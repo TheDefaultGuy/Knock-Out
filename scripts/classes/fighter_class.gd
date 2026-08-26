@@ -6,7 +6,7 @@ class_name Fighter extends Node2D
 @export var defense_component: DefenseComponent
 @export var attacking_component: AttackingComponent
 @export var health_component: HealthComponent
-
+@export var instant_ko_component: InstantKOComponent
 @export var move_set_anim: AnimationPlayer
 @export var animation_tree: AnimationTree
 @onready var anim_state_machine = animation_tree["parameters/playback"]
@@ -30,27 +30,28 @@ class_name Fighter extends Node2D
 
 func _ready() -> void:
 	if defense_component == null:
-		printerr(self.name, " doesn't have a Defense Component Assigned.")
+		printerr(self.name, " doesn't have a Defense Component assigned.")
 	if attacking_component == null:
-		printerr(self.name, " doesn't have an Attacking Component Assigned.")
+		printerr(self.name, " doesn't have an Attacking Component assigned.")
 	if health_component == null:
-		printerr(self.name, " doesn't have a Health Component Assigned.")
+		printerr(self.name, " doesn't have a Health Component assigned.")
 	if move_set_anim == null:
-		printerr(self.name, " doesn't have a Move Set Animation Player Assigned.")
+		printerr(self.name, " doesn't have a Move Set Animation Player assigned.")
 	if animation_tree == null:
-		printerr(self.name, " doesn't have an Animation Tree Assigned.")
-	#if isPlayer == false and :
+		printerr(self.name, " doesn't have an Animation Tree assigned.")
+	if isPlayer == false and instant_ko_component == null:
+		push_warning(self.name, " doesn't have an Instant KO Component assigned")
 
 func start_get_up():
 	FightManager.start_get_up_signal.emit()
 		
 func ready_to_fight():
-	print(name, "ready")
-	FightManager.fighter_ready_signal.emit()
+	print("Fighter Class: ", name, " is ready")
 	if isPlayer == true:
 		FightManager.player_ready_status = true
 	elif isPlayer == false:
 		FightManager.enemy_ready_status = true
+	FightManager.fighter_ready_signal.emit()
 	
 func emit_got_up_signal():
 	print("Fart")

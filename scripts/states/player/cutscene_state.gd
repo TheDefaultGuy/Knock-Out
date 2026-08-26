@@ -8,18 +8,19 @@ class_name CutSceneState extends State
 
 @export var next_state : State
 
-@export_category("Animations")
-@export var winning_animation : String
-@export var losing_animation : String
-@export var intro_animation : String
+#@export_category("Animations")
+#@export var winning_animation : String
+#@export var losing_animation : String
+#@export var intro_animation : String
+
+func _ready() -> void:
+	if next_state == null:
+		printerr(get_parent().get_parent().name, " CutScene State: next state not set")
 
 func enter():
 	print_rich("[color=yellow]Player Entered State: [/color]", self.name)
-	animation_tree.set("parameters/conditions/spectating", true)
-	
-	FightManager.fighter_got_up_signal.connect(back_to_fight)
+	FightManager.start_intro_animation_signal.connect(play_intro)
 	FightManager.resume_fighting_signal.connect(transition.bind(self, next_state))
-	
 	
 	if get_parent().get_parent().isPlayer == true:
 		FightManager.player_ready_status = false
@@ -28,20 +29,20 @@ func enter():
 	
 
 func exit():
-	animation_tree.set("parameters/conditions/spectating", false)
-	FightManager.fighter_got_up_signal.disconnect(back_to_fight)
 	FightManager.resume_fighting_signal.disconnect(transition)
-
-
-func back_to_fight():
-	anim_state_machine.travel("back_to_the_fight")
+	FightManager.start_intro_animation_signal.disconnect(play_intro)
 	
-func ready_to_fight():
-	if get_parent().get_parent().isPlayer == true:
-		FightManager.player_ready_status = true
-	else:
-		FightManager.enemy_ready_status = true
-	FightManager.fighter_ready_signal.emit()
+func play_intro():
+	anim_state_machine.travel("intro")
+
+
+	
+#func ready_to_fight():
+	#if get_parent().get_parent().isPlayer == true:
+		#FightManager.player_ready_status = true
+	#else:
+		#FightManager.enemy_ready_status = true
+	#FightManager.fighter_ready_signal.emit()
 	
 func perform_attack(_height : int, _direction : int, _action_name : String, _special_move : bool):
 	pass

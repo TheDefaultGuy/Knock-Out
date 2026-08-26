@@ -41,17 +41,22 @@ func _ready() -> void:
 	FightManager.enemy_knocked_down_signal.connect(toggle_round_timer)
 	FightManager.player_knocked_down_signal.connect(toggle_round_timer)
 	FightManager.resume_fighting_signal.connect(toggle_round_timer)
-	
 	FightManager.start_get_up_signal.connect(start_ko_count)
 	FightManager.fighter_got_up_signal.connect(stop_ko_count)
 	round_timer.start(round_length)
+	round_timer.paused = true
 	update_ui()
+	
+	FightManager.start_the_fight_signal.connect(start_the_match)
+	await get_tree().create_timer(2.0).timeout
+	FightManager.start_intro_animation_signal.emit()
+	
+func start_the_match():
 	round_timer.paused = false
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-
+	
+	
 func _process(_delta: float) -> void:
 	# Does the match to convert the seconds to M:SS format.
-
 	FightManager.round_time = (round_timer.wait_time - round_timer.time_left)
 	#print("ROUND TIME : ", FightManager.round_time)
 	@warning_ignore("integer_division")

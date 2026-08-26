@@ -38,7 +38,6 @@ func _process(delta: float) -> void:
 
 	if get_up_progress >= get_up_threshold: # When the get up progress reaches 100, the player succesfully gets back up.
 		 # plays the get up animation
-		print("poopyyy")
 		animation_tree.set("parameters/conditions/knockeddown", false)
 		animation_tree.set("parameters/conditions/gotup", true)
 		FightManager.fighter_got_up_signal.emit() # emits the global signal

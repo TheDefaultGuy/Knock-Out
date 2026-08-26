@@ -11,14 +11,14 @@ class_name AttackingComponent extends Node
 ## It calls functions in the opposing fighter's defense component, giving it the attacks variables as input.
 ## Which the attack covers, the dodge range, how much damage it does, etc...
 ## The defense compomnent then checks if the attack is successful and returns the result.] to the attack component.
-func send_attack_call(punch_height : int, punch_range : int, attack_damage : float, punch_direction : int):
+func send_attack_call(punch_height : int, punch_range : int, attack_damage : float, punch_direction : int, star_punch : bool):
 	if Global.enemy_node != null and Global.player_node != null:
 		match get_parent():
 			Global.enemy_node: # Checks wether the one attacking, the parent of this component, is the player or enemy.
-				punch(Global.player_node, punch_height, punch_range, attack_damage, punch_direction)
+				punch(Global.player_node, punch_height, punch_range, attack_damage, punch_direction, star_punch)
 					
 			Global.player_node:
-				punch(Global.enemy_node, punch_height, punch_range, attack_damage, punch_direction)
+				punch(Global.enemy_node, punch_height, punch_range, attack_damage, punch_direction, star_punch)
 				
 			_:
 				printerr("Attacking Component: ", get_parent().name, " is neither the player or the assigned enemy in global.")
@@ -36,10 +36,21 @@ func send_attack_call(punch_height : int, punch_range : int, attack_damage : flo
 		return
 #endregion
 		
-func punch(input_node : Node2D, punch_height : int, punch_range : int, attack_damage : float, punch_direction : int):
+func punch(input_node : Node2D, punch_height : int, punch_range : int, attack_damage : float, punch_direction : int, star_punch : bool):
 	if input_node.defense_component != null: # Checks to see if the enemy has a defense component.
-				if input_node.defense_component.has_method("check_defense") == true: #Checks to see if the defense component has that function
+				if input_node.defense_component.has_method("check_defense") == true: # Checks to see if the defense component has that function
+					
+					if get_parent().isPlayer == true and star_punch == true: # If it was a star punch, change the attack damage to reflect the amount of star punches used.
+						
+						# This is the equation used for calculating star punch damage in relation to the amount of stars used: https://www.desmos.com/calculator/ck5t9wejr0
+						# Basically, it's not a linear equation, its slightly exponential.
+						# That way, the first star doesn't have the same weight as the 3rd star, and the more the player holds on to the stars, the more damage they can do.
+						attack_damage = attack_damage * ( (float(FightManager.stars_used) + 1.0) ** 2.0 / 4.0)
+					
 					if input_node.defense_component.call("check_defense", punch_height, punch_range, attack_damage, punch_direction) == true:
+						if star_punch == true: # If it was a star punch and the hit was true, then increase the star punch landed variable
+							FightManager.star_punches_landed += 1
+							
 						FightManager.succesful_hit_signal.emit() # emits the signal if the defense component responds that the attack landed
 						return
 						

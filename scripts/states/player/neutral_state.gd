@@ -10,7 +10,7 @@ func enter():
 	animation_tree.set("parameters/conditions/tired", false)
 	animation_tree.set("parameters/conditions/spectating", false)
 	
-	anim_state_machine.travel("idle")
+	#anim_state_machine.travel("idle")
 	
 	# Sets the interrupted state in the state machine as itself.
 	# That way, if it gets interrupted by another state like stunned, it'll come back to this one.
@@ -44,7 +44,7 @@ func perform_defense(move : int, action_name : String):
 				FightManager.sfx_dodge_signal.emit()
 			Global.range.NEUTRAL:
 				if action_name == "down":
-					anim_state_machine.travel("duck_start")
+					anim_state_machine.travel("dodge_duck_start")
 					FightManager.sfx_duck_signal.emit()
 				elif action_name == "up":
 					anim_state_machine.travel("guard_up")
@@ -58,34 +58,27 @@ func perform_attack(height : int, direction : int, action_name : String, special
 		if special_move == false:
 			match height:
 				Global.height.LOW: # If its a low attack, check which direction and then play the appropriate animation for it.
-					match direction:
-						Global.range.LEFT:
-							anim_state_machine.travel("left_low_punch")
-							FightManager.sfx_punch_thrown_signal.emit()
-						Global.range.RIGHT:
-							anim_state_machine.travel("right_low_punch")
-							FightManager.sfx_punch_thrown_signal.emit()
+					animation_tree.set("parameters/attack_lower/blend_position", direction)
+					anim_state_machine.travel("attack_lower")
+					FightManager.sfx_punch_thrown_signal.emit()
 							
 				Global.height.HIGH: # If its a high attack, check which direction and then play the appropriate animation for it.
-					match direction:
-						Global.range.LEFT:
-							anim_state_machine.travel("left_high_punch")
-							FightManager.sfx_punch_thrown_signal.emit()
-						Global.range.RIGHT:
-							anim_state_machine.travel("right_high_punch")
-							FightManager.sfx_punch_thrown_signal.emit()
+					animation_tree.set("parameters/attack_upper/blend_position", direction)
+					anim_state_machine.travel("attack_upper")
+					FightManager.sfx_punch_thrown_signal.emit()
 				_:
 					printerr("Perform_attack function: Unnacounted height")
+					
 		elif special_move == true:
 			if FightManager.star_count > 0: # Checks to see if the player has stars to perform a star punch.
 				FightManager.use_stars()
 				match height:
 					Global.height.LOW:
-						anim_state_machine.travel("star_punch_lower")
+						anim_state_machine.travel("attack_star_punch_lower")
 						FightManager.sfx_star_punch_thrown_signal.emit()
 						
 					Global.height.HIGH:
-						anim_state_machine.travel("star_punch_upper")
+						anim_state_machine.travel("attack_star_punch_upper")
 						FightManager.sfx_star_punch_thrown_signal.emit()
 	else:
 		input_component.store_unhandled_input(action_name) # If the player is currently already dodging or attacking, it'll store the attack they wanted to do so that it's buffered.

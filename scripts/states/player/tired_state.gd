@@ -32,7 +32,7 @@ func perform_defense(move : int, action_name : String):
 				anim_state_machine.travel("dodge_right_start")
 				FightManager.sfx_dodge_signal.emit()
 			Global.range.NEUTRAL:
-				anim_state_machine.travel("duck_start")
+				anim_state_machine.travel("dodge_duck_start")
 				FightManager.sfx_duck_signal.emit()
 	else:
 		input_component.store_unhandled_input(action_name) # If the player is currently already dodging or attacking, it'll store the attack they wanted to do so that it's buffered.

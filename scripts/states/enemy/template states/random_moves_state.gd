@@ -21,10 +21,10 @@ class_name RandomizedMovesState extends State
 
 
 enum ATTACK_DELAY{
-	## Chooses a float value between the minimum and maximum wait time.
+	## Will choose a float value BETWEEN the minimum and maximum wait time.
 	FLOAT,
 	
-	## Randomly chooses from an array of predetermined values.
+	## Instead of choosing a number BETWEEN a minumum and a maximum value, it will choose randomly from a list of provided values instead.
 	PREDETERMINED
 }
 ## Enum that stores all of the possible state change conditions.
@@ -57,13 +57,13 @@ enum BLOCK_BEHAVIOR{
 	RESET_TIMER
 }
 
-
-
 @export_category("⏱ Attack Delays")
 ## What to do when an attack is blocked when in this state.
 @export var block_behavior := BLOCK_BEHAVIOR.PAUSE_TIMER
-## A Multipurpose timer that can be used by various states.
-@export var general_timer : Timer
+
+## The timer used to time attacks.
+@export var attack_timer : Timer
+
 ## How the delay between each attack is handled.
 @export var attack_delay_type := ATTACK_DELAY.FLOAT: 
 	set(value):
@@ -72,12 +72,16 @@ enum BLOCK_BEHAVIOR{
 		
 ## The minimum amount of time (in seconds) the enemy will wait before randomly choosing a move.
 @export_custom(PROPERTY_HINT_NONE, "suffix:s") var min_wait_time : float = 1.0
+
 ## The maximum amount of time (in seconds) the enemy will wait before randomly choosing a move.
 @export_custom(PROPERTY_HINT_NONE, "suffix:s") var max_wait_time : float = 3.0
 
+## An array of predetermined attack delay amounts. 
+## Instead of choosing a number BETWEEN a minumum and a maximum value, it will choose randomly from the list of provided values instead.
 @export_custom(PROPERTY_HINT_NONE, "suffix:s") var attack_delay_array : Array[float]
 
 @export_category("⇄ State Changing Conditions")
+
 ## The primary condition for changing state and the first one being checked.
 ##
 ## If the condition is met, it will transition to the primary target state.
@@ -97,40 +101,28 @@ enum BLOCK_BEHAVIOR{
 		
 ## The state the enemy will transition to after the primary condition is met.
 @export var primary_target_state : State
+
 ## The state the enemy will transition to after the secondary condition is met.
 @export var secondary_target_state : State
+
 ## The time in the round (in seconds) where the enemy changes to the target state.
 @export_range(10.0, 180.0, 1.0, "suffix:s") var target_round_time : float
+
 ## The amount of time the enemy waits (in seconds) before changing to the target state.
 @export_range(1.0, 90.0, 1.0, "suffix:s") var time_to_wait : float
+
 ## Timer used to transition to the target state.
 @export var wait_timer : Timer
-
-
-
-## Handles showing and hiding applicable exported variables
-func _validate_property(property: Dictionary) -> void: 
-	if property.name == "target_round_time" and primary_condition != STATE_CHANGE_CONDITION.AT_ROUND_TIME and secondary_condition != STATE_CHANGE_CONDITION.AT_ROUND_TIME :
-		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "time_to_wait" and primary_condition != STATE_CHANGE_CONDITION.AFTER_TIME_PASSED and secondary_condition != STATE_CHANGE_CONDITION.AFTER_TIME_PASSED :
-		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "min_wait_time" and attack_delay_type != ATTACK_DELAY.FLOAT :
-		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "max_wait_time" and attack_delay_type != ATTACK_DELAY.FLOAT :
-		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "attack_delay_array" and attack_delay_type != ATTACK_DELAY.PREDETERMINED :
-		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "wait_timer" and primary_condition != STATE_CHANGE_CONDITION.AFTER_TIME_PASSED and secondary_condition != STATE_CHANGE_CONDITION.AFTER_TIME_PASSED :
-		property.usage = PROPERTY_USAGE_NONE
 #endregion
 
 func _ready() -> void:
-	if general_timer == null:
+	if attack_timer == null:
 		printerr(self.name, " : General Timer not set.")
 	
 	if wait_timer != null:
 		wait_timer.wait_time = time_to_wait
 		wait_timer.one_shot = true
+
 #region The enter and exit functions.
 func enter():
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
@@ -140,8 +132,8 @@ func enter():
 	animation_tree.set("parameters/conditions/spectating", false)
 	
 	start_attack_delay_timer()
-	general_timer.timeout.connect(perform_action)
-	anim_state_machine.travel(idle_animation)
+	attack_timer.timeout.connect(perform_action)
+	#anim_state_machine.travel(idle_animation)
 	
 	# Sets the interrupted state in the state machine as itself.
 	# That way, if it gets interrupted by another state like stunned, it'll come back to this one.
@@ -174,7 +166,7 @@ func enter():
 			printerr(self.name, " : Wait Timer not set.")
 	pass
 func exit():
-	general_timer.timeout.disconnect(perform_action)
+	attack_timer.timeout.disconnect(perform_action)
 	FightManager.player_knocked_down_signal.disconnect(transition_to_spectating)
 	FightManager.enemy_knocked_down_signal.disconnect(transition_to_knocked_down)
 	defense_component.stunned_signal.disconnect(transition_to_stunned)
@@ -183,7 +175,7 @@ func exit():
 	FightManager.no_stamina_signal.disconnect(check_state_change_condition)
 	FightManager.succesful_block_signal.disconnect(handle_block)
 	
-	general_timer.stop()
+	attack_timer.stop()
 	
 	if wait_timer != null: # Shenanigans to pause the wait timer when transitioning to another scene.
 		wait_timer.stop()
@@ -200,11 +192,12 @@ func exit():
 ## This function is called right after performing an attack and after the player or the enemy blocks.
 func start_attack_delay_timer():
 	if attack_delay_type == ATTACK_DELAY.FLOAT:
-		general_timer.start(randf_range(min_wait_time, max_wait_time)) # Starts the timer when entering the state and sets a random wait time.
+		attack_timer.start(randf_range(min_wait_time, max_wait_time)) # Starts the timer when entering the state and sets a random wait time.
 	elif attack_delay_type == ATTACK_DELAY.PREDETERMINED:
-		general_timer.start(attack_delay_array.pick_random())
+		attack_timer.start(attack_delay_array.pick_random())
 		
 ## Function called when a block occurs.
+## Handle attack wait times after a block.
 func handle_block():
 	if block_behavior == BLOCK_BEHAVIOR.RESET_TIMER:
 		start_attack_delay_timer()
@@ -215,7 +208,7 @@ func handle_block():
 		
 ## Pauses and unpauses the attack delay timer.
 func toggle_attack_delay_timer():
-	general_timer.paused = !general_timer.paused
+	attack_timer.paused = !attack_timer.paused
 
 ## Does the weight calculation and chooses a random move from the move set dictionary
 func get_weighted_choice(weight_dict: Dictionary):
@@ -238,7 +231,7 @@ func get_weighted_choice(weight_dict: Dictionary):
 
 
 func perform_action():
-	var move = str(get_weighted_choice(moveset)).replace('"', "") # Formats the move name to be usable since it comes with quoation marks for some reason.
+	var move = str(get_weighted_choice(moveset)).replace('"', "") # Formats the move name to be usable incase it comes with quoation marks for some reason.
 	anim_state_machine.travel(move) 
 	start_attack_delay_timer()
 

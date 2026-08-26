@@ -14,40 +14,53 @@ class_name DefenseComponent extends Node
 ## 0 = Neutral; no dodge
 ##-1 = Dodging Left
 ## 1 = Dodging Right
-@export var dodge_position : int = Global.range.NEUTRAL 
+@export var dodge_position : int = Global.range.NEUTRAL
+
 ## Used to multiply damage at specific moments as a way to make weakspots or counter attack options.
 ##
 ## Used by enemies so that the player can be rewarded with well timed counter punches or exploiting weakspots.
 ## This and all "Defense Variables" should only be accessed and manipulated by animations within the move set animation
 @export var upper_damage_multiplier : float = 1.0 
+
 ## Used to multiply damage at specific moments as a way to make weakspots or counter attack options.
 ##
 ## Used by enemies so that the player can be rewarded with well timed counter punches or exploiting weakspots.
 ## This and all "Defense Variables" should only be accessed and manipulated by animations within the move set animation
 @export var lower_damage_multiplier : float = 1.0
+
 ## Used to divide damage done by attacks when blocked.
-## Used by both enemy and player.
+## Used only by the player, as enemies can't get hurt if they block.
 @export var blocking_damage_multiplier : float = 0.1 
+
 ## Whether the upper part of the fighter is blocked.
 ## High attacks will be considered as if they landed, by the attacker, but blocked by the defender.
 @export var upper_blocking_status : bool = false
+
 ## Whether the lower part of the fighter is blocked. 
 ## Low attacks will be considered as if they landed, by the attacker, but blocked by the defender.
 @export var lower_blocking_status : bool = false
+
 ## Whether the fighter is invulnerable or not in the upper section.
 ## Used for if they're ducking, dodging with their head, moved away, etc...
 @export var upper_invulnerability : bool = false 
+
 ## Whether the fighter is invulnerable or not in the lower section.
 ## Used for if they're ducking, dodging with their head, moved away, etc...
 @export var lower_invulnerability : bool = false
+
 ## The window of time in which attacking stuns the enemy. Never used by the player.
 @export var stun_window : bool = false 
+
 ## The window of time in which attacking grants a star for star punches.
 ## It's split into 2 variables corresponding to the 2 different heights. That way, you have the option of awarding a star by hitting the face but not the body or vice versa.
 @export var upper_star_window : bool = false 
+
 ## The window of time in which attacking grants a star for star punches.
 ## It's split into 2 variables corresponding to the 2 different heights. That way, you have the option of awarding a star by hitting the face but not the body or vice versa.
-@export var lower_star_window : bool = false # The window of time in which attacking grants a star for star punch.
+@export var lower_star_window : bool = false
+
+## The window of time in which being hit will trigger an instant KO check.
+@export var instant_ko_window: bool = false 
 #endregion
 
 ## Signal emitted when a dodge was performed. Used by the player.
@@ -55,6 +68,9 @@ signal succesful_dodge
 ## Signal emitted when the enemy was hit during the stunned. Used to transition into stunned state.
 signal stunned_signal
  
+func _ready() -> void:
+	if get_parent().isPlayer == false: # Enemies can't get hurt when they block.
+		blocking_damage_multiplier = 0
 
 ## This is the main function used to check if a hit is succesful or not and is called by the opposing fighter's [annotation Attack Component].
 ## 
@@ -101,10 +117,11 @@ func check_blocking_status(blocking_status : bool, damage_amount : float, punch_
 			if punch_height == Global.height.LOW:
 				if handle_damage_and_knockdown(damage_amount, lower_damage_multiplier) == true:
 					return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
-			else:
+					
+			else: # if the punch height was LOW or BOTH
 				if handle_damage_and_knockdown(damage_amount, upper_damage_multiplier) == true:
 					return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
-
+			
 			check_for_star_and_stun(punch_height)
 			play_animation(choose_hit_animation(punch_direction, punch_height))
 			return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
@@ -127,6 +144,9 @@ func check_blocking_status(blocking_status : bool, damage_amount : float, punch_
 func handle_damage_and_knockdown(damage_amount : float, multiplier : float) -> bool:
 	if get_parent().isPlayer == true: # checks to see if the defender is the player. If the player got hit, lower their stamina.
 		FightManager.lower_stamina()
+	else:
+		if check_instant_ko() == true:
+			damage_amount = damage_amount * 300.0
 	if get_parent().health_component.deal_damage_and_check_for_knockdown(damage_amount, multiplier) == true: 
 		play_animation("knock_down")
 		return true
@@ -135,31 +155,19 @@ func handle_damage_and_knockdown(damage_amount : float, multiplier : float) -> b
 	
 ## Chooses which hit animation to play.
 func choose_hit_animation(punch_direction : int, punch_height : int) -> String:
-	if punch_direction == Global.range.LEFT:
-		match punch_height:
-			Global.height.LOW:
-				return "hit_lower_left"
-			Global.height.HIGH:
-				return "hit_upper_left"
-			Global.height.BOTH: # For Star Punches
-				return "hit_upper_left"
-			_: 
-				printerr(get_parent().name, " Defense Component: Choose Hit Animation Function. Unnaccounted 4th height option.")
-				return ""
-	elif punch_direction == Global.range.RIGHT:
-		match punch_height:
-			Global.height.LOW:
-				return "hit_lower_right"
-			Global.height.HIGH:
-				return "hit_upper_right"
-			Global.height.BOTH: # For Star Punches
-				return "hit_upper_right"
-			_: 
-				printerr(get_parent().name, " Defense Component: Choose Hit Animation Function. Unnaccounted 4th height option.")
-				return ""
-	else:
-		printerr(get_parent().name, " Defense Component: Choose Hit Animation Function. Unnaccounted 3rd punch direction option.")
-		return ""
+	match punch_height:
+		Global.height.LOW:
+			get_parent().animation_tree.set("parameters/hit_lower/blend_position", punch_direction)
+			return "hit_lower"
+		Global.height.HIGH:
+			get_parent().animation_tree.set("parameters/hit_upper/blend_position", punch_direction)
+			return "hit_upper"
+		Global.height.BOTH: # For Star Punches
+			get_parent().animation_tree.set("parameters/hit_upper/blend_position", punch_direction)
+			return "hit_upper"
+		_: 
+			printerr(get_parent().name, " Defense Component: Choose Hit Animation Function. Unnaccounted 4th height option.")
+			return ""
 
 ## Chooses which blocking animation to play.
 func choose_block_animation(punch_height : int) -> String: 
@@ -215,5 +223,15 @@ func is_punch_dodged(punch_range: int) -> bool:
 	
 	# Returns true if any of them are true.
 	return dodged_neutral or dodged_right or dodged_left or ducked_neutral
-	
+
+## Checks the instant KO window and then calls the function in the instant KO component to check and return whether or not it's an instant KO.
+func check_instant_ko() -> bool:
+	print("check instant")
+	if instant_ko_window == true:
+		if get_parent().instant_ko_component != null:
+			if get_parent().instant_ko_component.check_for_instant_knock_out() == true:
+				return true
+		else:
+			push_error("Defense Component: ", get_parent().name, " doesn't have an Instant KO Component.")
+	return false
 #endregion
