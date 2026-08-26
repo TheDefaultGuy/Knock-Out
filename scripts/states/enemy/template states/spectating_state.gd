@@ -1,0 +1,29 @@
+@icon("res://assets/icons/BoxiconsBinocularFilled.svg")
+## It's the state entered when the player is knocked down.
+## This is a required state for enemy boxers.
+class_name EnemySpectatingState extends State
+
+@onready var anim_state_machine = animation_tree["parameters/playback"]
+
+func enter():
+	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
+	anim_state_machine.travel("spectating")
+	
+	animation_tree.set("parameters/conditions/spectating", true)
+	animation_tree.set("parameters/conditions/stunned", false)
+	
+
+	FightManager.fighter_got_up_signal.connect(back_to_fight)
+	FightManager.resume_fighting_signal.connect(transition_to_previous_state)
+
+
+func exit():
+	animation_tree.set("parameters/conditions/spectating", false)
+	FightManager.fighter_got_up_signal.disconnect(back_to_fight)
+	FightManager.resume_fighting_signal.disconnect(transition_to_previous_state)
+
+
+func back_to_fight():
+	anim_state_machine.travel("back_to_the_fight")
+
+	

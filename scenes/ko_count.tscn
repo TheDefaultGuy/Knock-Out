@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://b8n3e758it47v"]
+
+[ext_resource type="Script" uid="uid://dvab42mnrfsne" path="res://scripts/ko_count.gd" id="1_pqcpg"]
+
+[node name="Node2D" type="Node2D" unique_id=455575030]
+script = ExtResource("1_pqcpg")
+
+[node name="KO Timer" type="Timer" parent="." unique_id=103331069]
+
+[node name="Label" type="Label" parent="." unique_id=1991907615]
+offset_left = -0.5
+offset_top = -11.5
+offset_right = 1153.0
+offset_bottom = 647.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "asd3wer"
+horizontal_alignment = 1
+vertical_alignment = 1

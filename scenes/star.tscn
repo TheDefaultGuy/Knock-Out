@@ -1,0 +1,60 @@
+[gd_scene format=3 uid="uid://mbb7yyvjhw12"]
+
+[ext_resource type="Texture2D" uid="uid://x71ag0lhtvpd" path="res://assets/17-178727_download-mist-free-png-transparent-image-and-clipart.png" id="1_mcqwg"]
+[ext_resource type="Texture2D" uid="uid://dtheurjqdiaht" path="res://assets/streak.png" id="2_j6vao"]
+
+[sub_resource type="Curve" id="Curve_mcqwg"]
+_data = [Vector2(0, 1), 0.0, 0.10112369, 0, 0, Vector2(0.2702703, 1), 0.0, 0.0, 0, 0, Vector2(0.99999, 0), 0.0, 0.0, 0, 0, Vector2(1, 0), -4.68642, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_uj0uw"]
+curve = SubResource("Curve_mcqwg")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_xm5q8"]
+particle_flag_disable_z = true
+angle_min = 1.0728835e-05
+angle_max = 360.00003
+direction = Vector3(0, -1, 0)
+spread = 15.0
+initial_velocity_min = 15.0
+initial_velocity_max = 20.0
+orbit_velocity_min = 0.5380001
+orbit_velocity_max = 0.7960001
+scale_min = 0.099999994
+scale_max = 0.14999999
+scale_curve = SubResource("CurveTexture_uj0uw")
+
+[sub_resource type="Curve" id="Curve_xm5q8"]
+_limits = [0.0, 2.5, 0.0, 1.0]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.13705583, 2.5), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[node name="Star" type="Node2D" unique_id=366823912]
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="." unique_id=337692415]
+visible = false
+texture_filter = 1
+amount = 2
+texture = ExtResource("1_mcqwg")
+explosiveness = 0.15
+randomness = 0.05
+collision_base_size = 0.1
+process_material = SubResource("ParticleProcessMaterial_xm5q8")
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="." unique_id=1340064102]
+texture_filter = 1
+amount = 15
+texture = ExtResource("2_j6vao")
+explosiveness = 0.91
+particle_flag_align_y = true
+direction = Vector2(0, 0)
+spread = 180.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 512.0
+initial_velocity_max = 512.0
+damping_min = 100.0
+damping_max = 100.0
+split_scale = true
+scale_curve_x = null
+scale_curve_y = SubResource("Curve_xm5q8")
+color = Color(0, 0.6627451, 0.8, 0.1882353)
