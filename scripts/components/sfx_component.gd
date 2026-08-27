@@ -1,3 +1,4 @@
+@icon("res://assets/icons/MaterialSymbolsSoundDetectionLoudSound.svg")
 ## This is the component that handles playing the general sound effects.
 ##
 ## This is used to play sound effects that are not exclusive to fighters and attacks.
@@ -11,11 +12,6 @@ class_name SoundEffectsComponent extends Node
 @export var star_punch : AudioStream
 @export var duck : AudioStream
 @export var block : AudioStream
-
-#@export var punch_hit : AudioStream
-#@export var punch_hit : AudioStream
-
-
 
 
 # Called when the node enters the scene tree for the first time.

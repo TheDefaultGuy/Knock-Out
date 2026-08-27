@@ -8,17 +8,12 @@ class_name CutSceneState extends State
 
 @export var next_state : State
 
-#@export_category("Animations")
-#@export var winning_animation : String
-#@export var losing_animation : String
-#@export var intro_animation : String
-
 func _ready() -> void:
 	if next_state == null:
 		printerr(get_parent().get_parent().name, " CutScene State: next state not set")
 
 func enter():
-	print_rich("[color=yellow]Player Entered State: [/color]", self.name)
+	print_rich("[color=yellow]",get_parent().get_parent().name," Entered State: [/color]", self.name)
 	FightManager.start_intro_animation_signal.connect(play_intro)
 	FightManager.resume_fighting_signal.connect(transition.bind(self, next_state))
 	
@@ -34,15 +29,6 @@ func exit():
 	
 func play_intro():
 	anim_state_machine.travel("intro")
-
-
-	
-#func ready_to_fight():
-	#if get_parent().get_parent().isPlayer == true:
-		#FightManager.player_ready_status = true
-	#else:
-		#FightManager.enemy_ready_status = true
-	#FightManager.fighter_ready_signal.emit()
 	
 func perform_attack(_height : int, _direction : int, _action_name : String, _special_move : bool):
 	pass

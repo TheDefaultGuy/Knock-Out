@@ -45,18 +45,19 @@ func punch(input_node : Node2D, punch_height : int, punch_range : int, attack_da
 						# This is the equation used for calculating star punch damage in relation to the amount of stars used: https://www.desmos.com/calculator/ck5t9wejr0
 						# Basically, it's not a linear equation, its slightly exponential.
 						# That way, the first star doesn't have the same weight as the 3rd star, and the more the player holds on to the stars, the more damage they can do.
-						attack_damage = attack_damage * ( (float(FightManager.stars_used) + 1.0) ** 2.0 / 4.0)
+						attack_damage = snappedf(attack_damage * ( (float(FightManager.stars_used) + 1.0) ** 2.0 / 4.0), 5.0)
 					
 					if input_node.defense_component.call("check_defense", punch_height, punch_range, attack_damage, punch_direction) == true:
 						if star_punch == true: # If it was a star punch and the hit was true, then increase the star punch landed variable
 							FightManager.star_punches_landed += 1
-							
+						FightManager.stars_used = 0
 						FightManager.succesful_hit_signal.emit() # emits the signal if the defense component responds that the attack landed
 						return
 						
 					else:
 						if get_parent().isPlayer == true: # Checks to see if the attacker is the player. If the player missed an attack, lower their stamina.
 							FightManager.lower_stamina()
+							FightManager.stars_used = 0
 						return
 						
 				elif input_node.defense_component.has_method("check_defense") == false:

@@ -69,10 +69,10 @@ _data = {
 &"ko_count": SubResource("Animation_8k0nb")
 }
 
-[node name="Main" type="Node2D" unique_id=860723905 node_paths=PackedStringArray("player_node", "enemy_node", "round_timer", "player_bar", "enemy_bar", "star_count_label", "stamina_label", "time_left_label", "animation_player")]
+[node name="Main" type="Node2D" unique_id=860723905 node_paths=PackedStringArray("round_timer", "player_bar", "enemy_bar", "star_count_label", "stamina_label", "time_left_label", "animation_player")]
 script = ExtResource("1_v87wf")
-player_node = NodePath("Player")
-enemy_node = NodePath("Nick Bruiser")
+player_scene = ExtResource("3_bt4xr")
+enemy_scene = ExtResource("2_8k0nb")
 round_timer = NodePath("Round Timer")
 player_bar = NodePath("Camera2D/UI/PlayerBar")
 enemy_bar = NodePath("Camera2D/UI/EnemyBar")
@@ -82,6 +82,7 @@ time_left_label = NodePath("Camera2D/UI/TimeLeftLabel")
 animation_player = NodePath("AnimationPlayer")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=664736061]
+position = Vector2(0, -18)
 zoom = Vector2(3.12, 3.12)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="Camera2D" unique_id=231494102]
@@ -155,12 +156,6 @@ offset_right = 97.0
 offset_bottom = 13.0
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="Nick Bruiser" parent="." unique_id=1740195545 instance=ExtResource("2_8k0nb")]
-position = Vector2(0, 20)
-
-[node name="Player" parent="." unique_id=60101935 instance=ExtResource("3_bt4xr")]
-position = Vector2(0, 33)
 
 [node name="Round Timer" type="Timer" parent="." unique_id=1406587034]
 wait_time = 180.0

@@ -3,13 +3,16 @@
 class_name Arena extends Node2D
 @export_category("Fighters")
 ## Place the player or the controllable fighter node here.
-@export var player_node : Fighter
+@export var player_scene : PackedScene
 ## Place the opponent node here.
-@export var enemy_node : Fighter
+@export var enemy_scene : PackedScene
 ## The timer used for tracking the time left in the round.
 
 
 @export var round_timer: Timer
+
+var target_time_scale := 0.025
+var secs := 1.25
 
 @export_category("UI Elements")
 ## The player's health bar.
@@ -33,8 +36,15 @@ class_name Arena extends Node2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+
+	var player_node = player_scene.instantiate()
+	var enemy_node = enemy_scene.instantiate()
 	Global.player_node = player_node
 	Global.enemy_node = enemy_node
+	
+	add_child(player_node)
+	add_child(enemy_node)
+	
 	player_node.health_component.health_changed.connect(update_ui)
 	enemy_node.health_component.health_changed.connect(update_ui)
 	FightManager.update_ui_signal.connect(update_ui)
@@ -43,6 +53,9 @@ func _ready() -> void:
 	FightManager.resume_fighting_signal.connect(toggle_round_timer)
 	FightManager.start_get_up_signal.connect(start_ko_count)
 	FightManager.fighter_got_up_signal.connect(stop_ko_count)
+	
+	FightManager.enemy_knocked_down_signal.connect(slow_down_effect)
+	FightManager.player_knocked_down_signal.connect(slow_down_effect)
 	round_timer.start(round_length)
 	round_timer.paused = true
 	update_ui()
@@ -69,6 +82,11 @@ func _process(_delta: float) -> void:
 	#if ko_timer.is_stopped() == false:
 		#print(round(ko_timer.wait_time - ko_timer.time_left))
 	#
+func slow_down_effect():
+	Engine.time_scale = target_time_scale
+	await get_tree().create_timer(secs * target_time_scale).timeout
+	Engine.time_scale = 1.0
+	
 func toggle_round_timer() -> void:
 	round_timer.paused = !round_timer.paused
 	

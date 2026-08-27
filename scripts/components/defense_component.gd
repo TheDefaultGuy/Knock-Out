@@ -97,7 +97,7 @@ func check_defense(punch_height : int, punch_range : int, damage_amount : float,
 			Global.height.BOTH: # Checks to see if it's an attack that covers both heights.
 				
 				# If Health Component calculates the health and it returns as <= 0, then that means they're knocked down.
-				if handle_damage_and_knockdown(damage_amount, 1.0) == true:
+				if handle_damage_and_knockdown(damage_amount, 1.0, punch_height, punch_direction) == true:
 					return true
 				else:
 					play_animation(choose_hit_animation(punch_direction, punch_height))
@@ -115,11 +115,11 @@ func check_blocking_status(blocking_status : bool, damage_amount : float, punch_
 		# Checks to see if the fighter is currently vulnerable in the given region. true = blocking and NOT vulnerable, false = not blocking and IS vulnerable	
 		false: # Not blocking
 			if punch_height == Global.height.LOW:
-				if handle_damage_and_knockdown(damage_amount, lower_damage_multiplier) == true:
+				if handle_damage_and_knockdown(damage_amount, lower_damage_multiplier, punch_height, punch_direction) == true:
 					return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
 					
 			else: # if the punch height was LOW or BOTH
-				if handle_damage_and_knockdown(damage_amount, upper_damage_multiplier) == true:
+				if handle_damage_and_knockdown(damage_amount, upper_damage_multiplier, punch_height, punch_direction) == true:
 					return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
 			
 			check_for_star_and_stun(punch_height)
@@ -127,7 +127,7 @@ func check_blocking_status(blocking_status : bool, damage_amount : float, punch_
 			return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
 				
 		true: # IS blocking
-			if handle_damage_and_knockdown(damage_amount, blocking_damage_multiplier) == true:
+			if handle_damage_and_knockdown(damage_amount, blocking_damage_multiplier, punch_height, punch_direction) == true:
 				return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
 			
 			# Plays the corresponding block animation if it wasn't enough damage for a knockdown.
@@ -141,14 +141,23 @@ func check_blocking_status(blocking_status : bool, damage_amount : float, punch_
 #region Helper/short functions
 ## Helper function. Deals damage and returns whether or not the attack resulted in a knock down.
 ## Also emits the the signal that the hit was successful.
-func handle_damage_and_knockdown(damage_amount : float, multiplier : float) -> bool:
+func handle_damage_and_knockdown(damage_amount : float, multiplier : float, punch_height : int, punch_direction : int) -> bool:
 	if get_parent().isPlayer == true: # checks to see if the defender is the player. If the player got hit, lower their stamina.
 		FightManager.lower_stamina()
 	else:
 		if check_instant_ko() == true:
 			damage_amount = damage_amount * 300.0
-	if get_parent().health_component.deal_damage_and_check_for_knockdown(damage_amount, multiplier) == true: 
-		play_animation("knock_down")
+	if get_parent().health_component.deal_damage_and_check_for_knockdown(damage_amount, multiplier) == true:
+		match punch_height:
+			Global.height.LOW:
+				get_parent().animation_tree.set("parameters/knock_down_lower/blend_position", punch_direction)
+				play_animation("knock_down_lower")
+			Global.height.HIGH:
+				get_parent().animation_tree.set("parameters/knock_down_upper/blend_position", punch_direction)
+				play_animation("knock_down_upper")
+			_:
+				get_parent().animation_tree.set("parameters/knock_down_upper/blend_position", punch_direction)
+				play_animation("knock_down_upper")
 		return true
 	else:
 		return false
@@ -226,7 +235,6 @@ func is_punch_dodged(punch_range: int) -> bool:
 
 ## Checks the instant KO window and then calls the function in the instant KO component to check and return whether or not it's an instant KO.
 func check_instant_ko() -> bool:
-	print("check instant")
 	if instant_ko_window == true:
 		if get_parent().instant_ko_component != null:
 			if get_parent().instant_ko_component.check_for_instant_knock_out() == true:

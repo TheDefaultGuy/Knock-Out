@@ -89,24 +89,24 @@ func check_for_instant_knock_out() -> bool:
 		KO_CONDITION_TYPE.STARS_USED:
 			if FightManager.stars_used >= number_of_stars:
 				if state_machine.current_state == expected_state_A or state_machine.current_state == expected_state_B:
-					print_rich("[color=cyan]Instant KO component:[/color] KO condition met: ", condition)
+					print_rich("[color=cyan]Instant KO component:[/color] KO condition met: Number of stars.")
 					return true
 				
 		KO_CONDITION_TYPE.STAR_PUNCHES_RECEIVED:
 			if FightManager.star_punches_landed >= star_punches_received:
 				if state_machine.current_state == expected_state_A or state_machine.current_state == expected_state_B:
-					print_rich("[color=cyan]Instant KO component:[/color] KO condition met: ", condition)
+					print_rich("[color=cyan]Instant KO component:[/color] KO condition met: Star Punches Received ")
 					return true
 				
 		KO_CONDITION_TYPE.KNOCK_DOWNS_BEFORE_ROUND_TIME:
 			if FightManager.enemy_ko_count >= knock_downs_required and FightManager.round_time <= ko_round_time:
 				if state_machine.current_state == expected_state_A or state_machine.current_state == expected_state_B:
-					print_rich("[color=cyan]Instant KO component:[/color] KO condition met: ", condition)
+					print_rich("[color=cyan]Instant KO component:[/color] KO condition met: Knockdowns before round time")
 					return true
 				
 		KO_CONDITION_TYPE.NEVER_BEEN_HIT:
 			if Global.player_node.health_component.hp == Global.player_node.health_component.initial_hp:
 				if state_machine.current_state == expected_state_A or state_machine.current_state == expected_state_B:
-					print_rich("[color=cyan]Instant KO component:[/color] KO condition met: ", condition)
+					print_rich("[color=cyan]Instant KO component:[/color] KO condition met: Never Hit", condition)
 					return true
 	return false
