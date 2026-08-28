@@ -1,0 +1,55 @@
+[gd_resource type="AnimationNodeStateMachine" format=3 uid="uid://dvcovsfqgh1vx"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_sw5rj"]
+animation = &"dodge/right_start"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_4iqsr"]
+animation = &"dodge/right_middle"
+
+[sub_resource type="AnimationNodeBlendSpace1D" id="AnimationNodeBlendSpace1D_omg23"]
+min_space = 0.0
+blend_point_0/node = SubResource("AnimationNodeAnimation_sw5rj")
+blend_point_0/pos = 0.0
+blend_point_0/name = &"dodge_right_start"
+blend_point_1/node = SubResource("AnimationNodeAnimation_4iqsr")
+blend_point_1/pos = 1.0
+blend_point_1/name = &"dodge_right_middle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_2lbek"]
+animation = &"dodge/right_end"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_w806f"]
+animation = &"dodge/right_start"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_2k4er"]
+priority = 0
+switch_mode = 2
+advance_mode = 2
+advance_condition = &"holding_right"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_gngl7"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_xdb0c"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_si1ji"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_2nabb"]
+switch_mode = 2
+advance_mode = 2
+
+[resource]
+states/End/position = Vector2(177.59998, -313.12)
+states/Start/position = Vector2(724.2, -319.32)
+states/dodge_blend_right/node = SubResource("AnimationNodeBlendSpace1D_omg23")
+states/dodge_blend_right/position = Vector2(440.8, -406.2)
+states/dodge_right_end/node = SubResource("AnimationNodeAnimation_2lbek")
+states/dodge_right_end/position = Vector2(334, -313.256)
+states/dodge_right_start/node = SubResource("AnimationNodeAnimation_w806f")
+states/dodge_right_start/position = Vector2(567.2, -313.06082)
+transitions = ["dodge_right_start", "dodge_blend_right", SubResource("AnimationNodeStateMachineTransition_2k4er"), "dodge_blend_right", "dodge_right_end", SubResource("AnimationNodeStateMachineTransition_gngl7"), "dodge_right_start", "dodge_right_end", SubResource("AnimationNodeStateMachineTransition_xdb0c"), "Start", "dodge_right_start", SubResource("AnimationNodeStateMachineTransition_si1ji"), "dodge_right_end", "End", SubResource("AnimationNodeStateMachineTransition_2nabb")]
+graph_offset = Vector2(-12.431213, -454)

@@ -14,9 +14,12 @@ signal defense_input_signal(move)
 var holding_left : bool = false
 var holding_right : bool = false
 
+var allow_inputs : bool = false
 
 
 func _input(_event: InputEvent) -> void:
+	if allow_inputs == false:
+		return
 	if Input.is_action_just_pressed("dodge"):
 		print("pressed dodge")
 	
@@ -49,33 +52,39 @@ func _input(_event: InputEvent) -> void:
 		perform_action("right_high_punch")
 
 func _process(_delta: float) -> void:
-	if Input.is_action_pressed("up") == true: 
-		animation_tree.set("parameters/conditions/guard_up", true)
-		animation_tree.set("parameters/conditions/guard_down", false)
-	elif Input.is_action_pressed("up") == false: 
-		animation_tree.set("parameters/conditions/guard_up", false)
-		animation_tree.set("parameters/conditions/guard_down", true)
+	if allow_inputs == false:
+		return
+	if Input.is_action_pressed("up") == true and Input.is_action_pressed("block") == true: 
+		animation_tree.set("parameters/neutral/idle/blend_position", Vector2i(1, 1))
+		
+	elif Input.is_action_pressed("up") == false and Input.is_action_pressed("block") == true: 
+		animation_tree.set("parameters/neutral/idle/blend_position", Vector2i(1, 0))
+		
+	elif Input.is_action_pressed("up") == false and Input.is_action_pressed("block") == false: 
+		animation_tree.set("parameters/neutral/idle/blend_position", Vector2i(0, 0))
+		
+	elif Input.is_action_pressed("up") == true and Input.is_action_pressed("block") == false: 
+		animation_tree.set("parameters/neutral/idle/blend_position", Vector2i(0, 0))
 		
 	if Input.is_action_pressed("left") == true: 
-		animation_tree.set("parameters/dodge_blend_left/blend_position", Global.range.LEFT)
-		animation_tree.set("parameters/conditions/holding_left", true)
+		animation_tree.set("parameters/dodge/dodge_left/dodge_blend_left/blend_position", Global.range.LEFT)
+		animation_tree.set("parameters/dodge/dodge_left/conditions/holding_left", true)
+		
 	elif Input.is_action_pressed("left") == false: 
-		animation_tree.set("parameters/conditions/holding_left", false)
+		animation_tree.set("parameters/dodge/dodge_left/conditions/holding_left", false)
 		
 	if Input.is_action_pressed("right") == true: 
-		animation_tree.set("parameters/dodge_blend_right/blend_position", Global.range.RIGHT)
-		animation_tree.set("parameters/conditions/holding_right", true)
+		animation_tree.set("parameters/dodge/dodge_right/dodge_blend_right/blend_position", Global.range.RIGHT)
+		animation_tree.set("parameters/dodge/dodge_right/conditions/holding_right", true)
 	elif Input.is_action_pressed("right") == false: 
-		animation_tree.set("parameters/conditions/holding_right", false)
+		animation_tree.set("parameters/dodge/dodge_right/conditions/holding_right", false)
 		
 	if Input.is_action_pressed("down") == true: 
 		animation_tree.set("parameters/duck_blend/blend_position", -1)
 		animation_tree.set("parameters/conditions/holding_down", true)
 	elif Input.is_action_pressed("down") == false: 
 		animation_tree.set("parameters/conditions/holding_down", false)
-	#elif Input.is_action_pressed("right") == true: 
-		#animation_tree.set("parameters/BlendSpace1D/blend_position", true)
-		#animation_tree.set("parameters/holding_right", false)
+
 func perform_action(action_name : String):
 	match action_name:
 		"left_low_punch":
@@ -101,17 +110,20 @@ func perform_action(action_name : String):
 		_:
 			printerr("Unnaccounted action.")
 	
-
-func store_unhandled_input(action_name : String): # Saves the given action to then use it when requested.
+## Stores the given action to then use it when requested.
+func store_unhandled_input(action_name : String): 
 	unhandled_input = action_name
 	input_buffer_timer.start()
-
+	
+## Function called by specific animations.
+## Automatically performs the stored unhandled input and then clears it.
 func perform_buffered_action():
 	if unhandled_input != null:
 		perform_action(unhandled_input)
 		unhandled_input = null
 		
-func _on_input_buffer_timer_timeout() -> void: # When the buffer timer runs out, clear the unhandled input
+## When the buffer timer runs out, clear the unhandled input
+func _on_input_buffer_timer_timeout() -> void: 
 	unhandled_input = null
 	
 func reset_blend_positions() -> void:

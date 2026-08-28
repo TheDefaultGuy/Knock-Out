@@ -8,14 +8,14 @@ func enter():
 	print_rich("[color=yellow]Player Entered State: [/color]", self.name)
 	set_process(false)
 	
-	animation_tree.set("parameters/conditions/tired", true)
+	animation_tree.set("parameters/neutral/blend_position", 1)
 	
 	input_component.attack_input_signal.connect(perform_attack)
 	input_component.defense_input_signal.connect(perform_defense)
 	defense_component.succesful_dodge.connect(succesful_dodge)
 
 func exit():
-	animation_tree.set("parameters/conditions/tired", false)
+	animation_tree.set("parameters/neutral/blend_position", 0)
 	input_component.attack_input_signal.disconnect(perform_attack)
 	input_component.defense_input_signal.disconnect(perform_defense)
 	defense_component.succesful_dodge.disconnect(succesful_dodge)
@@ -24,16 +24,12 @@ func perform_defense(move : int, action_name : String):
 	if get_parent().get_parent().isKnockdown == true:
 		return
 	elif get_parent().get_parent().isDodging == false && get_parent().get_parent().isAttacking == false && get_parent().get_parent().isHit == false:
-		match move:
-			Global.range.LEFT:
-				anim_state_machine.travel("dodge_left_start")
-				FightManager.sfx_dodge_signal.emit()
-			Global.range.RIGHT:
-				anim_state_machine.travel("dodge_right_start")
-				FightManager.sfx_dodge_signal.emit()
-			Global.range.NEUTRAL:
-				anim_state_machine.travel("dodge_duck_start")
-				FightManager.sfx_duck_signal.emit()
+		animation_tree.set("parameters/dodge/blend_position", move)
+		anim_state_machine.travel("dodge")
+		if move == Global.range.NEUTRAL:
+			FightManager.sfx_duck_signal.emit()
+			return
+		FightManager.sfx_dodge_signal.emit()
 	else:
 		input_component.store_unhandled_input(action_name) # If the player is currently already dodging or attacking, it'll store the attack they wanted to do so that it's buffered.
 		

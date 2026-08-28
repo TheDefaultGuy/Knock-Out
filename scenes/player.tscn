@@ -36,8 +36,8 @@
 [ext_resource type="Texture2D" uid="uid://db11aitlamofr" path="res://assets/snes/player_modified/sprite-3-7.png" id="25_ua5cf"]
 [ext_resource type="Texture2D" uid="uid://oe1wvq7wq8pl" path="res://assets/snes/player_modified/sprite-2-5.png" id="26_51ujp"]
 [ext_resource type="Shader" uid="uid://sigjxhnoufm8" path="res://scripts/shaders/player_tired.tres" id="30_giy8y"]
+[ext_resource type="AnimationNodeStateMachine" uid="uid://dqq7v4rop1vgc" path="res://animation/player/player_animation_tree_state_machine.tres" id="32_t4otl"]
 [ext_resource type="Script" uid="uid://bd3i8gnmviajw" path="res://scripts/states/player/cutscene_state.gd" id="38_t4otl"]
-[ext_resource type="AnimationNodeStateMachine" uid="uid://e7ajbireesjc" path="res://new_animation_node_state_machine.tres" id="40_g5jhy"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_a8ls1"]
 
@@ -707,73 +707,6 @@ tracks/8/keys = {
 "values": []
 }
 
-[sub_resource type="Animation" id="Animation_gl8cc"]
-resource_name = "guard_up"
-length = 0.4
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Player/Player Sprite:animation")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [&"guard_up"]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Player/Player Sprite:frame")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [0]
-}
-tracks/2/type = "method"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Player/InputComponent")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [],
-"method": &"perform_buffered_action"
-}]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("Player/DefenseComponent:lower_blocking_status")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("Player/DefenseComponent:upper_blocking_status")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-
 [sub_resource type="Animation" id="Animation_oprun"]
 resource_name = "idle"
 length = 0.4
@@ -1160,7 +1093,6 @@ _data = {
 &"back_to_the_fight": SubResource("Animation_a38lo"),
 &"get_up_end": SubResource("Animation_lxlsd"),
 &"get_up_start": SubResource("Animation_ha2mi"),
-&"guard_up": SubResource("Animation_gl8cc"),
 &"idle": SubResource("Animation_oprun"),
 &"intro": SubResource("Animation_2dvfe"),
 &"intro_start": SubResource("Animation_giy8y"),
@@ -2859,6 +2791,146 @@ _data = {
 &"right_start": SubResource("Animation_8txt3")
 }
 
+[sub_resource type="Animation" id="Animation_4gjji"]
+resource_name = "guard_lower"
+length = 0.4
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Player/Player Sprite:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"blocks"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Player/Player Sprite:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [1]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Player/InputComponent")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"perform_buffered_action"
+}]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Player/DefenseComponent:lower_blocking_status")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Player/DefenseComponent:upper_blocking_status")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_u2ulf"]
+resource_name = "guard_up"
+length = 0.4
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Player/Player Sprite:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"guard_up"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Player/Player Sprite:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Player/InputComponent")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"perform_buffered_action"
+}]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Player/DefenseComponent:lower_blocking_status")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Player/DefenseComponent:upper_blocking_status")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_6e8lb"]
+_data = {
+&"lower": SubResource("Animation_4gjji"),
+&"upper": SubResource("Animation_u2ulf")
+}
+
 [sub_resource type="Animation" id="Animation_vau08"]
 resource_name = "hit_lower_left"
 length = 0.33333334
@@ -3878,33 +3950,33 @@ libraries/ = SubResource("AnimationLibrary_d2wvv")
 libraries/attack = SubResource("AnimationLibrary_2a3c5")
 libraries/block = SubResource("AnimationLibrary_au7lq")
 libraries/dodge = SubResource("AnimationLibrary_vdulj")
+libraries/guard = SubResource("AnimationLibrary_6e8lb")
 libraries/hit = SubResource("AnimationLibrary_0yhus")
 libraries/knock_down = SubResource("AnimationLibrary_mx1m4")
 
 [node name="AnimationTree" type="AnimationTree" parent="." unique_id=1441227393]
 unique_name_in_owner = true
 root_node = NodePath("%AnimationTree/../..")
-tree_root = ExtResource("40_g5jhy")
+tree_root = ExtResource("32_t4otl")
 anim_player = NodePath("../MoveSetAnim")
 parameters/conditions/gotup = false
-parameters/conditions/guard_down = true
-parameters/conditions/guard_up = false
-parameters/conditions/holding_down = false
-parameters/conditions/holding_left = false
-parameters/conditions/holding_right = false
 parameters/conditions/knockeddown = false
 parameters/conditions/spectating = false
-parameters/conditions/tired = false
-parameters/attack_lower/blend_position = 0.0
-parameters/attack_upper/blend_position = 0.0
-parameters/dodge_blend_left/blend_position = -0.05756581
-parameters/dodge_blend_right/blend_position = 0.0
-parameters/duck_blend/blend_position = 0.0
+parameters/attack/blend_position = Vector2(0, 0)
+parameters/block/blend_position = 0.0
+parameters/dodge/blend_position = 0.0
+parameters/dodge/dodge_right/conditions/holding_right = false
+parameters/dodge/dodge_right/dodge_blend_right/blend_position = 0.0
+parameters/dodge/dodge_left/conditions/holding_left = false
+parameters/dodge/dodge_left/dodge_blend_left/blend_position = 0.0
+parameters/dodge/duck/conditions/holding_down = false
+parameters/dodge/duck/duck_blend/blend_position = 0.0
 parameters/get_up_blend/blend_position = 0.0
-parameters/hit_lower/blend_position = 0.0
-parameters/hit_upper/blend_position = 0.0
-parameters/knock_down_lower/blend_position = 0.0
-parameters/knock_down_upper/blend_position = 0.0
+parameters/hit/blend_position = Vector2(0, 0)
+parameters/knock_down/blend_position = Vector2(0, 0)
+parameters/neutral/blend_position = 0.0
+parameters/neutral/idle/blend_position = Vector2(0, 0)
+parameters/star_punch/blend_position = 0.0
 
 [node name="StateMachine" type="Node" parent="." unique_id=343069231 node_paths=PackedStringArray("initial_state", "knocked_down_state", "spectating_state", "tired_state", "cutscene_state")]
 script = ExtResource("15_oprun")

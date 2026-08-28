@@ -7,13 +7,14 @@
 ## This should be used to recreate attacks like Bald Bull's Bull Rush, where the enemy won't stop until somebody is knocked down.
 class_name IntroLoopState extends State
 
-@onready var anim_state_machine = animation_tree["parameters/playback"]
+@onready var anim_state_machine = animation_tree.get("parameters/playback")
+#@export var loop_state_machine = animation_tree.p
 
 #region Exported Variables
 @export_category("🎬 Animations & Moveset")
 ## The intro animation that will play in this state.
-@export var intro_animation : String = "intro"
-
+@export var state_machine_animation : String = "intro"
+@export var attack_animation : String = "attack"
 
 
 ## How the delay between each attack is handled.
@@ -21,9 +22,9 @@ class_name IntroLoopState extends State
 ## A Multipurpose timer that can be used by various states.
 @export var general_timer : Timer
 ## The minimum amount of time (in seconds) the enemy will wait before randomly choosing a move.
-@export_custom(PROPERTY_HINT_NONE, "suffix:s") var min_wait_time : float = 1.0
+@export_custom(PROPERTY_HINT_NONE, "suffix:s") var min_wait_time : float = 3.0
 ## The maximum amount of time (in seconds) the enemy will wait before randomly choosing a move.
-@export_custom(PROPERTY_HINT_NONE, "suffix:s") var max_wait_time : float = 3.0
+@export_custom(PROPERTY_HINT_NONE, "suffix:s") var max_wait_time : float = 8.0
 
 @export_category("⇄ State Changing Conditions")
 ## The state the enemy will transition to after the conditions are met.
@@ -40,14 +41,13 @@ func _ready() -> void:
 
 func enter():
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
-	
 	# Lets the Animation Tree now that the enemy is neither stunned nor spectating.
-	animation_tree.set("parameters/conditions/stunned", false)
+	animation_tree.set("parameters/conditions/", false)
 	animation_tree.set("parameters/conditions/spectating", false)
 	animation_tree.set("parameters/conditions/ready_to_loop", false)
 	general_timer.timeout.connect(perform_action)
 	
-	anim_state_machine.travel(intro_animation)
+	anim_state_machine.travel(state_machine_animation)
 	
 	# Sets the interrupted state in the state machine as itself.
 	# That way, if it gets interrupted by another state like stunned, it'll come back to this one.
@@ -70,7 +70,7 @@ func enter():
 	pass
 
 func exit():
-	animation_tree.set("parameters/conditions/ready_to_loop", false)
+	anim_state_machine.travel(state_machine_animation)
 	general_timer.timeout.disconnect(perform_action)
 	FightManager.player_knocked_down_signal.disconnect(transition_to_spectating)
 	FightManager.enemy_knocked_down_signal.disconnect(transition_to_knocked_down)
@@ -103,7 +103,8 @@ func get_weighted_choice(weight_dict: Dictionary):
 	return weight_dict.keys().back() # Fallback edge case
 
 func perform_action():
-	animation_tree.set("parameters/conditions/ready_to_loop", true)
+	animation_tree.get(str("parameters/",state_machine_animation,"/playback")).travel(str(attack_animation))
+	#anim_state_machine
 	pass
 
 func _process(_delta: float) -> void:

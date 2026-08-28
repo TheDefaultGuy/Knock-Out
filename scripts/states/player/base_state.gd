@@ -4,7 +4,7 @@ class_name State extends Node
 @onready var health_component: HealthComponent = %HealthComponent
 @onready var defense_component: DefenseComponent = %DefenseComponent
 @onready var attacking_component: AttackingComponent = %AttackingComponent
-@export var animation_tree: AnimationTree
+@onready var animation_tree: AnimationTree = %AnimationTree
 
 
 @warning_ignore("unused_signal")

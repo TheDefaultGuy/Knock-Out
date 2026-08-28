@@ -19,7 +19,7 @@ class_name RandomizedMovesState extends State
 @export var idle_animation : String = "idle"
 
 
-
+## The behavior fo th attack delay, or the time between each attack.
 enum ATTACK_DELAY{
 	## Will choose a float value BETWEEN the minimum and maximum wait time.
 	FLOAT,
@@ -113,6 +113,15 @@ enum BLOCK_BEHAVIOR{
 
 ## Timer used to transition to the target state.
 @export var wait_timer : Timer
+
+## Handles showing and hiding applicable exported variables
+func _validate_property(property: Dictionary) -> void: 
+	if property.name == "target_round_time" and primary_condition != STATE_CHANGE_CONDITION.AT_ROUND_TIME and secondary_condition != STATE_CHANGE_CONDITION.AT_ROUND_TIME :
+		property.usage = PROPERTY_USAGE_NONE
+	if property.name == "time_to_wait" and primary_condition != STATE_CHANGE_CONDITION.AFTER_TIME_PASSED and secondary_condition != STATE_CHANGE_CONDITION.AFTER_TIME_PASSED :
+		property.usage = PROPERTY_USAGE_NONE
+	if property.name == "wait_timer" and primary_condition != STATE_CHANGE_CONDITION.AFTER_TIME_PASSED and secondary_condition != STATE_CHANGE_CONDITION.AFTER_TIME_PASSED :
+		property.usage = PROPERTY_USAGE_NONE
 #endregion
 
 func _ready() -> void:
@@ -128,7 +137,7 @@ func enter():
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
 	
 	# Lets the Animation Tree now that the enemy is neither stunned nor spectating.
-	animation_tree.set("parameters/conditions/stunned", false)
+	animation_tree.set("parameters/idle/blend_position", 0)
 	animation_tree.set("parameters/conditions/spectating", false)
 	
 	start_attack_delay_timer()

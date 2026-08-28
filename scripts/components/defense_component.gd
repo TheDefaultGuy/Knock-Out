@@ -100,7 +100,8 @@ func check_defense(punch_height : int, punch_range : int, damage_amount : float,
 				if handle_damage_and_knockdown(damage_amount, 1.0, punch_height, punch_direction) == true:
 					return true
 				else:
-					play_animation(choose_hit_animation(punch_direction, punch_height))
+					get_parent().animation_tree.set("parameters/hit/blend_position", Vector2i(punch_direction, punch_height))
+					play_animation("hit")
 					return true
 				
 			_: # Fall back for Unaccounted 4th height value.
@@ -123,7 +124,8 @@ func check_blocking_status(blocking_status : bool, damage_amount : float, punch_
 					return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
 			
 			check_for_star_and_stun(punch_height)
-			play_animation(choose_hit_animation(punch_direction, punch_height))
+			get_parent().animation_tree.set("parameters/hit/blend_position", Vector2i(punch_direction, punch_height))
+			play_animation("hit")
 			return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
 				
 		true: # IS blocking
@@ -131,7 +133,8 @@ func check_blocking_status(blocking_status : bool, damage_amount : float, punch_
 				return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
 			
 			# Plays the corresponding block animation if it wasn't enough damage for a knockdown.
-			play_animation(choose_block_animation(punch_height))
+			get_parent().animation_tree.set("parameters/block/blend_position", Vector2i(punch_direction, punch_height))
+			play_animation("block")
 
 			FightManager.succesful_block_signal.emit()
 			return false # Returns that the hit was NOT successful. Mainly as an answer to the attacking component.
@@ -148,48 +151,12 @@ func handle_damage_and_knockdown(damage_amount : float, multiplier : float, punc
 		if check_instant_ko() == true:
 			damage_amount = damage_amount * 300.0
 	if get_parent().health_component.deal_damage_and_check_for_knockdown(damage_amount, multiplier) == true:
-		match punch_height:
-			Global.height.LOW:
-				get_parent().animation_tree.set("parameters/knock_down_lower/blend_position", punch_direction)
-				play_animation("knock_down_lower")
-			Global.height.HIGH:
-				get_parent().animation_tree.set("parameters/knock_down_upper/blend_position", punch_direction)
-				play_animation("knock_down_upper")
-			_:
-				get_parent().animation_tree.set("parameters/knock_down_upper/blend_position", punch_direction)
-				play_animation("knock_down_upper")
+		get_parent().animation_tree.set("parameters/knock_down/blend_position", Vector2i(punch_direction, punch_height))
+		play_animation("knock_down")
 		return true
 	else:
 		return false
-	
-## Chooses which hit animation to play.
-func choose_hit_animation(punch_direction : int, punch_height : int) -> String:
-	match punch_height:
-		Global.height.LOW:
-			get_parent().animation_tree.set("parameters/hit_lower/blend_position", punch_direction)
-			return "hit_lower"
-		Global.height.HIGH:
-			get_parent().animation_tree.set("parameters/hit_upper/blend_position", punch_direction)
-			return "hit_upper"
-		Global.height.BOTH: # For Star Punches
-			get_parent().animation_tree.set("parameters/hit_upper/blend_position", punch_direction)
-			return "hit_upper"
-		_: 
-			printerr(get_parent().name, " Defense Component: Choose Hit Animation Function. Unnaccounted 4th height option.")
-			return ""
 
-## Chooses which blocking animation to play.
-func choose_block_animation(punch_height : int) -> String: 
-	match punch_height:
-			Global.height.LOW:
-				return "block_lower"
-			Global.height.HIGH:
-				return "block_upper"
-			Global.height.BOTH: # For Star Punches
-				return "block_upper"
-			_: 
-				printerr(get_parent().name, " Defense Component: Choose Block Animation Function. Unnaccounted 4th height option.")
-				return ""
 				
 ## Checks to see if the attack can be rewarded a star. 
 ## Then, it checks to see if the attack landed during a stun window.

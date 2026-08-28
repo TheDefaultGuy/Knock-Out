@@ -73,7 +73,7 @@ enum STATE_CHANGE_CONDITION{
 @export var wait_timer : Timer
 
 
-# Handles showing and hiding applicable exported variables
+## Handles showing and hiding applicable exported variables
 func _validate_property(property: Dictionary) -> void: 
 	if property.name == "target_round_time" and primary_condition != STATE_CHANGE_CONDITION.AT_ROUND_TIME and secondary_condition != STATE_CHANGE_CONDITION.AT_ROUND_TIME :
 		property.usage = PROPERTY_USAGE_NONE

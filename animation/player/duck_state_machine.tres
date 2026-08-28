@@ -1,0 +1,55 @@
+[gd_resource type="AnimationNodeStateMachine" format=3 uid="uid://dgy7sx4y0nbkj"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_2k4er"]
+animation = &"dodge/duck_end"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_gngl7"]
+animation = &"dodge/duck_start"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_xdb0c"]
+animation = &"dodge/duck_middle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_5m0f7"]
+animation = &"dodge/duck_start"
+
+[sub_resource type="AnimationNodeBlendSpace1D" id="AnimationNodeBlendSpace1D_qcwvm"]
+max_space = 0.0
+blend_point_0/node = SubResource("AnimationNodeAnimation_xdb0c")
+blend_point_0/pos = -1.0
+blend_point_0/name = &"dodge_duck_middle"
+blend_point_1/node = SubResource("AnimationNodeAnimation_5m0f7")
+blend_point_1/pos = 0.0
+blend_point_1/name = &"dodge_duck_start"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_5m0f7"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_xyb00"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_i7tyl"]
+priority = 0
+switch_mode = 2
+advance_mode = 2
+advance_condition = &"holding_down"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_vqc67"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_vrf14"]
+switch_mode = 2
+advance_mode = 2
+
+[resource]
+states/End/position = Vector2(307.19995, -384)
+states/Start/position = Vector2(-177.40001, -470.19998)
+states/dodge_duck_end/node = SubResource("AnimationNodeAnimation_2k4er")
+states/dodge_duck_end/position = Vector2(91.6, -366.6)
+states/dodge_duck_start/node = SubResource("AnimationNodeAnimation_gngl7")
+states/dodge_duck_start/position = Vector2(-10.6, -481)
+states/duck_blend/node = SubResource("AnimationNodeBlendSpace1D_qcwvm")
+states/duck_blend/position = Vector2(203.4, -481)
+transitions = ["dodge_duck_start", "dodge_duck_end", SubResource("AnimationNodeStateMachineTransition_5m0f7"), "duck_blend", "dodge_duck_end", SubResource("AnimationNodeStateMachineTransition_xyb00"), "dodge_duck_start", "duck_blend", SubResource("AnimationNodeStateMachineTransition_i7tyl"), "Start", "dodge_duck_start", SubResource("AnimationNodeStateMachineTransition_vqc67"), "dodge_duck_end", "End", SubResource("AnimationNodeStateMachineTransition_vrf14")]
+graph_offset = Vector2(-381.4312, -517.9153)

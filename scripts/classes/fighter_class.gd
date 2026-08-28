@@ -24,6 +24,8 @@ class_name Fighter extends Node2D
 @export var isAttacking : bool = false
 ## Whether the fighter is currently hit/playing the hit animation.
 @export var isHit : bool = false
+## Whether the fighter is currently tired.
+@export var isTired : bool = false
 ## Whether the fighter is the player themselves.
 @export var isPlayer : bool = false
 
