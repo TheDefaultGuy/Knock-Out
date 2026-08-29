@@ -1,0 +1,80 @@
+[gd_resource type="AnimationNodeStateMachine" format=3 uid="uid://dt6b8hv77b0dh"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_mldru"]
+animation = &"RESET"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_1w6f5"]
+animation = &"RESET"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_m6ksi"]
+animation = &"RESET"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_e13ks"]
+animation = &"item_heal/intro"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_f87op"]
+animation = &"item_heal/heal"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_3ht1w"]
+animation = &"item_heal/hit"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_fy5ux"]
+animation = &"item_heal/middle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_hplkv"]
+animation = &"item_heal/rage"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_6bwfa"]
+animation = &"item_heal/return"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_hplkv"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_fawrh"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_s1vlt"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_2t844"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_qf2n7"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_2xwu7"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_luax8"]
+switch_mode = 2
+advance_mode = 2
+
+[resource]
+state_machine_type = 1
+"states/ TO SET THE ANIMATION YOU WANT/node" = SubResource("AnimationNodeAnimation_mldru")
+"states/ TO SET THE ANIMATION YOU WANT/position" = Vector2(-80, -324)
+"states/CLICK THEM AND CHANGE THE ANIMATION NAME PROPERTY/node" = SubResource("AnimationNodeAnimation_1w6f5")
+"states/CLICK THEM AND CHANGE THE ANIMATION NAME PROPERTY/position" = Vector2(-80, -378)
+"states/DON'T CHANGE THE NAME OF THESE NODES/node" = SubResource("AnimationNodeAnimation_m6ksi")
+"states/DON'T CHANGE THE NAME OF THESE NODES/position" = Vector2(-80, -432)
+states/End/position = Vector2(431.8, -216)
+states/Start/position = Vector2(-227, -216)
+states/intro/node = SubResource("AnimationNodeAnimation_e13ks")
+states/intro/position = Vector2(-111, -216)
+states/item_heal/node = SubResource("AnimationNodeAnimation_f87op")
+states/item_heal/position = Vector2(174, -216)
+states/item_hit/node = SubResource("AnimationNodeAnimation_3ht1w")
+states/item_hit/position = Vector2(302, -311)
+states/middle/node = SubResource("AnimationNodeAnimation_fy5ux")
+states/middle/position = Vector2(39, -216)
+states/rage/node = SubResource("AnimationNodeAnimation_hplkv")
+states/rage/position = Vector2(431.8, -311)
+states/return/node = SubResource("AnimationNodeAnimation_6bwfa")
+states/return/position = Vector2(302, -216)
+transitions = ["intro", "middle", SubResource("AnimationNodeStateMachineTransition_hplkv"), "middle", "item_heal", SubResource("AnimationNodeStateMachineTransition_fawrh"), "item_heal", "return", SubResource("AnimationNodeStateMachineTransition_s1vlt"), "return", "End", SubResource("AnimationNodeStateMachineTransition_2t844"), "Start", "intro", SubResource("AnimationNodeStateMachineTransition_qf2n7"), "item_hit", "rage", SubResource("AnimationNodeStateMachineTransition_2xwu7"), "rage", "End", SubResource("AnimationNodeStateMachineTransition_luax8")]
+graph_offset = Vector2(-461, -359)

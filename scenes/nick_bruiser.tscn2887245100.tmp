@@ -699,34 +699,58 @@ tracks/3/keys = {
 tracks/4/type = "value"
 tracks/4/imported = false
 tracks/4/enabled = true
-tracks/4/path = NodePath("../DefenseComponent:upper_invulnerability")
+tracks/4/path = NodePath("../DefenseComponent:upper_star_window")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [true]
+"values": [false]
 }
 tracks/5/type = "value"
 tracks/5/imported = false
 tracks/5/enabled = true
-tracks/5/path = NodePath("../DefenseComponent:lower_invulnerability")
+tracks/5/path = NodePath("../DefenseComponent:lower_star_window")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [true]
+"values": [false]
 }
-tracks/6/type = "method"
+tracks/6/type = "value"
 tracks/6/imported = false
 tracks/6/enabled = true
-tracks/6/path = NodePath("%HealthComponent/..")
+tracks/6/path = NodePath("../DefenseComponent:upper_invulnerability")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("../DefenseComponent:lower_invulnerability")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/8/type = "method"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("%HealthComponent/..")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
 "times": PackedFloat32Array(1.6),
 "transitions": PackedFloat32Array(1),
 "values": [{
@@ -1778,10 +1802,10 @@ tracks/1/path = NodePath("../Enemy Sprite:frame")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.03333333, 0.07442175, 0.10775508, 0.13333334, 0.16666667, 0.20154342, 0.23487674, 0.26666668, 0.30000004, 0.33333334, 0.36666664, 0.40699393, 0.44032726, 0.4814157, 0.51474905),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0, 0.26666668),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+"values": [0, 1]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
@@ -1810,22 +1834,70 @@ tracks/3/keys = {
 tracks/4/type = "value"
 tracks/4/imported = false
 tracks/4/enabled = true
-tracks/4/path = NodePath("../DefenseComponent:upper_invulnerability")
+tracks/4/path = NodePath("../DefenseComponent:upper_star_window")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [true]
+"values": [false]
 }
 tracks/5/type = "value"
 tracks/5/imported = false
 tracks/5/enabled = true
-tracks/5/path = NodePath("../DefenseComponent:lower_invulnerability")
+tracks/5/path = NodePath("../DefenseComponent:lower_star_window")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("../DefenseComponent:upper_blocking_status")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("../DefenseComponent:lower_blocking_status")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("../DefenseComponent:upper_invulnerability")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("../DefenseComponent:lower_invulnerability")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
@@ -2095,7 +2167,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0.3),
 "transitions": PackedFloat32Array(1),
 "values": [{
-"args": [2, 0, 50.0, 1, false],
+"args": [2, 0, 40.0, 1, false],
 "method": &"send_attack_call"
 }]
 }
@@ -2197,7 +2269,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0.3),
 "transitions": PackedFloat32Array(1),
 "values": [{
-"args": [2, 0, 50.0, -1, false],
+"args": [2, 0, 40.0, -1, false],
 "method": &"send_attack_call"
 }]
 }
@@ -3145,34 +3217,94 @@ tracks/2/keys = {
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("../Enemy Sprite:material")
+tracks/3/path = NodePath("../DefenseComponent:upper_blocking_status")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [SubResource("ShaderMaterial_mqj24")]
+"values": [false]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
 tracks/4/enabled = true
-tracks/4/path = NodePath("../DefenseComponent:upper_invulnerability")
+tracks/4/path = NodePath("../DefenseComponent:lower_blocking_status")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [true]
+"values": [false]
 }
 tracks/5/type = "value"
 tracks/5/imported = false
 tracks/5/enabled = true
-tracks/5/path = NodePath("../DefenseComponent:lower_invulnerability")
+tracks/5/path = NodePath("../DefenseComponent:stun_window")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("../Enemy Sprite:material")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [SubResource("ShaderMaterial_mqj24")]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("../DefenseComponent:upper_star_window")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("../DefenseComponent:lower_star_window")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("../DefenseComponent:upper_invulnerability")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("../DefenseComponent:lower_invulnerability")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
@@ -3923,7 +4055,7 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(8, -16)]
+"values": [Vector2(24, -8)]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
@@ -4021,10 +4153,10 @@ tracks/3/path = NodePath("../Enemy Sprite:position")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0, 0.06666667, 0.13333334),
+"times": PackedFloat32Array(0, 0.059039183, 0.13333334),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [Vector2(8, -16), Vector2(8, -22), Vector2(8, -16)]
+"values": [Vector2(24, -8), Vector2(24, -14), Vector2(24, -8)]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
@@ -4123,7 +4255,7 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0, 0.2),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector2(0, 0), Vector2(8, -16)]
+"values": [Vector2(0, 0), Vector2(24, -8)]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
@@ -4221,7 +4353,7 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(8, -16)]
+"values": [Vector2(24, -8)]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
@@ -4320,7 +4452,7 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0, 0.2),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector2(8, -16), Vector2(0, 0)]
+"values": [Vector2(24, -8), Vector2(0, 0)]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
@@ -4407,7 +4539,7 @@ tracks/3/keys = {
 "times": PackedFloat32Array(0, 0.6),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector2(8, -16), Vector2(0, 0)]
+"values": [Vector2(24, -8), Vector2(0, 0)]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
@@ -4570,7 +4702,7 @@ tracks/8/keys = {
 tracks/9/type = "method"
 tracks/9/imported = false
 tracks/9/enabled = true
-tracks/9/path = NodePath("../HealthComponent/..")
+tracks/9/path = NodePath("%HealthComponent/..")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
@@ -4696,7 +4828,7 @@ tracks/8/keys = {
 tracks/9/type = "method"
 tracks/9/imported = false
 tracks/9/enabled = true
-tracks/9/path = NodePath("../HealthComponent/..")
+tracks/9/path = NodePath("%HealthComponent/..")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
@@ -4822,7 +4954,7 @@ tracks/8/keys = {
 tracks/9/type = "method"
 tracks/9/imported = false
 tracks/9/enabled = true
-tracks/9/path = NodePath("../HealthComponent/..")
+tracks/9/path = NodePath("%HealthComponent/..")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
@@ -4948,7 +5080,7 @@ tracks/8/keys = {
 tracks/9/type = "method"
 tracks/9/imported = false
 tracks/9/enabled = true
-tracks/9/path = NodePath("../HealthComponent/..")
+tracks/9/path = NodePath("%HealthComponent/..")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
@@ -5088,7 +5220,7 @@ defense_component = NodePath("DefenseComponent")
 attacking_component = NodePath("AttackingComponent")
 health_component = NodePath("HealthComponent")
 instant_ko_component = NodePath("InstantKOComponent")
-animation_tree = NodePath("EnemyAnimationTree")
+animation_tree = NodePath("AnimationTree")
 metadata/_custom_type_script = "uid://2lbod66rooni"
 
 [node name="Enemy Sprite" type="AnimatedSprite2D" parent="." unique_id=540694718]
@@ -5136,7 +5268,7 @@ spectating_state = NodePath("Spectating")
 cutscene_state = NodePath("CutSceneState")
 metadata/_custom_type_script = "uid://ch1gb3rys2tfm"
 
-[node name="RandomMoves" type="Node" parent="StateMachine" unique_id=1646714070 node_paths=PackedStringArray("attack_timer", "animation_tree")]
+[node name="RandomMoves" type="Node" parent="StateMachine" unique_id=1646714070 node_paths=PackedStringArray("attack_timer", "primary_target_state")]
 script = ExtResource("44_wdmnt")
 moveset = Dictionary[String, float]({
 "attack_elbow": 20.0,
@@ -5147,28 +5279,22 @@ moveset = Dictionary[String, float]({
 })
 attack_timer = NodePath("../../GeneralTimer")
 max_wait_time = 2.0
-secondary_condition = 0
-target_round_time = 180.0
-animation_tree = NodePath("../../EnemyAnimationTree")
+primary_condition = 5
+primary_target_state = NodePath("../ItemHealState")
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
-[node name="RandomMoves2" type="Node" parent="StateMachine" unique_id=642542442 node_paths=PackedStringArray("attack_timer", "animation_tree")]
-script = ExtResource("44_wdmnt")
-moveset = Dictionary[String, float]({
-"attack_elbow": 20.0,
-"attack_hook": 20.0,
-"attack_jab_high": 20.0,
-"attack_jab_low": 20.0,
-"attack_uppercut": 20.0
-})
-attack_timer = NodePath("../../GeneralTimer")
-max_wait_time = 2.0
-primary_condition = 6
-secondary_condition = 6
-animation_tree = NodePath("../../EnemyAnimationTree")
-metadata/_custom_type_script = "uid://dy765alksxcdx"
+[node name="IntroLoop" type="Node" parent="StateMachine" unique_id=417364346 node_paths=PackedStringArray("general_timer")]
+script = ExtResource("49_6ayxy")
+general_timer = NodePath("../../GeneralTimer")
+max_wait_time = 5.0
+metadata/_custom_type_script = "uid://be0a0n2xv87g7"
 
-[node name="Stunned" type="Node" parent="StateMachine" unique_id=642401764 node_paths=PackedStringArray("stun_timer", "heal_state", "animation_tree")]
+[node name="ReactionaryState" type="Node" parent="StateMachine" unique_id=149239062 node_paths=PackedStringArray("general_timer")]
+script = ExtResource("49_38nj0")
+general_timer = NodePath("../../GeneralTimer")
+metadata/_custom_type_script = "uid://bjtexblqp5cmp"
+
+[node name="Stunned" type="Node" parent="StateMachine" unique_id=642401764 node_paths=PackedStringArray("stun_timer", "heal_state")]
 script = ExtResource("45_38nj0")
 stun_timer = NodePath("../../GeneralTimer")
 stun_behavior = 2
@@ -5176,48 +5302,32 @@ stun_duration = 1.0
 min_stun_length = 3
 heal_after_stun = true
 heal_state = NodePath("../ItemHealState")
-animation_tree = NodePath("../../EnemyAnimationTree")
 metadata/_custom_type_script = "uid://d2mk31geekmgb"
 
-[node name="Spectating" type="Node" parent="StateMachine" unique_id=1977724816 node_paths=PackedStringArray("animation_tree")]
+[node name="Spectating" type="Node" parent="StateMachine" unique_id=1977724816]
 script = ExtResource("46_6ayxy")
-animation_tree = NodePath("../../EnemyAnimationTree")
 metadata/_custom_type_script = "uid://lrug82hg7rrf"
 
-[node name="KnockedDown" type="Node" parent="StateMachine" unique_id=1631047957 node_paths=PackedStringArray("animation_tree")]
+[node name="KnockedDown" type="Node" parent="StateMachine" unique_id=1631047957]
 script = ExtResource("47_2mgcc")
 max_getup_time = 3.0
-animation_tree = NodePath("../../EnemyAnimationTree")
 metadata/_custom_type_script = "uid://bxdm4cxh3jw0n"
 
-[node name="CutSceneState" type="Node" parent="StateMachine" unique_id=334701676 node_paths=PackedStringArray("next_state", "animation_tree")]
+[node name="CutSceneState" type="Node" parent="StateMachine" unique_id=334701676 node_paths=PackedStringArray("next_state")]
 script = ExtResource("50_wnc28")
 next_state = NodePath("../ItemHealState")
-animation_tree = NodePath("../../EnemyAnimationTree")
 metadata/_custom_type_script = "uid://bd3i8gnmviajw"
 
-[node name="FlurryAttackState" type="Node" parent="StateMachine" unique_id=1274541898 node_paths=PackedStringArray("KO_state", "survived_state", "animation_tree")]
+[node name="FlurryAttackState" type="Node" parent="StateMachine" unique_id=1274541898 node_paths=PackedStringArray("KO_state", "survived_state")]
 script = ExtResource("57_yfn78")
-KO_state = NodePath("../RandomMoves2")
-survived_state = NodePath("../RandomMoves2")
-animation_tree = NodePath("../../EnemyAnimationTree")
+KO_state = NodePath("../RandomMoves")
+survived_state = NodePath("../RandomMoves")
 metadata/_custom_type_script = "uid://biw43iy3kqvj0"
 
-[node name="ItemHealState" type="Node" parent="StateMachine" unique_id=70498946 node_paths=PackedStringArray("failed_heal_state", "animation_tree")]
+[node name="ItemHealState" type="Node" parent="StateMachine" unique_id=70498946 node_paths=PackedStringArray("failed_heal_state")]
 script = ExtResource("59_2gws3")
 failed_heal_state = NodePath("../FlurryAttackState")
-animation_tree = NodePath("../../EnemyAnimationTree")
 metadata/_custom_type_script = "uid://c73a2o5xnqs0k"
-
-[node name="IntroLoopState" type="Node" parent="StateMachine" unique_id=363331831]
-script = ExtResource("49_6ayxy")
-state_machine_animation = &"intro_loop_attack"
-metadata/_custom_type_script = "uid://be0a0n2xv87g7"
-
-[node name="ReactionaryState" type="Node" parent="StateMachine" unique_id=1239718303]
-script = ExtResource("49_38nj0")
-state_machine_animation = null
-metadata/_custom_type_script = "uid://bjtexblqp5cmp"
 
 [node name="MoveSetAnim" type="AnimationPlayer" parent="." unique_id=513767802]
 unique_name_in_owner = true
@@ -5229,14 +5339,13 @@ libraries/hit = SubResource("AnimationLibrary_7b5nu")
 libraries/item_heal = SubResource("AnimationLibrary_367aj")
 libraries/knock_down = SubResource("AnimationLibrary_uh3is")
 
-[node name="EnemyAnimationTree" type="AnimationTree" parent="." unique_id=1716021603]
+[node name="AnimationTree" type="AnimationTree" parent="." unique_id=1716021603]
 unique_name_in_owner = true
 root_node = NodePath("%HealthComponent")
 tree_root = ExtResource("61_2gws3")
 anim_player = NodePath("../MoveSetAnim")
 parameters/conditions/spectating = false
 parameters/block/blend_position = 0.0
-parameters/flurry_attack/conditions/ko = false
 parameters/hit/blend_position = Vector2(0, 0)
 parameters/idle/blend_position = 0.0
 parameters/intro_loop_attack/conditions/spectating = false

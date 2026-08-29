@@ -17,39 +17,43 @@ func enter() -> void:
 	print_rich("[color=yellow]Player Entered State: [/color]", self.name)
 	animation_tree.set("parameters/conditions/knockeddown", true)
 	animation_tree.set("parameters/conditions/gotup", false)
-	set_process(true)
 	FightManager.player_ready_status = false
 	input_component.attack_input_signal.connect(perform_attack)
 	input_component.defense_input_signal.connect(perform_defense)
-	FightManager.resume_fighting_signal.connect(transition_to_previous_state)
+	FightManager.resume_fighting_signal.connect(transition_to_neutral)
 	FightManager.fight_is_over_signal.connect(failed_to_get_up)
+	get_parent().get_parent().isKnockdown = true
 	
 func exit() -> void:
-	set_process(false)
 	get_up_progress = 0.0
 	input_component.attack_input_signal.disconnect(perform_attack)
 	input_component.defense_input_signal.disconnect(perform_defense)
-	FightManager.resume_fighting_signal.disconnect(transition_to_previous_state)
+	FightManager.resume_fighting_signal.disconnect(transition_to_neutral)
 	FightManager.fight_is_over_signal.disconnect(failed_to_get_up)
+	get_parent().get_parent().isKnockdown = false
 	
 func _process(delta: float) -> void:
-	get_up_progress = clampf(get_up_progress - get_up_decay_rate * delta, 0.0 , 110.0)
-	animation_tree.set("parameters/get_up_blend/blend_position", get_up_progress)
+	if get_parent().current_state == self:
+		get_up_progress = clampf(get_up_progress - get_up_decay_rate * delta, 0.0 , 110.0)
+		animation_tree.set("parameters/get_up_blend/blend_position", get_up_progress)
 
-	if get_up_progress >= get_up_threshold: # When the get up progress reaches 100, the player succesfully gets back up.
-		 # plays the get up animation
-		animation_tree.set("parameters/conditions/knockeddown", false)
-		animation_tree.set("parameters/conditions/gotup", true)
-		FightManager.fighter_got_up_signal.emit() # emits the global signal
-		set_process(false)
+		if get_up_progress >= get_up_threshold: # When the get up progress reaches 100, the player succesfully gets back up.
+			 # plays the get up animation
+			animation_tree.set("parameters/conditions/knockeddown", false)
+			animation_tree.set("parameters/conditions/gotup", true)
+			
+			FightManager.fighter_got_up_signal.emit() # Emits the global signal
+	return
 
 func perform_defense(_move : int, _action_name : String):
 	pass
 		
+## When an attack input is Given by the Input Component, increase the get up progress.
 func perform_attack(_height : int, _direction : int, _action_name : String, _special : bool):
 	get_up_progress += get_up_step_value
-
-func failed_to_get_up(): # Doesn't let the player be able to get up
+	
+## Doesn't let the player be able to get up after they failed to get up before the 10 count.
+func failed_to_get_up(): 
 	get_up_step_value = 0.0
 	get_up_decay_rate = 2.0 * get_up_decay_rate
 

@@ -45,8 +45,8 @@ func _ready() -> void:
 	add_child(player_node)
 	add_child(enemy_node)
 	
-	player_node.health_component.health_changed.connect(update_ui)
-	enemy_node.health_component.health_changed.connect(update_ui)
+	player_node.health_component.health_changed_signal.connect(update_ui)
+	enemy_node.health_component.health_changed_signal.connect(update_ui)
 	FightManager.update_ui_signal.connect(update_ui)
 	FightManager.enemy_knocked_down_signal.connect(toggle_round_timer)
 	FightManager.player_knocked_down_signal.connect(toggle_round_timer)
@@ -61,9 +61,9 @@ func _ready() -> void:
 	update_ui()
 	
 	FightManager.start_the_fight_signal.connect(start_the_match)
-	await get_tree().create_timer(2.0).timeout
+	await get_tree().create_timer(0.4).timeout
 	FightManager.start_intro_animation_signal.emit()
-	
+	start_the_match()
 func start_the_match():
 	round_timer.paused = false
 	

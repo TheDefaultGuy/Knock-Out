@@ -40,6 +40,3 @@ func succesful_dodge():
 	FightManager.set_stamina()
 	transition_to_previous_state()
 	
-	
-func _process(_delta: float) -> void:
-	pass

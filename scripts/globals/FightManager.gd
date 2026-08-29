@@ -116,6 +116,7 @@ func _ready() -> void:
 	fighter_ready_signal.connect(start_the_fight)
 	stars_used = 0
 	star_punches_landed = 0
+	
 func increase_enemy_ko_count() -> void:
 	enemy_ko_count = clampi(enemy_ko_count + 1 , 0 , 3)
 	if enemy_ko_count >= 3: # Checks for TKO; 3 knockouts
@@ -157,7 +158,8 @@ func set_stamina() -> void:
 		stamina = max_player_stamina
 		update_ui_signal.emit()
 		
-func start_the_fight() -> void: # Emits the signal for both fighters to resume fighting and resets their fighting status.
+## Emits the signal for both fighters to resume fighting and resets their fighting status.
+func start_the_fight() -> void: 
 	if enemy_ready_status == true and player_ready_status == true:
 		enemy_ready_status = false
 		player_ready_status = false

@@ -11,9 +11,9 @@ func enter():
 	animation_tree.set("parameters/conditions/spectating", false)
 
 	
-	# Sets the interrupted state in the state machine as itself.
-	# That way, if it gets interrupted by another state like stunned, it'll come back to this one.
-	get_parent().interrupted_state = self 
+	## Sets the interrupted state in the state machine as itself.
+	## That way, if it gets interrupted by another state like stunned, it'll come back to this one.
+	#get_parent().interrupted_state = self 
 	
 	input_component.attack_input_signal.connect(perform_attack)
 	input_component.defense_input_signal.connect(perform_defense)
@@ -62,5 +62,3 @@ func perform_attack(height : int, direction : int, action_name : String, special
 	else:
 		input_component.store_unhandled_input(action_name) # If the player is currently already dodging or attacking, it'll store the attack they wanted to do so that it's buffered.
 		
-func _process(_delta: float) -> void:
-	pass

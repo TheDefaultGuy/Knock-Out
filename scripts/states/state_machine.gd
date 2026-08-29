@@ -1,9 +1,10 @@
 @icon("res://assets/icons/MdiStateMachine.svg")
 class_name StateMachine extends Node
 
-@export_category("⚠️ Required States ⚠️")
+@export_category("⚠️ Initial State ⚠️")
 ## The first state or the default state the enemy or player is when starting the match.
 @export var initial_state : State
+@export_category("⚠️ Required States ⚠️")
 ## The state where the enemy is temporarily stunned and can't fight back.
 @export var stun_state : State
 ## The state where the player or enemy is knocked down and the count to get back up has started.
@@ -14,6 +15,9 @@ class_name StateMachine extends Node
 @export var tired_state : State
 ## The state where the player and enemy are starting the match or are at the end of the match.
 @export var cutscene_state : State
+
+## The state where the player can attack.
+@export var neutral_state : State
 
 var current_state : State
 

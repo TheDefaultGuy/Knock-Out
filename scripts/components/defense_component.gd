@@ -67,8 +67,14 @@ class_name DefenseComponent extends Node
 signal succesful_dodge 
 ## Signal emitted when the enemy was hit during the stunned. Used to transition into stunned state.
 signal stunned_signal
- 
+
+## Stores the hit animation. It can change depending on the state.
+var current_hit_animation : String = "hit"
+
+var current_anim_state_machine : AnimationNodeStateMachinePlayback = null
+
 func _ready() -> void:
+	current_anim_state_machine = get_parent().animation_tree["parameters/playback"]
 	if get_parent().isPlayer == false: # Enemies can't get hurt when they block.
 		blocking_damage_multiplier = 0
 
@@ -101,7 +107,7 @@ func check_defense(punch_height : int, punch_range : int, damage_amount : float,
 					return true
 				else:
 					get_parent().animation_tree.set("parameters/hit/blend_position", Vector2i(punch_direction, punch_height))
-					play_animation("hit")
+					play_animation(str(current_hit_animation))
 					return true
 				
 			_: # Fall back for Unaccounted 4th height value.
@@ -125,7 +131,7 @@ func check_blocking_status(blocking_status : bool, damage_amount : float, punch_
 			
 			check_for_star_and_stun(punch_height)
 			get_parent().animation_tree.set("parameters/hit/blend_position", Vector2i(punch_direction, punch_height))
-			play_animation("hit")
+			play_animation(str(current_hit_animation))
 			return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
 				
 		true: # IS blocking
@@ -133,7 +139,7 @@ func check_blocking_status(blocking_status : bool, damage_amount : float, punch_
 				return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
 			
 			# Plays the corresponding block animation if it wasn't enough damage for a knockdown.
-			get_parent().animation_tree.set("parameters/block/blend_position", Vector2i(punch_direction, punch_height))
+			get_parent().animation_tree.set("parameters/block/blend_position",  punch_height)
 			play_animation("block")
 
 			FightManager.succesful_block_signal.emit()
@@ -178,8 +184,7 @@ func check_for_star_and_stun(punch_height : int) -> bool:
 	
 ## A shorthand way to call the travel function.
 func play_animation(animation_name : String): 
-	#print("animation: ", animation_name)
-	get_parent().anim_state_machine.travel(animation_name)
+	current_anim_state_machine.travel(animation_name)
 	
 ## Helper function that makes the vulnurability checking simpler.
 func is_invulnerable(punch_height: int) -> bool:
@@ -210,3 +215,7 @@ func check_instant_ko() -> bool:
 			push_error("Defense Component: ", get_parent().name, " doesn't have an Instant KO Component.")
 	return false
 #endregion
+
+func reset_hit_animation():
+	current_hit_animation = "hit"
+	current_anim_state_machine = get_parent().animation_tree["parameters/playback"]

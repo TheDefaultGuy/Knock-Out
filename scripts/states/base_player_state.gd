@@ -1,4 +1,4 @@
-class_name State extends Node
+class_name PlayerState extends Node
 
 @onready var health_component: HealthComponent = %HealthComponent
 @onready var defense_component: DefenseComponent = %DefenseComponent
@@ -25,13 +25,6 @@ func exit() -> void:
 func transition(current, target_state) -> void:
 	transition_state.emit(current, target_state)
 
-## Used to go back to the previously interrupted state. Mainly used to return from states like stunned, knocked down, tired or spectating.
-func transition_to_previous_state() -> void:
-	transition_state.emit(self, get_parent().interrupted_state)
-	
-## Function that transitions from the current state to the stunned state.
-func transition_to_stunned() -> void:
-	transition_state.emit(self, get_parent().stun_state)
 	
 ## Function that transitions from the current state to the knocked down state.
 func transition_to_knocked_down() -> void:

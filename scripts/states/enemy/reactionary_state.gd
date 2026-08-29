@@ -4,6 +4,11 @@
 ## In this state, the enemy will keep looping the same animation, but react to the player's attacks.
 ## This is used to recreate boxers like Don Flamenco, where they taunt and only attack when attacked at first.
 ## You can set conditions to transition to another state if desired.
+##
+## This is a template state used by enemy boxers.
+## To add it as a state, add it as a child node to the State Machine node in the enemy's scene,
+## Then, tweak the exported variables to set it up.
+## DO NOT change anything in the actual .gd file, since it'll screw up compatibility HARD.
 class_name ReactionaryState extends State
 
 @onready var anim_state_machine = animation_tree["parameters/playback"]
@@ -11,9 +16,7 @@ class_name ReactionaryState extends State
 #region Exported Variables and function that handles which variables to show
 @export_category("🎬 Animations & Moveset")
 ## The idling animation that will play in this state.
-@export var idle_animation : String = "idle"
-## The taunt animation that will play in this state.
-@export var taunt_animation : String = "taunt"
+@export var state_machine_animation : String = "reactionary"
 
 
 enum STATE_CHANGE_CONDITION{
@@ -83,6 +86,7 @@ func _validate_property(property: Dictionary) -> void:
 		property.usage = PROPERTY_USAGE_NONE
 #endregion
 
+#region The Ready, Enter and Exit functions.
 func _ready() -> void:
 	if general_timer == null:
 		printerr(self.name, " : General Timer not set.")
@@ -90,16 +94,16 @@ func _ready() -> void:
 	if wait_timer != null:
 		wait_timer.wait_time = time_to_wait
 		wait_timer.one_shot = true
-		
-#region Enter and Exit functions.
-func enter(): # Blank enter and exit functions that get overridden by each state's own custom enter and exit functions.
+	
+func enter() -> void: # Blank enter and exit functions that get overridden by each state's own custom enter and exit functions.
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
 	
 	# Lets the Animation Tree now that the enemy is neither stunned nor spectating.
 	animation_tree.set("parameters/conditions/stunned", false)
 	animation_tree.set("parameters/conditions/spectating", false)
+
 	
-	anim_state_machine.travel(idle_animation)
+	anim_state_machine.travel(state_machine_animation)
 	start_attack_delay_timer()
 	# Sets the interrupted state in the state machine as itself.
 	# That way, if it gets interrupted by another state like stunned, it'll come back to this one.
@@ -112,10 +116,12 @@ func enter(): # Blank enter and exit functions that get overridden by each state
 	FightManager.enemy_knocked_down_signal.connect(check_state_change_condition.bind(FightManager.player_knocked_down_signal.get_name()))
 	FightManager.no_stamina_signal.connect(check_state_change_condition.bind(FightManager.player_knocked_down_signal.get_name()))
 	FightManager.succesful_block_signal.connect(start_attack_delay_timer)
+	defense_component.stunned_signal.connect(transition_to_stunned)
+	
 	if wait_timer != null:
 		wait_timer.start()
 		wait_timer.timeout.connect(_on_wait_timer_timeout)
-	defense_component.stunned_signal.connect(transition_to_stunned)
+	
 	
 	if primary_target_state == null and primary_condition != STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
 		printerr(self.name, " : Primary Target State not set.")
@@ -126,17 +132,15 @@ func enter(): # Blank enter and exit functions that get overridden by each state
 	if primary_condition == STATE_CHANGE_CONDITION.AFTER_TIME_PASSED or secondary_condition == STATE_CHANGE_CONDITION.AFTER_TIME_PASSED:
 		if wait_timer == null:
 			printerr(self.name, " : Wait Timer not set.")
-	pass
-
-func exit():
+			
+	# Sets the hit animation and state machine in the defense component as the hit animation in the state machine.
+	# This is because the defense component is the one responsible for playing the hit animation
+	defense_component.current_hit_animation = str("item_hit")
+	defense_component.current_anim_state_machine = animation_tree[str("parameters/", state_machine_animation ,"/playback")]
+	defense_component.lower_blocking_status = true
+	defense_component.upper_blocking_status = true
+func exit() -> void:
 	general_timer.timeout.disconnect(perform_action)
-	FightManager.player_knocked_down_signal.disconnect(transition_to_spectating)
-	FightManager.enemy_knocked_down_signal.disconnect(transition_to_knocked_down)
-	defense_component.stunned_signal.disconnect(transition_to_stunned)
-	FightManager.player_knocked_down_signal.disconnect(check_state_change_condition)
-	FightManager.enemy_knocked_down_signal.disconnect(check_state_change_condition)
-	FightManager.no_stamina_signal.disconnect(check_state_change_condition)
-	FightManager.succesful_block_signal.disconnect(start_attack_delay_timer)
 	general_timer.stop()
 	
 	if wait_timer != null: # Shenanigans to pause the wait timer when transitioning to another scene.
@@ -146,55 +150,70 @@ func exit():
 		else:
 			wait_timer.wait_time = wait_timer.time_left
 		wait_timer.timeout.disconnect(_on_wait_timer_timeout)
-	pass
+	FightManager.player_knocked_down_signal.disconnect(transition_to_spectating)
+	FightManager.enemy_knocked_down_signal.disconnect(transition_to_knocked_down)
+	
+	FightManager.player_knocked_down_signal.disconnect(check_state_change_condition.bind(FightManager.player_knocked_down_signal.get_name()))
+	FightManager.enemy_knocked_down_signal.disconnect(check_state_change_condition.bind(FightManager.player_knocked_down_signal.get_name()))
+	FightManager.no_stamina_signal.disconnect(check_state_change_condition.bind(FightManager.player_knocked_down_signal.get_name()))
+	FightManager.succesful_block_signal.disconnect(start_attack_delay_timer)
+	defense_component.stunned_signal.disconnect(transition_to_stunned)
+	
+func _process(_delta: float) -> void:
+	if Engine.is_editor_hint(): #Doesnt run the check round time function when in the editor; only when in-game
+		return
+	if get_parent().current_state == self:
+		check_round_time()
+	
 #endregion
 
 ## Starts the attack delay timer using a random time.
 ##
 ## This function is called right after performing an attack and after the player or the enemy blocks.
-func start_attack_delay_timer():
+func start_attack_delay_timer() -> void:
 	general_timer.start(randf_range(min_wait_time, max_wait_time)) # Starts the timer when entering the state and sets a random wait time.
-	
-func perform_action():
-	anim_state_machine.travel(taunt_animation)
+
+func perform_action() -> void:
+	#anim_state_machine.travel(taunt_animation)
 	start_attack_delay_timer()
 
-func _process(_delta: float) -> void:
-	if Engine.is_editor_hint(): #Doesnt run the check round time function when in the editor; only when in-game
-		return
-	check_round_time()
-	
-func check_round_time(): # Checks to see if the current round time matches the specified round time to change state.
-	if primary_condition == STATE_CHANGE_CONDITION.AT_ROUND_TIME:
-		if FightManager.round_time >= target_round_time:
-			transition(self, primary_target_state)
-	elif secondary_condition == STATE_CHANGE_CONDITION.AT_ROUND_TIME:
-		if FightManager.round_time >= target_round_time:
-			transition(self, secondary_target_state)
-			
-func _on_wait_timer_timeout():
-	if primary_condition == STATE_CHANGE_CONDITION.AFTER_TIME_PASSED:
-		transition(self, primary_target_state)
-	elif secondary_condition == STATE_CHANGE_CONDITION.AFTER_TIME_PASSED:
-		transition(self, secondary_target_state)
 
-func check_state_change_condition(signal_name : StringName):
+func check_round_time() -> void: # Checks to see if the current round time matches the specified round time to change state.
+	if FightManager.round_time >= target_round_time:
+		condition_match(STATE_CHANGE_CONDITION.AT_ROUND_TIME)
+		return
+			
+func _on_wait_timer_timeout() -> void:
+	condition_match(STATE_CHANGE_CONDITION.AFTER_TIME_PASSED)
+	return
+
+func check_state_change_condition(signal_name : StringName) -> void:
 	match signal_name:
-		#STATE_CHANGE_CONDITION.AT_ROUND_TIME:
 		"enemy_knocked_down_signal":
-			if primary_condition == STATE_CHANGE_CONDITION.AFTER_ENEMY_KNOCKED_DOWN:
-				get_parent().interrupted_state = primary_target_state
-			elif secondary_condition == STATE_CHANGE_CONDITION.AFTER_ENEMY_KNOCKED_DOWN:
-				get_parent().interrupted_state = secondary_target_state
-				
+			match STATE_CHANGE_CONDITION.AFTER_ENEMY_KNOCKED_DOWN:
+				primary_condition:
+					get_parent().interrupted_state = primary_target_state
+					return
+				secondary_condition:
+					get_parent().interrupted_state = secondary_target_state
+					return
 		"player_knocked_down_signal":
-			if primary_condition == STATE_CHANGE_CONDITION.AFTER_PLAYER_KNOCKED_DOWN:
-				get_parent().interrupted_state = primary_target_state
-			elif secondary_condition == STATE_CHANGE_CONDITION.AFTER_PLAYER_KNOCKED_DOWN:
-				get_parent().interrupted_state = secondary_target_state
+			condition_match(STATE_CHANGE_CONDITION.AFTER_PLAYER_KNOCKED_DOWN)
+			return
 				
 		"no_stamina_signal":
-			if primary_condition == STATE_CHANGE_CONDITION.AFTER_PLAYER_TIRED: 
-				transition(self, primary_target_state)
-			elif secondary_condition == STATE_CHANGE_CONDITION.AFTER_PLAYER_TIRED:
-				transition(self, secondary_target_state)
+			condition_match(STATE_CHANGE_CONDITION.AFTER_PLAYER_TIRED)
+			return
+## Helper function to make this more readable.
+func condition_match(condition : int) -> void:
+	match condition:
+		primary_condition:
+			transition_to_target(primary_target_state)
+			return
+		secondary_condition:
+			transition_to_target(secondary_target_state)
+			return
+			
+func transition_to_target(target_state : State) -> void:
+	if anim_state_machine.get_current_node() == "idle": # Checks to see if the enemy is idle so that it doesn't interrupt a hit, block, or any other animation.
+		transition(self, target_state)

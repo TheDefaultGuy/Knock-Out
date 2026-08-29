@@ -8,14 +8,14 @@ func enter():
 	animation_tree.set("parameters/conditions/spectating", true)
 	
 	FightManager.fighter_got_up_signal.connect(back_to_fight)
-	FightManager.resume_fighting_signal.connect(transition_to_previous_state)
+	FightManager.resume_fighting_signal.connect(transition_to_neutral)
 	FightManager.player_ready_status = false
 
 
 func exit():
 	animation_tree.set("parameters/conditions/spectating", false)
 	FightManager.fighter_got_up_signal.disconnect(back_to_fight)
-	FightManager.resume_fighting_signal.disconnect(transition_to_previous_state)
+	FightManager.resume_fighting_signal.disconnect(transition_to_neutral)
 
 
 func back_to_fight():

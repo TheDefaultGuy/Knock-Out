@@ -3,19 +3,23 @@ class_name HealthComponent extends Node
 
 @export var initial_hp : float = 100.0
 @export var hp : float = 100.0
-signal health_changed
+signal health_changed_signal
 
 func _ready() -> void:
 	initial_hp = hp
 	
 func take_damage(amount : float) -> float:
 	hp -= amount
-	health_changed.emit()
+	health_changed_signal.emit()
 	return hp
 
 func reset_hp() -> void:
 	hp = get_parent().max_hp
-	health_changed.emit()
+	health_changed_signal.emit()
+	
+func heal(amount : float) -> void:
+	hp += amount
+	health_changed_signal.emit()
 
 ## Function responsible for decreasing HP and checking to see if HP falls below zero, which would be a knock down.
 func deal_damage_and_check_for_knockdown(damage_amount : float, damage_multiplier : float) -> bool:
@@ -25,7 +29,7 @@ func deal_damage_and_check_for_knockdown(damage_amount : float, damage_multiplie
 			FightManager.player_knocked_down_signal.emit()
 			print_rich('[color=green]Health Component:[/color] Player Knocked Down!')
 			
-		else:
+		elif get_parent().isPlayer == false:
 			FightManager.enemy_knocked_down_signal.emit()
 			print_rich('[color=green]Health Component:[/color] Enemy Knocked Down!')
 		return true

@@ -12,7 +12,7 @@ func _ready() -> void:
 	if next_state == null:
 		printerr(get_parent().get_parent().name, " CutScene State: next state not set")
 
-func enter():
+func enter() -> void:
 	print_rich("[color=yellow]",get_parent().get_parent().name," Entered State: [/color]", self.name)
 	FightManager.start_intro_animation_signal.connect(play_intro)
 	FightManager.resume_fighting_signal.connect(transition.bind(self, next_state))
@@ -23,15 +23,15 @@ func enter():
 		FightManager.enemy_ready_status = false
 	
 
-func exit():
+func exit() -> void:
 	FightManager.resume_fighting_signal.disconnect(transition)
 	FightManager.start_intro_animation_signal.disconnect(play_intro)
 	
-func play_intro():
+func play_intro() -> void:
 	anim_state_machine.travel("intro")
 	
-func perform_attack(_height : int, _direction : int, _action_name : String, _special_move : bool):
-	pass
+func perform_attack(_height : int, _direction : int, _action_name : String, _special_move : bool) -> void:
+	return
 	
-func perform_defense(_move : int, _action_name : String):
-	pass
+func perform_defense(_move : int, _action_name : String) -> void:
+	return

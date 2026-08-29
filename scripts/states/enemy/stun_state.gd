@@ -3,6 +3,7 @@
 ## This is the state in which the enemy is stunned and can't fight back.
 ##
 ## It is a required state for all enemies.
+##
 ## The stun behavior is customizable.
 ## FIXED TIMER DURATION: after a given amount of time,
 ## The enemy will automatically leave the stun state, regardless of how many punches the player lands.
@@ -35,7 +36,7 @@ enum BEHAVIOR_TYPE{
 
 @export var stun_timer : Timer
 
-@export_category("Stun Behavior")
+@export_category("💫 Stun Behavior")
 @export var stun_behavior := BEHAVIOR_TYPE.FIXED_TIME_DURATION: 
 	set(value):
 		stun_behavior = value
@@ -54,6 +55,16 @@ enum BEHAVIOR_TYPE{
 ## The fixed amount of punches that stun will last for.
 @export_custom(PROPERTY_HINT_NONE, "suffix:punches") var fixed_stun_length : int = 5
 
+@export_category("🍾 Heal After Recovering?")
+## Whether the enemy transitions to a healing state after stun is over 
+@export var heal_after_stun : bool = false
+## The amount of time the enemy waits (in seconds) before changing to the target state.
+@export_range(5.0, 100.0, 1.0, "suffix:hp") var target_health : float = 80.0
+
+## The state in which the enemy attempts to heal.
+@export var heal_state : ItemHealState 
+
+var target_state : State
 
 ## How many punches the player has landed during this state.
 var punch_count: int = 0
@@ -70,7 +81,7 @@ func _validate_property(property: Dictionary) -> void:
 		property.usage = PROPERTY_USAGE_NONE
 #endregion
 		
-#region Enter, Exit, Ready and Process functions.
+#region Ready, Enter, Exit, and Process functions.
 func _ready() -> void:
 	# Sets the stun punch length based on the desired behavior.
 	match stun_behavior:
@@ -82,33 +93,40 @@ func _ready() -> void:
 	if stun_timer == null:
 		printerr(name, " : Stun Duration Timer has not been assigned.")
 
-func enter(): # Blank enter and exit functions that get overridden by each state's own custom enter and exit functions.
+
+func enter() -> void: # Blank enter and exit functions that get overridden by each state's own custom enter and exit functions.
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
 	animation_tree.set("parameters/conditions/spectating", false)
 	animation_tree.set("parameters/idle/blend_position", 1)
-	
 	FightManager.enemy_knocked_down_signal.connect(transition_to_knocked_down)
 	FightManager.succesful_hit_signal.connect(increase_punch_count)
 	stun_timer.timeout.connect(stun_timer_over)
 	# Resets punch count everytime the enemy enters stun.
 	punch_count = 0
 	
+	target_state = get_parent().interrupted_state
+	
 	match stun_behavior:
 		BEHAVIOR_TYPE.FIXED_TIME_DURATION:
 			stun_timer.start(stun_duration)
+			
 			# Increases the length of the stun in terms of pucnhes eeverytime the enemy enters stun state.
 		BEHAVIOR_TYPE.INCREASING_NUMBER_OF_PUNCHES:
 			stun_punch_length = clamp(stun_punch_length + 1, min_stun_length, max_stun_length)
 
-func exit():
+func exit() -> void:
 	animation_tree.set("parameters/idle/blend_position", 0)
 	animation_tree.set("parameters/conditions/spectating", false)
 	FightManager.enemy_knocked_down_signal.disconnect(transition_to_knocked_down)
 	FightManager.succesful_hit_signal.disconnect(increase_punch_count)
 	stun_timer.timeout.disconnect(stun_timer_over)
-
+	
 func _process(_delta: float) -> void:
-	pass
+	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
+		return
+	if get_parent().current_state == self:
+		check_health_condition()
+
 #endregion
 
 ## Increases the punch count by one everytime the player lands a punch during stun.
@@ -116,13 +134,18 @@ func increase_punch_count() -> void:
 	if stun_behavior == BEHAVIOR_TYPE.FIXED_NUMBER_OF_PUNCHES or stun_behavior == BEHAVIOR_TYPE.INCREASING_NUMBER_OF_PUNCHES:
 		stun_timer.start(stun_duration)
 		punch_count = punch_count + 1
-		print(punch_count)
+		#print("Stun State - Punch Count: ", punch_count)
 		if punch_count >= stun_punch_length:
-			transition_to_previous_state()
+			transition(self, target_state)
 
-func stun_timer_over():
+func stun_timer_over() -> void:
 	animation_tree.set("parameters/conditions/recovered", true)
-	transition_to_previous_state()
+	transition(self, target_state)
 
-func reset_stun_length():
+func reset_stun_length() -> void:
 	pass
+	
+## Checks the enemy's own HP and transitions to heal state once it reaches it.
+func check_health_condition() -> void:
+	if health_component.hp <= target_health and heal_after_stun == true:
+		target_state = heal_state
