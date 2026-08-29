@@ -99,7 +99,7 @@ func enter(): # Blank enter and exit functions that get overridden by each state
 			# Increases the length of the stun in terms of pucnhes eeverytime the enemy enters stun state.
 		BEHAVIOR_TYPE.INCREASING_NUMBER_OF_PUNCHES:
 			stun_punch_length = clamp(stun_punch_length + 1, min_stun_length, max_stun_length)
-	print("punch length: ", stun_punch_length)
+
 func exit():
 	animation_tree.set("parameters/idle/blend_position", 0)
 	animation_tree.set("parameters/conditions/spectating", false)
@@ -113,7 +113,6 @@ func _process(_delta: float) -> void:
 
 ## Increases the punch count by one everytime the player lands a punch during stun.
 func increase_punch_count() -> void:
-	print("increase punch")
 	if stun_behavior == BEHAVIOR_TYPE.FIXED_NUMBER_OF_PUNCHES or stun_behavior == BEHAVIOR_TYPE.INCREASING_NUMBER_OF_PUNCHES:
 		stun_timer.start(stun_duration)
 		punch_count = punch_count + 1

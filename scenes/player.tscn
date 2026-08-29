@@ -19,7 +19,7 @@
 [ext_resource type="Texture2D" uid="uid://cyx4t854icd2g" path="res://assets/snes/player_modified/sprite-2-7.png" id="14_sc3ue"]
 [ext_resource type="Shader" uid="uid://bgngon3gqyb0u" path="res://scripts/shaders/enemy_flash.gdshader" id="15_fulsm"]
 [ext_resource type="Texture2D" uid="uid://bkkcx4sxtu0er" path="res://assets/snes/player_modified/sprite-2-8.png" id="15_lxlsd"]
-[ext_resource type="Script" uid="uid://ch1gb3rys2tfm" path="res://scripts/state_machine.gd" id="15_oprun"]
+[ext_resource type="Script" uid="uid://ch1gb3rys2tfm" path="res://scripts/states/state_machine.gd" id="15_oprun"]
 [ext_resource type="Texture2D" uid="uid://bk78t04i2nal2" path="res://assets/snes/player_modified/sprite-3-5.png" id="16_ha2mi"]
 [ext_resource type="Script" uid="uid://b8xj68b44boym" path="res://scripts/states/player/neutral_state.gd" id="16_qfm1y"]
 [ext_resource type="Texture2D" uid="uid://c76nvj58vhsa4" path="res://assets/snes/player_modified/sprite-3-6.png" id="17_apa73"]
@@ -39,7 +39,7 @@
 [ext_resource type="AnimationNodeStateMachine" uid="uid://dqq7v4rop1vgc" path="res://animation/player/player_animation_tree_state_machine.tres" id="32_t4otl"]
 [ext_resource type="Script" uid="uid://bd3i8gnmviajw" path="res://scripts/states/player/cutscene_state.gd" id="38_t4otl"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_a8ls1"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ke2ow"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wqfne"]
 region = Rect2(0, 0, 40, 89)
@@ -191,6 +191,8 @@ animations = [{
 "name": &"tired",
 "speed": 5.0
 }]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_a8ls1"]
 
 [sub_resource type="Animation" id="Animation_smehm"]
 length = 0.001
@@ -773,8 +775,6 @@ tracks/4/keys = {
 "update": 1,
 "values": [false]
 }
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_ke2ow"]
 
 [sub_resource type="Animation" id="Animation_2dvfe"]
 resource_name = "intro"
@@ -3917,7 +3917,8 @@ metadata/_custom_type_script = "uid://2lbod66rooni"
 [node name="Player Sprite" type="AnimatedSprite2D" parent="." unique_id=356097986]
 unique_name_in_owner = true
 texture_filter = 1
-material = SubResource("ShaderMaterial_a8ls1")
+material = SubResource("ShaderMaterial_ke2ow")
+position = Vector2(0, 60.12)
 sprite_frames = SubResource("SpriteFrames_fdrta")
 animation = &"guard_down"
 autoplay = "guard_down"
@@ -3938,6 +3939,8 @@ script = ExtResource("5_ur7pv")
 [node name="DefenseComponent" type="Node" parent="." unique_id=928591856]
 unique_name_in_owner = true
 script = ExtResource("7_fjrip")
+upper_invulnerability = true
+lower_invulnerability = true
 
 [node name="AttackingComponent" type="Node" parent="." unique_id=1684799148]
 unique_name_in_owner = true
@@ -3962,7 +3965,7 @@ anim_player = NodePath("../MoveSetAnim")
 parameters/conditions/gotup = false
 parameters/conditions/knockeddown = false
 parameters/conditions/spectating = false
-parameters/attack/blend_position = Vector2(0, 0)
+parameters/attack/blend_position = Vector2(-1.0488889, 1.0478011)
 parameters/block/blend_position = 0.0
 parameters/dodge/blend_position = 0.0
 parameters/dodge/dodge_right/conditions/holding_right = false
@@ -3987,31 +3990,26 @@ tired_state = NodePath("TiredState")
 cutscene_state = NodePath("CutSceneState")
 metadata/_custom_type_script = "uid://ch1gb3rys2tfm"
 
-[node name="Neutral" type="Node" parent="StateMachine" unique_id=19848670 node_paths=PackedStringArray("animation_tree")]
+[node name="Neutral" type="Node" parent="StateMachine" unique_id=19848670]
 script = ExtResource("16_qfm1y")
-animation_tree = NodePath("../../AnimationTree")
 metadata/_custom_type_script = "uid://b8xj68b44boym"
 
-[node name="TiredState" type="Node" parent="StateMachine" unique_id=1201197542 node_paths=PackedStringArray("animation_tree")]
+[node name="TiredState" type="Node" parent="StateMachine" unique_id=1201197542]
 script = ExtResource("17_fulsm")
-animation_tree = NodePath("../../AnimationTree")
 metadata/_custom_type_script = "uid://dvx70pthua1yt"
 
-[node name="KnockedDown" type="Node" parent="StateMachine" unique_id=275347256 node_paths=PackedStringArray("animation_tree")]
+[node name="KnockedDown" type="Node" parent="StateMachine" unique_id=275347256]
 process_mode = 1
 script = ExtResource("19_4r5pv")
-animation_tree = NodePath("../../AnimationTree")
 metadata/_custom_type_script = "uid://dbtcttyq4b1k6"
 
-[node name="Spectating" type="Node" parent="StateMachine" unique_id=358364741 node_paths=PackedStringArray("animation_tree")]
+[node name="Spectating" type="Node" parent="StateMachine" unique_id=358364741]
 script = ExtResource("20_60mlk")
-animation_tree = NodePath("../../AnimationTree")
 metadata/_custom_type_script = "uid://bmm6abcpujspl"
 
-[node name="CutSceneState" type="Node" parent="StateMachine" unique_id=266133528 node_paths=PackedStringArray("next_state", "animation_tree")]
+[node name="CutSceneState" type="Node" parent="StateMachine" unique_id=266133528 node_paths=PackedStringArray("next_state")]
 script = ExtResource("38_t4otl")
 next_state = NodePath("../Neutral")
-animation_tree = NodePath("../../AnimationTree")
 metadata/_custom_type_script = "uid://bd3i8gnmviajw"
 
 [connection signal="timeout" from="InputComponent/InputBufferTimer" to="InputComponent" method="_on_input_buffer_timer_timeout"]

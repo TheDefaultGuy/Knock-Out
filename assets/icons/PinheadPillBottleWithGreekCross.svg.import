@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d2rk0of31xl5v"
-path="res://.godot/imported/knock_down.png-d6a65d21d7adc7f9a92ebb5c521826d7.ctex"
+uid="uid://bli21lrxcnya0"
+path="res://.godot/imported/PinheadPillBottleWithGreekCross.svg-bfd573bf1ad6116281465cc92979b045.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/mike/knock_down.png"
-dest_files=["res://.godot/imported/knock_down.png-d6a65d21d7adc7f9a92ebb5c521826d7.ctex"]
+source_file="res://assets/icons/PinheadPillBottleWithGreekCross.svg"
+dest_files=["res://.godot/imported/PinheadPillBottleWithGreekCross.svg-bfd573bf1ad6116281465cc92979b045.ctex"]
 
 [params]
 
@@ -38,3 +38,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=1.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false

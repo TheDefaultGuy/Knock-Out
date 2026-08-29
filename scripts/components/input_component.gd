@@ -80,10 +80,10 @@ func _process(_delta: float) -> void:
 		animation_tree.set("parameters/dodge/dodge_right/conditions/holding_right", false)
 		
 	if Input.is_action_pressed("down") == true: 
-		animation_tree.set("parameters/duck_blend/blend_position", -1)
-		animation_tree.set("parameters/conditions/holding_down", true)
+		animation_tree.set("parameters/dodge/duck/duck_blend/blend_position", -1)
+		animation_tree.set("parameters/dodge/duck/conditions/holding_down", true)
 	elif Input.is_action_pressed("down") == false: 
-		animation_tree.set("parameters/conditions/holding_down", false)
+		animation_tree.set("parameters/dodge/duck/conditions/holding_down", false)
 
 func perform_action(action_name : String):
 	match action_name:

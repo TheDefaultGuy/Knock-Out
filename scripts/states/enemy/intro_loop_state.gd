@@ -14,8 +14,6 @@ class_name IntroLoopState extends State
 @export_category("🎬 Animations & Moveset")
 ## The intro animation that will play in this state.
 @export var state_machine_animation : String = "intro"
-@export var attack_animation : String = "attack"
-
 
 ## How the delay between each attack is handled.
 @export_category("⏱ Attack Delays")
@@ -103,7 +101,7 @@ func get_weighted_choice(weight_dict: Dictionary):
 	return weight_dict.keys().back() # Fallback edge case
 
 func perform_action():
-	animation_tree.get(str("parameters/",state_machine_animation,"/playback")).travel(str(attack_animation))
+	animation_tree.get(str("parameters/",state_machine_animation,"/playback")).travel("attack")
 	#anim_state_machine
 	pass
 
