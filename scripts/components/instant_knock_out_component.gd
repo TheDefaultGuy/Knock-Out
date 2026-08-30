@@ -19,16 +19,6 @@ enum KO_CONDITION_TYPE{
 	## Will grant a KO if the player hasn't been hit before in the round.
 	NEVER_BEEN_HIT
 }
-### Sets which kind of punch is required for the instant KO
-#enum PUNCH_TYPE{
-	#LOW_REGULAR_PUNCH,
-	#HIGH_REGULAR_PUNCH,
-	#LOW_STAR_PUNCH,
-	#HIGH_STAR_PUNCH,
-	#ANY_REGULAR_PUNCH,
-	#ANY_STAR_PUNCH,
-	#ANY_PUNCH
-#}
 
 @export var state_machine : StateMachine
 
@@ -52,8 +42,6 @@ enum KO_CONDITION_TYPE{
 ## The number of star punches landed required to grant an instant KO.
 @export_range (1, 12) var star_punches_received : int = 6
 
-## The punch type required to grant an instant KO.
-#@export var punch_type : = PUNCH_TYPE.HIGH_STAR_PUNCH
 
 ## The number of star punches landed required to grant an instant KO.
 @export_range (1, 6) var knock_downs_required : int = 1
@@ -65,9 +53,6 @@ enum KO_CONDITION_TYPE{
 func _validate_property(property: Dictionary) -> void: 
 	if property.name == "number_of_stars" and condition != KO_CONDITION_TYPE.STARS_USED:
 		property.usage = PROPERTY_USAGE_NONE
-	#if property.name == "punch_type" and condition == KO_CONDITION_TYPE.STARS_USED:
-		#property.usage = PROPERTY_USAGE_NONE
-		
 	if property.name == "ko_round_time" and condition != KO_CONDITION_TYPE.KNOCK_DOWNS_BEFORE_ROUND_TIME:
 		property.usage = PROPERTY_USAGE_NONE
 	if property.name == "knock_downs_required" and condition != KO_CONDITION_TYPE.KNOCK_DOWNS_BEFORE_ROUND_TIME:

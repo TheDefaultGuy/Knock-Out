@@ -34,7 +34,7 @@ enum BEHAVIOR_TYPE{
 	INCREASING_NUMBER_OF_PUNCHES
 }
 
-@export var stun_timer : Timer
+var stun_timer : Timer = null
 
 @export_category("💫 Stun Behavior")
 @export var stun_behavior := BEHAVIOR_TYPE.FIXED_TIME_DURATION: 
@@ -71,6 +71,8 @@ var punch_count: int = 0
 ## How many punches the player can land before the enemy changes state.
 var stun_punch_length: int = 0
 
+var stun_over : bool = false
+
 ## Handles showing and hiding applicable exported variables
 func _validate_property(property: Dictionary) -> void: 
 	if property.name == "fixed_stun_length" and stun_behavior != BEHAVIOR_TYPE.FIXED_NUMBER_OF_PUNCHES:
@@ -83,15 +85,20 @@ func _validate_property(property: Dictionary) -> void:
 		
 #region Ready, Enter, Exit, and Process functions.
 func _ready() -> void:
+	create_timers()
 	# Sets the stun punch length based on the desired behavior.
 	match stun_behavior:
 		BEHAVIOR_TYPE.FIXED_NUMBER_OF_PUNCHES:
 			stun_punch_length = fixed_stun_length
 		BEHAVIOR_TYPE.INCREASING_NUMBER_OF_PUNCHES:
 			stun_punch_length = clamp(min_stun_length - 1, 0, max_stun_length)# minus 1 because the enter functions adds 1.
-			
-	if stun_timer == null:
-		printerr(name, " : Stun Duration Timer has not been assigned.")
+		
+
+## Creates the timers with code so that you don't have to make timer node and then manually assign it.
+func create_timers() -> void:
+	stun_timer = Timer.new()
+	stun_timer.name = "Stunned Timer"
+	get_parent().get_parent().add_child.call_deferred(stun_timer)
 
 
 func enter() -> void: # Blank enter and exit functions that get overridden by each state's own custom enter and exit functions.
@@ -103,7 +110,7 @@ func enter() -> void: # Blank enter and exit functions that get overridden by ea
 	stun_timer.timeout.connect(stun_timer_over)
 	# Resets punch count everytime the enemy enters stun.
 	punch_count = 0
-	
+	stun_over = true
 	target_state = get_parent().interrupted_state
 	
 	match stun_behavior:
@@ -124,9 +131,12 @@ func exit() -> void:
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
 		return
-	if get_parent().current_state == self:
-		check_health_condition()
-
+	if get_parent().current_state != self:
+		return
+	check_health_condition()
+	if anim_state_machine.get_current_node() == "idle" and stun_over == true: # Checks to see if the enemy is idle so that it doesn't interrupt a hit, block, or any other animation.
+		animation_tree.set("parameters/conditions/recovered", true)
+		transition(self, target_state)
 #endregion
 
 ## Increases the punch count by one everytime the player lands a punch during stun.
@@ -134,13 +144,12 @@ func increase_punch_count() -> void:
 	if stun_behavior == BEHAVIOR_TYPE.FIXED_NUMBER_OF_PUNCHES or stun_behavior == BEHAVIOR_TYPE.INCREASING_NUMBER_OF_PUNCHES:
 		stun_timer.start(stun_duration)
 		punch_count = punch_count + 1
-		#print("Stun State - Punch Count: ", punch_count)
 		if punch_count >= stun_punch_length:
 			transition(self, target_state)
 
 func stun_timer_over() -> void:
-	animation_tree.set("parameters/conditions/recovered", true)
-	transition(self, target_state)
+	stun_over = true
+	
 
 func reset_stun_length() -> void:
 	pass

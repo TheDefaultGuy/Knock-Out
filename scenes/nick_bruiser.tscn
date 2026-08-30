@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://7858o2inqkak"]
 
 [ext_resource type="Script" uid="uid://2lbod66rooni" path="res://scripts/classes/fighter_class.gd" id="1_wdmnt"]
+[ext_resource type="Shader" uid="uid://ce020fses7x2o" path="res://scripts/shaders/test_shader.tres" id="2_poxia"]
 [ext_resource type="Texture2D" uid="uid://exnrcaebufy1" path="res://assets/snes/nick/sprite-4-1.png" id="3_wv64h"]
 [ext_resource type="Texture2D" uid="uid://2i42t3rw8f75" path="res://assets/snes/nick/sprite-4-2.png" id="4_wnc28"]
 [ext_resource type="Texture2D" uid="uid://bm124swgnl0r3" path="res://assets/snes/nick/fili1.png" id="5_sjnn5"]
@@ -63,9 +64,12 @@
 [ext_resource type="Script" uid="uid://c15nwhylsnm6w" path="res://scripts/components/instant_knock_out_component.gd" id="55_xom0j"]
 [ext_resource type="Script" uid="uid://biw43iy3kqvj0" path="res://scripts/states/enemy/flurry_attack_state.gd" id="57_yfn78"]
 [ext_resource type="Script" uid="uid://c73a2o5xnqs0k" path="res://scripts/states/enemy/heal_item_state.gd" id="59_2gws3"]
-[ext_resource type="AnimationNodeStateMachine" uid="uid://qxtkqdire1qx" path="res://animation/enemy/enemy_state_machine.tres" id="61_2gws3"]
+[ext_resource type="AnimationNodeStateMachine" uid="uid://qxtkqdire1qx" path="res://animation/enemy/enemy_state_machine.tres" id="62_v64oh"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_60mlk"]
+shader = ExtResource("2_poxia")
+shader_parameter/Outline_Color = Color(1, 1, 1, 1)
+shader_parameter/Outline_Thickness = 2.0
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_8uk6w"]
 load_path = "res://.godot/imported/blinking.png-65984fddd985b1c5c80514c3c8451474.ctex"
@@ -739,7 +743,7 @@ tracks/6/keys = {
 
 [sub_resource type="Animation" id="Animation_wdmnt"]
 resource_name = "chicken"
-length = 1.0666667
+length = 0.53333336
 tracks/0/type = "method"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -770,7 +774,7 @@ tracks/2/path = NodePath("../Enemy Sprite:frame")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.26666668, 0.53333336, 0.8),
+"times": PackedFloat32Array(0, 0.13333334, 0.26666668, 0.4),
 "transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 1,
 "values": [0, 3, 0, 3]
@@ -802,86 +806,26 @@ tracks/4/keys = {
 tracks/5/type = "value"
 tracks/5/imported = false
 tracks/5/enabled = true
-tracks/5/path = NodePath("../DefenseComponent:stun_window")
+tracks/5/path = NodePath("../DefenseComponent:upper_blocking_status")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [false]
+"values": [true]
 }
 tracks/6/type = "value"
 tracks/6/imported = false
 tracks/6/enabled = true
-tracks/6/path = NodePath("../DefenseComponent:upper_star_window")
+tracks/6/path = NodePath("../DefenseComponent:lower_blocking_status")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
-"times": PackedFloat32Array(),
-"transitions": PackedFloat32Array(),
-"update": 1,
-"values": []
-}
-tracks/7/type = "value"
-tracks/7/imported = false
-tracks/7/enabled = true
-tracks/7/path = NodePath("../DefenseComponent:lower_star_window")
-tracks/7/interp = 1
-tracks/7/loop_wrap = true
-tracks/7/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/8/type = "value"
-tracks/8/imported = false
-tracks/8/enabled = true
-tracks/8/path = NodePath("../DefenseComponent:upper_blocking_status")
-tracks/8/interp = 1
-tracks/8/loop_wrap = true
-tracks/8/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [true]
-}
-tracks/9/type = "value"
-tracks/9/imported = false
-tracks/9/enabled = true
-tracks/9/path = NodePath("../DefenseComponent:lower_blocking_status")
-tracks/9/interp = 1
-tracks/9/loop_wrap = true
-tracks/9/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/10/type = "value"
-tracks/10/imported = false
-tracks/10/enabled = true
-tracks/10/path = NodePath("../DefenseComponent:upper_invulnerability")
-tracks/10/interp = 1
-tracks/10/loop_wrap = true
-tracks/10/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-tracks/11/type = "value"
-tracks/11/imported = false
-tracks/11/enabled = true
-tracks/11/path = NodePath("../DefenseComponent:lower_invulnerability")
-tracks/11/interp = 1
-tracks/11/loop_wrap = true
-tracks/11/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
 }
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_mqj24"]
@@ -1029,6 +973,143 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [&"idle"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../Enemy Sprite:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [0, 1]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../Enemy Sprite:flip_h")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("../Enemy Sprite:material")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [SubResource("ShaderMaterial_jr1li")]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("../DefenseComponent:stun_window")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("../DefenseComponent:upper_star_window")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("../DefenseComponent:lower_star_window")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("../DefenseComponent:upper_blocking_status")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("../DefenseComponent:lower_blocking_status")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/9/type = "value"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("../DefenseComponent:upper_invulnerability")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("../DefenseComponent:lower_invulnerability")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_367aj"]
+resource_name = "idle_guard"
+length = 0.8
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../Enemy Sprite:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"guard_down"]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -1839,6 +1920,7 @@ _data = {
 &"chicken": SubResource("Animation_wdmnt"),
 &"get_up": SubResource("Animation_wtq4b"),
 &"idle": SubResource("Animation_8qclf"),
+&"idle_guard": SubResource("Animation_367aj"),
 &"intro": SubResource("Animation_7b5nu"),
 &"intro_start": SubResource("Animation_yfn78"),
 &"knock_down": SubResource("Animation_wjec0"),
@@ -2803,10 +2885,10 @@ tracks/6/path = NodePath("%Enemy Sprite:material")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
-"times": PackedFloat32Array(0, 0.13333334, 0.33333334),
-"transitions": PackedFloat32Array(1, 1, 1),
+"times": PackedFloat32Array(0, 0.33333334),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [SubResource("ShaderMaterial_uj0uw"), SubResource("ShaderMaterial_60mlk"), SubResource("ShaderMaterial_uj0uw")]
+"values": [SubResource("ShaderMaterial_uj0uw"), SubResource("ShaderMaterial_uj0uw")]
 }
 tracks/7/type = "value"
 tracks/7/imported = false
@@ -5081,7 +5163,7 @@ _data = {
 &"award_star": SubResource("Animation_48yoq")
 }
 
-[node name="Nick Bruiser" type="Node2D" unique_id=1740195545 node_paths=PackedStringArray("defense_component", "attacking_component", "health_component", "instant_ko_component", "animation_tree")]
+[node name="Nick Bruiser" type="Node2D" unique_id=1740195545 node_paths=PackedStringArray("defense_component", "attacking_component", "health_component", "instant_ko_component", "animation_tree", "state_machine")]
 z_index = 2
 script = ExtResource("1_wdmnt")
 defense_component = NodePath("DefenseComponent")
@@ -5089,6 +5171,7 @@ attacking_component = NodePath("AttackingComponent")
 health_component = NodePath("HealthComponent")
 instant_ko_component = NodePath("InstantKOComponent")
 animation_tree = NodePath("EnemyAnimationTree")
+state_machine = NodePath("StateMachine")
 metadata/_custom_type_script = "uid://2lbod66rooni"
 
 [node name="Enemy Sprite" type="AnimatedSprite2D" parent="." unique_id=540694718]
@@ -5120,62 +5203,36 @@ expected_state_A = NodePath("../StateMachine/Stunned")
 number_of_stars = 2
 metadata/_custom_type_script = "uid://c15nwhylsnm6w"
 
-[node name="GeneralTimer" type="Timer" parent="." unique_id=1074000649]
-unique_name_in_owner = true
-editor_description = "A multipurpose timer that can be used by various states."
-wait_time = 2.0
-autostart = true
-
 [node name="StateMachine" type="Node" parent="." unique_id=1256866169 node_paths=PackedStringArray("initial_state", "stun_state", "knocked_down_state", "spectating_state", "cutscene_state")]
 unique_name_in_owner = true
 script = ExtResource("15_l7qsa")
-initial_state = NodePath("RandomMoves")
+initial_state = NodePath("IntroLoopState")
 stun_state = NodePath("Stunned")
 knocked_down_state = NodePath("KnockedDown")
 spectating_state = NodePath("Spectating")
 cutscene_state = NodePath("CutSceneState")
 metadata/_custom_type_script = "uid://ch1gb3rys2tfm"
 
-[node name="RandomMoves" type="Node" parent="StateMachine" unique_id=1646714070 node_paths=PackedStringArray("attack_timer", "animation_tree")]
+[node name="RandomMoves" type="Node" parent="StateMachine" unique_id=1646714070 node_paths=PackedStringArray("primary_target_state", "animation_tree")]
 script = ExtResource("44_wdmnt")
 moveset = Dictionary[String, float]({
-"attack_elbow": 20.0,
-"attack_hook": 20.0,
-"attack_jab_high": 20.0,
-"attack_jab_low": 20.0,
-"attack_uppercut": 20.0
+"elbow": 20.0,
+"hook": 20.0,
+"jab_high": 20.0,
+"jab_low": 20.0,
+"upper_cut": 20.0
 })
-attack_timer = NodePath("../../GeneralTimer")
 max_wait_time = 2.0
-secondary_condition = 0
-target_round_time = 180.0
+primary_condition = 4
+primary_target_state = NodePath("../FlurryAttackState")
 animation_tree = NodePath("../../EnemyAnimationTree")
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
-[node name="RandomMoves2" type="Node" parent="StateMachine" unique_id=642542442 node_paths=PackedStringArray("attack_timer", "animation_tree")]
-script = ExtResource("44_wdmnt")
-moveset = Dictionary[String, float]({
-"attack_elbow": 20.0,
-"attack_hook": 20.0,
-"attack_jab_high": 20.0,
-"attack_jab_low": 20.0,
-"attack_uppercut": 20.0
-})
-attack_timer = NodePath("../../GeneralTimer")
-max_wait_time = 2.0
-primary_condition = 6
-secondary_condition = 6
-animation_tree = NodePath("../../EnemyAnimationTree")
-metadata/_custom_type_script = "uid://dy765alksxcdx"
-
-[node name="Stunned" type="Node" parent="StateMachine" unique_id=642401764 node_paths=PackedStringArray("stun_timer", "heal_state", "animation_tree")]
+[node name="Stunned" type="Node" parent="StateMachine" unique_id=642401764 node_paths=PackedStringArray("animation_tree")]
 script = ExtResource("45_38nj0")
-stun_timer = NodePath("../../GeneralTimer")
 stun_behavior = 2
 stun_duration = 1.0
 min_stun_length = 3
-heal_after_stun = true
-heal_state = NodePath("../ItemHealState")
 animation_tree = NodePath("../../EnemyAnimationTree")
 metadata/_custom_type_script = "uid://d2mk31geekmgb"
 
@@ -5198,8 +5255,8 @@ metadata/_custom_type_script = "uid://bd3i8gnmviajw"
 
 [node name="FlurryAttackState" type="Node" parent="StateMachine" unique_id=1274541898 node_paths=PackedStringArray("KO_state", "survived_state", "animation_tree")]
 script = ExtResource("57_yfn78")
-KO_state = NodePath("../RandomMoves2")
-survived_state = NodePath("../RandomMoves2")
+KO_state = NodePath("../RandomMoves")
+survived_state = NodePath("../ItemHealState")
 animation_tree = NodePath("../../EnemyAnimationTree")
 metadata/_custom_type_script = "uid://biw43iy3kqvj0"
 
@@ -5209,17 +5266,20 @@ failed_heal_state = NodePath("../FlurryAttackState")
 animation_tree = NodePath("../../EnemyAnimationTree")
 metadata/_custom_type_script = "uid://c73a2o5xnqs0k"
 
-[node name="IntroLoopState" type="Node" parent="StateMachine" unique_id=363331831]
+[node name="IntroLoopState" type="Node" parent="StateMachine" unique_id=363331831 node_paths=PackedStringArray("target_state", "animation_tree")]
 script = ExtResource("49_6ayxy")
-state_machine_animation = &"intro_loop_attack"
+target_state = NodePath("../RandomMoves")
+animation_tree = NodePath("../../EnemyAnimationTree")
 metadata/_custom_type_script = "uid://be0a0n2xv87g7"
 
-[node name="ReactionaryState" type="Node" parent="StateMachine" unique_id=1239718303]
+[node name="ReactionaryState" type="Node" parent="StateMachine" unique_id=1239718303 node_paths=PackedStringArray("animation_tree")]
 script = ExtResource("49_38nj0")
-state_machine_animation = null
+block_animation = "block_react"
+primary_condition = 5
+animation_tree = NodePath("../../EnemyAnimationTree")
 metadata/_custom_type_script = "uid://bjtexblqp5cmp"
 
-[node name="MoveSetAnim" type="AnimationPlayer" parent="." unique_id=513767802]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=513767802]
 unique_name_in_owner = true
 root_node = NodePath("../HealthComponent")
 libraries/ = SubResource("AnimationLibrary_1x4g4")
@@ -5232,14 +5292,12 @@ libraries/knock_down = SubResource("AnimationLibrary_uh3is")
 [node name="EnemyAnimationTree" type="AnimationTree" parent="." unique_id=1716021603]
 unique_name_in_owner = true
 root_node = NodePath("%HealthComponent")
-tree_root = ExtResource("61_2gws3")
-anim_player = NodePath("../MoveSetAnim")
+tree_root = ExtResource("62_v64oh")
+anim_player = NodePath("../AnimationPlayer")
 parameters/conditions/spectating = false
 parameters/block/blend_position = 0.0
-parameters/flurry_attack/conditions/ko = false
 parameters/hit/blend_position = Vector2(0, 0)
 parameters/idle/blend_position = 0.0
-parameters/intro_loop_attack/conditions/spectating = false
 parameters/knock_down/blend_position = Vector2(0, 0)
 
 [node name="Star Sprite" type="AnimatedSprite2D" parent="." unique_id=409022597]

@@ -84,7 +84,7 @@ var enemy_ready_status : bool = true
 var star_count : int = 2
 
 ## The Player's stamina
-var stamina: int = 20 
+var stamina: int = 10 
 
 ## Number of times the player has been knocked down in the current round.
 var player_ko_count : int = 0
@@ -132,6 +132,7 @@ func increase_player_ko_count() -> void:
 func reset_ko_count() -> void:
 	enemy_ko_count = 0
 	player_ko_count = 0
+
 ## Adds a star to the player's star count and emits the signals related to it.
 func award_star() -> void:
 	print("Fight Manager: player was awarded a star")

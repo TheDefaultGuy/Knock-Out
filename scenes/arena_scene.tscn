@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://btamot0npdjvw" path="res://scripts/classes/arena_class.gd" id="1_v87wf"]
 [ext_resource type="PackedScene" uid="uid://7858o2inqkak" path="res://scenes/nick_bruiser.tscn" id="2_8k0nb"]
 [ext_resource type="PackedScene" uid="uid://bh3wovdy0myrr" path="res://scenes/player.tscn" id="3_bt4xr"]
+[ext_resource type="Script" uid="uid://lks1t1wg7nna" path="res://scripts/components/particle_effect_component.gd" id="4_4wfwo"]
 [ext_resource type="Script" uid="uid://c8kyx1g3lvmgb" path="res://scripts/components/sfx_component.gd" id="4_8k0nb"]
 [ext_resource type="AudioStream" uid="uid://cvaro8jabddtv" path="res://assets/sfx/hit.wav" id="5_efdj8"]
 [ext_resource type="AudioStream" uid="uid://dprc3kyxjg5n3" path="res://assets/sfx/dodge.wav" id="6_hhgcq"]
@@ -10,6 +11,8 @@
 [ext_resource type="AudioStream" uid="uid://ghulw4avu2eq" path="res://assets/sfx/star_punch_start.wav" id="8_tqdu3"]
 [ext_resource type="AudioStream" uid="uid://bvei8do7tp40f" path="res://assets/sfx/duck.wav" id="9_5bpft"]
 [ext_resource type="AudioStream" uid="uid://iy6ipv2pkmm8" path="res://assets/sfx/block.wav" id="10_h4xjg"]
+[ext_resource type="Script" uid="uid://cguhik1wigmds" path="res://scripts/components/fight_logic_component.gd" id="12_4wfwo"]
+[ext_resource type="Script" uid="uid://kmaq2e83r45t" path="res://scripts/components/match_settings_component.gd" id="13_tqdu3"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_hpwni"]
 
@@ -69,17 +72,17 @@ _data = {
 &"ko_count": SubResource("Animation_8k0nb")
 }
 
-[node name="Main" type="Node2D" unique_id=860723905 node_paths=PackedStringArray("round_timer", "player_bar", "enemy_bar", "star_count_label", "stamina_label", "time_left_label", "animation_player")]
+[node name="Main" type="Node2D" unique_id=860723905 node_paths=PackedStringArray("player_bar", "enemy_bar", "star_count_label", "stamina_label", "time_left_label", "fight_logic_component", "match_settings")]
 script = ExtResource("1_v87wf")
 player_scene = ExtResource("3_bt4xr")
 enemy_scene = ExtResource("2_8k0nb")
-round_timer = NodePath("Round Timer")
 player_bar = NodePath("Camera2D/UI/PlayerBar")
 enemy_bar = NodePath("Camera2D/UI/EnemyBar")
 star_count_label = NodePath("Camera2D/UI/StarCountLabel")
 stamina_label = NodePath("Camera2D/UI/StaminaLabel")
 time_left_label = NodePath("Camera2D/UI/TimeLeftLabel")
-animation_player = NodePath("AnimationPlayer")
+fight_logic_component = NodePath("FightLogicComponent")
+match_settings = NodePath("MatchSettings")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=664736061]
 position = Vector2(0, -18)
@@ -157,14 +160,14 @@ offset_bottom = 13.0
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Round Timer" type="Timer" parent="." unique_id=1406587034]
-wait_time = 180.0
-one_shot = true
-
-[node name="KO Timer" type="Timer" parent="." unique_id=1425096197]
-unique_name_in_owner = true
-wait_time = 10.0
-one_shot = true
+[node name="stae" type="Label" parent="Camera2D/UI" unique_id=1957271847]
+layout_mode = 0
+offset_left = -180.0
+offset_top = 76.0
+offset_right = -140.0
+offset_bottom = 99.0
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=805291020]
 libraries/ = SubResource("AnimationLibrary_bt4xr")
@@ -179,4 +182,16 @@ duck = ExtResource("9_5bpft")
 block = ExtResource("10_h4xjg")
 metadata/_custom_type_script = "uid://c8kyx1g3lvmgb"
 
-[connection signal="timeout" from="Round Timer" to="." method="_on_round_timer_timeout"]
+[node name="ParticleEffectComponent" type="Node" parent="." unique_id=1861586519]
+script = ExtResource("4_4wfwo")
+show_particles = false
+metadata/_custom_type_script = "uid://lks1t1wg7nna"
+
+[node name="FightLogicComponent" type="Node" parent="." unique_id=32840368 node_paths=PackedStringArray("animation_player")]
+script = ExtResource("12_4wfwo")
+animation_player = NodePath("../AnimationPlayer")
+metadata/_custom_type_script = "uid://cguhik1wigmds"
+
+[node name="MatchSettings" type="Node" parent="." unique_id=1391593835]
+script = ExtResource("13_tqdu3")
+metadata/_custom_type_script = "uid://kmaq2e83r45t"

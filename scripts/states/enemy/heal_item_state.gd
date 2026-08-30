@@ -15,10 +15,6 @@ class_name ItemHealState extends State
 @onready var anim_state_machine = animation_tree.get("parameters/playback")
 
 #region Exported Variables
-@export_category("🎬 Animations & Moveset")
-## The state machine animation that will play in this state that holds all of the attacks.
-@export var state_machine_animation : StringName = "item_heal"
-
 ## How the delay between each attack is handled.
 @export_category("⚙️ Attack Settings")
 
@@ -35,9 +31,24 @@ class_name ItemHealState extends State
 var check_animation_status : bool = false
 
 var target_state : State
+
+var root_state_machine: AnimationNodeStateMachine = null
+@onready var state_machine : AnimationNodeStateMachine = preload("uid://dt6b8hv77b0dh")
+var machine_name = null
+
 #endregion
 
 #region The Ready, Enter and Exit functions
+func _ready() -> void:
+	## Automatically adds the state machine node to the animation tree.
+	root_state_machine = animation_tree.tree_root
+	machine_name = str(name, "_state_machine") 
+	root_state_machine.add_node(machine_name, state_machine, Vector2(0,0))
+	var connection = AnimationNodeStateMachineTransition.new()
+	connection.switch_mode = AnimationNodeStateMachineTransition.SWITCH_MODE_AT_END
+	connection.advance_mode = AnimationNodeStateMachineTransition.ADVANCE_MODE_AUTO
+	root_state_machine.add_transition(machine_name, "hub_node", connection)
+
 
 func enter() -> void:
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
@@ -47,7 +58,7 @@ func enter() -> void:
 	animation_tree.set("parameters/conditions/stunned", false)
 
 	
-	anim_state_machine.travel(state_machine_animation)
+	anim_state_machine.travel(machine_name)
 	
 	if failed_heal_state == null:
 		printerr(self.name, " : Failed Healed State not set.")
@@ -61,15 +72,16 @@ func enter() -> void:
 	animation_tree.animation_finished.connect(check_animation)
 	FightManager.enemy_knocked_down_signal.connect(transition_to_knocked_down)
 	FightManager.succesful_hit_signal.connect(change_to_failed_state)
+	
 	# Sets the hit animation and state machine in the defense component as the hit animation in the state machine.
 	# This is because the defense component is the one responsible for playing the hit animation
 	defense_component.current_hit_animation = str("item_hit")
-	defense_component.current_anim_state_machine = animation_tree[str("parameters/", state_machine_animation ,"/playback")]
+	defense_component.current_anim_state_machine = animation_tree[str("parameters/", machine_name ,"/playback")]
 	check_animation_status = true
 	
 func exit() -> void:
 	# Resets the hit animation and state machine in the defense component back to the default hit animation.
-	defense_component.reset_hit_animation()
+	defense_component.reset_current_animations()
 	animation_tree.animation_finished.disconnect(check_animation)
 	FightManager.enemy_knocked_down_signal.disconnect(transition_to_knocked_down)
 	FightManager.succesful_hit_signal.disconnect(change_to_failed_state)
@@ -79,7 +91,7 @@ func exit() -> void:
 ## Checks if it's no longer in the animation state machine, which would mean it finished the animation.
 func check_animation(_animation_name : StringName) -> void:
 	if check_animation_status == true:
-		if anim_state_machine.get_current_node() != state_machine_animation:
+		if anim_state_machine.get_current_node() != machine_name:
 			transition(self, target_state)
 
 ## If the player got hit, then the interrupted state will be set to the failed healed state.

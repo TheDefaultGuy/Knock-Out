@@ -27,7 +27,7 @@ var interrupted_state: State
 
 var states : Dictionary = {}
 
-func _ready() -> void:
+func _ready() -> void:	
 	for child in get_children():
 		if child is State:
 			states[child] = child # basically checks all of the states and adds them to the states dictionary
@@ -74,8 +74,3 @@ func check_for_unnassigned_states():
 	if get_parent().isPlayer == false:
 		if stun_state == null:
 			printerr(get_parent().name, " doesn't have a Stunned State assigned.")
-		
-		
-		
-		
-		

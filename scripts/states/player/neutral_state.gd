@@ -3,9 +3,9 @@ class_name NeutralPlayerState extends State
 @onready var input_component: InputComponent = %InputComponent
 @onready var anim_state_machine = animation_tree["parameters/playback"]
 
-func enter():
+func enter() -> void:
 	print_rich("[color=yellow]Player Entered State: [/color]", self.name)
-	set_process(false)
+
 	input_component.allow_inputs = true
 	animation_tree.set("parameters/neutral/blend_position", 0)
 	animation_tree.set("parameters/conditions/spectating", false)
@@ -19,14 +19,15 @@ func enter():
 	input_component.defense_input_signal.connect(perform_defense)
 	FightManager.no_stamina_signal.connect(transition_to_tired)
 	FightManager.enemy_knocked_down_signal.connect(transition_to_spectating)
+
 	
-func exit():
+func exit() -> void:
 	input_component.attack_input_signal.disconnect(perform_attack)
 	input_component.defense_input_signal.disconnect(perform_defense)
 	FightManager.no_stamina_signal.disconnect(transition_to_tired)
 	FightManager.enemy_knocked_down_signal.disconnect(transition_to_spectating)
 	
-func perform_defense(move : int, action_name : String):
+func perform_defense(move : int, action_name : String) -> void:
 	if get_parent().get_parent().isKnockdown == true:
 		return
 	elif get_parent().get_parent().isDodging == true && get_parent().get_parent().isHit == false:
@@ -43,7 +44,7 @@ func perform_defense(move : int, action_name : String):
 	else:
 		input_component.store_unhandled_input(action_name) # If the player is currently already dodging or attacking, it'll store the attack they wanted to do so that it's buffered.
 	
-func perform_attack(height : int, direction : int, action_name : String, special_move : bool):
+func perform_attack(height : int, direction : int, action_name : String, special_move : bool) -> void:
 	if get_parent().get_parent().isKnockdown == true:
 		return
 	if get_parent().get_parent().isDodging == false && get_parent().get_parent().isAttacking == false && get_parent().get_parent().isHit == false: # Checks to see if the player isn't currently dodging.
@@ -55,7 +56,7 @@ func perform_attack(height : int, direction : int, action_name : String, special
 		elif special_move == true:
 			if FightManager.star_count > 0: # Checks to see if the player has stars to perform a star punch.
 				FightManager.use_stars()
-				animation_tree.set("parameters/star_punch/blend_position", Vector2i(direction, height))
+				animation_tree.set("parameters/star_punch/blend_position", height)
 				anim_state_machine.travel("star_punch")
 				FightManager.sfx_star_punch_thrown_signal.emit()
 

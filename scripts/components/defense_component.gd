@@ -70,6 +70,7 @@ signal stunned_signal
 
 ## Stores the hit animation. It can change depending on the state.
 var current_hit_animation : String = "hit"
+var current_block_animation : String = "block"
 
 var current_anim_state_machine : AnimationNodeStateMachinePlayback = null
 
@@ -140,7 +141,7 @@ func check_blocking_status(blocking_status : bool, damage_amount : float, punch_
 			
 			# Plays the corresponding block animation if it wasn't enough damage for a knockdown.
 			get_parent().animation_tree.set("parameters/block/blend_position",  punch_height)
-			play_animation("block")
+			play_animation(str(current_block_animation))
 
 			FightManager.succesful_block_signal.emit()
 			return false # Returns that the hit was NOT successful. Mainly as an answer to the attacking component.
@@ -216,6 +217,7 @@ func check_instant_ko() -> bool:
 	return false
 #endregion
 
-func reset_hit_animation():
+func reset_current_animations():
 	current_hit_animation = "hit"
+	current_block_animation = "block"
 	current_anim_state_machine = get_parent().animation_tree["parameters/playback"]

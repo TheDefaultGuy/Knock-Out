@@ -15,9 +15,6 @@ class_name FlurryAttackState extends State
 @onready var anim_state_machine = animation_tree.get("parameters/playback")
 
 #region Exported Variables
-@export_category("🎬 Animations & Moveset")
-## The state machine animation that will play in this state that holds all of the attacks.
-@export var state_machine_animation : String = "flurry_attack"
 
 ## How the delay between each attack is handled.
 @export_category("⚙️ Attack Settings")
@@ -35,13 +32,29 @@ class_name FlurryAttackState extends State
 var target_state : State
 
 var attack_count : int = -1
+
+var root_state_machine: AnimationNodeStateMachine = null
+
+@onready var state_machine : AnimationNodeStateMachine = preload("uid://bg1hc7fvrio3n")
+var machine_name = null
 #endregion
 
 #region The Ready, Enter and Exit functions
+func _ready() -> void:
+	root_state_machine = animation_tree.tree_root
+	machine_name = str(name, "_state_machine") 
+	## Automatically adds the state machine node to the animation tree.
+	root_state_machine.add_node(machine_name, state_machine, Vector2(0,0))
+	var connection = AnimationNodeStateMachineTransition.new()
+	connection.switch_mode = AnimationNodeStateMachineTransition.SWITCH_MODE_AT_END
+	connection.advance_mode = AnimationNodeStateMachineTransition.ADVANCE_MODE_AUTO
+	root_state_machine.add_transition(machine_name, "hub_node", connection)
+
+	
 func enter() -> void:
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
-
-	anim_state_machine.travel(state_machine_animation)
+	
+	anim_state_machine.travel(machine_name)
 	if KO_state == null:
 		printerr(self.name, " : KO State not set.")
 	if survived_state == null:
@@ -54,9 +67,9 @@ func enter() -> void:
 	animation_tree.animation_finished.connect(increase_count.unbind(1))
 	FightManager.player_knocked_down_signal.connect(transition_to_spectating)
 	FightManager.enemy_knocked_down_signal.connect(transition_to_knocked_down)
-
 	attack_count = -1 # Resets the attack count when re-entering this state
-	
+
+
 func exit() -> void:
 	animation_tree.animation_finished.disconnect(increase_count.unbind(1))
 	FightManager.player_knocked_down_signal.disconnect(transition_to_spectating)
@@ -64,8 +77,7 @@ func exit() -> void:
 
 	
 func _process(_delta: float) -> void:
-	if state_machine_animation != null:
-		animation_tree.set(str("parameters/",state_machine_animation,"/conditions/ko"), Global.player_node.isKnockdown)
+	animation_tree.set(str("parameters/",machine_name,"/conditions/ko"), Global.player_node.isKnockdown)
 	return
 #endregion
 
@@ -73,7 +85,7 @@ func _process(_delta: float) -> void:
 func increase_count() -> void:
 	attack_count += 1
 	if attack_count >= number_of_repetitions:
-		animation_tree[str("parameters/", state_machine_animation ,"/playback")].travel("End")
+		animation_tree[str("parameters/",machine_name,"/playback")].travel("End")
 		transition(self, target_state)
 		
 

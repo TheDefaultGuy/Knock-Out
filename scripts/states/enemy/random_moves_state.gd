@@ -72,9 +72,6 @@ enum BLOCK_BEHAVIOR{
 ## What to do when an attack is blocked when in this state.
 @export var block_behavior := BLOCK_BEHAVIOR.PAUSE_TIMER
 
-## The timer used to time attacks.
-@export var attack_timer : Timer
-
 ## How the delay between each attack is handled.
 @export var attack_delay_type := ATTACK_DELAY.FLOAT: 
 	set(value):
@@ -125,19 +122,20 @@ enum BLOCK_BEHAVIOR{
 @export_range(10.0, 180.0, 1.0, "suffix:s") var target_round_time : float
 
 ## The amount of time the enemy waits (in seconds) before changing to the target state.
-@export_range(1.0, 90.0, 1.0, "suffix:s") var time_to_wait : float
+@export_range(5.0, 120.0, 1.0, "suffix:s") var time_to_wait : float = 5.0
 
 
 var stored_round_time : float
 
-var stored_round_time_dict : Dictionary = {
-	"attack" : 0.0,
-	"wait" : 0.0,
-	"heal" : 0.0
-}
 
+## The timer used to time attacks.
+var attack_timer : Timer = null
 ## Timer used to transition to the target state.
-@export var wait_timer : Timer
+var wait_timer : Timer = null
+
+var root_state_machine: AnimationNodeStateMachine = null
+
+
 
 ## Handles showing and hiding applicable exported variables
 func _validate_property(property: Dictionary) -> void: 
@@ -149,29 +147,25 @@ func _validate_property(property: Dictionary) -> void:
 		property.usage = PROPERTY_USAGE_NONE
 	if property.name == "target_health" and primary_condition != STATE_CHANGE_CONDITION.AFTER_HEALTH_DROPS_BELOW and secondary_condition != STATE_CHANGE_CONDITION.AFTER_HEALTH_DROPS_BELOW :
 		property.usage = PROPERTY_USAGE_NONE
+	if property.name == "primary_target_state" and primary_condition == STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
+		property.usage = PROPERTY_USAGE_NONE
+	if property.name == "secondary_target_state" and secondary_condition == STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
+		property.usage = PROPERTY_USAGE_NONE
 #endregion
 
 #region The Ready, Enter and Exit functions.
 func _ready() -> void:
-	if attack_timer == null:
-		printerr(self.name, " : General Timer not set.")
-	
-	if wait_timer != null:
-		wait_timer.wait_time = time_to_wait
-		wait_timer.one_shot = true
-		
-
-	
+	create_timers()
 	if primary_target_state == null and primary_condition != STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
 		printerr(self.name, " : Primary Target State not set.")
 	if secondary_target_state == null and secondary_condition != STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
 		push_warning(self.name, " : Secondary Target State not set.")
 	if animation_tree == null:
 		printerr(self.name, " : Animation tree not set.")
-	if primary_condition == STATE_CHANGE_CONDITION.AFTER_TIME_PASSED or secondary_condition == STATE_CHANGE_CONDITION.AFTER_TIME_PASSED:
-		if wait_timer == null:
-			printerr(self.name, " : Wait Timer not set.")
-
+		
+	root_state_machine = animation_tree.tree_root
+	add_attack_animation_nodes()
+	
 
 func enter() -> void:
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
@@ -197,16 +191,16 @@ func enter() -> void:
 	
 	start_attack_delay_timer()
 	
-	if wait_timer != null:
-		wait_timer.start()
-		wait_timer.timeout.connect(_on_wait_timer_timeout)
+	
+	wait_timer.start()
+	wait_timer.timeout.connect(_on_wait_timer_timeout)
 
 
 func exit() -> void:
 	attack_timer.stop()
 	if wait_timer != null: # Shenanigans to pause the wait timer when transitioning to another scene.
 		wait_timer.stop()
-		if wait_timer.time_left <= 0:
+		if wait_timer.time_left <= 0.0:
 			wait_timer.wait_time = time_to_wait
 		else:
 			wait_timer.wait_time = wait_timer.time_left
@@ -232,12 +226,24 @@ func _process(_delta: float) -> void:
 
 #endregion
 
+## Automatically adds all of the attack names as nodes in the animation tree.
+func add_attack_animation_nodes() -> void:
+	for attack in moveset.keys():
+		var node_animation := AnimationNodeAnimation.new()
+		var anim_name : String = "attack/" + str(attack)
+		node_animation.animation = anim_name
+		root_state_machine.add_node(str(attack), node_animation, Vector2(0,0))
+		
+		var connection := AnimationNodeStateMachineTransition.new()
+		connection.switch_mode = AnimationNodeStateMachineTransition.SWITCH_MODE_AT_END
+		connection.advance_mode = AnimationNodeStateMachineTransition.ADVANCE_MODE_AUTO
+		root_state_machine.add_transition(str(attack), "hub_node", connection)
+
 ## Starts the attack delay timer using a random time.
 ##
 ## This function is called right after performing an attack and after the player or the enemy blocks.
 func start_attack_delay_timer() -> void:
 	if attack_delay_type == ATTACK_DELAY.FLOAT:
-		
 		attack_timer.start(randf_range(min_wait_time, max_wait_time)) # Starts the timer when entering the state and sets a random wait time.
 	elif attack_delay_type == ATTACK_DELAY.PREDETERMINED:
 		attack_timer.start(attack_delay_array.pick_random())
@@ -337,3 +343,14 @@ func condition_match_set_inter_state(condition : int) -> void:
 func transition_to_target(target_state : State) -> void:
 	if anim_state_machine.get_current_node() == "idle": # Checks to see if the enemy is idle so that it doesn't interrupt a hit, block, or any other animation.
 		transition(self, target_state)
+		
+## Creates the timers with code so that you don't have to make timer node and then manually assign it.
+func create_timers() -> void:
+	attack_timer = Timer.new()
+	attack_timer.name = "Attack Delay Timer"
+	add_child(attack_timer)
+	wait_timer = Timer.new()
+	wait_timer.name = "Wait Timer"
+	wait_timer.one_shot = true
+	add_child(wait_timer)
+	wait_timer.wait_time = time_to_wait

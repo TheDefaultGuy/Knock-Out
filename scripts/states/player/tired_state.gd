@@ -4,7 +4,7 @@ class_name TiredState extends State
 @onready var input_component: InputComponent = %InputComponent
 @onready var anim_state_machine = animation_tree["parameters/playback"]
 
-func enter():
+func enter() -> void:
 	print_rich("[color=yellow]Player Entered State: [/color]", self.name)
 	set_process(false)
 	
@@ -14,13 +14,13 @@ func enter():
 	input_component.defense_input_signal.connect(perform_defense)
 	defense_component.succesful_dodge.connect(succesful_dodge)
 
-func exit():
+func exit() -> void:
 	animation_tree.set("parameters/neutral/blend_position", 0)
 	input_component.attack_input_signal.disconnect(perform_attack)
 	input_component.defense_input_signal.disconnect(perform_defense)
 	defense_component.succesful_dodge.disconnect(succesful_dodge)
 	
-func perform_defense(move : int, action_name : String):
+func perform_defense(move : int, action_name : String) -> void:
 	if get_parent().get_parent().isKnockdown == true:
 		return
 	elif get_parent().get_parent().isDodging == false && get_parent().get_parent().isAttacking == false && get_parent().get_parent().isHit == false:
@@ -33,10 +33,11 @@ func perform_defense(move : int, action_name : String):
 	else:
 		input_component.store_unhandled_input(action_name) # If the player is currently already dodging or attacking, it'll store the attack they wanted to do so that it's buffered.
 		
-func perform_attack(_height : int, _direction : int, _action_name : String, _special : bool):
+func perform_attack(_height : int, _direction : int, _action_name : String, _special : bool) -> void:
 	pass
 
-func succesful_dodge():
+func succesful_dodge() -> void:
 	FightManager.set_stamina()
-	transition_to_previous_state()
+	animation_tree.set("parameters/neutral/blend_position", 0)
+	transition_to_neutral()
 	

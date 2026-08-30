@@ -15,8 +15,11 @@ class_name ReactionaryState extends State
 
 #region Exported Variables and function that handles which variables to show
 @export_category("🎬 Animations & Moveset")
-## The idling animation that will play in this state.
-@export var state_machine_animation : String = "reactionary"
+
+## The taunt animation that will play in this state.
+@export var taunt_animation : String = "taunt"
+## The block animation that will lead to the counter attack.
+@export var block_animation : String = "block"
 
 
 enum STATE_CHANGE_CONDITION{
@@ -41,8 +44,6 @@ enum STATE_CHANGE_CONDITION{
 }
 
 @export_category("⏱ Taunt Delays")
-## A Multipurpose timer that can be used by various states.
-@export var general_timer : Timer
 ## The minimum amount of time (in seconds) the enemy will wait before randomly choosing a move.
 @export_custom(PROPERTY_HINT_NONE, "suffix:s") var min_wait_time : float = 2.0
 ## The maximum amount of time (in seconds) the enemy will wait before randomly choosing a move.
@@ -71,10 +72,14 @@ enum STATE_CHANGE_CONDITION{
 ## The time in the round (in seconds) where the enemy changes to the target state.
 @export_range(10.0, 180.0, 1.0, "suffix:s") var target_round_time : float
 ## The amount of time the enemy waits (in seconds) before changing to the target state.
-@export_range(1.0, 90.0, 1.0, "suffix:s") var time_to_wait : float
+@export_range(5.0, 120.0, 1.0, "suffix:s") var time_to_wait : float = 5.0
 
-@export var wait_timer : Timer
+var wait_timer : Timer = null
+var taunt_timer : Timer = null
 
+var root_state_machine: AnimationNodeStateMachine = null
+var machine_name = null
+@onready var state_machine : AnimationNodeStateMachine = preload("uid://c1biuhgyv30i1")
 
 ## Handles showing and hiding applicable exported variables
 func _validate_property(property: Dictionary) -> void: 
@@ -84,16 +89,24 @@ func _validate_property(property: Dictionary) -> void:
 		property.usage = PROPERTY_USAGE_NONE
 	if property.name == "wait_timer" and primary_condition != STATE_CHANGE_CONDITION.AFTER_TIME_PASSED and secondary_condition != STATE_CHANGE_CONDITION.AFTER_TIME_PASSED :
 		property.usage = PROPERTY_USAGE_NONE
+	if property.name == "primary_target_state" and primary_condition == STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
+		property.usage = PROPERTY_USAGE_NONE
+	if property.name == "secondary_target_state" and secondary_condition == STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
+		property.usage = PROPERTY_USAGE_NONE
 #endregion
 
 #region The Ready, Enter and Exit functions.
 func _ready() -> void:
-	if general_timer == null:
-		printerr(self.name, " : General Timer not set.")
-	
-	if wait_timer != null:
-		wait_timer.wait_time = time_to_wait
-		wait_timer.one_shot = true
+	create_timers()
+	root_state_machine = animation_tree.tree_root
+	machine_name = str(name, "_state_machine")
+	root_state_machine.add_node(machine_name, state_machine, Vector2(0,0))
+	var connection = AnimationNodeStateMachineTransition.new()
+	connection.switch_mode = AnimationNodeStateMachineTransition.SWITCH_MODE_AT_END
+	connection.advance_mode = AnimationNodeStateMachineTransition.ADVANCE_MODE_AUTO
+	root_state_machine.add_transition(machine_name, "hub_node", connection)
+	state_machine.get_node("taunt").animation = taunt_animation
+	#state_machine.get_node("block_react").animation = block_animation
 	
 func enter() -> void: # Blank enter and exit functions that get overridden by each state's own custom enter and exit functions.
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
@@ -102,12 +115,14 @@ func enter() -> void: # Blank enter and exit functions that get overridden by ea
 	animation_tree.set("parameters/conditions/stunned", false)
 	animation_tree.set("parameters/conditions/spectating", false)
 
-	
-	anim_state_machine.travel(state_machine_animation)
+	anim_state_machine.travel(machine_name)
+
 	start_attack_delay_timer()
 	# Sets the interrupted state in the state machine as itself.
 	# That way, if it gets interrupted by another state like stunned, it'll come back to this one.
 	get_parent().interrupted_state = self 
+	
+
 	
 	FightManager.player_knocked_down_signal.connect(transition_to_spectating)
 	FightManager.enemy_knocked_down_signal.connect(transition_to_knocked_down)
@@ -118,10 +133,9 @@ func enter() -> void: # Blank enter and exit functions that get overridden by ea
 	FightManager.succesful_block_signal.connect(start_attack_delay_timer)
 	defense_component.stunned_signal.connect(transition_to_stunned)
 	
-	if wait_timer != null:
-		wait_timer.start()
-		wait_timer.timeout.connect(_on_wait_timer_timeout)
-	
+	wait_timer.start()
+	wait_timer.timeout.connect(_on_wait_timer_timeout)
+	taunt_timer.timeout.connect(perform_taunt)
 	
 	if primary_target_state == null and primary_condition != STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
 		printerr(self.name, " : Primary Target State not set.")
@@ -129,19 +143,16 @@ func enter() -> void: # Blank enter and exit functions that get overridden by ea
 		push_warning(self.name, " : Secondary Target State not set.")
 	if animation_tree == null:
 		printerr(self.name, " : Animation tree not set.")
-	if primary_condition == STATE_CHANGE_CONDITION.AFTER_TIME_PASSED or secondary_condition == STATE_CHANGE_CONDITION.AFTER_TIME_PASSED:
-		if wait_timer == null:
-			printerr(self.name, " : Wait Timer not set.")
-			
-	# Sets the hit animation and state machine in the defense component as the hit animation in the state machine.
-	# This is because the defense component is the one responsible for playing the hit animation
-	defense_component.current_hit_animation = str("item_hit")
-	defense_component.current_anim_state_machine = animation_tree[str("parameters/", state_machine_animation ,"/playback")]
-	defense_component.lower_blocking_status = true
-	defense_component.upper_blocking_status = true
+
+	# Sets the block animation and state machine in the defense component as the block animation in the state machine.
+	# This is because the defense component is the one responsible for playing the block animation
+	defense_component.current_block_animation = str("block_react")
+	defense_component.current_anim_state_machine = animation_tree[str("parameters/",machine_name,"/playback")]
+
+	
 func exit() -> void:
-	general_timer.timeout.disconnect(perform_action)
-	general_timer.stop()
+	taunt_timer.timeout.disconnect(perform_taunt)
+	taunt_timer.stop()
 	
 	if wait_timer != null: # Shenanigans to pause the wait timer when transitioning to another scene.
 		wait_timer.stop()
@@ -150,6 +161,7 @@ func exit() -> void:
 		else:
 			wait_timer.wait_time = wait_timer.time_left
 		wait_timer.timeout.disconnect(_on_wait_timer_timeout)
+	
 	FightManager.player_knocked_down_signal.disconnect(transition_to_spectating)
 	FightManager.enemy_knocked_down_signal.disconnect(transition_to_knocked_down)
 	
@@ -158,27 +170,28 @@ func exit() -> void:
 	FightManager.no_stamina_signal.disconnect(check_state_change_condition.bind(FightManager.player_knocked_down_signal.get_name()))
 	FightManager.succesful_block_signal.disconnect(start_attack_delay_timer)
 	defense_component.stunned_signal.disconnect(transition_to_stunned)
+	defense_component.reset_current_animations()
 	
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): #Doesnt run the check round time function when in the editor; only when in-game
 		return
 	if get_parent().current_state == self:
 		check_round_time()
-	
+
 #endregion
 
 ## Starts the attack delay timer using a random time.
 ##
 ## This function is called right after performing an attack and after the player or the enemy blocks.
 func start_attack_delay_timer() -> void:
-	general_timer.start(randf_range(min_wait_time, max_wait_time)) # Starts the timer when entering the state and sets a random wait time.
+	taunt_timer.start(randf_range(min_wait_time, max_wait_time)) # Starts the timer when entering the state and sets a random wait time.
 
-func perform_action() -> void:
-	#anim_state_machine.travel(taunt_animation)
+func perform_taunt() -> void:
+	animation_tree[str("parameters/",machine_name,"/playback")].travel("taunt")
 	start_attack_delay_timer()
 
-
-func check_round_time() -> void: # Checks to see if the current round time matches the specified round time to change state.
+## Checks to see if the current round time matches the specified round time to change state.
+func check_round_time() -> void: 
 	if FightManager.round_time >= target_round_time:
 		condition_match(STATE_CHANGE_CONDITION.AT_ROUND_TIME)
 		return
@@ -204,7 +217,8 @@ func check_state_change_condition(signal_name : StringName) -> void:
 		"no_stamina_signal":
 			condition_match(STATE_CHANGE_CONDITION.AFTER_PLAYER_TIRED)
 			return
-## Helper function to make this more readable.
+			
+## Helper function to make the script more readable.
 func condition_match(condition : int) -> void:
 	match condition:
 		primary_condition:
@@ -213,7 +227,22 @@ func condition_match(condition : int) -> void:
 		secondary_condition:
 			transition_to_target(secondary_target_state)
 			return
-			
+
+## Function called when the conditions to change state are met.
+## The functions waits until the enemy is back in the "idle" animation,
+## that way it doesn't awkwardly interrupt any other animations.
 func transition_to_target(target_state : State) -> void:
-	if anim_state_machine.get_current_node() == "idle": # Checks to see if the enemy is idle so that it doesn't interrupt a hit, block, or any other animation.
+	if anim_state_machine.get_current_node() == "idle" or anim_state_machine.get_current_node() == "idle_guard": # Checks to see if the enemy is idle so that it doesn't interrupt a hit, block, or any other animation.
+		animation_tree[str("parameters/",machine_name,"/playback")].travel("End")
 		transition(self, target_state)
+
+## Creates the timers with code so that you don't have to make timer node and then manually assign it.
+func create_timers() -> void:
+	taunt_timer = Timer.new()
+	taunt_timer.name = "Taunt Delay Timer"
+	add_child(taunt_timer)
+	wait_timer = Timer.new()
+	wait_timer.name = "Wait Timer"
+	wait_timer.one_shot = true
+	add_child(wait_timer)
+	wait_timer.wait_time = time_to_wait

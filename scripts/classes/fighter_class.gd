@@ -10,7 +10,7 @@ class_name Fighter extends Node2D
 @export var animation_tree: AnimationTree
 @onready var anim_state_machine = animation_tree["parameters/playback"]
 @export var fighter_info : FighterInfo
-
+@export var state_machine : StateMachine
 ## Self-explanatory
 @export var max_hp : float = 100.0
 
