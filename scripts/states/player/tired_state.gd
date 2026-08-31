@@ -2,7 +2,7 @@
 class_name TiredState extends State
 
 @onready var input_component: InputComponent = %InputComponent
-@onready var anim_state_machine = animation_tree["parameters/playback"]
+var player = self.owner
 
 func enter() -> void:
 	print_rich("[color=yellow]Player Entered State: [/color]", self.name)
@@ -21,9 +21,7 @@ func exit() -> void:
 	defense_component.succesful_dodge.disconnect(succesful_dodge)
 	
 func perform_defense(move : int, action_name : String) -> void:
-	if get_parent().get_parent().isKnockdown == true:
-		return
-	elif get_parent().get_parent().isDodging == false && get_parent().get_parent().isAttacking == false && get_parent().get_parent().isHit == false:
+	if anim_state_machine.get_current_node() == "neutral":
 		animation_tree.set("parameters/dodge/blend_position", move)
 		anim_state_machine.travel("dodge")
 		if move == Global.range.NEUTRAL:

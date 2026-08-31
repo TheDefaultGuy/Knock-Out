@@ -2,7 +2,7 @@
 class_name PlayerKnockedDownState extends State
 
 @onready var input_component: InputComponent = %InputComponent
-@onready var anim_state_machine = animation_tree["parameters/playback"]
+
 
 ## Value from 0.0 to 100.0 that determines how far the player is to recovering from a knockout and getting up.
 @export var get_up_progress : float = 0.0
@@ -22,7 +22,7 @@ func enter() -> void:
 	input_component.defense_input_signal.connect(perform_defense)
 	FightManager.resume_fighting_signal.connect(transition_to_neutral)
 	FightManager.fight_is_over_signal.connect(failed_to_get_up)
-	get_parent().get_parent().isKnockdown = true
+	self.owner.isKnockdown = true
 	
 func exit() -> void:
 	get_up_progress = 0.0
@@ -30,7 +30,7 @@ func exit() -> void:
 	input_component.defense_input_signal.disconnect(perform_defense)
 	FightManager.resume_fighting_signal.disconnect(transition_to_neutral)
 	FightManager.fight_is_over_signal.disconnect(failed_to_get_up)
-	get_parent().get_parent().isKnockdown = false
+	self.owner.isKnockdown = false
 	
 func _process(delta: float) -> void:
 	if get_parent().current_state == self:

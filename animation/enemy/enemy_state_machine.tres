@@ -183,4 +183,4 @@ states/spectating/position = Vector2(40, -249.04001)
 states/taunting/node = SubResource("AnimationNodeAnimation_dc4rr")
 states/taunting/position = Vector2(0, -156.512)
 transitions = ["spectating", "taunting", SubResource("AnimationNodeStateMachineTransition_30ln2"), "get_up", "back_to_the_fight", SubResource("AnimationNodeStateMachineTransition_38nj0"), "hit", "RESET", SubResource("AnimationNodeStateMachineTransition_v64oh"), "block", "RESET", SubResource("AnimationNodeStateMachineTransition_2gws3"), "RESET", "idle", SubResource("AnimationNodeStateMachineTransition_f4x83"), "back_to_the_fight", "RESET", SubResource("AnimationNodeStateMachineTransition_dtu1g"), "intro", "RESET", SubResource("AnimationNodeStateMachineTransition_tc7v8"), "idle", "spectating", SubResource("AnimationNodeStateMachineTransition_5oyfg"), "hub_node", "idle", SubResource("AnimationNodeStateMachineTransition_lmwrg"), "Start", "RESET", SubResource("AnimationNodeStateMachineTransition_sul60")]
-graph_offset = Vector2(-376.10803, -412)
+graph_offset = Vector2(-373.10803, -405)

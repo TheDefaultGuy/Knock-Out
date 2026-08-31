@@ -27,9 +27,10 @@ var interrupted_state: State
 
 var states : Dictionary = {}
 
-func _ready() -> void:	
+func _ready() -> void:
 	for child in get_children():
 		if child is State:
+
 			states[child] = child # basically checks all of the states and adds them to the states dictionary
 			
 			child.transition_state.connect(on_transition)
@@ -57,8 +58,8 @@ func on_transition(state, new_state_name):
 	
 	current_state = new_state # Sets the current state to the new state
 	#print("Current State: ", current_state)
-
-
+	
+	
 func check_for_unnassigned_states():
 	if knocked_down_state == null:
 		printerr(get_parent().name, " doesn't have a Knocked Down State assigned.")
@@ -68,9 +69,9 @@ func check_for_unnassigned_states():
 		printerr(get_parent().name, " doesn't have an Initial State assigned.")
 	if cutscene_state == null:
 		printerr(get_parent().name, " doesn't have an Cutscene State assigned.")
-	if get_parent().isPlayer == true:
+	if get_parent() is Player:
 		if tired_state == null:
 			printerr(get_parent().name, " doesn't have a Tired State assigned.")
-	if get_parent().isPlayer == false:
+	if get_parent() is Enemy:
 		if stun_state == null:
 			printerr(get_parent().name, " doesn't have a Stunned State assigned.")

@@ -11,7 +11,7 @@
 ## DO NOT change anything in the actual .gd file, since it'll screw up compatibility HARD.
 class_name ReactionaryState extends State
 
-@onready var anim_state_machine = animation_tree["parameters/playback"]
+
 
 #region Exported Variables and function that handles which variables to show
 @export_category("🎬 Animations & Moveset")
@@ -98,6 +98,7 @@ func _validate_property(property: Dictionary) -> void:
 #region The Ready, Enter and Exit functions.
 func _ready() -> void:
 	create_timers()
+	#reset_animation_tree()
 	root_state_machine = animation_tree.tree_root
 	machine_name = str(name, "_state_machine")
 	root_state_machine.add_node(machine_name, state_machine, Vector2(0,0))

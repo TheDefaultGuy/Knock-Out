@@ -3,8 +3,7 @@
 ## This is a required state for enemy boxers.
 class_name EnemySpectatingState extends State
 
-@onready var anim_state_machine = animation_tree["parameters/playback"]
-	
+
 func enter() -> void:
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
 	anim_state_machine.travel("spectating")

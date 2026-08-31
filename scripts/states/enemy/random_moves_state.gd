@@ -13,8 +13,6 @@
 ## DO NOT change anything in the actual .gd file, since it'll screw up compatibility HARD.
 class_name RandomizedMovesState extends State
 
-@onready var anim_state_machine = animation_tree["parameters/playback"]
-
 #region Exported Variables and function that handles which variables to show
 @export_category("🎬 Animations & Moveset")
 ## The available moves in this state.
@@ -156,16 +154,15 @@ func _validate_property(property: Dictionary) -> void:
 #region The Ready, Enter and Exit functions.
 func _ready() -> void:
 	create_timers()
+	root_state_machine = animation_tree.tree_root
+	add_attack_animation_nodes()
+	
 	if primary_target_state == null and primary_condition != STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
 		printerr(self.name, " : Primary Target State not set.")
 	if secondary_target_state == null and secondary_condition != STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
 		push_warning(self.name, " : Secondary Target State not set.")
 	if animation_tree == null:
 		printerr(self.name, " : Animation tree not set.")
-		
-	root_state_machine = animation_tree.tree_root
-	add_attack_animation_nodes()
-	
 
 func enter() -> void:
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
@@ -237,8 +234,8 @@ func add_attack_animation_nodes() -> void:
 		var connection := AnimationNodeStateMachineTransition.new()
 		connection.switch_mode = AnimationNodeStateMachineTransition.SWITCH_MODE_AT_END
 		connection.advance_mode = AnimationNodeStateMachineTransition.ADVANCE_MODE_AUTO
-		root_state_machine.add_transition(str(attack), "hub_node", connection)
-
+		root_state_machine.call_deferred("add_transition", str(attack), "hub_node", connection)
+	
 ## Starts the attack delay timer using a random time.
 ##
 ## This function is called right after performing an attack and after the player or the enemy blocks.

@@ -2,56 +2,22 @@
 ## The base class for all boxers/fighters, including the player.
 class_name Fighter extends Node2D
 
-@export_category("Required Gameplay Components")
-@export var defense_component: DefenseComponent
-@export var attacking_component: AttackingComponent
-@export var health_component: HealthComponent
-@export var instant_ko_component: InstantKOComponent
-@export var animation_tree: AnimationTree
+#@export_category("Required Gameplay Components")
+@onready var defense_component: DefenseComponent = %DefenseComponent
+@onready var health_component: HealthComponent = %HealthComponent
+@onready var attacking_component: AttackingComponent = %AttackingComponent
+@onready var animation_tree: AnimationTree = %AnimationTree
 @onready var anim_state_machine = animation_tree["parameters/playback"]
+
 @export var fighter_info : FighterInfo
-@export var state_machine : StateMachine
+@onready var state_machine: StateMachine = %StateMachine
+
 ## Self-explanatory
 @export var max_hp : float = 100.0
 
-@export_group("Fighter Variables")
-## Whether the fighter is currently knocked down.
-@export var isKnockdown : bool = false
-## Whether the fighter is currently dodging.
-@export var isDodging : bool = false
-## Whether the fighter is currently attacking.
-@export var isAttacking : bool = false
-## Whether the fighter is currently hit/playing the hit animation.
-@export var isHit : bool = false
-## Whether the fighter is the player themselves.
-@export var isPlayer : bool = false
-
-@warning_ignore("unused_signal")
-signal heal_item_used_signal
-
-
-func _ready() -> void:
-	if defense_component == null:
-		printerr(self.name, " doesn't have a Defense Component assigned.")
-	if attacking_component == null:
-		printerr(self.name, " doesn't have an Attacking Component assigned.")
-	if health_component == null:
-		printerr(self.name, " doesn't have a Health Component assigned.")
-	if animation_tree == null:
-		printerr(self.name, " doesn't have an Animation Tree assigned.")
-	if isPlayer == false and instant_ko_component == null:
-		push_warning(self.name, " doesn't have an Instant KO Component assigned")
-
 func start_get_up():
 	FightManager.start_get_up_signal.emit()
-		
-func ready_to_fight():
-	#print("Fighter Class: ", name, " is ready")
-	if isPlayer == true:
-		FightManager.player_ready_status = true
-	elif isPlayer == false:
-		FightManager.enemy_ready_status = true
-	FightManager.fighter_ready_signal.emit()
-	
+
+
 func emit_got_up_signal():
 	FightManager.fighter_got_up_signal.emit()

@@ -75,9 +75,12 @@ var current_block_animation : String = "block"
 var current_anim_state_machine : AnimationNodeStateMachinePlayback = null
 
 func _ready() -> void:
-	current_anim_state_machine = get_parent().animation_tree["parameters/playback"]
-	if get_parent().isPlayer == false: # Enemies can't get hurt when they block.
+	set_anim_state_machine.call_deferred() # gotta defer this for it to work for some reason.
+	if owner is Enemy: # Enemies can't get hurt when they block.
 		blocking_damage_multiplier = 0
+
+func set_anim_state_machine() -> void:
+	current_anim_state_machine = owner.anim_state_machine
 
 ## This is the main function used to check if a hit is succesful or not and is called by the opposing fighter's [annotation Attack Component].
 ## 
@@ -87,7 +90,7 @@ func _ready() -> void:
 func check_defense(punch_height : int, punch_range : int, damage_amount : float, punch_direction : int) -> bool: 
 	# First, it checks for invulnerabilities and dodges.
 	if is_invulnerable(punch_height) or is_punch_dodged(punch_range):
-		if get_parent().isPlayer == true:
+		if owner is Player:
 			succesful_dodge.emit()
 			FightManager.missed_attack_signal.emit()
 		return false # Returns that the hit was NOT successful. Mainly as an answer to the attacking component.
@@ -107,12 +110,12 @@ func check_defense(punch_height : int, punch_range : int, damage_amount : float,
 				if handle_damage_and_knockdown(damage_amount, 1.0, punch_height, punch_direction) == true:
 					return true
 				else:
-					get_parent().animation_tree.set("parameters/hit/blend_position", Vector2i(punch_direction, punch_height))
+					owner.animation_tree.set("parameters/hit/blend_position", Vector2i(punch_direction, punch_height))
 					play_animation(str(current_hit_animation))
 					return true
 				
 			_: # Fall back for Unaccounted 4th height value.
-				printerr(get_parent().name, " Defense Component: Unaccounted 4th height value.")
+				printerr(owner.name, " Defense Component: Unaccounted 4th height value.")
 				return false 
 				
 
@@ -131,7 +134,7 @@ func check_blocking_status(blocking_status : bool, damage_amount : float, punch_
 					return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
 			
 			check_for_star_and_stun(punch_height)
-			get_parent().animation_tree.set("parameters/hit/blend_position", Vector2i(punch_direction, punch_height))
+			owner.animation_tree.set("parameters/hit/blend_position", Vector2i(punch_direction, punch_height))
 			play_animation(str(current_hit_animation))
 			return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
 				
@@ -140,7 +143,7 @@ func check_blocking_status(blocking_status : bool, damage_amount : float, punch_
 				return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
 			
 			# Plays the corresponding block animation if it wasn't enough damage for a knockdown.
-			get_parent().animation_tree.set("parameters/block/blend_position",  punch_height)
+			owner.animation_tree.set("parameters/block/blend_position",  punch_height)
 			play_animation(str(current_block_animation))
 
 			FightManager.succesful_block_signal.emit()
@@ -152,13 +155,13 @@ func check_blocking_status(blocking_status : bool, damage_amount : float, punch_
 ## Helper function. Deals damage and returns whether or not the attack resulted in a knock down.
 ## Also emits the the signal that the hit was successful.
 func handle_damage_and_knockdown(damage_amount : float, multiplier : float, punch_height : int, punch_direction : int) -> bool:
-	if get_parent().isPlayer == true: # checks to see if the defender is the player. If the player got hit, lower their stamina.
+	if owner is Player: # checks to see if the defender is the player. If the player got hit, lower their stamina.
 		FightManager.lower_stamina()
 	else:
 		if check_instant_ko() == true:
 			damage_amount = damage_amount * 300.0
-	if get_parent().health_component.deal_damage_and_check_for_knockdown(damage_amount, multiplier) == true:
-		get_parent().animation_tree.set("parameters/knock_down/blend_position", Vector2i(punch_direction, punch_height))
+	if owner.health_component.deal_damage_and_check_for_knockdown(damage_amount, multiplier) == true:
+		owner.animation_tree.set("parameters/knock_down/blend_position", Vector2i(punch_direction, punch_height))
 		play_animation("knock_down")
 		return true
 	else:
@@ -169,7 +172,7 @@ func handle_damage_and_knockdown(damage_amount : float, multiplier : float, punc
 ## Then, it checks to see if the attack landed during a stun window.
 ## Returns true if stunned, and false if not
 func check_for_star_and_stun(punch_height : int) -> bool: 
-	if get_parent().isPlayer == false: # Checks to see if the parent that is getting hit is the enemy and not the player.
+	if owner is Enemy: # Checks to see if the parent that is getting hit is the enemy and not the player.
 		match punch_height: # If the player attacked at a time where a star can be awarded, run the award star function.
 			Global.height.LOW:
 				if lower_star_window == true:
@@ -209,15 +212,16 @@ func is_punch_dodged(punch_range: int) -> bool:
 ## Checks the instant KO window and then calls the function in the instant KO component to check and return whether or not it's an instant KO.
 func check_instant_ko() -> bool:
 	if instant_ko_window == true:
-		if get_parent().instant_ko_component != null:
-			if get_parent().instant_ko_component.check_for_instant_knock_out() == true:
+		if owner.instant_ko_component != null:
+			if owner.instant_ko_component.check_for_instant_knock_out() == true:
 				return true
 		else:
-			push_error("Defense Component: ", get_parent().name, " doesn't have an Instant KO Component.")
+			push_error("Defense Component: ", owner.name, " doesn't have an Instant KO Component.")
 	return false
 #endregion
 
+## Resets the hit and block animations as well as the current state machine back to the default ones.
 func reset_current_animations():
 	current_hit_animation = "hit"
 	current_block_animation = "block"
-	current_anim_state_machine = get_parent().animation_tree["parameters/playback"]
+	current_anim_state_machine = owner.animation_tree["parameters/playback"]

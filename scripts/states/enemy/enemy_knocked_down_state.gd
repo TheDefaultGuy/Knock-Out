@@ -3,7 +3,7 @@
 ## It is a required state for all enemies.
 class_name EnemyKnockedDownState extends State
 
-@onready var anim_state_machine = animation_tree["parameters/playback"]
+
 
 @export_custom(PROPERTY_HINT_NONE, "suffix:s") var min_getup_time : float = 1.0
 @export_custom(PROPERTY_HINT_NONE, "suffix:s") var max_getup_time : float = 9.0

@@ -15,7 +15,6 @@
 ## Resets after a new round.
 class_name StunState extends State
 
-@onready var anim_state_machine = animation_tree["parameters/playback"]
 
 #region Exported Variables and function that handles which variables to show.
 ## How stun will work/behave for the fighter.

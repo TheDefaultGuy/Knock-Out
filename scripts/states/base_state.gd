@@ -3,17 +3,22 @@ class_name State extends Node
 @onready var health_component: HealthComponent = %HealthComponent
 @onready var defense_component: DefenseComponent = %DefenseComponent
 @onready var attacking_component: AttackingComponent = %AttackingComponent
-@export var animation_tree: AnimationTree
+@onready var animation_tree: AnimationTree = %AnimationTree
+@onready var anim_state_machine = animation_tree["parameters/playback"]
+
 
 
 @warning_ignore("unused_signal")
 signal transition_state
 
-
+func _ready() -> void:
+	pass
+	
 ## The Function that will run as soon as the state machine enters the state.
 ## Can be overwritten by extended state, but still be reliably called by the state machine.
 func enter() -> void:
 	pass
+	
 ## The Function that will run right before the state machine exits the state.
 ## Can be overwritten by extended state, but still be reliably called by the state machine.
 func exit() -> void:
@@ -21,7 +26,8 @@ func exit() -> void:
 
 #func _process(_delta: float) -> void:
 	#return
-	
+
+#region Transition functions
 func transition(current, target_state) -> void:
 	transition_state.emit(current, target_state)
 
@@ -46,3 +52,4 @@ func transition_to_tired() -> void:
 ## Function that transitions from the current state to the neutral state.
 func transition_to_neutral() -> void:
 	transition_state.emit(self, get_parent().neutral_state)
+#endregion

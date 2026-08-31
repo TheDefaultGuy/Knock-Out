@@ -2,20 +2,29 @@
 ## This is the component that handles the players input and then relays that to the player states
 class_name InputComponent extends Node
 
-@onready var input_buffer_timer: Timer = %InputBufferTimer
-@onready var animation_tree: AnimationTree = %AnimationTree
-@onready var anim_state_machine = animation_tree["parameters/playback"]
+var input_buffer_timer: Timer = null
+
 var unhandled_input = null
 var latest_action = null
 
 signal attack_input_signal(height, range, direction, special)
 signal defense_input_signal(move)
 
+## Variable that stores if the player is holding fown the left or right button respectively.
 var holding_left : bool = false
+## Variable that stores if the player is holding fown the left or right button respectively.
 var holding_right : bool = false
-
+## Variable that stores if the player can perform any inputs.
 var allow_inputs : bool = false
+@export var buffer_time : float = 0.3
 
+func _ready() -> void:
+	# Creates a new input buffer Timer on ready
+	input_buffer_timer = Timer.new()
+	input_buffer_timer.one_shot = true
+	input_buffer_timer.wait_time = buffer_time
+	input_buffer_timer.timeout.connect(_on_input_buffer_timer_timeout)
+	add_child(input_buffer_timer)
 
 func _input(_event: InputEvent) -> void:
 	if allow_inputs == false:
@@ -55,35 +64,35 @@ func _process(_delta: float) -> void:
 	if allow_inputs == false:
 		return
 	if Input.is_action_pressed("up") == true and Input.is_action_pressed("block") == true: 
-		animation_tree.set("parameters/neutral/idle/blend_position", Vector2i(1, 1))
+		owner.animation_tree.set("parameters/neutral/idle/blend_position", Vector2i(1, 1))
 		
 	elif Input.is_action_pressed("up") == false and Input.is_action_pressed("block") == true: 
-		animation_tree.set("parameters/neutral/idle/blend_position", Vector2i(1, 0))
+		owner.animation_tree.set("parameters/neutral/idle/blend_position", Vector2i(1, 0))
 		
 	elif Input.is_action_pressed("up") == false and Input.is_action_pressed("block") == false: 
-		animation_tree.set("parameters/neutral/idle/blend_position", Vector2i(0, 0))
+		owner.animation_tree.set("parameters/neutral/idle/blend_position", Vector2i(0, 0))
 		
 	elif Input.is_action_pressed("up") == true and Input.is_action_pressed("block") == false: 
-		animation_tree.set("parameters/neutral/idle/blend_position", Vector2i(0, 0))
+		owner.animation_tree.set("parameters/neutral/idle/blend_position", Vector2i(0, 0))
 		
 	if Input.is_action_pressed("left") == true: 
-		animation_tree.set("parameters/dodge/dodge_left/dodge_blend_left/blend_position", Global.range.LEFT)
-		animation_tree.set("parameters/dodge/dodge_left/conditions/holding_left", true)
+		owner.animation_tree.set("parameters/dodge/dodge_left/dodge_blend_left/blend_position", Global.range.LEFT)
+		owner.animation_tree.set("parameters/dodge/dodge_left/conditions/holding_left", true)
 		
 	elif Input.is_action_pressed("left") == false: 
-		animation_tree.set("parameters/dodge/dodge_left/conditions/holding_left", false)
+		owner.animation_tree.set("parameters/dodge/dodge_left/conditions/holding_left", false)
 		
 	if Input.is_action_pressed("right") == true: 
-		animation_tree.set("parameters/dodge/dodge_right/dodge_blend_right/blend_position", Global.range.RIGHT)
-		animation_tree.set("parameters/dodge/dodge_right/conditions/holding_right", true)
+		owner.animation_tree.set("parameters/dodge/dodge_right/dodge_blend_right/blend_position", Global.range.RIGHT)
+		owner.animation_tree.set("parameters/dodge/dodge_right/conditions/holding_right", true)
 	elif Input.is_action_pressed("right") == false: 
-		animation_tree.set("parameters/dodge/dodge_right/conditions/holding_right", false)
+		owner.animation_tree.set("parameters/dodge/dodge_right/conditions/holding_right", false)
 		
 	if Input.is_action_pressed("down") == true: 
-		animation_tree.set("parameters/dodge/duck/duck_blend/blend_position", -1)
-		animation_tree.set("parameters/dodge/duck/conditions/holding_down", true)
+		owner.animation_tree.set("parameters/dodge/duck/duck_blend/blend_position", -1)
+		owner.animation_tree.set("parameters/dodge/duck/conditions/holding_down", true)
 	elif Input.is_action_pressed("down") == false: 
-		animation_tree.set("parameters/dodge/duck/conditions/holding_down", false)
+		owner.animation_tree.set("parameters/dodge/duck/conditions/holding_down", false)
 
 func perform_action(action_name : String):
 	match action_name:
@@ -127,6 +136,6 @@ func _on_input_buffer_timer_timeout() -> void:
 	unhandled_input = null
 	
 func reset_blend_positions() -> void:
-	animation_tree.set("parameters/dodge_blend_left/blend_position", 0)
-	animation_tree.set("parameters/dodge_blend_right/blend_position", 0)
-	animation_tree.set("parameters/duck_blend/blend_position", 0)
+	owner.animation_tree.set("parameters/dodge_blend_left/blend_position", 0)
+	owner.animation_tree.set("parameters/dodge_blend_right/blend_position", 0)
+	owner.animation_tree.set("parameters/duck_blend/blend_position", 0)

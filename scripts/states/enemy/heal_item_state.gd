@@ -12,7 +12,7 @@
 ## DO NOT change anything in the actual .gd file, since it'll screw up compatibility HARD.
 class_name ItemHealState extends State
 
-@onready var anim_state_machine = animation_tree.get("parameters/playback")
+#@onready var anim_state_machine = animation_tree.get("parameters/playback")
 
 #region Exported Variables
 ## How the delay between each attack is handled.
@@ -41,6 +41,7 @@ var machine_name = null
 #region The Ready, Enter and Exit functions
 func _ready() -> void:
 	## Automatically adds the state machine node to the animation tree.
+	#reset_animation_tree()
 	root_state_machine = animation_tree.tree_root
 	machine_name = str(name, "_state_machine") 
 	root_state_machine.add_node(machine_name, state_machine, Vector2(0,0))

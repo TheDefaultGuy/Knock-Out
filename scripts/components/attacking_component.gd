@@ -13,7 +13,7 @@ class_name AttackingComponent extends Node
 ## The defense compomnent then checks if the attack is successful and returns the result.] to the attack component.
 func send_attack_call(punch_height : int, punch_range : int, attack_damage : float, punch_direction : int, star_punch : bool):
 	if Global.enemy_node != null and Global.player_node != null:
-		match get_parent():
+		match owner:
 			Global.enemy_node: # Checks wether the one attacking, the parent of this component, is the player or enemy.
 				punch(Global.player_node, punch_height, punch_range, attack_damage, punch_direction, star_punch)
 					
@@ -21,7 +21,7 @@ func send_attack_call(punch_height : int, punch_range : int, attack_damage : flo
 				punch(Global.enemy_node, punch_height, punch_range, attack_damage, punch_direction, star_punch)
 				
 			_:
-				printerr("Attacking Component: ", get_parent().name, " is neither the player or the assigned enemy in global.")
+				printerr("Attacking Component: ", owner.name, " is neither the player or the assigned enemy in global.")
 				return
 	
 #region Trouble Shooting if statements
@@ -40,7 +40,7 @@ func punch(input_node : Node2D, punch_height : int, punch_range : int, attack_da
 	if input_node.defense_component != null: # Checks to see if the enemy has a defense component.
 				if input_node.defense_component.has_method("check_defense") == true: # Checks to see if the defense component has that function
 					
-					if get_parent().isPlayer == true and star_punch == true: # If it was a star punch, change the attack damage to reflect the amount of star punches used.
+					if owner is Player and star_punch == true: # If it was a star punch, change the attack damage to reflect the amount of star punches used.
 						
 						# This is the equation used for calculating star punch damage in relation to the amount of stars used: https://www.desmos.com/calculator/ck5t9wejr0
 						# Basically, it's not a linear equation, its slightly exponential.
@@ -55,7 +55,7 @@ func punch(input_node : Node2D, punch_height : int, punch_range : int, attack_da
 						return
 						
 					else:
-						if get_parent().isPlayer == true: # Checks to see if the attacker is the player. If the player missed an attack, lower their stamina.
+						if owner is Player: # Checks to see if the attacker is the player. If the player missed an attack, lower their stamina.
 							FightManager.lower_stamina()
 							FightManager.stars_used = 0
 						return

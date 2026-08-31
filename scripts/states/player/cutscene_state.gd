@@ -4,20 +4,20 @@
 ## This state is required and used by both the player and enemies
 class_name CutSceneState extends State
 
-@onready var anim_state_machine = animation_tree["parameters/playback"]
+
 
 @export var next_state : State
 
 func _ready() -> void:
 	if next_state == null:
-		printerr(get_parent().get_parent().name, " CutScene State: next state not set")
+		printerr(owner.name, " CutScene State: next state not set")
 
 func enter() -> void:
-	print_rich("[color=yellow]",get_parent().get_parent().name," Entered State: [/color]", self.name)
+	print_rich("[color=yellow]",owner.name," Entered State: [/color]", self.name)
 	FightManager.start_intro_animation_signal.connect(play_intro)
 	FightManager.resume_fighting_signal.connect(transition.bind(self, next_state))
 	
-	if get_parent().get_parent().isPlayer == true:
+	if owner is Player:
 		FightManager.player_ready_status = false
 	else:
 		FightManager.enemy_ready_status = false

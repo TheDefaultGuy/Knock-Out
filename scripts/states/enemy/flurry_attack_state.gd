@@ -12,7 +12,7 @@
 ## DO NOT change anything in the actual .gd file, since it'll screw up compatibility HARD.
 class_name FlurryAttackState extends State
 
-@onready var anim_state_machine = animation_tree.get("parameters/playback")
+#@onready var anim_state_machine = animation_tree.get("parameters/playback")
 
 #region Exported Variables
 
@@ -41,6 +41,7 @@ var machine_name = null
 
 #region The Ready, Enter and Exit functions
 func _ready() -> void:
+	#reset_animation_tree()
 	root_state_machine = animation_tree.tree_root
 	machine_name = str(name, "_state_machine") 
 	## Automatically adds the state machine node to the animation tree.
@@ -48,8 +49,7 @@ func _ready() -> void:
 	var connection = AnimationNodeStateMachineTransition.new()
 	connection.switch_mode = AnimationNodeStateMachineTransition.SWITCH_MODE_AT_END
 	connection.advance_mode = AnimationNodeStateMachineTransition.ADVANCE_MODE_AUTO
-	root_state_machine.add_transition(machine_name, "hub_node", connection)
-
+	root_state_machine.call_deferred("add_transition", machine_name, "hub_node", connection)
 	
 func enter() -> void:
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
@@ -77,8 +77,10 @@ func exit() -> void:
 
 	
 func _process(_delta: float) -> void:
+	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
+		return
 	animation_tree.set(str("parameters/",machine_name,"/conditions/ko"), Global.player_node.isKnockdown)
-	return
+
 #endregion
 
 ## Increases the attack count variable by 1 every time an animation is played in this state.

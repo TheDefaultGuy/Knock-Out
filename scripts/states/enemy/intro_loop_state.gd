@@ -12,7 +12,7 @@
 ## DO NOT change anything in the actual .gd file, since it'll screw up compatibility HARD.
 class_name IntroLoopState extends State
 
-@onready var anim_state_machine = animation_tree.get("parameters/playback")
+#@onready var anim_state_machine = animation_tree.get("parameters/playback")
 
 
 #region Exported Variables
@@ -44,7 +44,7 @@ func _ready() -> void:
 	wait_timer.one_shot = true
 	add_child(wait_timer)
 	wait_timer.timeout.connect(perform_action)
-	
+	#reset_animation_tree()
 	## Automatically adds the state machine node to the animation tree.
 	root_state_machine = animation_tree.tree_root
 	machine_name = str(name, "_state_machine") 
@@ -59,7 +59,6 @@ func enter() -> void:
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
 	# Lets the Animation Tree now that the enemy is neither stunned nor spectating.
 	animation_tree.set("parameters/conditions/spectating", false)
-	print("cock")
 	
 	FightManager.player_knocked_down_signal.connect(transition_to_spectating)
 	FightManager.enemy_knocked_down_signal.connect(transition_to_knocked_down)
@@ -105,5 +104,6 @@ func start_loop_timer() -> void:
 	wait_timer.start(randf_range(min_wait_time, max_wait_time))
 	
 func _process(_delta: float) -> void:
+	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
+		return
 	animation_tree.set(str("parameters/",machine_name,"/conditions/ko"), Global.player_node.isKnockdown)
-	return
