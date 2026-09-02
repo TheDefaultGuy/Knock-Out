@@ -4,6 +4,7 @@ class_name Enemy extends Fighter
 
 @onready var instant_ko_component: InstantKOComponent = %InstantKOComponent
 
+
 func _ready() -> void:
 	if defense_component == null:
 		printerr(self.name, " doesn't have a Defense Component assigned.")

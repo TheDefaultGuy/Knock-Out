@@ -1,0 +1,8 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://bxigr2qxvfuwf"]
+
+[ext_resource type="Shader" uid="uid://4gxysrasjpem" path="res://scripts/shaders/enemy_flash.tres" id="1_jtxbe"]
+
+[resource]
+shader = ExtResource("1_jtxbe")
+shader_parameter/Visible = false
+shader_parameter/Flash_Color = Color(1, 1, 1, 1)

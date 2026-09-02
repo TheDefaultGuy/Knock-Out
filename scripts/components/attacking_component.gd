@@ -6,6 +6,7 @@ class_name AttackingComponent extends Node
 ## Multiplier for the attack's damage. mainly used by the player.
 @export_custom(PROPERTY_HINT_NONE, "suffix:x") var attack_multiplier : float = 1.0 
 
+@onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
 ## Function that called by the attack animations
 ##
 ## It calls functions in the opposing fighter's defense component, giving it the attacks variables as input.
@@ -64,3 +65,8 @@ func punch(input_node : Node2D, punch_height : int, punch_range : int, attack_da
 					printerr("Attacking Component: Targetted node's defense component doesn't have the function that's being called.")
 	elif input_node.defense_component == null:
 		printerr("Attacking Component: No defense component.")
+
+func attack_flash():
+	animated_sprite_2d.material.set_shader_parameter("Visible", true)
+	await get_tree().create_timer(0.25).timeout
+	animated_sprite_2d.material.set_shader_parameter("Visible", false)

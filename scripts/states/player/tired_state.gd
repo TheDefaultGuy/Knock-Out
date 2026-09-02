@@ -3,6 +3,7 @@ class_name TiredState extends State
 
 @onready var input_component: InputComponent = %InputComponent
 var player = self.owner
+@onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
 
 func enter() -> void:
 	print_rich("[color=yellow]Player Entered State: [/color]", self.name)
@@ -13,12 +14,15 @@ func enter() -> void:
 	input_component.attack_input_signal.connect(perform_attack)
 	input_component.defense_input_signal.connect(perform_defense)
 	defense_component.succesful_dodge.connect(succesful_dodge)
-
+	animated_sprite_2d.material.set_shader_parameter("Visible", true)
+	
+	
 func exit() -> void:
 	animation_tree.set("parameters/neutral/blend_position", 0)
 	input_component.attack_input_signal.disconnect(perform_attack)
 	input_component.defense_input_signal.disconnect(perform_defense)
 	defense_component.succesful_dodge.disconnect(succesful_dodge)
+	animated_sprite_2d.material.set_shader_parameter("Visible", false)
 	
 func perform_defense(move : int, action_name : String) -> void:
 	if anim_state_machine.get_current_node() == "neutral":

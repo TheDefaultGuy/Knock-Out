@@ -1,5 +1,10 @@
 [gd_resource type="VisualShader" format=3 uid="uid://sigjxhnoufm8"]
 
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_bkrh0"]
+input_name = "texture_pixel_size"
+
+[sub_resource type="VisualShaderNodeVectorOp" id="VisualShaderNodeVectorOp_7sfsc"]
+
 [sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_dsrlg"]
 input_name = "texture"
 
@@ -22,14 +27,19 @@ input_name = "uv"
 [resource]
 mode = 1
 flags/light_only = false
+nodes/fragment/0/position = Vector2(520, 180)
 nodes/fragment/2/node = SubResource("VisualShaderNodeInput_dsrlg")
-nodes/fragment/2/position = Vector2(-576, 176)
+nodes/fragment/2/position = Vector2(-580, 180)
 nodes/fragment/3/node = SubResource("VisualShaderNodeColorParameter_cxps1")
-nodes/fragment/3/position = Vector2(-400, 320)
+nodes/fragment/3/position = Vector2(-520, 340)
 nodes/fragment/4/node = SubResource("VisualShaderNodeVectorOp_bkrh0")
-nodes/fragment/4/position = Vector2(160, 128)
+nodes/fragment/4/position = Vector2(340, 140)
 nodes/fragment/8/node = SubResource("VisualShaderNodeTexture_dsrlg")
 nodes/fragment/8/position = Vector2(-144, -48)
 nodes/fragment/9/node = SubResource("VisualShaderNodeInput_cxps1")
 nodes/fragment/9/position = Vector2(-624, 32)
-nodes/fragment/connections = PackedInt32Array(3, 0, 4, 1, 2, 0, 8, 2, 8, 0, 4, 0, 9, 0, 8, 1, 4, 0, 0, 0)
+nodes/fragment/10/node = SubResource("VisualShaderNodeInput_bkrh0")
+nodes/fragment/10/position = Vector2(-500, 660)
+nodes/fragment/11/node = SubResource("VisualShaderNodeVectorOp_7sfsc")
+nodes/fragment/11/position = Vector2(60, 460)
+nodes/fragment/connections = PackedInt32Array(2, 0, 8, 2, 8, 0, 4, 0, 4, 0, 0, 0, 9, 0, 8, 0, 3, 0, 11, 0, 11, 0, 4, 1, 9, 0, 11, 1)

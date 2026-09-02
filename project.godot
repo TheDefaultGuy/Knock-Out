@@ -10,14 +10,14 @@ config_version=5
 
 [application]
 
-config/name="Knock-Out"
+config/name="PunchOutTest"
 run/main_scene="uid://b2o12w57mpc12"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="uid://cgmsoi7qkgxod"
 
 [audio]
 
-buses/default_bus_layout=""
+buses/default_bus_layout="uid://wp12f0wdq5uq"
 
 [autoload]
 
@@ -56,19 +56,6 @@ window/stretch/aspect="expand"
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/dialogic/plugin.cfg")
-
-[file_customization]
-
-folder_colors={
-"res://addons/": "gray",
-"res://animation/": "purple",
-"res://assets/": "green",
-"res://scenes/": "blue",
-"res://scripts/components/": "orange",
-"res://scripts/globals/": "gray",
-"res://scripts/shaders/": "pink",
-"res://scripts/states/": "yellow"
-}
 
 [input]
 
