@@ -3,7 +3,7 @@
 class_name Enemy extends Fighter
 
 @onready var instant_ko_component: InstantKOComponent = %InstantKOComponent
-
+@onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
 
 func _ready() -> void:
 	if defense_component == null:
@@ -17,6 +17,7 @@ func _ready() -> void:
 	if instant_ko_component == null:
 		push_warning(self.name, " doesn't have an Instant KO Component assigned")
 
-func ready_to_fight():
+func ready_to_fight() -> void:
 	FightManager.enemy_ready_status = true
 	FightManager.fighter_ready_signal.emit()
+	

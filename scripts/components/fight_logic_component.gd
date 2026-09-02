@@ -3,7 +3,8 @@ class_name FightLogicComponent extends Node
 
 var round_timer: Timer = null
 var ko_timer: Timer  = null
-@export var animation_player: AnimationPlayer
+
+@onready var animation_player: AnimationPlayer = %AnimationPlayer
 
 func _ready() -> void:
 	FightManager.enemy_knocked_down_signal.connect(toggle_round_timer)
@@ -12,11 +13,11 @@ func _ready() -> void:
 	FightManager.start_get_up_signal.connect(start_ko_count)
 	FightManager.fighter_got_up_signal.connect(stop_ko_count)
 	FightManager.start_the_fight_signal.connect(start_the_match)
-	
-	create_timers()
+	#create_timers()
+	call_deferred("create_timers")
 	
 	await get_tree().create_timer(0.4).timeout
-	FightManager.start_intro_animation_signal.emit()
+	#FightManager.start_intro_animation_signal.emit()
 	start_the_match()
 
 func _process(_delta: float) -> void:
@@ -55,13 +56,15 @@ func _on_round_timer_timeout() -> void:
 func create_timers() -> void:
 	round_timer = Timer.new()
 	round_timer.one_shot = true
-	round_timer.wait_time = get_parent().match_settings.round_length
+	round_timer.wait_time = owner.match_settings.round_length
+	round_timer.autostart = true
 	round_timer.name = "Round Timer"
-	get_parent().add_child.call_deferred(round_timer)
+	add_child.call_deferred(round_timer)
+	round_timer.timeout.connect(_on_round_timer_timeout)
 	
 	ko_timer = Timer.new()
 	ko_timer.one_shot = true
 	ko_timer.wait_time = 10.0
 	ko_timer.name = "KO Count Timer"
-	round_timer.timeout.connect(_on_round_timer_timeout)
-	get_parent().add_child.call_deferred(ko_timer)
+	ko_timer.timeout.connect(end_fight)
+	add_child.call_deferred(ko_timer)

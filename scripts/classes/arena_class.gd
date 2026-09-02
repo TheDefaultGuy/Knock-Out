@@ -14,22 +14,23 @@ class_name Arena extends Node2D
 var target_time_scale := 0.025
 var secs := 1.25
 
-@export_category("UI Elements")
-## The player's health bar.
-@export var player_bar: ProgressBar
-## The enemy's health bar.
-@export var enemy_bar: ProgressBar
-## The label that displays the player's health bar.
-@export var star_count_label: Label
-## The label that displays the player's stamina.
-@export var stamina_label: Label
-##The label that displays the time left in the round..
-@export var time_left_label: Label
-@onready var stae: Label = $Camera2D/UI/stae
 
-@export_category("Required Components")
-@export var fight_logic_component : FightLogicComponent
-@export var match_settings : MatchSettings
+## The player's health bar.
+@onready var player_bar: ProgressBar = $Camera2D/UI/PlayerBar
+## The enemy's health bar.
+@onready var enemy_bar: ProgressBar = $Camera2D/UI/EnemyBar
+## The label that displays the player's health bar.
+@onready var star_count_label: Label = $Camera2D/UI/StarCountLabel
+## The label that displays the player's stamina.
+@onready var stamina_label: Label = $Camera2D/UI/StaminaLabel
+##The label that displays the time left in the round..
+@onready var time_left_label: Label = $Camera2D/UI/TimeLeftLabel
+@onready var state_label: Label = $Camera2D/UI/stae
+
+
+@onready var fight_logic_component : FightLogicComponent = %FightLogicComponent
+@onready var match_settings : MatchSettings = %MatchSettings
+
 var player_node = null
 var enemy_node = null
 # Called when the node enters the scene tree for the first time.
@@ -62,7 +63,7 @@ func slow_down_effect() -> void:
 	
 func _process(_delta: float) -> void:
 	if enemy_node !=null:
-		stae.text = enemy_node.state_machine.current_state.name
+		state_label.text = enemy_node.state_machine.current_state.name
 	
 func update_ui() -> void:
 	player_bar.value = Global.player_node.health_component.hp

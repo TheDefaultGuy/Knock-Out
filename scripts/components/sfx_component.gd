@@ -12,7 +12,7 @@ class_name SoundEffectsComponent extends Node
 @export var star_punch : AudioStream
 @export var duck : AudioStream
 @export var block : AudioStream
-
+@export var knock_down : AudioStream
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -22,7 +22,8 @@ func _ready() -> void:
 	FightManager.sfx_star_punch_thrown_signal.connect(play_sound_effect.bind(star_punch))
 	FightManager.succesful_block_signal.connect(play_sound_effect.bind(block))
 	FightManager.sfx_duck_signal.connect(play_sound_effect.bind(duck))
-
+	#FightManager.enemy_knocked_down_signal.connect(play_sound_effect.bind(knock_down))
+	#FightManager.player_knocked_down_signal.connect(play_sound_effect.bind(knock_down))
 func play_sound_effect(sound_effect : AudioStream):
 	var sfx_player = AudioStreamPlayer.new()
 	sfx_player.stream = sound_effect

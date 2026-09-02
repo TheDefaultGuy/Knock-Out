@@ -19,7 +19,7 @@ class_name ReactionaryState extends State
 ## The taunt animation that will play in this state.
 @export var taunt_animation : String = "taunt"
 ## The block animation that will lead to the counter attack.
-@export var block_animation : String = "block"
+@export var block_animation : String = "block_react"
 
 
 enum STATE_CHANGE_CONDITION{
@@ -44,10 +44,10 @@ enum STATE_CHANGE_CONDITION{
 }
 
 @export_category("⏱ Taunt Delays")
-## The minimum amount of time (in seconds) the enemy will wait before randomly choosing a move.
-@export_custom(PROPERTY_HINT_NONE, "suffix:s") var min_wait_time : float = 2.0
-## The maximum amount of time (in seconds) the enemy will wait before randomly choosing a move.
-@export_custom(PROPERTY_HINT_NONE, "suffix:s") var max_wait_time : float = 5.0
+## The minimum amount of time (in seconds) the enemy will wait before taunting.
+@export_range(1.0, 8.0, 0.2, "suffix:s") var min_wait_time : float = 2.0
+## The maximum amount of time (in seconds) the enemy will wait before taunting.
+@export_range(1.0, 8.0, 0.2, "suffix:s") var max_wait_time : float = 5.0
 
 @export_category("⇄ State Changing Conditions")
 ## The primary condition and the first one being checked.

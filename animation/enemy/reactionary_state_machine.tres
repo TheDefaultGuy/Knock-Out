@@ -15,21 +15,34 @@ animation = &"RESET"
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ma6e1"]
 animation = &"RESET"
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_8uk6w"]
-animation = &"block/lower"
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_51pjw"]
+animation = &"block/upper_left"
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_l0dlj"]
-animation = &"block/upper"
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_kn42k"]
+animation = &"block/upper_right"
 
-[sub_resource type="AnimationNodeBlendSpace1D" id="AnimationNodeBlendSpace1D_yfn78"]
-min_space = 0.0
-value_label = "punch_height"
-blend_point_0/node = SubResource("AnimationNodeAnimation_8uk6w")
-blend_point_0/pos = 0.0
-blend_point_0/name = &"block_lower"
-blend_point_1/node = SubResource("AnimationNodeAnimation_l0dlj")
-blend_point_1/pos = 1.0
-blend_point_1/name = &"block_upper"
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_t36s3"]
+animation = &"block/lower_left"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_jfq4d"]
+animation = &"block/lower_right"
+
+[sub_resource type="AnimationNodeBlendSpace2D" id="AnimationNodeBlendSpace2D_fi3h3"]
+min_space = Vector2(-1, 0)
+x_label = "punch_direction"
+y_label = "punch_range"
+blend_point_0/node = SubResource("AnimationNodeAnimation_51pjw")
+blend_point_0/pos = Vector2(-1, 1)
+blend_point_0/name = &"block_upper_left"
+blend_point_1/node = SubResource("AnimationNodeAnimation_kn42k")
+blend_point_1/pos = Vector2(1, 1)
+blend_point_1/name = &"block_upper_right"
+blend_point_2/node = SubResource("AnimationNodeAnimation_t36s3")
+blend_point_2/pos = Vector2(-1, 0)
+blend_point_2/name = &"block_lower_left"
+blend_point_3/node = SubResource("AnimationNodeAnimation_jfq4d")
+blend_point_3/pos = Vector2(1, 0)
+blend_point_3/name = &"block_lower_right"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_1vi08"]
 animation = &"attack/fast_uppercut_right"
@@ -39,10 +52,6 @@ animation = &"idle_guard"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_0himb"]
 animation = &"taunt"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_gvj01"]
-switch_mode = 2
-advance_mode = 2
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_nd7h3"]
 switch_mode = 2
@@ -59,6 +68,10 @@ advance_mode = 2
 switch_mode = 2
 advance_mode = 2
 
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_7hafc"]
+switch_mode = 2
+advance_mode = 2
+
 [resource]
 "states/DO NOT RENAME ANY OF THE NODES/node" = SubResource("AnimationNodeAnimation_lqdfj")
 "states/DO NOT RENAME ANY OF THE NODES/position" = Vector2(653, -598)
@@ -72,13 +85,13 @@ states/RESET/position = Vector2(286, -404)
 states/Start/position = Vector2(167, -404)
 "states/THE IDLE GUARD NODE'S ANIMATION/node" = SubResource("AnimationNodeAnimation_ma6e1")
 "states/THE IDLE GUARD NODE'S ANIMATION/position" = Vector2(-4, -556)
-states/block_react/node = SubResource("AnimationNodeBlendSpace1D_yfn78")
-states/block_react/position = Vector2(286, -613)
+states/block_react/node = SubResource("AnimationNodeBlendSpace2D_fi3h3")
+states/block_react/position = Vector2(286, -623)
 states/counter_attack/node = SubResource("AnimationNodeAnimation_1vi08")
 states/counter_attack/position = Vector2(286, -503)
 states/idle_guard/node = SubResource("AnimationNodeAnimation_nd7h3")
 states/idle_guard/position = Vector2(286, -314)
 states/taunt/node = SubResource("AnimationNodeAnimation_0himb")
-states/taunt/position = Vector2(477, -404)
-transitions = ["block_react", "counter_attack", SubResource("AnimationNodeStateMachineTransition_gvj01"), "counter_attack", "RESET", SubResource("AnimationNodeStateMachineTransition_nd7h3"), "taunt", "RESET", SubResource("AnimationNodeStateMachineTransition_51pjw"), "Start", "RESET", SubResource("AnimationNodeStateMachineTransition_t36s3"), "RESET", "idle_guard", SubResource("AnimationNodeStateMachineTransition_kn42k")]
-graph_offset = Vector2(-267, -682)
+states/taunt/position = Vector2(478, -404)
+transitions = ["counter_attack", "RESET", SubResource("AnimationNodeStateMachineTransition_nd7h3"), "taunt", "RESET", SubResource("AnimationNodeStateMachineTransition_51pjw"), "Start", "RESET", SubResource("AnimationNodeStateMachineTransition_t36s3"), "RESET", "idle_guard", SubResource("AnimationNodeStateMachineTransition_kn42k"), "block_react", "counter_attack", SubResource("AnimationNodeStateMachineTransition_7hafc")]
+graph_offset = Vector2(-436, -668)

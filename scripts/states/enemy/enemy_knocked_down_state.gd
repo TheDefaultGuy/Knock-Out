@@ -26,4 +26,5 @@ func start_get_up_timer() -> void:
 		return
 	await get_tree().create_timer(randf_range(min_getup_time, max_getup_time)).timeout
 	anim_state_machine.travel("get_up")
+	health_component.reset_hp()
 	

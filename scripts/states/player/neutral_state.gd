@@ -1,8 +1,8 @@
 class_name NeutralPlayerState extends State
 
 @onready var input_component: InputComponent = %InputComponent
-
 @onready var player = self.owner
+@onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
 
 func enter() -> void:
 	print_rich("[color=yellow]Player Entered State: [/color]", self.name)
@@ -53,3 +53,10 @@ func perform_attack(height : int, direction : int, action_name : String, special
 				return
 	else:
 		input_component.store_unhandled_input(action_name) # If the player is currently already dodging or attacking, it'll store the attack they wanted to do so that it's buffered.	
+
+func _process(_delta: float) -> void:
+	if get_parent().current_state == self:
+		if anim_state_machine.get_current_node() == "hit":
+			animated_sprite_2d.material.set_shader_parameter("Visible", true)
+			return
+		animated_sprite_2d.material.set_shader_parameter("Visible", false)

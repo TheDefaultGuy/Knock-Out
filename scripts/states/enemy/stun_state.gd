@@ -48,7 +48,7 @@ var stun_timer : Timer = null
 ## FIXED_NUMBER_OF_PUNCHES and INCREASING_NUMBER_OF_PUNCHES: How long does the player have to NOT punch for the enemy to recover automatically.
 @export_range(0.5, 3.0, 0.25, "suffix:s") var stun_duration : float = 2.0 
 ## The minimum amount of punches that stun will last for.
-@export_custom(PROPERTY_HINT_NONE, "suffix:punches") var min_stun_length : int = 2
+@export_custom(PROPERTY_HINT_NONE, "suffix:punches") var min_stun_length : int = 3
 ## The maximum amount of punches that stun will last for.
 @export_custom(PROPERTY_HINT_NONE, "suffix:punches") var max_stun_length : int = 15
 ## The fixed amount of punches that stun will last for.
@@ -97,6 +97,8 @@ func _ready() -> void:
 func create_timers() -> void:
 	stun_timer = Timer.new()
 	stun_timer.name = "Stunned Timer"
+	stun_timer.autostart = false
+	stun_timer.one_shot = true
 	get_parent().get_parent().add_child.call_deferred(stun_timer)
 
 
@@ -109,7 +111,7 @@ func enter() -> void: # Blank enter and exit functions that get overridden by ea
 	stun_timer.timeout.connect(stun_timer_over)
 	# Resets punch count everytime the enemy enters stun.
 	punch_count = 0
-	stun_over = true
+	stun_over = false
 	target_state = get_parent().interrupted_state
 	
 	match stun_behavior:
@@ -118,6 +120,7 @@ func enter() -> void: # Blank enter and exit functions that get overridden by ea
 			
 			# Increases the length of the stun in terms of pucnhes eeverytime the enemy enters stun state.
 		BEHAVIOR_TYPE.INCREASING_NUMBER_OF_PUNCHES:
+			stun_timer.start(stun_duration)
 			stun_punch_length = clamp(stun_punch_length + 1, min_stun_length, max_stun_length)
 
 func exit() -> void:
@@ -126,6 +129,7 @@ func exit() -> void:
 	FightManager.enemy_knocked_down_signal.disconnect(transition_to_knocked_down)
 	FightManager.succesful_hit_signal.disconnect(increase_punch_count)
 	stun_timer.timeout.disconnect(stun_timer_over)
+	defense_component.reset_current_animations()
 	
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
@@ -143,6 +147,8 @@ func increase_punch_count() -> void:
 	if stun_behavior == BEHAVIOR_TYPE.FIXED_NUMBER_OF_PUNCHES or stun_behavior == BEHAVIOR_TYPE.INCREASING_NUMBER_OF_PUNCHES:
 		stun_timer.start(stun_duration)
 		punch_count = punch_count + 1
+		if punch_count +1 == stun_punch_length:
+			defense_component.current_hit_animation = "final_hit"
 		if punch_count >= stun_punch_length:
 			transition(self, target_state)
 

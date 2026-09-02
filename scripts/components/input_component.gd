@@ -3,7 +3,7 @@
 class_name InputComponent extends Node
 
 var input_buffer_timer: Timer = null
-
+var parry_timer: Timer = null
 var unhandled_input = null
 var latest_action = null
 
@@ -17,6 +17,7 @@ var holding_right : bool = false
 ## Variable that stores if the player can perform any inputs.
 var allow_inputs : bool = false
 @export var buffer_time : float = 0.3
+@export var parry_window : float = 0.15
 
 func _ready() -> void:
 	# Creates a new input buffer Timer on ready
@@ -25,6 +26,12 @@ func _ready() -> void:
 	input_buffer_timer.wait_time = buffer_time
 	input_buffer_timer.timeout.connect(_on_input_buffer_timer_timeout)
 	add_child(input_buffer_timer)
+	
+	parry_timer = Timer.new()
+	parry_timer.one_shot = true
+	parry_timer.wait_time = parry_window
+	#parry_timer.timeout.connect(_on_input_buffer_timer_timeout)
+	add_child(parry_timer)
 
 func _input(_event: InputEvent) -> void:
 	if allow_inputs == false:
@@ -40,6 +47,10 @@ func _input(_event: InputEvent) -> void:
 
 	if Input.is_action_just_pressed("right"):
 		perform_action("right")
+		
+	if Input.is_action_just_pressed("block"):
+		parry_timer.start()
+		print("block")
 		
 	if Input.is_action_just_pressed("star_punch") and Input.is_action_pressed("up") == false:
 		perform_action("star_punch_lower")
@@ -63,6 +74,7 @@ func _input(_event: InputEvent) -> void:
 func _process(_delta: float) -> void:
 	if allow_inputs == false:
 		return
+	
 	if Input.is_action_pressed("up") == true and Input.is_action_pressed("block") == true: 
 		owner.animation_tree.set("parameters/neutral/idle/blend_position", Vector2i(1, 1))
 		

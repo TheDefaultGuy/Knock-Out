@@ -70,6 +70,7 @@ signal stunned_signal
 
 ## Stores the hit animation. It can change depending on the state.
 var current_hit_animation : String = "hit"
+## Stores the block animation. It can change depending on the state.
 var current_block_animation : String = "block"
 
 var current_anim_state_machine : AnimationNodeStateMachinePlayback = null
@@ -86,13 +87,13 @@ func set_anim_state_machine() -> void:
 ## 
 ## Punch height and damage amount is self-explanatory.
 ## Punch_range is what dodge positions (X axis) the attack covers; this is used for real hit ditection.
-## Punch direction is which direction the punch is coming from from the player's perspective; this is only used for selecting animations.
+## Punch direction is which direction the punch is coming from from the player's perspective; this is mainly used for selecting animations.
 func check_defense(punch_height : int, punch_range : int, damage_amount : float, punch_direction : int) -> bool: 
 	# First, it checks for invulnerabilities and dodges.
-	if is_invulnerable(punch_height) or is_punch_dodged(punch_range):
-		if owner is Player:
+	if is_invulnerable(punch_height) or is_punch_dodged(punch_range) == true: # If the player is invulnerable or is not in the area the punch covers, it missed.
+		if owner is Player: # Sends a signal that the player successfully dodged so that they can leave the Tired State.
 			succesful_dodge.emit()
-			FightManager.missed_attack_signal.emit()
+		FightManager.missed_attack_signal.emit()
 		return false # Returns that the hit was NOT successful. Mainly as an answer to the attacking component.
 		
 	else:
@@ -110,7 +111,7 @@ func check_defense(punch_height : int, punch_range : int, damage_amount : float,
 				if handle_damage_and_knockdown(damage_amount, 1.0, punch_height, punch_direction) == true:
 					return true
 				else:
-					owner.animation_tree.set("parameters/hit/blend_position", Vector2i(punch_direction, punch_height))
+					owner.animation_tree.set(str("parameters/",str(current_hit_animation),"/blend_position"), Vector2i(punch_direction, punch_height))
 					play_animation(str(current_hit_animation))
 					return true
 				
@@ -134,7 +135,7 @@ func check_blocking_status(blocking_status : bool, damage_amount : float, punch_
 					return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
 			
 			check_for_star_and_stun(punch_height)
-			owner.animation_tree.set("parameters/hit/blend_position", Vector2i(punch_direction, punch_height))
+			owner.animation_tree.set(str("parameters/",str(current_hit_animation),"/blend_position"), Vector2i(punch_direction, punch_height))
 			play_animation(str(current_hit_animation))
 			return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
 				
@@ -142,8 +143,11 @@ func check_blocking_status(blocking_status : bool, damage_amount : float, punch_
 			if handle_damage_and_knockdown(damage_amount, blocking_damage_multiplier, punch_height, punch_direction) == true:
 				return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
 			
+			if owner is Player:
+				if owner.input_component.parry_timer.time_left > 0.0:
+					print("WOW PARRY")
 			# Plays the corresponding block animation if it wasn't enough damage for a knockdown.
-			owner.animation_tree.set("parameters/block/blend_position",  punch_height)
+			owner.animation_tree.set(str("parameters/",str(current_block_animation),"/blend_position"),  Vector2i(punch_direction, punch_height))
 			play_animation(str(current_block_animation))
 
 			FightManager.succesful_block_signal.emit()
@@ -158,7 +162,7 @@ func handle_damage_and_knockdown(damage_amount : float, multiplier : float, punc
 	if owner is Player: # checks to see if the defender is the player. If the player got hit, lower their stamina.
 		FightManager.lower_stamina()
 	else:
-		if check_instant_ko() == true:
+		if check_instant_ko() == true: # If the instant KO conditions were met, multiply the hell out of the damage.
 			damage_amount = damage_amount * 300.0
 	if owner.health_component.deal_damage_and_check_for_knockdown(damage_amount, multiplier) == true:
 		owner.animation_tree.set("parameters/knock_down/blend_position", Vector2i(punch_direction, punch_height))
@@ -183,6 +187,8 @@ func check_for_star_and_stun(punch_height : int) -> bool:
 			
 		if stun_window == true: # If the player attacked at a time where the enemy can be stunned, move to the stunned state.
 			stunned_signal.emit()
+			if current_hit_animation == "hit":
+				current_hit_animation = "stun_hit"
 			return true
 	return false
 	
@@ -192,11 +198,23 @@ func play_animation(animation_name : String):
 	
 ## Helper function that makes the vulnurability checking simpler.
 func is_invulnerable(punch_height: int) -> bool:
-	var high_invul = (punch_height == Global.height.HIGH and upper_invulnerability)
-	var low_invul = (punch_height == Global.height.LOW and lower_invulnerability)
-	
-	# Returns true if any of them are true.
-	return high_invul or low_invul
+	match punch_height:
+		Global.height.HIGH:
+			if upper_invulnerability == true:
+				return true
+			elif upper_invulnerability == false:
+				return false
+		Global.height.LOW:
+			if lower_invulnerability == true:
+				return true
+			elif lower_invulnerability == false:
+				return false
+		Global.height.BOTH:
+			if lower_invulnerability == true and upper_invulnerability == true:
+				return true
+			else:
+				return false
+	return false
 
 ## Helper function that makes the dodge checking simpler.
 func is_punch_dodged(punch_range: int) -> bool:
@@ -204,10 +222,9 @@ func is_punch_dodged(punch_range: int) -> bool:
 	var dodged_neutral = (punch_range == Global.range.NEUTRAL and dodge_position != Global.range.NEUTRAL)
 	var dodged_right = (punch_range <= Global.range.NEUTRAL and dodge_position >= Global.range.RIGHT)
 	var dodged_left = (punch_range >= Global.range.NEUTRAL and dodge_position <= Global.range.LEFT)
-	var ducked_neutral = (punch_range == Global.range.NEUTRAL and dodge_position == Global.range.NEUTRAL and upper_invulnerability)
-	
+
 	# Returns true if any of them are true.
-	return dodged_neutral or dodged_right or dodged_left or ducked_neutral
+	return dodged_neutral or dodged_right or dodged_left
 
 ## Checks the instant KO window and then calls the function in the instant KO component to check and return whether or not it's an instant KO.
 func check_instant_ko() -> bool:

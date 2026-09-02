@@ -11,6 +11,7 @@
 [ext_resource type="AudioStream" uid="uid://ghulw4avu2eq" path="res://assets/sfx/star_punch_start.wav" id="8_tqdu3"]
 [ext_resource type="AudioStream" uid="uid://bvei8do7tp40f" path="res://assets/sfx/duck.wav" id="9_5bpft"]
 [ext_resource type="AudioStream" uid="uid://iy6ipv2pkmm8" path="res://assets/sfx/block.wav" id="10_h4xjg"]
+[ext_resource type="AudioStream" uid="uid://bmdkkm11kix7e" path="res://assets/sfx/knock_down_player.wav" id="11_5bpft"]
 [ext_resource type="Script" uid="uid://cguhik1wigmds" path="res://scripts/components/fight_logic_component.gd" id="12_4wfwo"]
 [ext_resource type="Script" uid="uid://kmaq2e83r45t" path="res://scripts/components/match_settings_component.gd" id="13_tqdu3"]
 
@@ -72,17 +73,10 @@ _data = {
 &"ko_count": SubResource("Animation_8k0nb")
 }
 
-[node name="Main" type="Node2D" unique_id=860723905 node_paths=PackedStringArray("player_bar", "enemy_bar", "star_count_label", "stamina_label", "time_left_label", "fight_logic_component", "match_settings")]
+[node name="Main" type="Node2D" unique_id=860723905]
 script = ExtResource("1_v87wf")
 player_scene = ExtResource("3_bt4xr")
 enemy_scene = ExtResource("2_8k0nb")
-player_bar = NodePath("Camera2D/UI/PlayerBar")
-enemy_bar = NodePath("Camera2D/UI/EnemyBar")
-star_count_label = NodePath("Camera2D/UI/StarCountLabel")
-stamina_label = NodePath("Camera2D/UI/StaminaLabel")
-time_left_label = NodePath("Camera2D/UI/TimeLeftLabel")
-fight_logic_component = NodePath("FightLogicComponent")
-match_settings = NodePath("MatchSettings")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=664736061]
 position = Vector2(0, -18)
@@ -170,9 +164,11 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=805291020]
+unique_name_in_owner = true
 libraries/ = SubResource("AnimationLibrary_bt4xr")
 
 [node name="SoundEffectsComponent" type="Node" parent="." unique_id=1369961966]
+unique_name_in_owner = true
 script = ExtResource("4_8k0nb")
 punch_hit = ExtResource("5_efdj8")
 dodge = ExtResource("6_hhgcq")
@@ -180,18 +176,21 @@ star_awarded = ExtResource("7_4wfwo")
 star_punch = ExtResource("8_tqdu3")
 duck = ExtResource("9_5bpft")
 block = ExtResource("10_h4xjg")
+knock_down = ExtResource("11_5bpft")
 metadata/_custom_type_script = "uid://c8kyx1g3lvmgb"
 
 [node name="ParticleEffectComponent" type="Node" parent="." unique_id=1861586519]
+unique_name_in_owner = true
 script = ExtResource("4_4wfwo")
 show_particles = false
 metadata/_custom_type_script = "uid://lks1t1wg7nna"
 
-[node name="FightLogicComponent" type="Node" parent="." unique_id=32840368 node_paths=PackedStringArray("animation_player")]
+[node name="FightLogicComponent" type="Node" parent="." unique_id=32840368]
+unique_name_in_owner = true
 script = ExtResource("12_4wfwo")
-animation_player = NodePath("../AnimationPlayer")
 metadata/_custom_type_script = "uid://cguhik1wigmds"
 
 [node name="MatchSettings" type="Node" parent="." unique_id=1391593835]
+unique_name_in_owner = true
 script = ExtResource("13_tqdu3")
 metadata/_custom_type_script = "uid://kmaq2e83r45t"

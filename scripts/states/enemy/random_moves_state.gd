@@ -77,10 +77,10 @@ enum BLOCK_BEHAVIOR{
 		notify_property_list_changed()
 		
 ## The minimum amount of time (in seconds) the enemy will wait before randomly choosing a move.
-@export_custom(PROPERTY_HINT_NONE, "suffix:s") var min_wait_time : float = 1.0
+@export_range(1.0, 8.0, 0.2, "suffix:s") var min_wait_time : float = 1.0
 
 ## The maximum amount of time (in seconds) the enemy will wait before randomly choosing a move.
-@export_custom(PROPERTY_HINT_NONE, "suffix:s") var max_wait_time : float = 3.0
+@export_range(1.0, 8.0, 0.2, "suffix:s") var max_wait_time : float = 3.0
 
 
 ## An array of predetermined attack delay amounts. 
@@ -174,7 +174,6 @@ func enter() -> void:
 	FightManager.enemy_knocked_down_signal.connect(transition_to_knocked_down)
 	FightManager.player_knocked_down_signal.connect(check_state_change_condition.bind(FightManager.player_knocked_down_signal.get_name()))
 	FightManager.enemy_knocked_down_signal.connect(check_state_change_condition.bind(FightManager.player_knocked_down_signal.get_name()))
-	FightManager.no_stamina_signal.connect(check_state_change_condition.bind(FightManager.player_knocked_down_signal.get_name()))
 	
 	# If the player or the enemy blocks an attack, it resets the attack delay timer
 	# This is so that the timer doesn't accidently go off right after a block animation is playing.
@@ -188,25 +187,22 @@ func enter() -> void:
 	
 	start_attack_delay_timer()
 	
-	
 	wait_timer.start()
-	wait_timer.timeout.connect(_on_wait_timer_timeout)
-
-
+	wait_timer.paused = false
+	
 func exit() -> void:
 	attack_timer.stop()
 	if wait_timer != null: # Shenanigans to pause the wait timer when transitioning to another scene.
-		wait_timer.stop()
+		wait_timer.paused = true
 		if wait_timer.time_left <= 0.0:
-			wait_timer.wait_time = time_to_wait
+			wait_timer.wait_time = time_to_wait # Resets thet time if the timer has already reached zero.
 		else:
-			wait_timer.wait_time = wait_timer.time_left
-		wait_timer.timeout.disconnect(_on_wait_timer_timeout)
+			wait_timer.wait_time = wait_timer.time_left # Sets the time left to the time that was remaining on exit. Basically pauses the timer.
+		
 	FightManager.player_knocked_down_signal.disconnect(transition_to_spectating)
 	FightManager.enemy_knocked_down_signal.disconnect(transition_to_knocked_down)
 	FightManager.player_knocked_down_signal.disconnect(check_state_change_condition.bind(FightManager.player_knocked_down_signal.get_name()))
 	FightManager.enemy_knocked_down_signal.disconnect(check_state_change_condition.bind(FightManager.player_knocked_down_signal.get_name()))
-	FightManager.no_stamina_signal.disconnect(check_state_change_condition.bind(FightManager.player_knocked_down_signal.get_name()))
 	
 	# If the player or the enemy blocks an attack, it resets the attack delay timer
 	# This is so that the timer doesn't accidently go off right after a block animation is playing.
@@ -220,7 +216,7 @@ func _process(_delta: float) -> void:
 	if get_parent().current_state == self:
 		check_round_time()
 		check_stamina()
-
+		check_wait_time()
 #endregion
 
 ## Automatically adds all of the attack names as nodes in the animation tree.
@@ -240,20 +236,22 @@ func add_attack_animation_nodes() -> void:
 ##
 ## This function is called right after performing an attack and after the player or the enemy blocks.
 func start_attack_delay_timer() -> void:
-	if attack_delay_type == ATTACK_DELAY.FLOAT:
-		attack_timer.start(randf_range(min_wait_time, max_wait_time)) # Starts the timer when entering the state and sets a random wait time.
-	elif attack_delay_type == ATTACK_DELAY.PREDETERMINED:
-		attack_timer.start(attack_delay_array.pick_random())
+	match attack_delay_type:
+		ATTACK_DELAY.FLOAT:
+			attack_timer.start(randf_range(min_wait_time, max_wait_time)) # Starts the timer when entering the state and sets a random wait time.
+		ATTACK_DELAY.PREDETERMINED:
+			attack_timer.start(attack_delay_array.pick_random())
 		
 ## Function called when a block occurs.
 ## Handle attack wait times after a block.
 func handle_block() -> void:
-	if block_behavior == BLOCK_BEHAVIOR.RESET_TIMER:
-		start_attack_delay_timer()
-	elif block_behavior == BLOCK_BEHAVIOR.PAUSE_TIMER:
-		toggle_attack_delay_timer()
-		await get_tree().create_timer(0.5).timeout
-		toggle_attack_delay_timer()
+	match block_behavior:
+		BLOCK_BEHAVIOR.RESET_TIMER:
+			start_attack_delay_timer()
+		BLOCK_BEHAVIOR.PAUSE_TIMER:
+			toggle_attack_delay_timer()
+			await get_tree().create_timer(0.5).timeout
+			toggle_attack_delay_timer()
 		
 ## Pauses and unpauses the attack delay timer.
 func toggle_attack_delay_timer() -> void:
@@ -282,18 +280,18 @@ func perform_action() -> void:
 	var move = str(get_weighted_choice(moveset)).replace('"', "") # Formats the move name to be usable incase it comes with quoation marks for some reason.
 	anim_state_machine.travel(move) 
 	start_attack_delay_timer()
-
-
+	
 ## Checks to see if the current round time matches the specified round time to change state.
+func check_wait_time() -> void:
+	if wait_timer.time_left <= 0.0 :
+		condition_match_direct_transition(STATE_CHANGE_CONDITION.AFTER_TIME_PASSED)
+		return
+
+## Checks to see if the wait timer has ran out so that the enemy can change state
 func check_round_time() -> void:
 	if FightManager.round_time >= target_round_time:
 		condition_match_direct_transition(STATE_CHANGE_CONDITION.AT_ROUND_TIME)
 		return
-
-## Changes to the condition's target state after the waiting time has elapsed.
-func _on_wait_timer_timeout() -> void:
-	condition_match_direct_transition(STATE_CHANGE_CONDITION.AFTER_TIME_PASSED)
-	return
 
 ## Matches the signal received to the condition and then changes to the state of the matching condition.
 func check_state_change_condition(signal_name : StringName) -> void:
@@ -314,7 +312,19 @@ func check_stamina() -> void:
 	else:
 		condition_match_direct_transition(STATE_CHANGE_CONDITION.AFTER_PLAYER_NOT_TIRED)
 		return
-				
+
+## Creates the timers with code so that you don't have to make timer node and then manually assign it.
+func create_timers() -> void:
+	attack_timer = Timer.new()
+	attack_timer.name = "Attack Delay Timer"
+	add_child(attack_timer)
+	wait_timer = Timer.new()
+	wait_timer.name = "Wait Timer"
+	wait_timer.one_shot = true
+	add_child(wait_timer)
+	wait_timer.wait_time = time_to_wait
+	
+#region Helper Functions
 ## Helper function to make this more readable.
 func condition_match_direct_transition(condition : int) -> void:
 	match condition:
@@ -324,6 +334,7 @@ func condition_match_direct_transition(condition : int) -> void:
 		secondary_condition:
 			transition_to_target(secondary_target_state)
 			return
+			
 
 ## Helper function to make this more readable.
 func condition_match_set_inter_state(condition : int) -> void:
@@ -340,14 +351,4 @@ func condition_match_set_inter_state(condition : int) -> void:
 func transition_to_target(target_state : State) -> void:
 	if anim_state_machine.get_current_node() == "idle": # Checks to see if the enemy is idle so that it doesn't interrupt a hit, block, or any other animation.
 		transition(self, target_state)
-		
-## Creates the timers with code so that you don't have to make timer node and then manually assign it.
-func create_timers() -> void:
-	attack_timer = Timer.new()
-	attack_timer.name = "Attack Delay Timer"
-	add_child(attack_timer)
-	wait_timer = Timer.new()
-	wait_timer.name = "Wait Timer"
-	wait_timer.one_shot = true
-	add_child(wait_timer)
-	wait_timer.wait_time = time_to_wait
+#endregion

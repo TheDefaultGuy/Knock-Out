@@ -4,6 +4,7 @@ class_name Player extends Fighter
 
 ## Whether the fighter is currently knocked down.
 @export var isKnockdown : bool = false
+@onready var input_component: InputComponent = %InputComponent
 
 
 func _ready() -> void:

@@ -20,10 +20,10 @@ class_name IntroLoopState extends State
 
 ## How the delay between each attack is handled.
 @export_category("⏱ Attack Delays")
-## The minimum amount of time (in seconds) the enemy will wait before randomly choosing a move.
-@export_custom(PROPERTY_HINT_NONE, "suffix:s") var min_wait_time : float = 3.0
-## The maximum amount of time (in seconds) the enemy will wait before randomly choosing a move.
-@export_custom(PROPERTY_HINT_NONE, "suffix:s") var max_wait_time : float = 8.0
+## The minimum amount of time (in seconds) the enemy will wait before attacking.
+@export_range(1.0, 8.0, 0.2, "suffix:s") var min_wait_time : float = 3.0
+## The maximum amount of time (in seconds) the enemy will wait before attacking.
+@export_range(1.0, 8.0, 0.25, "suffix:s") var max_wait_time : float = 8.0
 
 @export_category("⇄ State Changing Conditions")
 ## The state the enemy will transition to after the conditions are met.
@@ -94,7 +94,8 @@ func exit() -> void:
 	#defense_component.current_anim_state_machine = animation_tree[str("parameters/", machine_name ,"/playback")]
 func perform_action() -> void:
 	animation_tree.get(str("parameters/",machine_name,"/playback")).travel("attack")
-
+	start_loop_timer()
+	
 func change_state() -> void:
 	get_parent().interrupted_state = target_state
 

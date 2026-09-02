@@ -42,21 +42,37 @@ blend_point_3/name = &"attack_left_lower"
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_60mlk"]
 animation = &"back_to_the_fight"
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_asaa1"]
-animation = &"block/lower"
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_u0koy"]
+animation = &"back_to_the_fight_2"
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_vqrow"]
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_1qps4"]
 animation = &"block/upper"
 
-[sub_resource type="AnimationNodeBlendSpace1D" id="AnimationNodeBlendSpace1D_swopd"]
-min_space = 0.0
-value_label = "punch_height"
-blend_point_0/node = SubResource("AnimationNodeAnimation_asaa1")
-blend_point_0/pos = 0.0
-blend_point_0/name = &"block_lower"
-blend_point_1/node = SubResource("AnimationNodeAnimation_vqrow")
-blend_point_1/pos = 1.0
-blend_point_1/name = &"block_upper"
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_v1587"]
+animation = &"block/upper"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_5rg8i"]
+animation = &"block/lower"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_44dyb"]
+animation = &"block/lower"
+
+[sub_resource type="AnimationNodeBlendSpace2D" id="AnimationNodeBlendSpace2D_u0koy"]
+min_space = Vector2(-1, 0)
+x_label = "punch_direction"
+y_label = "punch_height"
+blend_point_0/node = SubResource("AnimationNodeAnimation_1qps4")
+blend_point_0/pos = Vector2(-1, 1)
+blend_point_0/name = &"block_upper"
+blend_point_1/node = SubResource("AnimationNodeAnimation_v1587")
+blend_point_1/pos = Vector2(1, 1)
+blend_point_1/name = &"block_upper 2"
+blend_point_2/node = SubResource("AnimationNodeAnimation_5rg8i")
+blend_point_2/pos = Vector2(1, 0)
+blend_point_2/name = &"block_lower"
+blend_point_3/node = SubResource("AnimationNodeAnimation_44dyb")
+blend_point_3/pos = Vector2(-1, 0)
+blend_point_3/name = &"block_lower 2"
 
 [sub_resource type="AnimationNodeBlendSpace1D" id="AnimationNodeBlendSpace1D_sw5rj"]
 value_label = "dodge_direction"
@@ -215,20 +231,11 @@ switch_mode = 2
 advance_mode = 2
 advance_condition = &"spectating"
 
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_qcwvm"]
-priority = 0
-advance_mode = 2
-advance_condition = &"gotup"
-
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_asaa1"]
 switch_mode = 2
 advance_mode = 2
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_xpfnc"]
-switch_mode = 2
-advance_mode = 2
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_4iqsr"]
 switch_mode = 2
 advance_mode = 2
 
@@ -264,6 +271,18 @@ advance_mode = 2
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_1qps4"]
 advance_mode = 2
 
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_x5dov"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ichnf"]
+advance_mode = 2
+advance_condition = &"gotup"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_0t60y"]
+switch_mode = 2
+advance_mode = 2
+
 [resource]
 states/ATTACKS/node = SubResource("AnimationNodeAnimation_dt7fs")
 states/ATTACKS/position = Vector2(96.8, 21.000008)
@@ -274,25 +293,27 @@ states/attack/node = SubResource("AnimationNodeBlendSpace2D_28nnw")
 states/attack/position = Vector2(30.12223, 126.33267)
 states/back_to_the_fight/node = SubResource("AnimationNodeAnimation_60mlk")
 states/back_to_the_fight/position = Vector2(333.8, 21.880013)
-states/block/node = SubResource("AnimationNodeBlendSpace1D_swopd")
-states/block/position = Vector2(-56.6448, -142.31528)
+states/back_to_the_fight_2/node = SubResource("AnimationNodeAnimation_u0koy")
+states/back_to_the_fight_2/position = Vector2(324.57855, 92.08472)
+states/block/node = SubResource("AnimationNodeBlendSpace2D_u0koy")
+states/block/position = Vector2(-153.42145, -82.91528)
 states/dodge/node = SubResource("AnimationNodeBlendSpace1D_sw5rj")
 states/dodge/position = Vector2(142.50722, -277.31528)
 states/get_up_blend/node = SubResource("AnimationNodeBlendSpace1D_3ju8v")
-states/get_up_blend/position = Vector2(333.86584, 126.925125)
+states/get_up_blend/position = Vector2(339.86584, 165.92513)
 states/hit/node = SubResource("AnimationNodeBlendSpace2D_jnxkn")
-states/hit/position = Vector2(-47.631207, -221.1153)
+states/hit/position = Vector2(-45.999996, -221.1153)
 states/intro/node = SubResource("AnimationNodeAnimation_v3c03")
 states/intro/position = Vector2(290.0565, -176.88)
 states/intro_start/node = SubResource("AnimationNodeAnimation_jnxkn")
 states/intro_start/position = Vector2(431.31528, -79.61223)
 states/knock_down/node = SubResource("AnimationNodeBlendSpace2D_05j56")
-states/knock_down/position = Vector2(510.49683, 128.33943)
+states/knock_down/position = Vector2(564.4968, 141.33943)
 states/neutral/node = SubResource("AnimationNodeBlendSpace1D_v1587")
 states/neutral/position = Vector2(95.953445, -79.092224)
 states/spectating/node = SubResource("AnimationNodeAnimation_4ni07")
-states/spectating/position = Vector2(-45.999996, 20.992004)
+states/spectating/position = Vector2(-87, 21.000008)
 states/star_punch/node = SubResource("AnimationNodeBlendSpace1D_5hiko")
 states/star_punch/position = Vector2(157.83363, 126.10516)
-transitions = ["back_to_the_fight", "ATTACKS", SubResource("AnimationNodeStateMachineTransition_mx1m4"), "ATTACKS", "spectating", SubResource("AnimationNodeStateMachineTransition_60mlk"), "get_up_blend", "back_to_the_fight", SubResource("AnimationNodeStateMachineTransition_qcwvm"), "intro", "RESET", SubResource("AnimationNodeStateMachineTransition_asaa1"), "attack", "ATTACKS", SubResource("AnimationNodeStateMachineTransition_xpfnc"), "block", "RESET", SubResource("AnimationNodeStateMachineTransition_4iqsr"), "hit", "RESET", SubResource("AnimationNodeStateMachineTransition_kdswm"), "knock_down", "get_up_blend", SubResource("AnimationNodeStateMachineTransition_vqrow"), "star_punch", "ATTACKS", SubResource("AnimationNodeStateMachineTransition_v3c03"), "dodge", "RESET", SubResource("AnimationNodeStateMachineTransition_hjkvg"), "ATTACKS", "neutral", SubResource("AnimationNodeStateMachineTransition_4qjkg"), "RESET", "neutral", SubResource("AnimationNodeStateMachineTransition_egth0"), "Start", "neutral", SubResource("AnimationNodeStateMachineTransition_21d0b"), "Start", "intro_start", SubResource("AnimationNodeStateMachineTransition_1qps4")]
-graph_offset = Vector2(-459.42145, -265.91528)
+transitions = ["back_to_the_fight", "ATTACKS", SubResource("AnimationNodeStateMachineTransition_mx1m4"), "ATTACKS", "spectating", SubResource("AnimationNodeStateMachineTransition_60mlk"), "intro", "RESET", SubResource("AnimationNodeStateMachineTransition_asaa1"), "attack", "ATTACKS", SubResource("AnimationNodeStateMachineTransition_xpfnc"), "hit", "RESET", SubResource("AnimationNodeStateMachineTransition_kdswm"), "knock_down", "get_up_blend", SubResource("AnimationNodeStateMachineTransition_vqrow"), "star_punch", "ATTACKS", SubResource("AnimationNodeStateMachineTransition_v3c03"), "dodge", "RESET", SubResource("AnimationNodeStateMachineTransition_hjkvg"), "ATTACKS", "neutral", SubResource("AnimationNodeStateMachineTransition_4qjkg"), "RESET", "neutral", SubResource("AnimationNodeStateMachineTransition_egth0"), "Start", "neutral", SubResource("AnimationNodeStateMachineTransition_21d0b"), "Start", "intro_start", SubResource("AnimationNodeStateMachineTransition_1qps4"), "block", "RESET", SubResource("AnimationNodeStateMachineTransition_x5dov"), "get_up_blend", "back_to_the_fight_2", SubResource("AnimationNodeStateMachineTransition_ichnf"), "back_to_the_fight_2", "ATTACKS", SubResource("AnimationNodeStateMachineTransition_0t60y")]
+graph_offset = Vector2(-426.42145, -139.91528)
