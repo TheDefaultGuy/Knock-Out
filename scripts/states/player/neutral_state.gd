@@ -1,3 +1,5 @@
+@icon("res://assets/icons/BoxiconsMehBlank.svg")
+
 class_name NeutralPlayerState extends State
 
 @onready var input_component: InputComponent = %InputComponent

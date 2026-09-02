@@ -28,6 +28,12 @@ default_value_enabled = true
 [sub_resource type="VisualShaderNodeBooleanConstant" id="VisualShaderNodeBooleanConstant_07yv6"]
 constant = true
 
+[sub_resource type="VisualShaderNodeTexture2DArray" id="VisualShaderNodeTexture2DArray_ncjeg"]
+
+[sub_resource type="VisualShaderNodeFloatParameter" id="VisualShaderNodeFloatParameter_ncjeg"]
+parameter_name = "FloatParameter"
+default_value_enabled = true
+
 [resource]
 mode = 1
 flags/light_only = false
@@ -51,4 +57,8 @@ nodes/fragment/43/node = SubResource("VisualShaderNodeIf_jtd1c")
 nodes/fragment/43/position = Vector2(1920, 2180)
 nodes/fragment/44/node = SubResource("VisualShaderNodeBooleanConstant_07yv6")
 nodes/fragment/44/position = Vector2(1580, 2160)
+nodes/fragment/45/node = SubResource("VisualShaderNodeTexture2DArray_ncjeg")
+nodes/fragment/45/position = Vector2(2000, 2420)
+nodes/fragment/46/node = SubResource("VisualShaderNodeFloatParameter_ncjeg")
+nodes/fragment/46/position = Vector2(1580, 2780)
 nodes/fragment/connections = PackedInt32Array(37, 0, 36, 2, 36, 0, 38, 0, 40, 0, 0, 0, 35, 0, 38, 3, 36, 0, 40, 0, 41, 0, 38, 1, 42, 0, 43, 0, 44, 0, 43, 1, 38, 0, 43, 3, 43, 0, 40, 1)

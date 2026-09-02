@@ -1,5 +1,5 @@
 @icon("res://assets/icons/MaterialSymbolsSettings.svg")
-@tool
+
 ## This component stores the settings of the match.
 ## How many rounds, the round time, the heal amounts for the enemy and player, etc...
 class_name MatchSettings extends Node

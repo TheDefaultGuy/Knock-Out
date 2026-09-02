@@ -58,7 +58,7 @@ var stun_timer : Timer = null
 ## Whether the enemy transitions to a healing state after stun is over 
 @export var heal_after_stun : bool = false
 ## The amount of time the enemy waits (in seconds) before changing to the target state.
-@export_range(5.0, 100.0, 1.0, "suffix:hp") var target_health : float = 80.0
+@export_range(5.0, 100.0, 1.0, "suffix:hp") var target_health : float = 20.0
 
 ## The state in which the enemy attempts to heal.
 @export var heal_state : ItemHealState 
@@ -109,6 +109,8 @@ func enter() -> void: # Blank enter and exit functions that get overridden by ea
 	FightManager.enemy_knocked_down_signal.connect(transition_to_knocked_down)
 	FightManager.succesful_hit_signal.connect(increase_punch_count)
 	stun_timer.timeout.connect(stun_timer_over)
+	animation_tree.animation_finished.connect(check_if_stun_over.unbind(1))
+	
 	# Resets punch count everytime the enemy enters stun.
 	punch_count = 0
 	stun_over = false
@@ -130,6 +132,7 @@ func exit() -> void:
 	FightManager.succesful_hit_signal.disconnect(increase_punch_count)
 	stun_timer.timeout.disconnect(stun_timer_over)
 	defense_component.reset_current_animations()
+	animation_tree.animation_finished.disconnect(check_if_stun_over)
 	
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
@@ -137,9 +140,6 @@ func _process(_delta: float) -> void:
 	if get_parent().current_state != self:
 		return
 	check_health_condition()
-	if anim_state_machine.get_current_node() == "idle" and stun_over == true: # Checks to see if the enemy is idle so that it doesn't interrupt a hit, block, or any other animation.
-		animation_tree.set("parameters/conditions/recovered", true)
-		transition(self, target_state)
 #endregion
 
 ## Increases the punch count by one everytime the player lands a punch during stun.
@@ -147,14 +147,18 @@ func increase_punch_count() -> void:
 	if stun_behavior == BEHAVIOR_TYPE.FIXED_NUMBER_OF_PUNCHES or stun_behavior == BEHAVIOR_TYPE.INCREASING_NUMBER_OF_PUNCHES:
 		stun_timer.start(stun_duration)
 		punch_count = punch_count + 1
-		if punch_count +1 == stun_punch_length:
-			defense_component.current_hit_animation = "final_hit"
+		if punch_count + 1 == stun_punch_length:
+			defense_component.current_hit_animation = "final_hit" # Sets the last hit of the stun to be the final hit animation.
 		if punch_count >= stun_punch_length:
-			transition(self, target_state)
+			stun_over = true
+## Checks if the enemy is in the idle animation and if stun is over so that it can transition out.
+func check_if_stun_over() -> void:
+	if anim_state_machine.get_current_node() == "idle" and stun_over == true: # Checks to see if the enemy is idle so that it doesn't interrupt a hit, block, or any other animation.
+		transition(self, target_state)
 
 func stun_timer_over() -> void:
 	stun_over = true
-	
+	check_if_stun_over()
 
 func reset_stun_length() -> void:
 	pass
