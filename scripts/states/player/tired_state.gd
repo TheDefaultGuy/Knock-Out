@@ -1,5 +1,5 @@
 @icon("res://assets/icons/FluentEmojiHighContrastSweatDroplets.svg")
-class_name TiredState extends State
+class_name Tired extends State
 
 @onready var input_component: InputComponent = %InputComponent
 var player = self.owner

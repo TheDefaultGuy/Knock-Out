@@ -61,7 +61,7 @@ var stun_timer : Timer = null
 @export_range(5.0, 100.0, 1.0, "suffix:hp") var target_health : float = 20.0
 
 ## The state in which the enemy attempts to heal.
-@export var heal_state : ItemHealState 
+@export var heal_state : ItemHeal 
 
 var target_state : State
 
@@ -70,7 +70,10 @@ var punch_count: int = 0
 ## How many punches the player can land before the enemy changes state.
 var stun_punch_length: int = 0
 
+## Variable checked to see when to transition out of stun.
 var stun_over : bool = false
+const DIZZY_EFFECT = preload("uid://1gxun2up65jb")
+var dizzy : CPUParticles2D = null
 
 ## Handles showing and hiding applicable exported variables
 func _validate_property(property: Dictionary) -> void: 
@@ -91,15 +94,20 @@ func _ready() -> void:
 			stun_punch_length = fixed_stun_length
 		BEHAVIOR_TYPE.INCREASING_NUMBER_OF_PUNCHES:
 			stun_punch_length = clamp(min_stun_length - 1, 0, max_stun_length)# minus 1 because the enter functions adds 1.
-		
-
+	dizzy = DIZZY_EFFECT.instantiate()
+	add_child(dizzy)
+	dizzy.position = Vector2(0.0, -84.0)
+	dizzy.local_coords = true
+	dizzy.emitting = true
+	dizzy.visible = false
+	
 ## Creates the timers with code so that you don't have to make timer node and then manually assign it.
 func create_timers() -> void:
 	stun_timer = Timer.new()
 	stun_timer.name = "Stunned Timer"
 	stun_timer.autostart = false
 	stun_timer.one_shot = true
-	get_parent().get_parent().add_child.call_deferred(stun_timer)
+	add_child.call_deferred(stun_timer)
 
 
 func enter() -> void: # Blank enter and exit functions that get overridden by each state's own custom enter and exit functions.
@@ -110,6 +118,7 @@ func enter() -> void: # Blank enter and exit functions that get overridden by ea
 	FightManager.succesful_hit_signal.connect(increase_punch_count)
 	stun_timer.timeout.connect(stun_timer_over)
 	animation_tree.animation_finished.connect(check_if_stun_over.unbind(1))
+	dizzy.visible = true
 	
 	# Resets punch count everytime the enemy enters stun.
 	punch_count = 0
@@ -133,7 +142,8 @@ func exit() -> void:
 	stun_timer.timeout.disconnect(stun_timer_over)
 	defense_component.reset_current_animations()
 	animation_tree.animation_finished.disconnect(check_if_stun_over)
-	
+
+	dizzy.visible = false
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
 		return
@@ -151,6 +161,7 @@ func increase_punch_count() -> void:
 			defense_component.current_hit_animation = "final_hit" # Sets the last hit of the stun to be the final hit animation.
 		if punch_count >= stun_punch_length:
 			stun_over = true
+			dizzy.visible = false
 ## Checks if the enemy is in the idle animation and if stun is over so that it can transition out.
 func check_if_stun_over() -> void:
 	if anim_state_machine.get_current_node() == "idle" and stun_over == true: # Checks to see if the enemy is idle so that it doesn't interrupt a hit, block, or any other animation.

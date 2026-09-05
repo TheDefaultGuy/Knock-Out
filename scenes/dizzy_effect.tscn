@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://1gxun2up65jb"]
+
+[ext_resource type="Texture2D" uid="uid://dc4w1c8wo6uig" path="res://assets/single_star.png" id="1_ecgsl"]
+
+[node name="Dizzy" type="CPUParticles2D" unique_id=1178928618]
+z_index = 1
+y_sort_enabled = true
+texture_filter = 1
+scale = Vector2(1, 0.8)
+amount = 2
+texture = ExtResource("1_ecgsl")
+local_coords = true
+emission_shape = 4
+emission_points = PackedVector2Array(16, 0)
+emission_colors = PackedColorArray()
+spread = 0.0
+gravity = Vector2(0, 0)
+orbit_velocity_min = 1.0
+orbit_velocity_max = 1.0
+scale_amount_min = 1.5
+scale_amount_max = 1.5

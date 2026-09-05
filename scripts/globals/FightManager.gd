@@ -26,6 +26,9 @@ signal sfx_duck_signal
 signal sfx_star_punch_thrown_signal
 
 @warning_ignore("unused_signal")
+signal sfx_parry_signal
+
+@warning_ignore("unused_signal")
 signal player_knocked_down_signal
 
 @warning_ignore("unused_signal")

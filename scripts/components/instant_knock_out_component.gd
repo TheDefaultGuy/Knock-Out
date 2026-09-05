@@ -62,10 +62,8 @@ func _validate_property(property: Dictionary) -> void:
 #endregion
 
 func _ready() -> void:
-	if expected_state_A == null:
-		printerr(get_parent().name, " Instant KO Component: Expected State A not set.")
-	if expected_state_B == null :
-		push_warning(get_parent().name, " Instant KO Component: Expected State B not set.")
+	if expected_state_A == null and expected_state_B == null :
+		printerr(get_parent().name, " Instant KO Component: No expected state set.")
 		
 ## Checks if the conditions for an instant Knock-Out have been met.
 ## Returns true if the conditions HAVE been met and thus awards an instant KO.

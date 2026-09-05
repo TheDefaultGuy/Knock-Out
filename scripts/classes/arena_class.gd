@@ -25,7 +25,7 @@ var secs := 1.25
 @onready var stamina_label: Label = $Camera2D/UI/StaminaLabel
 ##The label that displays the time left in the round..
 @onready var time_left_label: Label = $Camera2D/UI/TimeLeftLabel
-@onready var state_label: Label = $Camera2D/UI/stae
+@onready var state_label: Label = $Camera2D/UI/StateLabel
 
 
 @onready var fight_logic_component : FightLogicComponent = %FightLogicComponent
@@ -61,11 +61,13 @@ func slow_down_effect() -> void:
 	await get_tree().create_timer(secs * target_time_scale).timeout
 	Engine.time_scale = 1.0
 	
+	
 func _process(_delta: float) -> void:
 	if enemy_node !=null:
 		state_label.text = enemy_node.state_machine.current_state.name
 	
 func update_ui() -> void:
+
 	player_bar.value = Global.player_node.health_component.hp
 	enemy_bar.value = Global.enemy_node.health_component.hp
 	star_count_label.text = str("Stars: ", FightManager.star_count)

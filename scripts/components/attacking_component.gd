@@ -2,13 +2,22 @@
 ## This component is responsible for performing the attacks.
 ## It's used by the attack animations in the Move Set Animation Player and iteracts with the defense component.
 class_name AttackingComponent extends Node
+@onready var defense_component: DefenseComponent = %DefenseComponent
 
 ## Multiplier for the attack's damage. mainly used by the player.
 @export_custom(PROPERTY_HINT_NONE, "suffix:x") var attack_multiplier : float = 1.0 
+@export var parry_damage_curve : Curve
+var parry_attack_timer : Timer = null
 
-var enemy_flash_duration := 0.25
+@export_custom(PROPERTY_HINT_NONE, "suffix:s") var parry_bonus_duration : float = 2.0
+
+var enemy_flash_duration : float = 0.25
 
 @onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
+
+func _ready() -> void:
+	create_parry_timer()
+	defense_component.player_parried.connect(parry_damage_bonus)
 ## Function that called by the attack animations
 ##
 ## It calls functions in the opposing fighter's defense component, giving it the attacks variables as input.
@@ -75,3 +84,18 @@ func attack_flash() -> void:
 		animated_sprite_2d.material.set_shader_parameter("Visible", false)
 		return
 	push_warning("Player cannot do attack flash, only enemies.")
+
+func parry_damage_bonus() -> void:
+		parry_attack_timer.start()
+
+func _process(_delta: float) -> void:
+	if parry_attack_timer.is_stopped() == false and owner is Player:
+		attack_multiplier = parry_damage_curve.sample(1 - (parry_attack_timer.time_left / parry_attack_timer.wait_time))
+		#print(attack_multiplier)
+
+func create_parry_timer() -> void:
+	parry_attack_timer = Timer.new()
+	parry_attack_timer.name = "Attack Delay Timer"
+	parry_attack_timer.wait_time = parry_bonus_duration
+	parry_attack_timer.one_shot = true
+	add_child(parry_attack_timer)

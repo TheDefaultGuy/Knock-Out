@@ -11,7 +11,7 @@
 ## To add it as a state, add it as a child node to the State Machine node in the enemy's scene,
 ## Then, tweak the exported variables to set it up.
 ## DO NOT change anything in the actual .gd file, since it'll screw up compatibility HARD.
-class_name RandomizedMovesState extends State
+class_name RandomMoves extends State
 
 #region Exported Variables and function that handles which variables to show
 @export_category("🎬 Animations & Moveset")
@@ -136,19 +136,20 @@ var root_state_machine: AnimationNodeStateMachine = null
 
 
 ## Handles showing and hiding applicable exported variables
-func _validate_property(property: Dictionary) -> void: 
-	if property.name == "target_round_time" and primary_condition != STATE_CHANGE_CONDITION.AT_ROUND_TIME and secondary_condition != STATE_CHANGE_CONDITION.AT_ROUND_TIME :
-		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "time_to_wait" and primary_condition != STATE_CHANGE_CONDITION.AFTER_TIME_PASSED and secondary_condition != STATE_CHANGE_CONDITION.AFTER_TIME_PASSED :
-		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "wait_timer" and primary_condition != STATE_CHANGE_CONDITION.AFTER_TIME_PASSED and secondary_condition != STATE_CHANGE_CONDITION.AFTER_TIME_PASSED :
-		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "target_health" and primary_condition != STATE_CHANGE_CONDITION.AFTER_HEALTH_DROPS_BELOW and secondary_condition != STATE_CHANGE_CONDITION.AFTER_HEALTH_DROPS_BELOW :
-		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "primary_target_state" and primary_condition == STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
-		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "secondary_target_state" and secondary_condition == STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
-		property.usage = PROPERTY_USAGE_NONE
+func _validate_property(_property: Dictionary) -> void: 
+	#if property.name == "target_round_time" and primary_condition != STATE_CHANGE_CONDITION.AT_ROUND_TIME and secondary_condition != STATE_CHANGE_CONDITION.AT_ROUND_TIME :
+		#property.usage = PROPERTY_USAGE_NONE
+	#if property.name == "time_to_wait" and primary_condition != STATE_CHANGE_CONDITION.AFTER_TIME_PASSED and secondary_condition != STATE_CHANGE_CONDITION.AFTER_TIME_PASSED :
+		#property.usage = PROPERTY_USAGE_NONE
+	#if property.name == "wait_timer" and primary_condition != STATE_CHANGE_CONDITION.AFTER_TIME_PASSED and secondary_condition != STATE_CHANGE_CONDITION.AFTER_TIME_PASSED :
+		#property.usage = PROPERTY_USAGE_NONE
+	#if property.name == "target_health" and primary_condition != STATE_CHANGE_CONDITION.AFTER_HEALTH_DROPS_BELOW and secondary_condition != STATE_CHANGE_CONDITION.AFTER_HEALTH_DROPS_BELOW :
+		#property.usage = PROPERTY_USAGE_NONE
+	#if property.name == "primary_target_state" and primary_condition == STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
+		#property.usage = PROPERTY_USAGE_NONE
+	#if property.name == "secondary_target_state" and secondary_condition == STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
+		#property.usage = PROPERTY_USAGE_NONE
+	pass
 #endregion
 
 #region The Ready, Enter and Exit functions.

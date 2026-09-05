@@ -1,15 +1,14 @@
 @icon("res://assets/icons/TablerEyeExclamation.svg")
 @tool
 ## This is a template state used by enemy boxers.
-## In this state, the enemy will keep looping the same animation, but react to the player's attacks.
-## This is used to recreate boxers like Don Flamenco, where they taunt and only attack when attacked at first.
-## You can set conditions to transition to another state if desired.
+## In this state, the enemy will react to the player's actions.
+## The enemy can dodge if the player throws a punch, throw a fake out punch and then punish if the player dodged.
 ##
 ## This is a template state used by enemy boxers.
 ## To add it as a state, add it as a child node to the State Machine node in the enemy's scene,
 ## Then, tweak the exported variables to set it up.
 ## DO NOT change anything in the actual .gd file, since it'll screw up compatibility HARD.
-class_name ReactionaryState extends State
+class_name Reactionary extends State
 
 
 

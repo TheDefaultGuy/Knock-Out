@@ -1,7 +1,5 @@
 @icon("res://assets/icons/BoxiconsBinocularFilled.svg")
-class_name PlayerSpectatingState extends State
-
-
+class_name PlayerSpectating extends State
 
 func enter() -> void:
 	print_rich("[color=yellow]Player Entered State: [/color]", self.name)

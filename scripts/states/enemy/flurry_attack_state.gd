@@ -10,7 +10,7 @@
 ## To add it as a state, add it as a child node to the State Machine node in the enemy's scene,
 ## Then, tweak the exported variables to set it up.
 ## DO NOT change anything in the actual .gd file, since it'll screw up compatibility HARD.
-class_name FlurryAttackState extends State
+class_name FlurryAttack extends State
 
 #@onready var anim_state_machine = animation_tree.get("parameters/playback")
 
@@ -54,7 +54,7 @@ func _ready() -> void:
 func enter() -> void:
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
 	
-	anim_state_machine.travel(machine_name)
+	
 	if KO_state == null:
 		printerr(self.name, " : KO State not set.")
 	if survived_state == null:
@@ -65,16 +65,18 @@ func enter() -> void:
 	target_state = survived_state
 	
 	animation_tree.animation_finished.connect(increase_count.unbind(1))
+	FightManager.player_knocked_down_signal.connect(change_state)
 	FightManager.player_knocked_down_signal.connect(transition_to_spectating)
 	FightManager.enemy_knocked_down_signal.connect(transition_to_knocked_down)
 	attack_count = -1 # Resets the attack count when re-entering this state
-
+	await get_tree().create_timer(1.0).timeout
+	anim_state_machine.travel(machine_name)
 
 func exit() -> void:
-	animation_tree.animation_finished.disconnect(increase_count.unbind(1))
+	animation_tree.animation_finished.disconnect(increase_count)
 	FightManager.player_knocked_down_signal.disconnect(transition_to_spectating)
 	FightManager.enemy_knocked_down_signal.disconnect(transition_to_knocked_down)
-
+	FightManager.player_knocked_down_signal.disconnect(change_state)
 	
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game

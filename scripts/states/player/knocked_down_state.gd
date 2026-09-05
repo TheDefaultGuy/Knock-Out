@@ -1,5 +1,5 @@
 @icon("res://assets/icons/StreamlineSleepSolid.svg")
-class_name PlayerKnockedDownState extends State
+class_name PlayerKnockedDown extends State
 
 @onready var input_component: InputComponent = %InputComponent
 

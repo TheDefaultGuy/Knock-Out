@@ -10,7 +10,7 @@
 ## To add it as a state, add it as a child node to the State Machine node in the enemy's scene,
 ## Then, tweak the exported variables to set it up.
 ## DO NOT change anything in the actual .gd file, since it'll screw up compatibility HARD.
-class_name IntroLoopState extends State
+class_name IntroThenLoop extends State
 
 #@onready var anim_state_machine = animation_tree.get("parameters/playback")
 
@@ -67,14 +67,14 @@ func enter() -> void:
 
 	if target_state == null:
 		printerr(self.name, " : Target State not set.")
-		
+		target_state = get_parent().interrupted_state
 	if animation_tree == null:
 		printerr(self.name, " : Animation tree not set.")
 		
 
 	# Sets the interrupted state in the state machine as itself.
 	# That way, if it gets interrupted by another state like stunned, it'll come back to this one.
-	get_parent().interrupted_state = target_state 
+	get_parent().interrupted_state = target_state
 	anim_state_machine.travel(machine_name)
 	start_loop_timer()
 	

@@ -6,6 +6,9 @@
 ## It mainly checks if an attack lands given the fighter's blocking, dodging, state, etc...
 class_name DefenseComponent extends Node
 
+
+signal player_parried
+
 #region Exported Variables
 @export_group("Defense Variables")
 
@@ -74,6 +77,7 @@ var current_hit_animation : String = "hit"
 var current_block_animation : String = "block"
 
 var current_anim_state_machine : AnimationNodeStateMachinePlayback = null
+const IMPACT_EFFECT = preload("uid://mbb7yyvjhw12")
 
 func _ready() -> void:
 	set_anim_state_machine.call_deferred() # gotta defer this for it to work for some reason.
@@ -137,6 +141,11 @@ func check_blocking_status(blocking_status : bool, damage_amount : float, punch_
 			check_for_star_and_stun(punch_height)
 			owner.animation_tree.set(str("parameters/",str(current_hit_animation),"/blend_position"), Vector2i(punch_direction, punch_height))
 			play_animation(str(current_hit_animation))
+			if owner is Enemy:
+				var impact_effect = IMPACT_EFFECT.instantiate()
+				var effect_position = [-10.0, -54.0]
+				impact_effect.position.y = effect_position[punch_height]
+				owner.add_child(impact_effect)
 			return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
 				
 		true: # IS blocking
@@ -146,8 +155,15 @@ func check_blocking_status(blocking_status : bool, damage_amount : float, punch_
 			if owner is Player:
 				if owner.input_component.parry_timer.time_left > 0.0:
 					print("WOW PARRY")
+					FightManager.sfx_parry_signal.emit()
+					player_parried.emit()
+					current_block_animation = "fast_block"
+					#FightManager.lower_stamina() 
+				else: 
+					current_block_animation = "block"
 			# Plays the corresponding block animation if it wasn't enough damage for a knockdown.
 			owner.animation_tree.set(str("parameters/",str(current_block_animation),"/blend_position"),  Vector2i(punch_direction, punch_height))
+			
 			play_animation(str(current_block_animation))
 
 			FightManager.succesful_block_signal.emit()

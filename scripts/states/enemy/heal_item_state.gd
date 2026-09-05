@@ -10,7 +10,7 @@
 ## To add it as a state, add it as a child node to the State Machine node in the enemy's scene,
 ## Then, tweak the exported variables to set it up.
 ## DO NOT change anything in the actual .gd file, since it'll screw up compatibility HARD.
-class_name ItemHealState extends State
+class_name ItemHeal extends State
 
 #@onready var anim_state_machine = animation_tree.get("parameters/playback")
 

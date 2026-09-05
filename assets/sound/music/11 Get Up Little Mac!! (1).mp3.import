@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://cwd0ahjeaqarg"
+path="res://.godot/imported/11 Get Up Little Mac!! (1).mp3-26c2e357e708980d067e77f7c6e41a64.mp3str"
+
+[deps]
+
+source_file="res://assets/sound/music/11 Get Up Little Mac!! (1).mp3"
+dest_files=["res://.godot/imported/11 Get Up Little Mac!! (1).mp3-26c2e357e708980d067e77f7c6e41a64.mp3str"]
+
+[params]
+
+loop=true
+loop_offset=0.0
+bpm=180.0
+beat_count=16
+bar_beats=4

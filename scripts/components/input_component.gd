@@ -36,8 +36,8 @@ func _ready() -> void:
 func _input(_event: InputEvent) -> void:
 	if allow_inputs == false:
 		return
-	if Input.is_action_just_pressed("dodge"):
-		print("pressed dodge")
+	#if Input.is_action_just_pressed("dodge"):
+		#print("pressed dodge")
 	
 	if Input.is_action_just_pressed("down"): # Ducking to avoid high attacks
 		perform_action("down")
@@ -48,9 +48,8 @@ func _input(_event: InputEvent) -> void:
 	if Input.is_action_just_pressed("right"):
 		perform_action("right")
 		
-	if Input.is_action_just_pressed("block"):
+	if Input.is_action_just_pressed("block") or Input.is_action_just_pressed("block_upper") or Input.is_action_just_pressed("block_lower"):
 		parry_timer.start()
-		print("block")
 		
 	if Input.is_action_just_pressed("star_punch") and Input.is_action_pressed("up") == false:
 		perform_action("star_punch_lower")
@@ -86,11 +85,15 @@ func _process(_delta: float) -> void:
 		
 	elif Input.is_action_pressed("up") == true and Input.is_action_pressed("block") == false: 
 		owner.animation_tree.set("parameters/neutral/idle/blend_position", Vector2i(0, 0))
-		
+	
+	if Input.is_action_pressed("block_upper") == true:
+		owner.animation_tree.set("parameters/neutral/idle/blend_position", Vector2i(1, 1))
+	elif Input.is_action_pressed("block_lower") == true:
+		owner.animation_tree.set("parameters/neutral/idle/blend_position", Vector2i(1, 0))
+	
 	if Input.is_action_pressed("left") == true: 
 		owner.animation_tree.set("parameters/dodge/dodge_left/dodge_blend_left/blend_position", Global.range.LEFT)
 		owner.animation_tree.set("parameters/dodge/dodge_left/conditions/holding_left", true)
-		
 	elif Input.is_action_pressed("left") == false: 
 		owner.animation_tree.set("parameters/dodge/dodge_left/conditions/holding_left", false)
 		
