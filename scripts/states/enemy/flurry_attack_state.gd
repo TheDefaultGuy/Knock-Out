@@ -1,4 +1,5 @@
 @icon("res://assets/icons/MaterialSymbolsDeliveryTruckSpeedRounded.svg")
+@tool
 ## A state in which the enemy will perform an intro animation and then a series of repeated moves,
 ## Similar to Piston Hondo's "Hondo Rush", Mr Sandman's "Dreamland Express", and Super Macho Man's Clotheslines.
 ##
@@ -21,6 +22,10 @@ class_name FlurryAttack extends State
 
 ## The minimum amount of time (in seconds) the enemy will wait before randomly choosing a move.
 @export var number_of_repetitions : int = 3
+## Whether to skip the intro animation or not. Use it for when you ONLY want the repeated attacks.
+@export var skip_intro : bool = false
+## A Small delay before performing the attacks. Mainly as a small buffer to make sure to animations get cut off.
+@export var start_delay : float = 0.2
 
 
 @export_category("⇄ State Changing Conditions")
@@ -31,7 +36,7 @@ class_name FlurryAttack extends State
 
 var target_state : State
 
-var attack_count : int = -1
+var attack_count : int = 0
 
 var root_state_machine: AnimationNodeStateMachine = null
 
@@ -41,11 +46,14 @@ var machine_name = null
 
 #region The Ready, Enter and Exit functions
 func _ready() -> void:
-	#reset_animation_tree()
+	machine_name = str(name).to_snake_case()
+	call_deferred("add_attack_animation_nodes")
+	
+func add_attack_animation_nodes() -> void:
 	root_state_machine = animation_tree.tree_root
-	machine_name = str(name, "_state_machine") 
+	machine_name = str(name).to_snake_case()
 	## Automatically adds the state machine node to the animation tree.
-	root_state_machine.add_node(machine_name, state_machine, Vector2(0,0))
+	root_state_machine.add_node(machine_name, state_machine, Vector2(300.0,-550.0))
 	var connection = AnimationNodeStateMachineTransition.new()
 	connection.switch_mode = AnimationNodeStateMachineTransition.SWITCH_MODE_AT_END
 	connection.advance_mode = AnimationNodeStateMachineTransition.ADVANCE_MODE_AUTO
@@ -60,21 +68,29 @@ func enter() -> void:
 	if survived_state == null:
 		survived_state = get_parent().interrupted_state
 		
+	if skip_intro == true:
+		animation_tree.set(str("parameters/",machine_name,"/conditions/skip_intro"), true)
+	else:
+		animation_tree.set(str("parameters/",machine_name,"/conditions/skip_intro"), false)
 	# Sets the interrupted state in the state machine as itself.
 	# That way, if it gets interrupted by another state like stunned, it'll come back to this one.
 	target_state = survived_state
 	
-	animation_tree.animation_finished.connect(increase_count.unbind(1))
+	animation_tree.animation_finished.connect(increase_count)
 	FightManager.player_knocked_down_signal.connect(change_state)
-	FightManager.player_knocked_down_signal.connect(transition_to_spectating)
 	FightManager.enemy_knocked_down_signal.connect(transition_to_knocked_down)
-	attack_count = -1 # Resets the attack count when re-entering this state
-	await get_tree().create_timer(1.0).timeout
+	
+	match skip_intro: # Resets the attack count when re-entering this state
+		true:
+			attack_count = 0 
+		false:
+			attack_count = -1
+			
+	await get_tree().create_timer(start_delay).timeout
 	anim_state_machine.travel(machine_name)
 
 func exit() -> void:
 	animation_tree.animation_finished.disconnect(increase_count)
-	FightManager.player_knocked_down_signal.disconnect(transition_to_spectating)
 	FightManager.enemy_knocked_down_signal.disconnect(transition_to_knocked_down)
 	FightManager.player_knocked_down_signal.disconnect(change_state)
 	
@@ -86,7 +102,7 @@ func _process(_delta: float) -> void:
 #endregion
 
 ## Increases the attack count variable by 1 every time an animation is played in this state.
-func increase_count() -> void:
+func increase_count(_animation) -> void:
 	attack_count += 1
 	if attack_count >= number_of_repetitions:
 		animation_tree[str("parameters/",machine_name,"/playback")].travel("End")
@@ -95,3 +111,4 @@ func increase_count() -> void:
 
 func change_state() -> void:
 	target_state = KO_state
+	transition_to_spectating()

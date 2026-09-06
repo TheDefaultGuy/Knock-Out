@@ -11,8 +11,9 @@ func enter() -> void:
 	FightManager.enemy_ready_status = false
 	FightManager.fight_is_over_signal.connect(play_win_animation)
 	animation_tree.animation_finished.connect(end_match)
+	owner.animation_tree.set("parameters/back_to_the_fight/blend_position", -1)
+	anim_state_machine = animation_tree["parameters/playback"]
 
-	
 func exit() -> void:
 	FightManager.fighter_got_up_signal.disconnect(back_to_the_fight)
 	FightManager.resume_fighting_signal.disconnect(transition_to_previous_state)

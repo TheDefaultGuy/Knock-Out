@@ -54,10 +54,7 @@ func punch(input_node : Node2D, punch_height : int, punch_range : int, attack_da
 					
 					if owner is Player and star_punch == true: # If it was a star punch, change the attack damage to reflect the amount of star punches used.
 						
-						# This is the equation used for calculating star punch damage in relation to the amount of stars used: https://www.desmos.com/calculator/ck5t9wejr0
-						# Basically, it's not a linear equation, its slightly exponential.
-						# That way, the first star doesn't have the same weight as the 3rd star, and the more the player holds on to the stars, the more damage they can do.
-						attack_damage = snappedf(attack_damage * ( (float(FightManager.stars_used) + 1.0) ** 2.0 / 4.0), 5.0)
+						attack_damage = calculate_start_punch_damage(attack_damage)
 					
 					if input_node.defense_component.call("check_defense", punch_height, punch_range, attack_damage, punch_direction) == true:
 						if star_punch == true: # If it was a star punch and the hit was true, then increase the star punch landed variable
@@ -99,3 +96,9 @@ func create_parry_timer() -> void:
 	parry_attack_timer.wait_time = parry_bonus_duration
 	parry_attack_timer.one_shot = true
 	add_child(parry_attack_timer)
+	
+##This is the equation used for calculating star punch damage in relation to the amount of stars used: https://www.desmos.com/calculator/ck5t9wejr0
+##Basically, it's not a linear equation, its slightly exponential.
+##That way, the first star doesn't have the same weight as the 3rd star, and the more the player holds on to the stars, the more damage they can do.
+func calculate_start_punch_damage(attack_damage: float) -> float:
+	return snappedf(attack_damage * ( (float(FightManager.stars_used) + 1.0) ** 2.0 / 4.0), 5.0)

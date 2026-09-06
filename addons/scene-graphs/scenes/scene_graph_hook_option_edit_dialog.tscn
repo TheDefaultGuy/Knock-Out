@@ -1,0 +1,51 @@
+[gd_scene format=3 uid="uid://d1p3pfr5y5cgr"]
+
+[ext_resource type="Script" uid="uid://2djrbdgwh67v" path="res://addons/scene-graphs/editor/dialogs/scene_graph_hook_option_edit_dialog.gd" id="1_s07aw"]
+
+[node name="Scene Graph Hook Option Edit Dialog" type="ConfirmationDialog" unique_id=1062255079]
+oversampling_override = 1.0
+title = "Edit Hook Options"
+position = Vector2i(0, 36)
+size = Vector2i(560, 300)
+visible = true
+script = ExtResource("1_s07aw")
+
+[node name="Content" type="VBoxContainer" parent="." unique_id=408346596]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 552.0
+offset_bottom = 251.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Content" unique_id=1473728999]
+layout_mode = 2
+
+[node name="Type Label" type="Label" parent="Content/HBoxContainer" unique_id=1049080258]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Hook:"
+
+[node name="Hook Name Label" type="Label" parent="Content/HBoxContainer" unique_id=960812026]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Hook Name"
+
+[node name="Description Label" type="Label" parent="Content" unique_id=739127650]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="HSeparator" type="HSeparator" parent="Content" unique_id=1878467933]
+layout_mode = 2
+
+[node name="Inspector" type="ScrollContainer" parent="Content" unique_id=2119424602]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Property Editors" type="VBoxContainer" parent="Content/Inspector" unique_id=1493004307]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3

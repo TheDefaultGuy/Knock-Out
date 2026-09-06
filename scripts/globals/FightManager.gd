@@ -72,6 +72,13 @@ signal start_get_up_signal
 @warning_ignore("unused_signal")
 ## Signal emitted when a fighter fails to get up before 10 or is TKO'd. Means the fight is over and gameplay is over.
 signal fight_is_over_signal
+
+@warning_ignore("unused_signal")
+signal final_stun_hit_signal
+@warning_ignore("unused_signal")
+signal player_threw_punch_signal(height, direction)
+@warning_ignore("unused_signal")
+signal player_dodged_signal(direction)
 #endregion
 
 #region Stored variables
@@ -84,7 +91,7 @@ var player_ready_status : bool = true
 var enemy_ready_status : bool = true
 
 ## The number of stars the player currently has.
-var star_count : int = 2
+var star_count : int = 0
 
 ## The Player's stamina
 var stamina: int = 10 
@@ -102,7 +109,7 @@ var round_idx : int = 0
 var round_time : float = 0.0
 
 ## The maximum players stamina.
-var max_player_stamina : int = 20
+var max_player_stamina : int = 15
 
 ## The number of stars the player used in their star punch.
 ## Used by the Attack Component to calculate the damage of the star punch and by the Instant KO Component to validate if it was a KO.
@@ -165,7 +172,7 @@ func set_stamina() -> void:
 ## Emits the signal for both fighters to resume fighting and resets their fighting status.
 func start_the_fight() -> void: 
 	if enemy_ready_status == true and player_ready_status == true:
-		enemy_ready_status = false
-		player_ready_status = false
 		resume_fighting_signal.emit()
 		print("Fight Manager: both fighters ready to fight")
+		enemy_ready_status = false
+		player_ready_status = false

@@ -21,6 +21,9 @@ class_name StateMachine extends Node
 
 var current_state : State
 
+@onready var animation_tree: AnimationTree = %AnimationTree
+@onready var anim_state_machine = animation_tree["parameters/playback"]
+var root_state_machine : AnimationNodeStateMachine = null
 # Used to store a state that the enemy was currently at before it got interrupted
 # be it by being stunned, knocked down, etc...
 var interrupted_state: State 
@@ -28,6 +31,7 @@ var interrupted_state: State
 var states : Dictionary = {}
 
 func _ready() -> void:
+	delete_attack_animation_nodes()
 	for child in get_children():
 		if child is State:
 
@@ -58,7 +62,24 @@ func on_transition(state, new_state_name):
 	
 	current_state = new_state # Sets the current state to the new state
 	#print("Current State: ", current_state)
+
+## Deletes all of the animation nodes.
+func delete_attack_animation_nodes() -> void:
+	var transitions_to_remove = []
+	root_state_machine = animation_tree.tree_root
 	
+	for i in range(root_state_machine.get_transition_count()):
+		var from_node : StringName = root_state_machine.get_transition_from(i)
+		var to_node : StringName = root_state_machine.get_transition_to(i)
+		
+		if to_node == "hub_node":
+			transitions_to_remove.append({"from": from_node, "to": to_node})
+			
+	for trans in transitions_to_remove:
+		root_state_machine.remove_transition(trans["from"], trans["to"])
+		
+		root_state_machine.remove_node(trans["from"])
+
 	
 func check_for_unnassigned_states():
 	if knocked_down_state == null:

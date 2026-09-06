@@ -17,7 +17,8 @@ var holding_right : bool = false
 ## Variable that stores if the player can perform any inputs.
 var allow_inputs : bool = false
 @export var buffer_time : float = 0.3
-@export var parry_window : float = 0.15
+@export var parry_window : float = 0.1
+@export var final_stun_hit_attack_cooldown : float = 0.6
 
 func _ready() -> void:
 	# Creates a new input buffer Timer on ready
@@ -32,7 +33,8 @@ func _ready() -> void:
 	parry_timer.wait_time = parry_window
 	#parry_timer.timeout.connect(_on_input_buffer_timer_timeout)
 	add_child(parry_timer)
-
+	FightManager.final_stun_hit_signal.connect(final_stun_hit)
+	
 func _input(_event: InputEvent) -> void:
 	if allow_inputs == false:
 		return
@@ -154,3 +156,10 @@ func reset_blend_positions() -> void:
 	owner.animation_tree.set("parameters/dodge_blend_left/blend_position", 0)
 	owner.animation_tree.set("parameters/dodge_blend_right/blend_position", 0)
 	owner.animation_tree.set("parameters/duck_blend/blend_position", 0)
+
+## This function is used so that players can't attack aafter the enemy got hit on the last punch allowable of their stun state.
+## This is so that players don't throw another punch that won't land and waste stamina.
+func final_stun_hit() -> void:
+	allow_inputs = false
+	await get_tree().create_timer(final_stun_hit_attack_cooldown).timeout
+	allow_inputs = true

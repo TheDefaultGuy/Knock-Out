@@ -18,6 +18,5 @@ class_name Fighter extends Node2D
 func start_get_up():
 	FightManager.start_get_up_signal.emit()
 
-
 func emit_got_up_signal():
 	FightManager.fighter_got_up_signal.emit()

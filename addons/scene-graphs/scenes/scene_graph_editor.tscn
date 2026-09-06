@@ -1,0 +1,86 @@
+[gd_scene format=3 uid="uid://1mi2njpt5jwi"]
+
+[ext_resource type="Script" uid="uid://hc26dyjrynne" path="res://addons/scene-graphs/editor/scene_graph_editor.gd" id="1_bwmb2"]
+[ext_resource type="Script" uid="uid://camepk4lkae85" path="res://addons/scene-graphs/editor/scene_graph_editor_root.gd" id="1_unvls"]
+[ext_resource type="Theme" uid="uid://bndk11e5gjol3" path="res://addons/scene-graphs/themes/scene_graph_editor_theme.tres" id="1_wih2w"]
+[ext_resource type="Script" uid="uid://cip3hjy77h2ec" path="res://addons/scene-graphs/editor/scene_graph_view_manager.gd" id="2_8syjn"]
+
+[node name="SceneGraphEditor" type="EditorDock" unique_id=2142569254 node_paths=PackedStringArray("editor", "view_manager")]
+custom_minimum_size = Vector2(200, 200)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource("1_wih2w")
+title = "Scene Graph"
+layout_key = "scene_graph"
+icon_name = &"Signals"
+default_slot = 8
+available_layouts = 7
+script = ExtResource("1_unvls")
+editor = NodePath("VBoxContainer/GraphEdit")
+view_manager = NodePath("Signal View Manager")
+
+[node name="Signal View Manager" type="Node" parent="." unique_id=1097538621 node_paths=PackedStringArray("editor")]
+script = ExtResource("2_8syjn")
+editor = NodePath("../VBoxContainer/GraphEdit")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1108155931]
+layout_mode = 2
+
+[node name="Header" type="MarginContainer" parent="VBoxContainer" unique_id=260714984]
+layout_mode = 2
+
+[node name="HFlowContainer" type="HFlowContainer" parent="VBoxContainer/Header" unique_id=1098885477]
+layout_mode = 2
+theme_override_constants/h_separation = 5
+alignment = 2
+
+[node name="Views" type="Button" parent="VBoxContainer/Header/HFlowContainer" unique_id=87163369]
+layout_mode = 2
+text = "Manage Views"
+
+[node name="View Dropdown" type="OptionButton" parent="VBoxContainer/Header/HFlowContainer" unique_id=1544293729]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Reload Button" type="Button" parent="VBoxContainer/Header/HFlowContainer" unique_id=369198331]
+unique_name_in_owner = true
+layout_mode = 2
+flat = true
+
+[node name="Dev Tools" type="HBoxContainer" parent="VBoxContainer/Header/HFlowContainer" unique_id=1173736008]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="VSeparator4" type="VSeparator" parent="VBoxContainer/Header/HFlowContainer/Dev Tools" unique_id=1540757415]
+layout_mode = 2
+
+[node name="Dev Tools Button" type="MenuButton" parent="VBoxContainer/Header/HFlowContainer/Dev Tools" unique_id=861350666]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Dev Tools"
+flat = false
+item_count = 1
+popup/item_0/text = "Reload Plugin"
+popup/item_0/id = 0
+
+[node name="GraphEdit" type="GraphEdit" parent="VBoxContainer" unique_id=1870571004]
+layout_mode = 2
+size_flags_vertical = 3
+scroll_offset = Vector2(0, -31)
+snapping_distance = 32
+right_disconnects = true
+type_names = {
+0: "method",
+1: "signal"
+}
+script = ExtResource("1_bwmb2")
+
+[connection signal="pressed" from="VBoxContainer/Header/HFlowContainer/Views" to="Signal View Manager" method="show_dialog" flags=3]
+[connection signal="pressed" from="VBoxContainer/Header/HFlowContainer/Reload Button" to="." method="populate_from_scene"]

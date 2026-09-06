@@ -1,4 +1,5 @@
 @icon("res://assets/icons/PinheadPillBottleWithGreekCross.svg")
+@tool
 ## A state in which the enemy will attempt to heal with an item,
 ## similar to Doc Louis with his chocolate and Soda Popinski with his "Soda".
 ##
@@ -12,14 +13,10 @@
 ## DO NOT change anything in the actual .gd file, since it'll screw up compatibility HARD.
 class_name ItemHeal extends State
 
-#@onready var anim_state_machine = animation_tree.get("parameters/playback")
 
 #region Exported Variables
 ## How the delay between each attack is handled.
-@export_category("⚙️ Attack Settings")
-
-## How much HP will the enemy heal if the player doesn't stop them from healing.
-@export var heal_amount : float = 30.0
+#@export_category("⚙️ Attack Settings")
 
 
 
@@ -40,35 +37,35 @@ var machine_name = null
 
 #region The Ready, Enter and Exit functions
 func _ready() -> void:
-	## Automatically adds the state machine node to the animation tree.
-	#reset_animation_tree()
+	machine_name = str(name).to_snake_case()
+	call_deferred("add_attack_animation_nodes")
+	
+func add_attack_animation_nodes() -> void:
 	root_state_machine = animation_tree.tree_root
-	machine_name = str(name, "_state_machine") 
-	root_state_machine.add_node(machine_name, state_machine, Vector2(0,0))
+	machine_name = str(name).to_snake_case()
+	root_state_machine.add_node(machine_name, state_machine, Vector2(300.0,-550.0))
 	var connection = AnimationNodeStateMachineTransition.new()
 	connection.switch_mode = AnimationNodeStateMachineTransition.SWITCH_MODE_AT_END
 	connection.advance_mode = AnimationNodeStateMachineTransition.ADVANCE_MODE_AUTO
 	root_state_machine.add_transition(machine_name, "hub_node", connection)
 
-
 func enter() -> void:
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
-	
 	# Lets the Animation Tree now that the enemy is neither stunned nor spectating.
 	animation_tree.set("parameters/conditions/spectating", false)
 	animation_tree.set("parameters/conditions/stunned", false)
-
+	
 	
 	anim_state_machine.travel(machine_name)
 	
 	if failed_heal_state == null:
 		printerr(self.name, " : Failed Healed State not set.")
-	#if successful_heal_state == null:
-		#successful_heal_state = get_parent().interrupted_state
+	if successful_heal_state == null:
+		successful_heal_state = get_parent().interrupted_state
 		
 	## Sets the interrupted state as the successful heal state by default.
 	## gets overridden by the failed heal state if the enemy gets hit during this state.
-	target_state = get_parent().interrupted_state
+	target_state = successful_heal_state
 	
 	animation_tree.animation_finished.connect(check_animation)
 	FightManager.enemy_knocked_down_signal.connect(transition_to_knocked_down)
@@ -76,8 +73,8 @@ func enter() -> void:
 	
 	# Sets the hit animation and state machine in the defense component as the hit animation in the state machine.
 	# This is because the defense component is the one responsible for playing the hit animation
-	defense_component.current_hit_animation = str("item_hit")
-	defense_component.current_anim_state_machine = animation_tree[str("parameters/", machine_name ,"/playback")]
+	defense_component.current_hit_animation = "item_hit"
+	defense_component.current_anim_state_machine = animation_tree[str("parameters/", str(machine_name) ,"/playback")]
 	check_animation_status = true
 	
 func exit() -> void:

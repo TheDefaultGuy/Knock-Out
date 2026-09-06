@@ -66,5 +66,5 @@ func create_timers() -> void:
 	ko_timer.one_shot = true
 	ko_timer.wait_time = 10.0
 	ko_timer.name = "KO Count Timer"
-	ko_timer.timeout.connect(end_fight)
 	add_child.call_deferred(ko_timer)
+	ko_timer.timeout.connect(end_fight)

@@ -16,7 +16,8 @@ class_name IntroThenLoop extends State
 
 
 #region Exported Variables
-@export_category("🎬 Animations & Moveset")
+#@export_category("🎬 Animations & Moveset")
+#
 
 ## How the delay between each attack is handled.
 @export_category("⏱ Attack Delays")
@@ -46,9 +47,14 @@ func _ready() -> void:
 	wait_timer.timeout.connect(perform_action)
 	#reset_animation_tree()
 	## Automatically adds the state machine node to the animation tree.
+	
+	machine_name = str(name).to_snake_case()
+	call_deferred("add_attack_animation_nodes")
+	
+func add_attack_animation_nodes() -> void:
 	root_state_machine = animation_tree.tree_root
-	machine_name = str(name, "_state_machine") 
-	root_state_machine.add_node(machine_name, state_machine, Vector2(0,0))
+	machine_name = str(name).to_snake_case()
+	root_state_machine.add_node(machine_name, state_machine, Vector2(300.0,-550.0))
 	var connection = AnimationNodeStateMachineTransition.new()
 	connection.switch_mode = AnimationNodeStateMachineTransition.SWITCH_MODE_AT_END
 	connection.advance_mode = AnimationNodeStateMachineTransition.ADVANCE_MODE_AUTO
@@ -62,7 +68,6 @@ func enter() -> void:
 	
 	FightManager.player_knocked_down_signal.connect(transition_to_spectating)
 	FightManager.enemy_knocked_down_signal.connect(transition_to_knocked_down)
-	FightManager.no_stamina_signal.connect(transition_to_previous_state)
 	defense_component.stunned_signal.connect(transition_to_stunned)
 
 	if target_state == null:
@@ -76,6 +81,7 @@ func enter() -> void:
 	# That way, if it gets interrupted by another state like stunned, it'll come back to this one.
 	get_parent().interrupted_state = target_state
 	anim_state_machine.travel(machine_name)
+	animation_tree[str("parameters/",machine_name,"/playback")].travel("Start")
 	start_loop_timer()
 	
 func exit() -> void:
@@ -84,7 +90,6 @@ func exit() -> void:
 	wait_timer.timeout.disconnect(perform_action)
 	FightManager.player_knocked_down_signal.disconnect(transition_to_spectating)
 	FightManager.enemy_knocked_down_signal.disconnect(transition_to_knocked_down)
-	FightManager.no_stamina_signal.disconnect(transition_to_previous_state)
 	defense_component.stunned_signal.disconnect(transition_to_stunned)
 #endregion
 
@@ -92,6 +97,7 @@ func exit() -> void:
 	## This is because the defense component is the one responsible for playing the hit animation
 	#defense_component.current_hit_animation = str("item_hit")
 	#defense_component.current_anim_state_machine = animation_tree[str("parameters/", machine_name ,"/playback")]
+	
 func perform_action() -> void:
 	animation_tree.get(str("parameters/",machine_name,"/playback")).travel("attack")
 	start_loop_timer()

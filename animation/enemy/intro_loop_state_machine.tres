@@ -35,7 +35,7 @@ advance_condition = &"ko"
 
 [resource]
 states/End/position = Vector2(649, 125)
-states/Start/position = Vector2(119, 7)
+states/Start/position = Vector2(146, 7)
 states/attack/node = SubResource("AnimationNodeAnimation_lx8ob")
 states/attack/position = Vector2(501, 125)
 states/intro/node = SubResource("AnimationNodeAnimation_bp15k")
@@ -45,4 +45,4 @@ states/loop/position = Vector2(431, 7)
 states/return/node = SubResource("AnimationNodeAnimation_aqtjj")
 states/return/position = Vector2(342, 125)
 transitions = ["Start", "intro", SubResource("AnimationNodeStateMachineTransition_hvqif"), "intro", "loop", SubResource("AnimationNodeStateMachineTransition_ow3nb"), "attack", "return", SubResource("AnimationNodeStateMachineTransition_qmxu7"), "return", "loop", SubResource("AnimationNodeStateMachineTransition_djx3a"), "attack", "End", SubResource("AnimationNodeStateMachineTransition_lx8ob")]
-graph_offset = Vector2(-225, -90.65014)
+graph_offset = Vector2(-254, -126.65014)

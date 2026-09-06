@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://c2vbdtoq1noj0"]
+
+[ext_resource type="Texture2D" uid="uid://bnkv65w5kjegx" path="res://assets/parry.png" id="1_p0c4u"]
+[ext_resource type="Script" uid="uid://b6rn88caapdn4" path="res://scripts/particles/impact_effect.gd" id="2_qcn6d"]
+
+[sub_resource type="Gradient" id="Gradient_4oml4"]
+offsets = PackedFloat32Array(0.6825397, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[node name="ParryEffect" type="CPUParticles2D" unique_id=1340064102]
+z_index = 2
+texture_filter = 1
+emitting = false
+amount = 5
+texture = ExtResource("1_p0c4u")
+lifetime = 0.7
+one_shot = true
+explosiveness = 1.0
+direction = Vector2(0, -1)
+spread = 34.85
+initial_velocity_min = 264.63
+initial_velocity_max = 264.63
+angular_velocity_min = -452.65
+angular_velocity_max = 335.79
+scale_amount_min = 0.4
+scale_amount_max = 0.6
+color = Color(1, 1, 1, 0.6627451)
+color_ramp = SubResource("Gradient_4oml4")
+script = ExtResource("2_qcn6d")

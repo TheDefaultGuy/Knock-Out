@@ -15,6 +15,10 @@ var selected_index : int = 0
 var passing_option_button : OptionButton = null
 
 func _ready() -> void:
+	set_up_option_button()
+	
+
+func set_up_option_button() -> void:
 	passing_option_button = OptionButton.new()
 	classes = []
 	for class_info in ProjectSettings.get_global_class_list():
@@ -32,15 +36,6 @@ func _ready() -> void:
 			inheritors[str(class_info["class"])] = idx
 			idx += 1
 	print(inheritors)
-## Called when the node enters the scene tree for the first time.
-#func _ready() -> void:
-	#pass # Replace with function body.
-#
-#
-## Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta: float) -> void:
-	#pass
-
 
 func _on_button_pressed() -> void:
 	

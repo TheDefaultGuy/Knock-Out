@@ -47,8 +47,6 @@ func _ready() -> void:
 	generate_state_variables()
 
 func _on_option_button_item_selected(index: int) -> void:
-	
-	
 	#clear_all_slots()
 	for child in get_child_count():
 		print(child)
@@ -62,8 +60,6 @@ func _on_option_button_item_selected(index: int) -> void:
 	print("index: ", index)
 	selected_state = load(str(classes[index])).new()
 	generate_state_variables()
-	
-	
 	
 func generate_state_variables() -> void:
 	print("selected_state: ", selected_state)

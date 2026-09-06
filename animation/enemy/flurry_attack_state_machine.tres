@@ -36,15 +36,20 @@ switch_mode = 2
 advance_mode = 2
 advance_condition = &"ko"
 
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_benmn"]
+priority = 0
+advance_mode = 2
+advance_condition = &"skip_intro"
+
 [resource]
 state_machine_type = 1
 states/End/position = Vector2(282.8, -117)
-states/Start/position = Vector2(-318, -229)
+states/Start/position = Vector2(-127, -128)
 states/intro/node = SubResource("AnimationNodeAnimation_d620g")
 states/intro/position = Vector2(-127, -229)
 states/left_attack/node = SubResource("AnimationNodeAnimation_qd2fh")
 states/left_attack/position = Vector2(76, -229)
 states/right_attack/node = SubResource("AnimationNodeAnimation_benmn")
 states/right_attack/position = Vector2(76, -117)
-transitions = ["Start", "intro", SubResource("AnimationNodeStateMachineTransition_uc24f"), "intro", "left_attack", SubResource("AnimationNodeStateMachineTransition_3mcjc"), "left_attack", "right_attack", SubResource("AnimationNodeStateMachineTransition_vjxxu"), "right_attack", "left_attack", SubResource("AnimationNodeStateMachineTransition_8acya"), "right_attack", "End", SubResource("AnimationNodeStateMachineTransition_d620g"), "left_attack", "End", SubResource("AnimationNodeStateMachineTransition_qd2fh")]
+transitions = ["Start", "intro", SubResource("AnimationNodeStateMachineTransition_uc24f"), "intro", "left_attack", SubResource("AnimationNodeStateMachineTransition_3mcjc"), "left_attack", "right_attack", SubResource("AnimationNodeStateMachineTransition_vjxxu"), "right_attack", "left_attack", SubResource("AnimationNodeStateMachineTransition_8acya"), "right_attack", "End", SubResource("AnimationNodeStateMachineTransition_d620g"), "left_attack", "End", SubResource("AnimationNodeStateMachineTransition_qd2fh"), "Start", "left_attack", SubResource("AnimationNodeStateMachineTransition_benmn")]
 graph_offset = Vector2(-738, -318)

@@ -15,8 +15,34 @@ animation = &"item_heal/intro"
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_f87op"]
 animation = &"item_heal/heal"
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_3ht1w"]
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_k8fsp"]
 animation = &"item_heal/hit"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_jle07"]
+animation = &"item_heal/hit"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_7foo2"]
+animation = &"item_heal/hit"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_pqamw"]
+animation = &"item_heal/hit"
+
+[sub_resource type="AnimationNodeBlendSpace2D" id="AnimationNodeBlendSpace2D_5ev60"]
+min_space = Vector2(-1, 0)
+x_label = "punch_direction"
+y_label = "punch_height"
+blend_point_0/node = SubResource("AnimationNodeAnimation_k8fsp")
+blend_point_0/pos = Vector2(-1, 1)
+blend_point_0/name = &"item_heal_hit"
+blend_point_1/node = SubResource("AnimationNodeAnimation_jle07")
+blend_point_1/pos = Vector2(1, 1)
+blend_point_1/name = &"item_heal_hit 2"
+blend_point_2/node = SubResource("AnimationNodeAnimation_7foo2")
+blend_point_2/pos = Vector2(1, 0)
+blend_point_2/name = &"item_heal_hit 3"
+blend_point_3/node = SubResource("AnimationNodeAnimation_pqamw")
+blend_point_3/pos = Vector2(-1, 0)
+blend_point_3/name = &"item_heal_hit 4"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_fy5ux"]
 animation = &"item_heal/middle"
@@ -43,15 +69,15 @@ advance_mode = 2
 switch_mode = 2
 advance_mode = 2
 
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_qf2n7"]
-advance_mode = 2
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_2xwu7"]
-switch_mode = 2
-advance_mode = 2
-
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_luax8"]
 switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ta4ff"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_k8fsp"]
 advance_mode = 2
 
 [resource]
@@ -63,18 +89,18 @@ state_machine_type = 1
 "states/DON'T CHANGE THE NAME OF THESE NODES/node" = SubResource("AnimationNodeAnimation_m6ksi")
 "states/DON'T CHANGE THE NAME OF THESE NODES/position" = Vector2(-80, -432)
 states/End/position = Vector2(431.8, -216)
-states/Start/position = Vector2(-227, -216)
+states/Start/position = Vector2(-213, -216)
 states/intro/node = SubResource("AnimationNodeAnimation_e13ks")
 states/intro/position = Vector2(-111, -216)
 states/item_heal/node = SubResource("AnimationNodeAnimation_f87op")
 states/item_heal/position = Vector2(174, -216)
-states/item_hit/node = SubResource("AnimationNodeAnimation_3ht1w")
+states/item_hit/node = SubResource("AnimationNodeBlendSpace2D_5ev60")
 states/item_hit/position = Vector2(302, -311)
 states/middle/node = SubResource("AnimationNodeAnimation_fy5ux")
-states/middle/position = Vector2(39, -216)
+states/middle/position = Vector2(17, -216)
 states/rage/node = SubResource("AnimationNodeAnimation_hplkv")
 states/rage/position = Vector2(431.8, -311)
 states/return/node = SubResource("AnimationNodeAnimation_6bwfa")
 states/return/position = Vector2(302, -216)
-transitions = ["intro", "middle", SubResource("AnimationNodeStateMachineTransition_hplkv"), "middle", "item_heal", SubResource("AnimationNodeStateMachineTransition_fawrh"), "item_heal", "return", SubResource("AnimationNodeStateMachineTransition_s1vlt"), "return", "End", SubResource("AnimationNodeStateMachineTransition_2t844"), "Start", "intro", SubResource("AnimationNodeStateMachineTransition_qf2n7"), "item_hit", "rage", SubResource("AnimationNodeStateMachineTransition_2xwu7"), "rage", "End", SubResource("AnimationNodeStateMachineTransition_luax8")]
-graph_offset = Vector2(-461, -359)
+transitions = ["intro", "middle", SubResource("AnimationNodeStateMachineTransition_hplkv"), "middle", "item_heal", SubResource("AnimationNodeStateMachineTransition_fawrh"), "item_heal", "return", SubResource("AnimationNodeStateMachineTransition_s1vlt"), "return", "End", SubResource("AnimationNodeStateMachineTransition_2t844"), "rage", "End", SubResource("AnimationNodeStateMachineTransition_luax8"), "item_hit", "rage", SubResource("AnimationNodeStateMachineTransition_ta4ff"), "Start", "intro", SubResource("AnimationNodeStateMachineTransition_k8fsp")]
+graph_offset = Vector2(-500, -569)

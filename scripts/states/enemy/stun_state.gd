@@ -162,6 +162,7 @@ func increase_punch_count() -> void:
 		if punch_count >= stun_punch_length:
 			stun_over = true
 			dizzy.visible = false
+			FightManager.final_stun_hit_signal.emit()
 ## Checks if the enemy is in the idle animation and if stun is over so that it can transition out.
 func check_if_stun_over() -> void:
 	if anim_state_machine.get_current_node() == "idle" and stun_over == true: # Checks to see if the enemy is idle so that it doesn't interrupt a hit, block, or any other animation.
