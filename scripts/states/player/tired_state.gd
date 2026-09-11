@@ -28,6 +28,7 @@ func perform_defense(move : int, action_name : String) -> void:
 	if anim_state_machine.get_current_node() == "neutral":
 		animation_tree.set("parameters/dodge/blend_position", move)
 		anim_state_machine.travel("dodge")
+		FightManager.player_dodged_signal.emit(move)
 		if move == Global.range.NEUTRAL:
 			FightManager.sfx_duck_signal.emit()
 			return

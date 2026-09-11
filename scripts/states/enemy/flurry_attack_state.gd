@@ -11,9 +11,8 @@
 ## To add it as a state, add it as a child node to the State Machine node in the enemy's scene,
 ## Then, tweak the exported variables to set it up.
 ## DO NOT change anything in the actual .gd file, since it'll screw up compatibility HARD.
-class_name FlurryAttack extends State
+class_name FlurryAttacks extends EnemyState
 
-#@onready var anim_state_machine = animation_tree.get("parameters/playback")
 
 #region Exported Variables
 
@@ -27,88 +26,72 @@ class_name FlurryAttack extends State
 ## A Small delay before performing the attacks. Mainly as a small buffer to make sure to animations get cut off.
 @export var start_delay : float = 0.2
 
-
-@export_category("⇄ State Changing Conditions")
-## The state the enemy will transition to if the player got knocked out during this state.
-@export var KO_state : State
-## The state the enemy will transition to if the player survived this state.
-@export var survived_state : State
-
 var target_state : State
 
 var attack_count : int = 0
 
-var root_state_machine: AnimationNodeStateMachine = null
 
-@onready var state_machine : AnimationNodeStateMachine = preload("uid://bg1hc7fvrio3n")
-var machine_name = null
 #endregion
 
 #region The Ready, Enter and Exit functions
-func _ready() -> void:
-	machine_name = str(name).to_snake_case()
-	call_deferred("add_attack_animation_nodes")
+func _init() -> void:
+	state_type = STATE_TYPE_ENUM.NESTED_STATE_MACHINE
+	attack_timer_required = false
+	nested_state_machine = preload("uid://bg1hc7fvrio3n")
+	primary_condition = STATE_CHANGE_CONDITION.AFTER_COMPLETION
 	
-func add_attack_animation_nodes() -> void:
-	root_state_machine = animation_tree.tree_root
-	machine_name = str(name).to_snake_case()
-	## Automatically adds the state machine node to the animation tree.
-	root_state_machine.add_node(machine_name, state_machine, Vector2(300.0,-550.0))
-	var connection = AnimationNodeStateMachineTransition.new()
-	connection.switch_mode = AnimationNodeStateMachineTransition.SWITCH_MODE_AT_END
-	connection.advance_mode = AnimationNodeStateMachineTransition.ADVANCE_MODE_AUTO
-	root_state_machine.call_deferred("add_transition", machine_name, "hub_node", connection)
+func _enter_tree() -> void:
+	primary_condition = STATE_CHANGE_CONDITION.AFTER_COMPLETION
 	
+## Overrides te state change condition so that this state can function properly.
+func _validate_property(property: Dictionary) -> void: 
+	attack_timer_required = false
+	update_shown_exported_variables(property)
+	
+
 func enter() -> void:
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
 	
 	
-	if KO_state == null:
-		printerr(self.name, " : KO State not set.")
-	if survived_state == null:
-		survived_state = get_parent().interrupted_state
-		
+	current_animation_state_machine = animation_tree[str("parameters/",nested_machine_name,"/playback")]
+	
 	if skip_intro == true:
-		animation_tree.set(str("parameters/",machine_name,"/conditions/skip_intro"), true)
+		animation_tree.set(str("parameters/",nested_machine_name,"/conditions/skip_intro"), true)
 	else:
-		animation_tree.set(str("parameters/",machine_name,"/conditions/skip_intro"), false)
-	# Sets the interrupted state in the state machine as itself.
-	# That way, if it gets interrupted by another state like stunned, it'll come back to this one.
-	target_state = survived_state
+		animation_tree.set(str("parameters/",nested_machine_name,"/conditions/skip_intro"), false)
+		
+
+	get_parent().interrupted_state = primary_target_state
 	
 	animation_tree.animation_finished.connect(increase_count)
-	FightManager.player_knocked_down_signal.connect(change_state)
-	FightManager.enemy_knocked_down_signal.connect(transition_to_knocked_down)
+	
+	
+	toggle_important_state_signal_connections()
 	
 	match skip_intro: # Resets the attack count when re-entering this state
 		true:
-			attack_count = 0 
+			attack_count = 1 
 		false:
-			attack_count = -1
+			attack_count = 0
 			
 	await get_tree().create_timer(start_delay).timeout
-	anim_state_machine.travel(machine_name)
+	anim_state_machine.travel(nested_machine_name)
 
 func exit() -> void:
 	animation_tree.animation_finished.disconnect(increase_count)
-	FightManager.enemy_knocked_down_signal.disconnect(transition_to_knocked_down)
-	FightManager.player_knocked_down_signal.disconnect(change_state)
+	toggle_important_state_signal_connections()
 	
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
 		return
-	animation_tree.set(str("parameters/",machine_name,"/conditions/ko"), Global.player_node.isKnockdown)
-
+	if get_parent().current_state == self or get_parent().current_state is EnemySpectating:
+		animation_tree.set(str("parameters/",nested_machine_name,"/conditions/ko"), Global.player_node.isKnockdown)
+		check_state_completion()
 #endregion
 
 ## Increases the attack count variable by 1 every time an animation is played in this state.
 func increase_count(_animation) -> void:
 	attack_count += 1
-	if attack_count >= number_of_repetitions:
-		animation_tree[str("parameters/",machine_name,"/playback")].travel("End")
-		transition(self, target_state)
+	if attack_count == number_of_repetitions:
+		current_animation_state_machine.travel("End")
 		
-
-func change_state() -> void:
-	target_state = KO_state
-	transition_to_spectating()

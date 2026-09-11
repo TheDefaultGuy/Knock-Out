@@ -164,8 +164,8 @@ func exit() -> void:
 		#return
 	#if get_parent().current_state == state_to_check:
 		#check_round_time()
-		#check_stamina()
-		#check_wait_time()
+		#check_player_stamina()
+		#check_time_has_passed()
 #endregion
 
 
@@ -173,7 +173,7 @@ func exit() -> void:
 
 	
 ## Checks to see if the current round time matches the specified round time to change state.
-func check_wait_time() -> void:
+func check_time_has_passed() -> void:
 	if wait_timer.time_left <= 0.0 :
 		condition_match_direct_transition(STATE_CHANGE_CONDITION.AFTER_TIME_PASSED)
 		return
@@ -196,7 +196,7 @@ func check_state_change_condition(signal_name : StringName) -> void:
 			return
 
 ## Checks the player stamina and then transitions to target state once it's zero.
-func check_stamina() -> void:
+func check_player_stamina() -> void:
 	if FightManager.stamina <= 0:
 		condition_match_direct_transition(STATE_CHANGE_CONDITION.AFTER_PLAYER_TIRED)
 		return

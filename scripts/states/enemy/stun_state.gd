@@ -109,14 +109,14 @@ func create_timers() -> void:
 	stun_timer.one_shot = true
 	add_child.call_deferred(stun_timer)
 
-
 func enter() -> void: # Blank enter and exit functions that get overridden by each state's own custom enter and exit functions.
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
-	animation_tree.set("parameters/conditions/spectating", false)
+
 	animation_tree.set("parameters/idle/blend_position", 1)
 	FightManager.enemy_knocked_down_signal.connect(transition_to_knocked_down)
 	FightManager.succesful_hit_signal.connect(increase_punch_count)
-	stun_timer.timeout.connect(stun_timer_over)
+	
+	
 	animation_tree.animation_finished.connect(check_if_stun_over.unbind(1))
 	dizzy.visible = true
 	
@@ -133,14 +133,15 @@ func enter() -> void: # Blank enter and exit functions that get overridden by ea
 		BEHAVIOR_TYPE.INCREASING_NUMBER_OF_PUNCHES:
 			stun_timer.start(stun_duration)
 			stun_punch_length = clamp(stun_punch_length + 1, min_stun_length, max_stun_length)
-
+	
 func exit() -> void:
 	animation_tree.set("parameters/idle/blend_position", 0)
-	animation_tree.set("parameters/conditions/spectating", false)
 	FightManager.enemy_knocked_down_signal.disconnect(transition_to_knocked_down)
 	FightManager.succesful_hit_signal.disconnect(increase_punch_count)
-	stun_timer.timeout.disconnect(stun_timer_over)
+	
+	
 	defense_component.reset_current_animations()
+	
 	animation_tree.animation_finished.disconnect(check_if_stun_over)
 
 	dizzy.visible = false
@@ -149,7 +150,9 @@ func _process(_delta: float) -> void:
 		return
 	if get_parent().current_state != self:
 		return
-	check_health_condition()
+	check_enemy_health_condition()
+	check_if_stun_over()
+	
 #endregion
 
 ## Increases the punch count by one everytime the player lands a punch during stun.
@@ -159,23 +162,30 @@ func increase_punch_count() -> void:
 		punch_count = punch_count + 1
 		if punch_count + 1 == stun_punch_length:
 			defense_component.current_hit_animation = "final_hit" # Sets the last hit of the stun to be the final hit animation.
-		if punch_count >= stun_punch_length:
-			stun_over = true
+
+		if punch_count == stun_punch_length:
 			dizzy.visible = false
 			FightManager.final_stun_hit_signal.emit()
+			stun_over = true
+			
 ## Checks if the enemy is in the idle animation and if stun is over so that it can transition out.
 func check_if_stun_over() -> void:
-	if anim_state_machine.get_current_node() == "idle" and stun_over == true: # Checks to see if the enemy is idle so that it doesn't interrupt a hit, block, or any other animation.
-		transition(self, target_state)
+	if stun_timer.time_left == 0.0 :
+		transition_to_target()
+		return
+	await animation_tree.animation_finished
+	if stun_over == true:
+		transition_to_target()
+	return
 
-func stun_timer_over() -> void:
-	stun_over = true
-	check_if_stun_over()
+func transition_to_target() -> void:
+	if anim_state_machine.get_current_node() == "idle": # Checks to see if the enemy is idle so that it doesn't interrupt a hit, block, or any other animation.
+		transition(self, target_state)
 
 func reset_stun_length() -> void:
 	pass
 	
 ## Checks the enemy's own HP and transitions to heal state once it reaches it.
-func check_health_condition() -> void:
+func check_enemy_health_condition() -> void:
 	if health_component.hp <= target_health and heal_after_stun == true:
 		target_state = heal_state

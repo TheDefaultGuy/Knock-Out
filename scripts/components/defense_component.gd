@@ -77,6 +77,8 @@ var current_hit_animation : String = "hit"
 var current_block_animation : String = "block"
 
 var current_anim_state_machine : AnimationNodeStateMachinePlayback = null
+
+
 const IMPACT_EFFECT = preload("uid://mbb7yyvjhw12")
 const PARRY_EFFECT = preload("uid://c2vbdtoq1noj0")
 var effect_position = [-10.0, -54.0]
@@ -199,9 +201,9 @@ func choose_hit_region(punch_height : int, damage_amount : float, punch_directio
 		return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
 
 	check_for_star_and_stun(punch_height)
-	
+
 	owner.animation_tree.set(str("parameters/",str(current_hit_animation),"/blend_position"), Vector2i(punch_direction, punch_height))
-	
+
 	play_animation(str(current_hit_animation))
 	if owner is Enemy:
 		play_impact_effect(punch_height)

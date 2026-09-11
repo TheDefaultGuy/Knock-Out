@@ -55,23 +55,23 @@
 [ext_resource type="Script" uid="uid://d2mk31geekmgb" path="res://scripts/states/enemy/stun_state.gd" id="45_38nj0"]
 [ext_resource type="Script" uid="uid://lrug82hg7rrf" path="res://scripts/states/enemy/spectating_state.gd" id="46_6ayxy"]
 [ext_resource type="Script" uid="uid://bxdm4cxh3jw0n" path="res://scripts/states/enemy/enemy_knocked_down_state.gd" id="47_2mgcc"]
-[ext_resource type="Script" uid="uid://be0a0n2xv87g7" path="res://scripts/states/enemy/intro_loop_state.gd" id="49_6ayxy"]
 [ext_resource type="Script" uid="uid://bd3i8gnmviajw" path="res://scripts/states/player/cutscene_state.gd" id="50_wnc28"]
 [ext_resource type="Script" uid="uid://c15nwhylsnm6w" path="res://scripts/components/instant_knock_out_component.gd" id="55_xom0j"]
-[ext_resource type="Script" uid="uid://biw43iy3kqvj0" path="res://scripts/states/enemy/flurry_attack_state.gd" id="57_yfn78"]
-[ext_resource type="Script" uid="uid://c73a2o5xnqs0k" path="res://scripts/states/enemy/heal_item_state.gd" id="59_2gws3"]
-[ext_resource type="Script" uid="uid://c4q24a656iry7" path="res://scripts/states/enemy/taunt_and_counter_state.gd" id="61_f4x83"]
+[ext_resource type="Script" uid="uid://c73a2o5xnqs0k" path="res://scripts/states/enemy/heal_item_state.gd" id="58_v64oh"]
+[ext_resource type="Script" uid="uid://bjtexblqp5cmp" path="res://scripts/states/enemy/reactionary_state.gd" id="59_poxia"]
+[ext_resource type="Script" uid="uid://be0a0n2xv87g7" path="res://scripts/states/enemy/intro_loop_state.gd" id="60_7b5nu"]
+[ext_resource type="Script" uid="uid://bsaimsql061lj" path="res://scripts/states/enemy/pick_random_state.gd" id="61_f4x83"]
 [ext_resource type="AudioStream" uid="uid://401bxxyjqk01" path="res://assets/sound/sfx/10.wav" id="62_21mea"]
-[ext_resource type="Script" uid="uid://bjtexblqp5cmp" path="res://scripts/states/enemy/reactionary_state.gd" id="62_e5w0m"]
 [ext_resource type="AudioStream" uid="uid://cj2whkvaqwy33" path="res://assets/sound/sfx/uppercut.wav" id="62_poxia"]
 [ext_resource type="AnimationNodeStateMachine" uid="uid://qxtkqdire1qx" path="res://animation/enemy/enemy_state_machine.tres" id="62_v64oh"]
 [ext_resource type="AudioStream" uid="uid://bnfi5vhnq4l8t" path="res://assets/sound/sfx/johnny-test-whip-crack.mp3" id="63_7b5nu"]
+[ext_resource type="Script" uid="uid://c4q24a656iry7" path="res://scripts/states/enemy/taunt_and_counter_state.gd" id="63_jgm8d"]
 [ext_resource type="AudioStream" uid="uid://ghulw4avu2eq" path="res://assets/sound/sfx/star_punch_start.wav" id="63_pkcvl"]
+[ext_resource type="Script" uid="uid://biw43iy3kqvj0" path="res://scripts/states/enemy/flurry_attack_state.gd" id="63_rt3r2"]
 [ext_resource type="AudioStream" uid="uid://763gm60yi6v4" path="res://assets/sound/sfx/knock_down_enemy.wav" id="65_ssxbu"]
 [ext_resource type="AudioStream" uid="uid://bvei8do7tp40f" path="res://assets/sound/sfx/duck.wav" id="66_40p5w"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_8uk6w"]
-load_path = "res://.godot/imported/blinking.png-65984fddd985b1c5c80514c3c8451474.ctex"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jr1li"]
 atlas = SubResource("CompressedTexture2D_8uk6w")
@@ -90,7 +90,6 @@ atlas = SubResource("CompressedTexture2D_8uk6w")
 region = Rect2(144, 0, 48, 128)
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_l0dlj"]
-load_path = "res://.godot/imported/idle.png-b2a2d7311bced75e100041f90b2692ec.ctex"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_c0tv0"]
 atlas = SubResource("CompressedTexture2D_l0dlj")
@@ -7942,78 +7941,6 @@ spectating_state = NodePath("Spectating")
 cutscene_state = NodePath("CutSceneState")
 metadata/_custom_type_script = "uid://ch1gb3rys2tfm"
 
-[node name="CalmState" type="Node" parent="StateMachine" unique_id=1646714070 node_paths=PackedStringArray("primary_target_state", "secondary_target_state", "tertiary_target_state")]
-script = ExtResource("44_wdmnt")
-moveset = Dictionary[String, float]({
-"jab_high": 20.0,
-"jab_low": 20.0
-})
-min_wait_time = 1.4
-max_wait_time = 2.2
-secondary_condition = 4
-tertiary_condition = 9
-primary_target_state = NodePath("../AggressiveState")
-secondary_target_state = NodePath("../FlurryAttackState")
-tertiary_target_state = NodePath("../AggressiveState")
-target_round_time = 35.0
-metadata/_custom_type_script = "uid://dy765alksxcdx"
-
-[node name="AggressiveState" type="Node" parent="StateMachine" unique_id=678278768 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
-script = ExtResource("44_wdmnt")
-moveset = Dictionary[String, float]({
-"elbow": 20.0,
-"hook": 20.0,
-"hook_2": 20.0,
-"uppercut": 20.0
-})
-max_wait_time = 1.4
-primary_condition = 0
-secondary_condition = 5
-primary_target_state = NodePath("../FlurryAttackState")
-secondary_target_state = NodePath("../ItemHealState")
-time_to_wait = 15.0
-target_hp = 55.0
-metadata/_custom_type_script = "uid://dy765alksxcdx"
-
-[node name="AggressiveState2" type="Node" parent="StateMachine" unique_id=961077862]
-script = ExtResource("44_wdmnt")
-moveset = Dictionary[String, float]({
-"elbow": 20.0,
-"fakeout_REAL": 20.0,
-"jab_high": 20.0,
-"uppercut": 20.0
-})
-min_wait_time = 1.2
-max_wait_time = 1.6
-primary_condition = 8
-metadata/_custom_type_script = "uid://dy765alksxcdx"
-
-[node name="SkillcheckState" type="Node" parent="StateMachine" unique_id=1727590910 node_paths=PackedStringArray("primary_target_state")]
-script = ExtResource("44_wdmnt")
-moveset = Dictionary[String, float]({
-"fakeout_REAL": 20.0,
-"hook": 40.0,
-"hook_2": 40.0,
-"uppercut": 20.0
-})
-max_wait_time = 1.4
-primary_condition = 0
-secondary_condition = 2
-primary_target_state = NodePath("../IntroLoopState")
-time_to_wait = 25.0
-metadata/_custom_type_script = "uid://dy765alksxcdx"
-
-[node name="UpperCut" type="Node" parent="StateMachine" unique_id=985394209 node_paths=PackedStringArray("primary_target_state")]
-script = ExtResource("44_wdmnt")
-moveset = Dictionary[String, float]({
-"uppercut": 100.0
-})
-max_wait_time = 1.4
-primary_condition = 0
-primary_target_state = NodePath("../AggressiveState2")
-time_to_wait = 15.0
-metadata/_custom_type_script = "uid://dy765alksxcdx"
-
 [node name="Stunned" type="Node" parent="StateMachine" unique_id=642401764]
 script = ExtResource("45_38nj0")
 stun_behavior = 2
@@ -8036,85 +7963,76 @@ metadata/_custom_type_script = "uid://bxdm4cxh3jw0n"
 script = ExtResource("50_wnc28")
 metadata/_custom_type_script = "uid://bd3i8gnmviajw"
 
-[node name="FlurryAttackState" type="Node" parent="StateMachine" unique_id=1274541898 node_paths=PackedStringArray("KO_state", "survived_state")]
-script = ExtResource("57_yfn78")
-start_delay = 0.3
-KO_state = NodePath("../CalmState2")
-survived_state = NodePath("../TauntAndCounter")
-metadata/_custom_type_script = "uid://biw43iy3kqvj0"
-
-[node name="Mad2" type="Node" parent="StateMachine" unique_id=732365808 node_paths=PackedStringArray("KO_state", "survived_state")]
-script = ExtResource("57_yfn78")
-number_of_repetitions = 6
-start_delay = 0.3
-KO_state = NodePath("../UpperCut")
-survived_state = NodePath("../SkillcheckState")
-metadata/_custom_type_script = "uid://biw43iy3kqvj0"
-
-[node name="Mad" type="Node" parent="StateMachine" unique_id=164737188 node_paths=PackedStringArray("KO_state", "survived_state")]
-script = ExtResource("57_yfn78")
-number_of_repetitions = 6
-skip_intro = true
-start_delay = 0.3
-KO_state = NodePath("../CalmState2")
-survived_state = NodePath("../Reactionary")
-metadata/_custom_type_script = "uid://biw43iy3kqvj0"
-
-[node name="ItemHealState" type="Node" parent="StateMachine" unique_id=70498946 node_paths=PackedStringArray("failed_heal_state", "successful_heal_state")]
-script = ExtResource("59_2gws3")
-failed_heal_state = NodePath("../Mad")
-successful_heal_state = NodePath("../TauntAndCounter")
-metadata/_custom_type_script = "uid://c73a2o5xnqs0k"
-
-[node name="IntroLoopState" type="Node" parent="StateMachine" unique_id=363331831 node_paths=PackedStringArray("target_state")]
-script = ExtResource("49_6ayxy")
-min_wait_time = 2.0
-max_wait_time = 4.0
-target_state = NodePath("../UpperCut")
-metadata/_custom_type_script = "uid://be0a0n2xv87g7"
-
-[node name="IntroLoopState2" type="Node" parent="StateMachine" unique_id=1121819709 node_paths=PackedStringArray("target_state")]
-script = ExtResource("49_6ayxy")
-min_wait_time = 2.0
-max_wait_time = 4.0
-target_state = NodePath("../CalmState2")
-metadata/_custom_type_script = "uid://be0a0n2xv87g7"
-
-[node name="TauntAndCounter" type="Node" parent="StateMachine" unique_id=2055499513 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
-script = ExtResource("61_f4x83")
-min_wait_time = 1.0
-max_wait_time = 2.4
-primary_condition = 0
-secondary_condition = 4
-primary_target_state = NodePath("../CalmState2")
-secondary_target_state = NodePath("../IntroLoopState2")
-time_to_wait = 12.0
-metadata/_custom_type_script = "uid://c4q24a656iry7"
-
-[node name="Reactionary" type="Node" parent="StateMachine" unique_id=1258680956 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
-script = ExtResource("62_e5w0m")
-max_wait_time = 3.6
-primary_condition = 4
-secondary_condition = 0
-primary_target_state = NodePath("../UpperCut")
-secondary_target_state = NodePath("../Mad2")
-time_to_wait = 20.0
-metadata/_custom_type_script = "uid://bjtexblqp5cmp"
-
-[node name="CalmState2" type="Node" parent="StateMachine" unique_id=399224974 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
+[node name="CalmState" type="Node" parent="StateMachine" unique_id=1646714070 node_paths=PackedStringArray("primary_target_state")]
 script = ExtResource("44_wdmnt")
-moveset = Dictionary[String, float]({
+moveset_dictionary = {
 "jab_high": 20.0,
 "jab_low": 20.0
-})
-min_wait_time = 1.5
-max_wait_time = 2.4
+}
 primary_condition = 0
-secondary_condition = 4
-primary_target_state = NodePath("../SkillcheckState")
-secondary_target_state = NodePath("../UpperCut")
-time_to_wait = 12.0
+primary_target_state = NodePath("../ItemHeal")
+time_to_wait = 2.0
 metadata/_custom_type_script = "uid://dy765alksxcdx"
+
+[node name="CalmState2" type="Node" parent="StateMachine" unique_id=550832782 node_paths=PackedStringArray("primary_target_state")]
+script = ExtResource("44_wdmnt")
+moveset_dictionary = {
+"elbow": 20.0,
+"hook": 20.0,
+"uppercut": 20.0
+}
+primary_condition = 0
+primary_target_state = NodePath("../Reactionary")
+time_to_wait = 15.0
+metadata/_custom_type_script = "uid://dy765alksxcdx"
+
+[node name="ItemHeal" type="Node" parent="StateMachine" unique_id=2059746833 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
+script = ExtResource("58_v64oh")
+primary_condition = 8
+secondary_condition = 9
+primary_target_state = NodePath("../CalmState2")
+secondary_target_state = NodePath("../FlurryAttacks2")
+metadata/_custom_type_script = "uid://c73a2o5xnqs0k"
+
+[node name="Reactionary" type="Node" parent="StateMachine" unique_id=1539633508]
+script = ExtResource("59_poxia")
+primary_condition = 10
+block_behavior = 1
+metadata/_custom_type_script = "uid://bjtexblqp5cmp"
+
+[node name="IntroThenLoops" type="Node" parent="StateMachine" unique_id=61317170]
+script = ExtResource("60_7b5nu")
+primary_condition = 3
+secondary_condition = 2
+metadata/_custom_type_script = "uid://be0a0n2xv87g7"
+
+[node name="PickRandomState" type="Node" parent="StateMachine" unique_id=77240609]
+script = ExtResource("61_f4x83")
+primary_condition = 8
+secondary_condition = 8
+tertiary_condition = 8
+metadata/_custom_type_script = "uid://bsaimsql061lj"
+
+[node name="TauntAndCounter" type="Node" parent="StateMachine" unique_id=343560956 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
+script = ExtResource("63_jgm8d")
+primary_condition = 4
+secondary_condition = 5
+primary_target_state = NodePath("../FlurryAttacks")
+secondary_target_state = NodePath("../ItemHeal")
+block_behavior = 2
+metadata/_custom_type_script = "uid://c4q24a656iry7"
+
+[node name="FlurryAttacks" type="Node" parent="StateMachine" unique_id=1276042577]
+script = ExtResource("63_rt3r2")
+primary_condition = 8
+metadata/_custom_type_script = "uid://biw43iy3kqvj0"
+
+[node name="FlurryAttacks2" type="Node" parent="StateMachine" unique_id=1162364569 node_paths=PackedStringArray("primary_target_state")]
+script = ExtResource("63_rt3r2")
+skip_intro = true
+primary_condition = 8
+primary_target_state = NodePath("../Reactionary")
+metadata/_custom_type_script = "uid://biw43iy3kqvj0"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=513767802]
 unique_name_in_owner = true
@@ -8138,24 +8056,25 @@ anim_player = NodePath("../AnimationPlayer")
 parameters/back_to_the_fight/blend_position = -0.00054496527
 parameters/block/blend_position = Vector2(0, 0)
 parameters/final_hit/blend_position = Vector2(-1.2386009, 2.2694063)
-parameters/flurry_attack_state/conditions/ko = false
-parameters/flurry_attack_state/conditions/skip_intro = false
+parameters/flurry_attacks/conditions/ko = false
+parameters/flurry_attacks/conditions/skip_intro = false
 parameters/get_up/blend_position = -1.0043597
 parameters/hit/blend_position = Vector2(-1.0605003, 1.0886598)
 parameters/idle/blend_position = 0.0
-parameters/intro_loop_state/conditions/ko = false
-parameters/intro_loop_state_2/conditions/ko = false
-parameters/item_heal_state/item_hit/blend_position = Vector2(0, 0)
+parameters/intro_then_loops/conditions/ko = false
+parameters/item_heal/item_hit/blend_position = Vector2(0, 0)
 parameters/knock_down/blend_position = Vector2(-1.0533643, 1.0897703)
-parameters/mad/conditions/ko = false
-parameters/mad/conditions/skip_intro = false
-parameters/mad_2/conditions/ko = false
-parameters/mad_2/conditions/skip_intro = false
 parameters/reactionary/dodge/blend_position = Vector2(0, 0)
+parameters/reactionary/final_hit/blend_position = Vector2(0, 0)
 parameters/reactionary/hit/blend_position = Vector2(0, 0)
 parameters/reactionary/punish/blend_position = 0.0
+parameters/reactionary/stun_hit/blend_position = Vector2(0, 0)
 parameters/stun_hit/blend_position = Vector2(-0.9225484, 0.86757994)
-parameters/taunt_and_counter/block_react/blend_position = Vector2(0, 0)
+parameters/taunt_and_counter/block/blend_position = Vector2(0, 0)
+parameters/taunt_and_counter/final_hit/blend_position = Vector2(0, 0)
+parameters/taunt_and_counter/hit/blend_position = Vector2(0, 0)
+parameters/taunt_and_counter/idle/blend_position = 0.0
+parameters/taunt_and_counter/stun_hit/blend_position = Vector2(0, 0)
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1565675371]
 unique_name_in_owner = true

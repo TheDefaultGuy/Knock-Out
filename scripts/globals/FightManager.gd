@@ -1,4 +1,4 @@
-@tool
+
 extends Node
 #region Signals
 ## Signal emitted when the value of something displayed in the UI has changed.
@@ -94,7 +94,7 @@ var enemy_ready_status : bool = true
 var star_count : int = 0
 
 ## The Player's stamina
-var stamina: int = 10 
+var stamina: int = 2
 
 ## Number of times the player has been knocked down in the current round.
 var player_ko_count : int = 0
