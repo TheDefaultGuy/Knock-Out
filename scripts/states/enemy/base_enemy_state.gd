@@ -187,15 +187,14 @@ var nested_machine_name : StringName = ""
 ## The actual nested state machine
 var nested_state_machine : AnimationNodeStateMachine = null
 
-## Simple array that stores the primary_condition, secondary_condition, tertiary_condition so that checking if something is in that state is easier.
-var state_change_conditions : Array = []
 
 ## This variable is just for readability.
 var parent_state_machine_node = null
 
-## Array that will store all of the Conditions and Target states.
-var conditions_and_target_states: Array[Array] = [[]]
+## Dictionary that will store all of the Conditions and Target states.
+var conditions_and_targets_dict: Dictionary[int, State] = { }
 
+## The current animation state machine that the animations will be called/traveled to from.
 var current_animation_state_machine = null
 
 ## Stores the state type.
@@ -209,21 +208,20 @@ var attack_timer_required : bool = true
 ## Whether the state has been interrupted or not.
 var interruption_status : bool = false
 
+
+
 func _ready() -> void:
-	
+	nested_machine_name = str(self.name).to_snake_case() 
 	parent_state_machine_node = get_parent()
 	
-	conditions_and_target_states = [
-		[primary_condition, primary_target_state], 
-		[secondary_condition, secondary_target_state], 
-		[tertiary_condition, tertiary_target_state]
-		]
-	
+	conditions_and_targets_dict = {
+		primary_condition: primary_target_state,
+		secondary_condition: secondary_target_state,
+		tertiary_condition: tertiary_target_state
+		}
 	current_animation_state_machine = anim_state_machine
-	state_change_conditions = [primary_condition, secondary_condition, tertiary_condition]
-	
 
-	if STATE_CHANGE_CONDITION.AFTER_TIME_PASSED in state_change_conditions:
+	if STATE_CHANGE_CONDITION.AFTER_TIME_PASSED in conditions_and_targets_dict.keys():
 		state_change_timer = create_timer("Wait Timer", true, time_to_wait)
 		add_child(state_change_timer)
 		
@@ -251,6 +249,7 @@ func check_for_unassigned_variables() -> void:
 		printerr(self.name, " : Nested State Machine has not been declared despite the state being set as Nested State Machine")
 	return
 
+#region Timer Related functions
 ## Function that helps create a custom timer. Since it returns a Timer, it should be used to assign a timer to a variable.
 func create_timer(timer_name : String, one_shot : bool, wait : float) -> Timer:
 	var created_timer = Timer.new()
@@ -258,8 +257,6 @@ func create_timer(timer_name : String, one_shot : bool, wait : float) -> Timer:
 	created_timer.one_shot = one_shot
 	created_timer.wait_time = wait
 	return created_timer
-	
-
 
 ## Starts the attack delay timer using a random time.
 ##
@@ -298,6 +295,7 @@ func toggle_state_change_timer() -> void:
 	elif state_change_timer.time_left == 0.0:
 		check_time_has_passed()
 		return
+#endregion
 
 #region Check Conditions Functions
 ## Checks to see if the wait timer has ran out so that the enemy can change state.
@@ -305,13 +303,13 @@ func check_round_time() -> void:
 	if FightManager.round_time >= target_round_time:
 		condition_match_direct_transition(STATE_CHANGE_CONDITION.AT_ROUND_TIME)
 		return
-		
+
 ## Checks to see if the enemy's HP has dropped below the target value.
 func check_enemy_health() -> void:
 	if health_component.hp <= target_hp:
 		condition_match_direct_transition(STATE_CHANGE_CONDITION.AFTER_HEALTH_DROPS_BELOW)
 		return
-	
+
 ## Checks to see if the current round time matches the specified round time to change state.
 func check_time_has_passed() -> void:
 	if state_change_timer == null:
@@ -327,7 +325,7 @@ func check_state_after_stun() -> void:
 	condition_match_change_interrupted_state(STATE_CHANGE_CONDITION.AFTER_STUN)
 	transition_to_stunned()
 	return
-	
+
 ## Checks the player stamina and then transitions to target state once it's zero.
 func check_player_stamina() -> void:
 	if FightManager.stamina <= 0:
@@ -336,72 +334,50 @@ func check_player_stamina() -> void:
 	elif FightManager.stamina > 0:
 		condition_match_direct_transition(STATE_CHANGE_CONDITION.AFTER_PLAYER_NOT_TIRED)
 		return
-		
+
 ## Checks if the state has completed or been interrupted and then changes accordingly.
 func check_state_completion() -> void:
-	print("BASE STATE FUNC: ", current_animation_state_machine.get_current_node())
-	print("interruption_status: ", interruption_status)
+	#print("BASE STATE FUNC: ", current_animation_state_machine.get_current_node())
+	#print("interruption_status: ", interruption_status)
 	if current_animation_state_machine.get_current_node() == "End" :
 		if interruption_status == true:
 			condition_match_direct_transition(STATE_CHANGE_CONDITION.STATE_INTERRUPTED)
 			return
 		condition_match_direct_transition(STATE_CHANGE_CONDITION.AFTER_COMPLETION)
 		return
-	
+
+## Checks if the Enemy or the Player have been knocked down and then changes to the state of the matching condition.
+func check_for_knockdowns() -> void:
+	match true:
+		Global.enemy_node.isKnockdown:
+			condition_match_change_interrupted_state(STATE_CHANGE_CONDITION.AFTER_ENEMY_KNOCKED_DOWN)
+			transition_to_target(get_parent().knocked_down_state)
+		Global.player_node.isKnockdown:
+			condition_match_change_interrupted_state(STATE_CHANGE_CONDITION.AFTER_PLAYER_KNOCKED_DOWN)
+			transition_to_target(get_parent().spectating_state)
+	return
+
 #endregion
 
 #region Condition match functions
 ## If the condition is met, then directly go to the target state whenever possible. 
 func condition_match_direct_transition(condition : int) -> void:
-	#for i in range(conditions_and_target_states.size()):
-		#if conditions_and_target_states[i][0] == condition:
-			#transition_to_target(conditions_and_target_states[i][1])
-			
-	match condition:
-		primary_condition:
-			transition_to_target(primary_target_state)
-			return
-		secondary_condition:
-			transition_to_target(secondary_target_state)
-			return
-		tertiary_condition:
-			transition_to_target(tertiary_target_state)
-			return
+	# Iterates through the conditions_and_targets_dict instead of matching since its much easier to scale amount of possible conditions and target states.
+	for key in conditions_and_targets_dict.keys(): 
+		if key == condition:
+			transition_to_target(conditions_and_targets_dict[key])
+			return # Very important return since multiple conditions can be met.
 			
 ## When the condition is met, set the interrupted state as the target state.
 ## This is used for when a condition is met by changing to a different state, such as Stunned, Spectating or Knocked Down.
 ## Basically, if enemy gets knocked down, instead of the enemy returning to this state after recovering,
 ## They will instead transition to the target state set in this one.
 func condition_match_change_interrupted_state(condition : int) -> void:
-	#for i in range(conditions_and_target_states.size()):
-		#if conditions_and_target_states[i][0] == condition:
-			#set_and_check_interrupted_state(conditions_and_target_states[i][1])
-	
-	match condition:
-		primary_condition:
-			set_and_check_interrupted_state(primary_target_state)
-			return
-		secondary_condition:
-			set_and_check_interrupted_state(secondary_target_state)
-			return
-		tertiary_condition:
-			set_and_check_interrupted_state(tertiary_target_state)
-			return
-			
-## Matches the signal received to the condition and then changes to the state of the matching condition.
-func check_state_change_condition(signal_name : StringName) -> void:
-	match signal_name:
-		"enemy_knocked_down_signal":
-			condition_match_change_interrupted_state(STATE_CHANGE_CONDITION.AFTER_ENEMY_KNOCKED_DOWN)
-			await animation_tree.animation_finished
-			transition_to_knocked_down()
-			return
-
-		"player_knocked_down_signal":
-			condition_match_change_interrupted_state(STATE_CHANGE_CONDITION.AFTER_PLAYER_KNOCKED_DOWN)
-			await animation_tree.animation_finished
-			transition_to_spectating()
-			return
+	# Iterates through the conditions_and_targets_dict instead of matching since its much easier to scale amount of possible conditions and target states.
+	for key in conditions_and_targets_dict.keys(): 
+		if key == condition:
+			transition_to_target(conditions_and_targets_dict[key])
+			return # Very important return since multiple conditions can be met.
 #endregion
 
 #region Add attack animation nodes functions
@@ -479,7 +455,53 @@ func add_attack_animation_nodes(root_node : AnimationRootNode, moveset : Array) 
 		# Connects the animation to the "hub_node", where all attack animations connect to.
 		root_node.call_deferred("add_transition", str(attack), "hub_node", connection)
 	return
+## Automatically adds all of the attack names as nodes in a Nested State machine that is in the Root State Machine of the animation tree.
+## Theoretically allows attack animations to be in nested nodes by giving it the nested
+## State machine as an argument instead of the root state machine.
+func add_attack_animation_nodes_to_nested_state_machine(target_node : AnimationNodeStateMachine, moveset : Array) -> void:
 	
+	var positional_offset := Vector2(175.0, 0.0) # Offset added to each node's position so that they dont all overlap.
+	var node_position_origin := Vector2(-1000.0,-500.0) # The point in the animation tree where the nodes will be added.
+	
+	node_position_origin += (self.get_index() * positional_offset) # Offsets the node's position based on the child index.
+	
+	if target_node.has_node("hub_node") == false:
+		printerr(self.name, ': target node does not have a "hub_node" to attach the attacks to.')
+		return
+	# Iterates through each of the attacks in the moveset dictionary to add their animations to the root state machine.
+	for attack in moveset:
+		
+		# If there is already an Animation node with that animation name, skip it.
+		if target_node.has_node(str(attack)): 
+			continue
+		
+		# Creates a new AnimationNodeAnimation that'll be added to the Root State Machine
+		var node_animation : AnimationNodeAnimation = AnimationNodeAnimation.new()
+		
+		# Adds the "attack/" preffix since attack animations SHOULD be in the "attack" Animation Library
+		var anim_name : String = "attack/" + str(attack) 
+		
+		# Fallback in case somebody put the attack animation outside the "attack" Animation Library
+		if anim_name == "" or anim_name == null:
+			anim_name = str(attack)
+			printerr('Attack Animations must be placed under the "attack/" Animation Library in the Animation player. This is the animation that isnt correctly placed: ', str(attack))
+		
+		# Sets the Node's animation as the attack animation given.
+		node_animation.animation = anim_name
+		
+		# Adds the state machine as a node in the Root state machine in the animation tree.
+		target_node.add_node(str(attack), node_animation, node_position_origin) 
+		
+		node_position_origin += Vector2(0.0, -60.0) # Offsets each node's position so that they dont all overlap in the animation tree.
+		
+		# Creates the transition that will connect the newly created node to the "hub_node"
+		var connection : AnimationNodeStateMachineTransition = AnimationNodeStateMachineTransition.new()
+		connection.switch_mode = AnimationNodeStateMachineTransition.SWITCH_MODE_AT_END
+		connection.advance_mode = AnimationNodeStateMachineTransition.ADVANCE_MODE_AUTO
+		
+		# Connects the animation to the "hub_node", where all attack animations connect to.
+		target_node.call_deferred("add_transition", str(attack), "hub_node", connection)
+	return
 
 #endregion
 
@@ -487,7 +509,6 @@ func add_attack_animation_nodes(root_node : AnimationRootNode, moveset : Array) 
 ## Checks if the player is able to transition and then transitions to the target state once it's possible.
 ## This is done to avoid cutting off animations.
 func transition_to_target(target_state : State) -> void:
-	#await animation_tree.animation_finished
 	if current_animation_state_machine.get_current_node() in ["idle", "idle_guard", "End"]: # Checks to see if the enemy is idle so that it doesn't interrupt a hit, block, or any other animation.
 		if current_animation_state_machine != animation_tree["parameters/playback"]:
 			current_animation_state_machine.travel("End")
@@ -505,16 +526,6 @@ func set_and_check_interrupted_state(target_state) -> void:
 	
 ## Toggles the signals for going to Spectating, Knocked Down and Stunned state.
 func toggle_important_state_signal_connections() -> void:
-	if FightManager.player_knocked_down_signal.is_connected(check_state_change_condition) == true:
-		FightManager.player_knocked_down_signal.disconnect(check_state_change_condition)
-	else:
-		FightManager.player_knocked_down_signal.connect(check_state_change_condition.bind(FightManager.player_knocked_down_signal.get_name()))
-	
-	if FightManager.enemy_knocked_down_signal.is_connected(check_state_change_condition) == true:
-		FightManager.enemy_knocked_down_signal.disconnect(check_state_change_condition)
-	else:
-		FightManager.enemy_knocked_down_signal.connect(check_state_change_condition.bind(FightManager.player_knocked_down_signal.get_name()))
-		
 	if defense_component.stunned_signal.is_connected(check_state_after_stun) == true:
 		defense_component.stunned_signal.disconnect(check_state_after_stun)
 	else:

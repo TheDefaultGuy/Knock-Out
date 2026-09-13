@@ -31,11 +31,11 @@ func _init() -> void:
 	
 func enter() -> void: # Blank enter and exit functions that get overridden by each state's own custom enter and exit functions.
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
-
+	
 	anim_state_machine.travel(nested_machine_name)
 	
 	current_animation_state_machine = animation_tree[str("parameters/",str(nested_machine_name),"/playback")]
-
+	current_animation_state_machine.travel("Start")
 	start_attack_delay_timer()
 
 	# Sets the interrupted state in the state machine as itself.
@@ -75,6 +75,8 @@ func _process(_delta: float) -> void:
 		check_player_stamina()
 		check_time_has_passed()
 		check_enemy_health()
+		check_for_knockdowns()
+		print("REACTIONARY: ", current_animation_state_machine.get_current_node())
 		#print("fakeout timer: ", fakeout_timer.time_left)
 #endregion
 
@@ -93,4 +95,6 @@ func play_punish_animation(dodge_direction : int) -> void:
 func perform_action() -> void:
 	var moves = ["fakeout", "attack"]
 	current_animation_state_machine.travel(moves.pick_random())
+	await animation_tree.animation_finished # Waits for the attack animation to finish before restarting the attack delay timer.
 	start_attack_delay_timer()
+	return

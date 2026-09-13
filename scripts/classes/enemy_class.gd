@@ -2,6 +2,9 @@
 ## The base class for all boxers/fighters, including the player.
 class_name Enemy extends Fighter
 
+## Whether the fighter is currently stunned.
+var is_stunned : bool = false
+
 @onready var instant_ko_component: InstantKOComponent = %InstantKOComponent
 @onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
 

@@ -91,16 +91,36 @@ var player_ready_status : bool = true
 var enemy_ready_status : bool = true
 
 ## The number of stars the player currently has.
-var star_count : int = 0
+var star_count : int = 0 :
+	# Clamps the value and emits the signal to update the UI everytime the value is set.
+	set(value):
+		star_count = clampi(value, 0 , 3) 
+		update_ui_signal.emit()
 
 ## The Player's stamina
-var stamina: int = 2
+var stamina : int = 2 :
+	# Clamps the value and emits the signal to update the UI everytime the value is set.
+	set(value):
+		stamina = clampi(value, 0 , max_player_stamina)
+		update_ui_signal.emit()
 
 ## Number of times the player has been knocked down in the current round.
-var player_ko_count : int = 0
+var player_ko_count : int = 0 :
+	# Clamps the value and emits the signal to update the UI everytime the value is set.
+	set(value):
+		player_ko_count = clampi(value, 0 , 3)
+		if player_ko_count == 3: # Checks for TKO; 3 knockouts
+			print_rich("[b][u]\nFightManager: TKO Player[/u][/b]")
+			fight_is_over_signal.emit()
 
 ## Number of times the player has been knocked down in the current round.
-var enemy_ko_count : int = 0 
+var enemy_ko_count : int = 0 :
+	# Clamps the value and emits the signal to update the UI everytime the value is set.
+	set(value):
+		enemy_ko_count = clampi(value, 0 , 3)
+		if enemy_ko_count == 3: # Checks for TKO; 3 knockouts
+			print_rich("[b][u]\nFightManager: TKO enemy[/u][/b]")
+			fight_is_over_signal.emit()
 
 ## Which round of the fight it currently is. 0 = 1st round, 1 = 2nd round , 2 = 3rd round.
 var round_idx : int = 0 
@@ -128,16 +148,11 @@ func _ready() -> void:
 	star_punches_landed = 0
 	
 func increase_enemy_ko_count() -> void:
-	enemy_ko_count = clampi(enemy_ko_count + 1 , 0 , 3)
-	if enemy_ko_count >= 3: # Checks for TKO; 3 knockouts
-		print_rich("[b][u]\nFightManager: TKO ENEMY[/u][/b]")
-		fight_is_over_signal.emit()
+	enemy_ko_count += 1
 		
 func increase_player_ko_count() -> void:
-	player_ko_count = clampi(player_ko_count + 1 , 0 , 3)
-	if player_ko_count >= 3: # Checks for TKO; 3 knockouts
-		print("[b][u]\nFightManager: TKO PLAYER[/u][/b]")
-		fight_is_over_signal.emit()
+	player_ko_count += 1
+
 		
 func reset_ko_count() -> void:
 	enemy_ko_count = 0
@@ -146,8 +161,7 @@ func reset_ko_count() -> void:
 ## Adds a star to the player's star count and emits the signals related to it.
 func award_star() -> void:
 	print("Fight Manager: player was awarded a star")
-	star_count = clampi(star_count + 1 , 0 , 3)
-	update_ui_signal.emit()
+	star_count += 1
 	star_awarded_signal.emit()
 	stars_used = 0
 	
@@ -156,19 +170,17 @@ func use_stars() -> void:
 	print("Fight Manager: player used ", star_count, " stars")
 	stars_used = star_count
 	star_count = 0
-	update_ui_signal.emit()
 
 ## Lowers the players stamina by 1 each time it's called
 func lower_stamina() -> void:
-	stamina = clampi(stamina - 1, 0 , max_player_stamina)
+	stamina -= 1
 	if stamina == 0:
 		no_stamina_signal.emit()
-	update_ui_signal.emit()
+
 	
 func set_stamina() -> void: 
-		stamina = max_player_stamina
-		update_ui_signal.emit()
-		
+	stamina = max_player_stamina
+
 ## Emits the signal for both fighters to resume fighting and resets their fighting status.
 func start_the_fight() -> void: 
 	if enemy_ready_status == true and player_ready_status == true:

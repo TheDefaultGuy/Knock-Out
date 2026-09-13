@@ -2,8 +2,7 @@
 ## The base class for all boxers/fighters, including the player.
 class_name Player extends Fighter
 
-## Whether the fighter is currently knocked down.
-@export var isKnockdown : bool = false
+
 @onready var input_component: InputComponent = %InputComponent
 
 

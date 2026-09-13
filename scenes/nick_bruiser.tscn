@@ -2092,7 +2092,7 @@ tracks/11/use_blend = true
 
 [sub_resource type="Animation" id="Animation_uhtxd"]
 resource_name = "elbow_punish"
-length = 0.76666665
+length = 0.8
 tracks/0/type = "method"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -2100,7 +2100,7 @@ tracks/0/path = NodePath("AttackingComponent")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0.3),
+"times": PackedFloat32Array(0.2),
 "transitions": PackedFloat32Array(1),
 "values": [{
 "args": [2, 0, 20.0, -1, false],
@@ -2126,7 +2126,7 @@ tracks/2/path = NodePath("AnimatedSprite2D:frame")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.3),
+"times": PackedFloat32Array(0, 0.2),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [2, 1]
@@ -2138,7 +2138,7 @@ tracks/3/path = NodePath("AnimatedSprite2D:position")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0.2, 0.3, 0.36666667, 0.43333334, 0.5, 0.57393724),
+"times": PackedFloat32Array(0.099999994, 0.2, 0.26666665, 0.3333333, 0.39999998, 0.4739372),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
 "update": 0,
 "values": [Vector2(0, 0), Vector2(0, -12), Vector2(0, 10), Vector2(0, -10), Vector2(0, 4), Vector2(0, -10)]
@@ -2150,10 +2150,10 @@ tracks/4/path = NodePath("DefenseComponent:upper_invulnerability")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 0.8),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [true]
+"values": [true, false]
 }
 tracks/5/type = "value"
 tracks/5/imported = false
@@ -2162,10 +2162,10 @@ tracks/5/path = NodePath("DefenseComponent:lower_invulnerability")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 0.8),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [true]
+"values": [true, false]
 }
 tracks/6/type = "audio"
 tracks/6/imported = false
@@ -2179,7 +2179,7 @@ tracks/6/keys = {
 "start_offset": 0.0,
 "stream": ExtResource("62_poxia")
 }],
-"times": PackedFloat32Array(0.26666665)
+"times": PackedFloat32Array(0.13333334)
 }
 tracks/6/use_blend = true
 
@@ -3194,7 +3194,7 @@ tracks/10/keys = {
 
 [sub_resource type="Animation" id="Animation_ail1p"]
 resource_name = "hook_left"
-length = 1.2
+length = 0.8
 tracks/0/type = "method"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -3202,7 +3202,7 @@ tracks/0/path = NodePath("AttackingComponent")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0.26666668),
+"times": PackedFloat32Array(0.2),
 "transitions": PackedFloat32Array(1),
 "values": [{
 "args": [0, -1, 20.0, 1, false],
@@ -3240,7 +3240,7 @@ tracks/3/path = NodePath("AnimatedSprite2D:position")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0.26666668, 0.46666667, 0.5651063, 0.76666665),
+"times": PackedFloat32Array(0.06666667, 0.36666667, 0.5, 0.6666666),
 "transitions": PackedFloat32Array(0.35355344, 0.53588665, 0.53588665, 0.35355344),
 "update": 0,
 "values": [Vector2(0, 0), Vector2(-32, 0), Vector2(-32, 0), Vector2(0, 0)]
@@ -3252,7 +3252,7 @@ tracks/4/path = NodePath("DefenseComponent:upper_invulnerability")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"times": PackedFloat32Array(0, 0.76666665),
+"times": PackedFloat32Array(0, 0.8),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [true, false]
@@ -3264,7 +3264,7 @@ tracks/5/path = NodePath("DefenseComponent:lower_invulnerability")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
-"times": PackedFloat32Array(0, 0.76666665),
+"times": PackedFloat32Array(0, 0.8),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [true, false]
@@ -3281,7 +3281,7 @@ tracks/6/keys = {
 "start_offset": 0.0,
 "stream": ExtResource("62_poxia")
 }],
-"times": PackedFloat32Array(0.33333334)
+"times": PackedFloat32Array(0.13333334)
 }
 tracks/6/use_blend = true
 tracks/7/type = "value"
@@ -3299,7 +3299,7 @@ tracks/7/keys = {
 
 [sub_resource type="Animation" id="Animation_wknah"]
 resource_name = "hook_right"
-length = 1.2
+length = 0.8
 tracks/0/type = "method"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -3307,7 +3307,7 @@ tracks/0/path = NodePath("AttackingComponent")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0.26666668),
+"times": PackedFloat32Array(0.2),
 "transitions": PackedFloat32Array(1),
 "values": [{
 "args": [0, 1, 20.0, 1, false],
@@ -3345,7 +3345,7 @@ tracks/3/path = NodePath("AnimatedSprite2D:position")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0.26666668, 0.46666667, 0.5651063, 0.76666665),
+"times": PackedFloat32Array(0.06666666, 0.36666667, 0.5, 0.63489366),
 "transitions": PackedFloat32Array(0.35355344, 0.53588665, 0.53588665, 0.35355344),
 "update": 0,
 "values": [Vector2(0, 0), Vector2(32, 0), Vector2(32, 0), Vector2(0, 0)]
@@ -3357,7 +3357,7 @@ tracks/4/path = NodePath("DefenseComponent:upper_invulnerability")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"times": PackedFloat32Array(0, 0.76666665),
+"times": PackedFloat32Array(0, 0.8),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [true, false]
@@ -3369,7 +3369,7 @@ tracks/5/path = NodePath("DefenseComponent:lower_invulnerability")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
-"times": PackedFloat32Array(0, 0.76666665),
+"times": PackedFloat32Array(0, 0.8),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [true, false]
@@ -3386,7 +3386,7 @@ tracks/6/keys = {
 "start_offset": 0.0,
 "stream": ExtResource("62_poxia")
 }],
-"times": PackedFloat32Array(0.26666668)
+"times": PackedFloat32Array(0.13333334)
 }
 tracks/6/use_blend = true
 tracks/7/type = "value"
@@ -7963,15 +7963,20 @@ metadata/_custom_type_script = "uid://bxdm4cxh3jw0n"
 script = ExtResource("50_wnc28")
 metadata/_custom_type_script = "uid://bd3i8gnmviajw"
 
-[node name="CalmState" type="Node" parent="StateMachine" unique_id=1646714070 node_paths=PackedStringArray("primary_target_state")]
+[node name="CalmState" type="Node" parent="StateMachine" unique_id=1646714070 node_paths=PackedStringArray("primary_target_state", "secondary_target_state", "tertiary_target_state")]
 script = ExtResource("44_wdmnt")
 moveset_dictionary = {
 "jab_high": 20.0,
 "jab_low": 20.0
 }
 primary_condition = 0
-primary_target_state = NodePath("../ItemHeal")
-time_to_wait = 2.0
+secondary_condition = 4
+tertiary_condition = 1
+primary_target_state = NodePath("../Reactionary")
+secondary_target_state = NodePath("../FlurryAttacks2")
+tertiary_target_state = NodePath("../CalmState2")
+target_round_time = 10.0
+time_to_wait = 8.0
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
 [node name="CalmState2" type="Node" parent="StateMachine" unique_id=550832782 node_paths=PackedStringArray("primary_target_state")]
@@ -8013,12 +8018,10 @@ secondary_condition = 8
 tertiary_condition = 8
 metadata/_custom_type_script = "uid://bsaimsql061lj"
 
-[node name="TauntAndCounter" type="Node" parent="StateMachine" unique_id=343560956 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
+[node name="TauntAndCounter" type="Node" parent="StateMachine" unique_id=343560956]
 script = ExtResource("63_jgm8d")
 primary_condition = 4
 secondary_condition = 5
-primary_target_state = NodePath("../FlurryAttacks")
-secondary_target_state = NodePath("../ItemHeal")
 block_behavior = 2
 metadata/_custom_type_script = "uid://c4q24a656iry7"
 
@@ -8058,6 +8061,8 @@ parameters/block/blend_position = Vector2(0, 0)
 parameters/final_hit/blend_position = Vector2(-1.2386009, 2.2694063)
 parameters/flurry_attacks/conditions/ko = false
 parameters/flurry_attacks/conditions/skip_intro = false
+parameters/flurry_attacks_2/conditions/ko = false
+parameters/flurry_attacks_2/conditions/skip_intro = false
 parameters/get_up/blend_position = -1.0043597
 parameters/hit/blend_position = Vector2(-1.0605003, 1.0886598)
 parameters/idle/blend_position = 0.0

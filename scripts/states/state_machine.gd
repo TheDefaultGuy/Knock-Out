@@ -65,21 +65,24 @@ func on_transition(state, new_state_name):
 
 ## Deletes all of the animation nodes.
 func delete_attack_animation_nodes() -> void:
-	var transitions_to_remove = []
-	root_state_machine = animation_tree.tree_root
-	
-	for i in range(root_state_machine.get_transition_count()):
-		var from_node : StringName = root_state_machine.get_transition_from(i)
-		var to_node : StringName = root_state_machine.get_transition_to(i)
+	if owner is Enemy: # Only do this with enemy class
+		var transitions_to_remove : Array = []
+		var nodes_to_remove : Array = []
+		root_state_machine = animation_tree.tree_root
 		
-		if to_node == "hub_node":
-			transitions_to_remove.append({"from": from_node, "to": to_node})
+		for i in range(root_state_machine.get_transition_count()):
+			var from_node : StringName = root_state_machine.get_transition_from(i)
+			var to_node : StringName = root_state_machine.get_transition_to(i)
 			
-	for trans in transitions_to_remove:
-		root_state_machine.remove_transition(trans["from"], trans["to"])
-		
-		root_state_machine.remove_node(trans["from"])
-
+			if to_node == "hub_node":
+				transitions_to_remove.append({"from": str(from_node), "to": str(to_node)})
+				
+		for trans in transitions_to_remove:
+			root_state_machine.remove_transition(trans["from"], trans["to"])
+			nodes_to_remove.append(trans["from"])
+			root_state_machine.remove_node(trans["from"])
+		#print("Animation nodes to remove: ", nodes_to_remove)
+	return
 	
 func check_for_unnassigned_states():
 	if knocked_down_state == null:

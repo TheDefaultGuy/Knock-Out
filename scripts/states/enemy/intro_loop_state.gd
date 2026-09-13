@@ -36,11 +36,8 @@ func _enter_tree() -> void:
 	## Handles showing and hiding applicable exported variables
 func _validate_property(property: Dictionary) -> void:
 	update_shown_exported_variables(property)
-	#if primary_condition != STATE_CHANGE_CONDITION.AFTER_PLAYER_KNOCKED_DOWN:
-		#printerr(self.name, ' the primary condition MUST be set to "After Player Knocked Down" due to the nature of this state.')
-	#if secondary_condition != STATE_CHANGE_CONDITION.AFTER_ENEMY_KNOCKED_DOWN:
-		#printerr(self.name, ' the primary condition MUST be set to "After Enemy Knocked Down" due to the nature of this state.')
-		
+
+
 func enter() -> void:
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
 	
@@ -68,10 +65,13 @@ func exit() -> void:
 
 func perform_action()-> void:
 	current_animation_state_machine.travel("attack")
+	await animation_tree.animation_finished # Waits for the attack animation to finish before restarting the attack delay timer.
+	start_attack_delay_timer()
 	
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
 		return
 	if get_parent().current_state == self or get_parent().current_state is EnemySpectating:
 		animation_tree.set(str("parameters/",nested_machine_name,"/conditions/ko"), Global.player_node.isKnockdown)
-	
+	if get_parent().current_state == self:
+		check_for_knockdowns()

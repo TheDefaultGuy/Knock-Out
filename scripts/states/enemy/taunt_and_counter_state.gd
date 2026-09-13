@@ -36,9 +36,9 @@ func _validate_property(property: Dictionary) -> void:
 
 func enter() -> void: # Blank enter and exit functions that get overridden by each state's own custom enter and exit functions.
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
-	
+
 	anim_state_machine.travel(nested_machine_name)
-	
+
 	current_animation_state_machine = animation_tree[str("parameters/",nested_machine_name,"/playback")]
 
 	start_attack_delay_timer()
@@ -96,5 +96,6 @@ func _process(_delta: float) -> void:
 		check_player_stamina()
 		check_time_has_passed()
 		check_enemy_health()
+		check_for_knockdowns()
 	#print("Nested current node: ", animation_tree[str("parameters/",nested_machine_name,"/playback")].get_current_node())
 #endregion

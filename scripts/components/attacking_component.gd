@@ -17,7 +17,8 @@ var enemy_flash_duration : float = 0.25
 
 func _ready() -> void:
 	create_parry_timer()
-	defense_component.player_parried.connect(parry_damage_bonus)
+	defense_component.player_parried_signal.connect(parry_damage_bonus)
+
 ## Function that called by the attack animations
 ##
 ## It calls functions in the opposing fighter's defense component, giving it the attacks variables as input.
@@ -88,7 +89,7 @@ func parry_damage_bonus() -> void:
 func _process(_delta: float) -> void:
 	if parry_attack_timer.is_stopped() == false and owner is Player:
 		attack_multiplier = parry_damage_curve.sample(1 - (parry_attack_timer.time_left / parry_attack_timer.wait_time))
-		#print(attack_multiplier)
+
 
 func create_parry_timer() -> void:
 	parry_attack_timer = Timer.new()
@@ -97,8 +98,8 @@ func create_parry_timer() -> void:
 	parry_attack_timer.one_shot = true
 	add_child(parry_attack_timer)
 	
-##This is the equation used for calculating star punch damage in relation to the amount of stars used: https://www.desmos.com/calculator/ck5t9wejr0
-##Basically, it's not a linear equation, its slightly exponential.
-##That way, the first star doesn't have the same weight as the 3rd star, and the more the player holds on to the stars, the more damage they can do.
+## This is the equation used for calculating star punch damage in relation to the amount of stars used: https://www.desmos.com/calculator/ck5t9wejr0
+## Basically, it's not a linear equation, its slightly exponential.
+## That way, the first star doesn't have the same weight as the 3rd star, and the more the player holds on to the stars, the more damage they can do.
 func calculate_start_punch_damage(attack_damage: float) -> float:
 	return snappedf(attack_damage * ( (float(FightManager.stars_used) + 1.0) ** 2.0 / 4.0), 5.0)

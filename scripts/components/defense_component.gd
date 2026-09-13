@@ -7,7 +7,7 @@
 class_name DefenseComponent extends Node
 
 
-signal player_parried
+signal player_parried_signal
 
 #region Exported Variables
 @export_group("Defense Variables")
@@ -87,7 +87,7 @@ var effect_position = [-10.0, -54.0]
 var multiplier_array : Array[float] = [lower_damage_multiplier, upper_damage_multiplier, upper_damage_multiplier]
 
 ## Array that stores both blocking status variables for cleaner code.
-var blocking_array : Array[int] = [lower_blocking_status, upper_blocking_status]
+var blocking_array : Array[bool] = [lower_blocking_status, upper_blocking_status]
 
 ## Array that stores both star window variables for cleaner code.
 var star_window_array : Array[bool] = [lower_star_window, upper_star_window]
@@ -97,11 +97,11 @@ func _ready() -> void:
 	if owner is Enemy: # Enemies can't get hurt when they block.
 		blocking_damage_multiplier = 0
 
-func set_arrays() -> void:
+## Sets the defense variables array so that it's easier to check and for cleaner code.
+func set_defense_variables_arrays() -> void:
 	multiplier_array = [lower_damage_multiplier, upper_damage_multiplier, upper_damage_multiplier]
 	blocking_array = [lower_blocking_status, upper_blocking_status]
 	star_window_array = [lower_star_window, upper_star_window]
-
 
 func set_anim_state_machine() -> void:
 	current_anim_state_machine = owner.anim_state_machine
@@ -112,7 +112,7 @@ func set_anim_state_machine() -> void:
 ## Punch_range is what dodge positions (X axis) the attack covers; this is used for real hit ditection.
 ## Punch direction is which direction the punch is coming from from the player's perspective; this is mainly used for selecting animations.
 func check_defense(punch_height : int, punch_range : int, damage_amount : float, punch_direction : int) -> bool: 
-	set_arrays()
+	set_defense_variables_arrays()
 	
 	# First, it checks for invulnerabilities and dodges.
 	if is_invulnerable(punch_height) or is_punch_dodged(punch_range) == true: # If the player is invulnerable or is not in the area the punch covers, it missed.
@@ -153,16 +153,16 @@ func check_blocking_status(blocking_status : bool, damage_amount : float, punch_
 				return choose_hit_region(punch_height, damage_amount, punch_direction)
 			
 			if owner is Player:
-				if owner.input_component.parry_timer.time_left > 0.0:
+				if owner.input_component.parry_timer.time_left > 0.0: # If the parry timer hasn't reached 0, then it's considered a successful parry.
 					FightManager.sfx_parry_signal.emit()
-					player_parried.emit()
-					current_block_animation = "fast_block"
+					player_parried_signal.emit()
+					current_block_animation = "fast_block" # Sets the block animation as the fast block.
 					play_parry_effect(punch_height)
-					#FightManager.lower_stamina() 
 				else: 
 					current_block_animation = "block"
 					
-				FightManager.lower_stamina()
+				FightManager.lower_stamina() # Lowers the player stamina after a block.
+				
 			# Plays the corresponding block animation if it wasn't enough damage for a knockdown.
 			owner.animation_tree.set(str("parameters/",str(current_block_animation),"/blend_position"),  Vector2i(punch_direction, punch_height))
 			
@@ -227,7 +227,7 @@ func check_for_star_and_stun(punch_height : int) -> bool:
 	return false
 	
 ## A shorthand way to call the travel function.
-func play_animation(animation_name : String): 
+func play_animation(animation_name : String) -> void: 
 	current_anim_state_machine.travel(animation_name)
 	
 ## Helper function that makes the vulnurability checking simpler.
@@ -269,13 +269,14 @@ func check_instant_ko() -> bool:
 		else:
 			push_error("Defense Component: ", owner.name, " doesn't have an Instant KO Component.")
 	return false
-#endregion
 
 ## Resets the hit and block animations as well as the current state machine back to the default ones.
-func reset_current_animations():
+func reset_current_animations() -> void:
 	current_hit_animation = "hit"
 	current_block_animation = "block"
 	current_anim_state_machine = owner.animation_tree["parameters/playback"]
+	
+#endregion
 
 func play_impact_effect(punch_height) -> void:
 	var impact_effect = IMPACT_EFFECT.instantiate()

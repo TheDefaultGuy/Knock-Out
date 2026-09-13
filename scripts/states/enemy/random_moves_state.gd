@@ -59,17 +59,16 @@ func _ready() -> void:
 			
 	parent_state_machine_node = get_parent()
 	
-	conditions_and_target_states = [
-		[primary_condition, primary_target_state], 
-		[secondary_condition, secondary_target_state], 
-		[tertiary_condition, tertiary_target_state]
-		]
+	conditions_and_targets_dict = {
+		primary_condition: primary_target_state,
+		secondary_condition: secondary_target_state,
+		tertiary_condition: tertiary_target_state
+		}
 	
 	current_animation_state_machine = anim_state_machine
-	state_change_conditions = [primary_condition, secondary_condition, tertiary_condition]
 	
 
-	if STATE_CHANGE_CONDITION.AFTER_TIME_PASSED in state_change_conditions:
+	if STATE_CHANGE_CONDITION.AFTER_TIME_PASSED in conditions_and_targets_dict.keys():
 		state_change_timer = create_timer("Wait Timer", true, time_to_wait)
 		add_child(state_change_timer)
 		
@@ -141,6 +140,7 @@ func _process(_delta: float) -> void:
 		check_player_stamina()
 		check_time_has_passed()
 		check_enemy_health()
+		check_for_knockdowns()
 		#print("STATE CHANGE TIME LEFT: ", state_change_timer.time_left)
 	
 #endregion

@@ -19,9 +19,11 @@ func _init() -> void:
 	state_type = STATE_TYPE_ENUM.NESTED_STATE_MACHINE
 	attack_timer_required  = false
 	nested_state_machine = preload("uid://dt6b8hv77b0dh")
+	
 	# Given the nature of this state, these 2 conditions MUST ALWAYS be enabled and have corresponding target states.
 	primary_condition = STATE_CHANGE_CONDITION.AFTER_COMPLETION
 	secondary_condition = STATE_CHANGE_CONDITION.STATE_INTERRUPTED
+	
 	if secondary_target_state == null and primary_target_state != null:
 		secondary_target_state = primary_target_state
 		printerr(self.name, " does NOT have secondary target state set, but has used the primary target state as a fallback.")
@@ -54,11 +56,6 @@ func enter() -> void:
 
 ## Handles showing and hiding applicable exported variables
 func _validate_property(property: Dictionary) -> void:
-#
-	#if primary_condition != STATE_CHANGE_CONDITION.AFTER_COMPLETION:
-		#printerr(self.name, ' the primary condition MUST be set to "After Completion" due to the nature of this state.')
-	#if secondary_condition != STATE_CHANGE_CONDITION.STATE_INTERRUPTED:
-		#printerr(self.name, ' the primary condition MUST be set to "State Interrupted" due to the nature of this state.')
 	update_shown_exported_variables(property)
 	
 func exit() -> void:
@@ -77,7 +74,9 @@ func _process(_delta: float) -> void:
 		return
 	if get_parent().current_state == self:
 		check_state_completion()
+		check_for_knockdowns()
 		#print(current_animation_state_machine.get_current_node())
+
 ## If the player got hit, then the interrupted state will be set to the failed healed state.
 func change_to_failed_state() -> void:
 	interruption_status = true

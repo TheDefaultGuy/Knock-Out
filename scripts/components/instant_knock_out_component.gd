@@ -88,7 +88,7 @@ func check_for_instant_knock_out() -> bool:
 					return true
 				
 		KO_CONDITION_TYPE.NEVER_BEEN_HIT:
-			if Global.player_node.health_component.hp == Global.player_node.health_component.initial_hp:
+			if Global.player_node.health_component.hp == Global.player_node.health_component.max_hp:
 				if state_machine.current_state == expected_state_A or state_machine.current_state == expected_state_B:
 					print_rich("[color=cyan]Instant KO component:[/color] KO condition met: Never Hit", condition)
 					return true

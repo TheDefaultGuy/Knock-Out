@@ -2,6 +2,9 @@
 ## The base class for all boxers/fighters, including the player.
 class_name Fighter extends Node2D
 
+## Whether the fighter is currently knocked down.
+@export var isKnockdown : bool = false
+
 #@export_category("Required Gameplay Components")
 @onready var defense_component: DefenseComponent = %DefenseComponent
 @onready var health_component: HealthComponent = %HealthComponent

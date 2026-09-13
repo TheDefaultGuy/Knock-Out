@@ -86,7 +86,9 @@ func _process(_delta: float) -> void:
 		return
 	if get_parent().current_state == self or get_parent().current_state is EnemySpectating:
 		animation_tree.set(str("parameters/",nested_machine_name,"/conditions/ko"), Global.player_node.isKnockdown)
+	if get_parent().current_state == self:
 		check_state_completion()
+		check_for_knockdowns()
 #endregion
 
 ## Increases the attack count variable by 1 every time an animation is played in this state.
