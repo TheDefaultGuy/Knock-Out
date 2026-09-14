@@ -42,6 +42,5 @@ func end_match(animation : String) -> void:
 		
 func play_win_animation() -> void:
 	await FightManager.fight_is_over_signal
-	print("OVER")
 	if FightManager.is_fight_over == true:
 		anim_state_machine.travel("outro")

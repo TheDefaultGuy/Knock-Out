@@ -298,7 +298,7 @@ func match_moveset_type() -> Array:
 func check_for_attack_and_append(attack : String) -> void:
 	if attack not in match_moveset_type():
 		
-		push_warning(self.name, " did NOT have a fakeout animation in its moveset, which is required for this state. The fakeout animation has been added.")
+		push_warning(self.name, " did NOT have a required animation in its moveset, which is required for this state. The fakeout animation has been added.")
 		match moveset_type:
 			MOVESET_TYPE_ENUM.WEIGHTED_DICTIONARY:
 				moveset_dictionary[attack] = 20.0

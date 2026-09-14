@@ -30,7 +30,12 @@ func get_up() -> void:
 	health_component.reset_hp()
 	
 func start_get_up_timer() -> void:
-	print("START GETUP TIMER")
+	if FightManager.is_fight_over == true:
+		print("Not getting up.")
+		FightManager.fight_is_over_signal.emit()
+		return
+	FightManager.start_ko_count_signal.emit()
+	print("STARTING GETUP TIMER")
 	get_up_timer.start(randf_range(min_getup_time, max_getup_time))
 
 	

@@ -49,5 +49,6 @@ func play_sound_effect(sound_effect : AudioStream):
 	sfx_player.queue_free()
 
 func change_BGM(new_bgm):
-	background_music.stream = new_bgm
-	background_music.play()
+	if background_music.stream != new_bgm:
+		background_music.stream = new_bgm
+		background_music.play()

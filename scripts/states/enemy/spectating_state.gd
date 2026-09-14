@@ -26,6 +26,11 @@ func back_to_the_fight() -> void:
 
 func play_win_animation() -> void:
 	await FightManager.fight_is_over_signal
+
+	if anim_state_machine.get_current_node() != "spectating" or anim_state_machine.get_current_node() != "move_to_spectate":
+
+		await animation_tree.animation_finished
+
 	if FightManager.is_fight_over == true:
 		anim_state_machine.travel("outro")
 
@@ -41,3 +46,4 @@ func _process(_delta: float) -> void:
 	if anim_state_machine.get_current_node() == "idle":
 		anim_state_machine.travel("move_to_spectate")
 	play_win_animation()
+	

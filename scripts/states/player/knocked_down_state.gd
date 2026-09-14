@@ -39,8 +39,8 @@ func exit() -> void:
 	owner.can_get_up = false
 	
 func _process(delta: float) -> void:
-	print("Fight over: ", FightManager.is_fight_over)
-	if get_parent().current_state == self and FightManager.is_fight_over == false and owner.can_get_up == true:
+
+	if get_parent().current_state == self and owner.can_get_up == true and FightManager.is_fight_over == false: #
 		get_up_progress = clampf(get_up_progress - get_up_decay_rate * delta, 0.0 , 110.0)
 		animation_tree.set("parameters/get_up_blend/blend_position", get_up_progress)
 
@@ -57,7 +57,8 @@ func perform_defense(_move : int, _action_name : String):
 		
 ## When an attack input is Given by the Input Component, increase the get up progress.
 func perform_attack(_height : int, _direction : int, _action_name : String):
-	get_up_progress += get_up_step_value
+	if owner.can_get_up == true and FightManager.is_fight_over == false:
+		get_up_progress += get_up_step_value
 	
 ## Doesn't let the player be able to get up after they failed to get up before the 10 count.
 func failed_to_get_up(): 

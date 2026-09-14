@@ -94,14 +94,14 @@ var enemy_ready_status : bool = true
 var is_fight_over : bool = false
 
 ## The number of stars the player currently has.
-var star_count : int = 3 :
+var star_count : int = 0 :
 	# Clamps the value and emits the signal to update the UI everytime the value is set.
 	set(value):
 		star_count = clampi(value, 0 , 3) 
 		update_ui_signal.emit()
 
 ## The Player's stamina
-var stamina : int = 12:
+var stamina : int = 10:
 	# Clamps the value and emits the signal to update the UI everytime the value is set.
 	set(value):
 		stamina = clampi(value, 0 , max_player_stamina)
@@ -119,7 +119,7 @@ var player_ko_count : int = 0 :
 			
 
 ## Number of times the player has been knocked down in the current round.
-var enemy_ko_count : int = 2 :
+var enemy_ko_count : int = 0 :
 	# Clamps the value and emits the signal to update the UI everytime the value is set.
 	set(value):
 		enemy_ko_count = clampi(value, 0 , 3)
