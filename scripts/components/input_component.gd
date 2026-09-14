@@ -38,90 +38,75 @@ func _ready() -> void:
 func _input(_event: InputEvent) -> void:
 	if allow_inputs == false:
 		return
-	#if Input.is_action_just_pressed("dodge"):
-		#print("pressed dodge")
-	
+
 	if Input.is_action_just_pressed("down"): # Ducking to avoid high attacks
 		perform_action("down")
 
-	if Input.is_action_just_pressed("left"):
+	elif Input.is_action_just_pressed("left"):
 		perform_action("left")
 
-	if Input.is_action_just_pressed("right"):
+	elif Input.is_action_just_pressed("right"):
 		perform_action("right")
 		
 	if Input.is_action_just_pressed("block") or Input.is_action_just_pressed("block_upper") or Input.is_action_just_pressed("block_lower"):
 		parry_timer.start()
 		
-	if Input.is_action_just_pressed("star_punch") and Input.is_action_pressed("up") == false:
-		perform_action("star_punch_lower")
+	# If the player is NOT holding the Up button, check the low punches.
+	if Input.is_action_pressed("up") == false:
 		
-	if Input.is_action_just_pressed("star_punch") and Input.is_action_pressed("up") == true:
-		perform_action("star_punch_upper")
+		if Input.is_action_just_pressed("left_punch"):
+			perform_action("left_low_punch")
+		elif Input.is_action_just_pressed("right_punch"):
+			perform_action("right_low_punch")
+			
+		elif Input.is_action_just_pressed("star_punch"):
+			perform_action("star_punch_lower")
+			
+	# If the player is already holding the Up button check the high punches
+	elif Input.is_action_pressed("up") == true:
 		
-	# If the player is NOT holding the Up button and presses the button to throw a punch, then that's a low punch.
-	if Input.is_action_just_pressed("left_punch") and Input.is_action_pressed("up") == false:
-		perform_action("left_low_punch")
-	if Input.is_action_just_pressed("right_punch") and Input.is_action_pressed("up") == false:
-		perform_action("right_low_punch")
-		
-	# If the player is already holding the Up button and presses the button to throw a punch, then that's a high punch.
-	if Input.is_action_pressed("up") == true and Input.is_action_just_pressed("left_punch"):
-		perform_action("left_high_punch")
+		if Input.is_action_just_pressed("left_punch"):
+			perform_action("left_high_punch")
+		elif Input.is_action_just_pressed("right_punch"):
+			perform_action("right_high_punch")
 
-	if Input.is_action_pressed("up") == true and Input.is_action_just_pressed("right_punch"):
-		perform_action("right_high_punch")
-
+		elif Input.is_action_just_pressed("star_punch"):
+			perform_action("star_punch_upper")
+	
 func _process(_delta: float) -> void:
 	if allow_inputs == false:
 		return
-	
-	if Input.is_action_pressed("up") == true and Input.is_action_pressed("block") == true: 
-		owner.animation_tree.set("parameters/neutral/idle/blend_position", Vector2i(1, 1))
 		
-	elif Input.is_action_pressed("up") == false and Input.is_action_pressed("block") == true: 
-		owner.animation_tree.set("parameters/neutral/idle/blend_position", Vector2i(1, 0))
-		
-	elif Input.is_action_pressed("up") == false and Input.is_action_pressed("block") == false: 
-		owner.animation_tree.set("parameters/neutral/idle/blend_position", Vector2i(0, 0))
-		
-	elif Input.is_action_pressed("up") == true and Input.is_action_pressed("block") == false: 
-		owner.animation_tree.set("parameters/neutral/idle/blend_position", Vector2i(0, 0))
+	var blend_vector : Vector2i = Vector2i( \
+	int(Input.is_action_pressed("block") or Input.is_action_pressed("block_upper") or Input.is_action_pressed("block_lower")), \
+	int((Input.is_action_pressed("block") and Input.is_action_pressed("up")) or Input.is_action_pressed("block_upper"))\
+	)
 	
-	if Input.is_action_pressed("block_upper") == true:
-		owner.animation_tree.set("parameters/neutral/idle/blend_position", Vector2i(1, 1))
-	elif Input.is_action_pressed("block_lower") == true:
-		owner.animation_tree.set("parameters/neutral/idle/blend_position", Vector2i(1, 0))
-	
-	if Input.is_action_pressed("left") == true: 
+	owner.animation_tree.set("parameters/neutral/idle/blend_position", blend_vector)
+	if Input.is_action_pressed("left"):
 		owner.animation_tree.set("parameters/dodge/dodge_left/dodge_blend_left/blend_position", Global.range.LEFT)
-		owner.animation_tree.set("parameters/dodge/dodge_left/conditions/holding_left", true)
-	elif Input.is_action_pressed("left") == false: 
-		owner.animation_tree.set("parameters/dodge/dodge_left/conditions/holding_left", false)
-		
-	if Input.is_action_pressed("right") == true: 
+	
+	elif Input.is_action_pressed("right"):
 		owner.animation_tree.set("parameters/dodge/dodge_right/dodge_blend_right/blend_position", Global.range.RIGHT)
-		owner.animation_tree.set("parameters/dodge/dodge_right/conditions/holding_right", true)
-	elif Input.is_action_pressed("right") == false: 
-		owner.animation_tree.set("parameters/dodge/dodge_right/conditions/holding_right", false)
 		
-	if Input.is_action_pressed("down") == true: 
+	elif Input.is_action_pressed("down"):
 		owner.animation_tree.set("parameters/dodge/duck/duck_blend/blend_position", -1)
-		owner.animation_tree.set("parameters/dodge/duck/conditions/holding_down", true)
-	elif Input.is_action_pressed("down") == false: 
-		owner.animation_tree.set("parameters/dodge/duck/conditions/holding_down", false)
+	
+	owner.animation_tree.set("parameters/dodge/dodge_left/conditions/holding_left", Input.is_action_pressed("left"))
+	owner.animation_tree.set("parameters/dodge/dodge_right/conditions/holding_right", Input.is_action_pressed("right"))
+	owner.animation_tree.set("parameters/dodge/duck/conditions/holding_down", Input.is_action_pressed("down"))
 
 func perform_action(action_name : String):
 	match action_name:
 		"left_low_punch":
-			attack_input_signal.emit(Global.height.LOW, Global.range.LEFT, "left_low_punch", false)
+			attack_input_signal.emit(Global.height.LOW, Global.range.LEFT, "left_low_punch")
 		"right_low_punch":
-			attack_input_signal.emit(Global.height.LOW, Global.range.RIGHT, "right_low_punch", false)
+			attack_input_signal.emit(Global.height.LOW, Global.range.RIGHT, "right_low_punch")
 		"left_high_punch":
-			attack_input_signal.emit(Global.height.HIGH, Global.range.LEFT, "left_high_punch", false)
+			attack_input_signal.emit(Global.height.HIGH, Global.range.LEFT, "left_high_punch")
 		"right_high_punch":
-			attack_input_signal.emit(Global.height.HIGH, Global.range.RIGHT, "right_high_punch", false)
-		"up": # Ducking to avoid high attacks
+			attack_input_signal.emit(Global.height.HIGH, Global.range.RIGHT, "right_high_punch")
+		"up":
 			defense_input_signal.emit(Global.range.NEUTRAL, "up")
 		"down": # Ducking to avoid high attacks
 			defense_input_signal.emit(Global.range.NEUTRAL, "down")
@@ -130,11 +115,11 @@ func perform_action(action_name : String):
 		"right":
 			defense_input_signal.emit(Global.range.RIGHT, "right")
 		"star_punch_lower":
-			attack_input_signal.emit(Global.height.LOW, Global.range.NEUTRAL, "star_punch_lower", true)
+			attack_input_signal.emit(Global.height.LOW, Global.range.NEUTRAL, "star_punch_lower")
 		"star_punch_upper":
-			attack_input_signal.emit(Global.height.HIGH, Global.range.NEUTRAL, "star_punch_upper", true)
+			attack_input_signal.emit(Global.height.HIGH, Global.range.NEUTRAL, "star_punch_upper")
 		_:
-			printerr("Unnaccounted action.")
+			printerr("Input Component: Unnaccounted action.")
 	
 ## Stores the given action to then use it when requested.
 func store_unhandled_input(action_name : String): 

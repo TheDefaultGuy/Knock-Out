@@ -145,12 +145,14 @@ func check_blocking_status(blocking_status : bool, damage_amount : float, punch_
 		# Checks to see if the fighter is currently vulnerable in the given region. true = blocking and NOT vulnerable, false = not blocking and IS vulnerable	
 		false: # NOT blocking
 			return choose_hit_region(punch_height, damage_amount, punch_direction)
-				
-		true: # IS blocking
 			
+		
+		true: # IS blocking
 	 		# Basically, if you're blocking, but the punch isn't straight ahead, you still get hit.
-			if dodge_position == Global.range.NEUTRAL and punch_range != Global.range.NEUTRAL and owner is Player:
-				return choose_hit_region(punch_height, damage_amount, punch_direction)
+			if dodge_position == Global.range.NEUTRAL:
+				if punch_range != Global.range.NEUTRAL:
+					if owner is Player:
+						return choose_hit_region(punch_height, damage_amount, punch_direction)
 			
 			if owner is Player:
 				if owner.input_component.parry_timer.time_left > 0.0: # If the parry timer hasn't reached 0, then it's considered a successful parry.
@@ -181,7 +183,7 @@ func handle_damage_and_knockdown(damage_amount : float, multiplier : float, punc
 		FightManager.lower_stamina()
 	else:
 		if check_instant_ko() == true: # If the instant KO conditions were met, multiply the hell out of the damage.
-			damage_amount = damage_amount * 1000.0
+			damage_amount = damage_amount * 2000.0
 	
 	# Checks to see if the health component returned that the attack resulted in a knockdown.
 	if owner.health_component.deal_damage_and_check_for_knockdown(damage_amount, multiplier) == true: 
@@ -205,6 +207,7 @@ func choose_hit_region(punch_height : int, damage_amount : float, punch_directio
 	owner.animation_tree.set(str("parameters/",str(current_hit_animation),"/blend_position"), Vector2i(punch_direction, punch_height))
 
 	play_animation(str(current_hit_animation))
+	
 	if owner is Enemy:
 		play_impact_effect(punch_height)
 	return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
@@ -234,21 +237,13 @@ func play_animation(animation_name : String) -> void:
 func is_invulnerable(punch_height: int) -> bool:
 	match punch_height:
 		Global.height.HIGH:
-			if upper_invulnerability == true:
-				return true
-			elif upper_invulnerability == false:
-				return false
+			return upper_invulnerability
 		Global.height.LOW:
-			if lower_invulnerability == true:
-				return true
-			elif lower_invulnerability == false:
-				return false
+			return lower_invulnerability
 		Global.height.BOTH:
-			if lower_invulnerability == true and upper_invulnerability == true:
-				return true
-			else:
-				return false
-	return false
+			return lower_invulnerability and upper_invulnerability
+		_: 
+			return false
 
 ## Helper function that makes the dodge checking simpler.
 func is_punch_dodged(punch_range: int) -> bool:
@@ -267,7 +262,7 @@ func check_instant_ko() -> bool:
 			if owner.instant_ko_component.check_for_instant_knock_out() == true:
 				return true
 		else:
-			push_error("Defense Component: ", owner.name, " doesn't have an Instant KO Component.")
+			push_warning("Defense Component: ", owner.name, " doesn't have an Instant KO Component.")
 	return false
 
 ## Resets the hit and block animations as well as the current state machine back to the default ones.

@@ -9,7 +9,7 @@ signal star_awarded_signal
 
 ## Signal emitted when the player no longer has stamina so that they can transition to the tired state.
 signal no_stamina_signal 
-
+#region SFX
 @warning_ignore("unused_signal")
 signal sfx_punch_thrown_signal
 
@@ -27,7 +27,7 @@ signal sfx_star_punch_thrown_signal
 
 @warning_ignore("unused_signal")
 signal sfx_parry_signal
-
+#endregion
 @warning_ignore("unused_signal")
 signal player_knocked_down_signal
 
@@ -67,11 +67,12 @@ signal fighter_ready_signal
 
 @warning_ignore("unused_signal")
 ## Signal emitted when a fighter finished the knock down animation and is time to get up.
-signal start_get_up_signal 
+signal start_ko_count_signal 
 
 @warning_ignore("unused_signal")
 ## Signal emitted when a fighter fails to get up before 10 or is TKO'd. Means the fight is over and gameplay is over.
 signal fight_is_over_signal
+
 
 @warning_ignore("unused_signal")
 signal final_stun_hit_signal
@@ -90,15 +91,17 @@ var player_ready_status : bool = true
 ## This is used so that even if the player and enemy have different animation lengths, they get synchronized and can start fighting at the same time.
 var enemy_ready_status : bool = true
 
+var is_fight_over : bool = false
+
 ## The number of stars the player currently has.
-var star_count : int = 0 :
+var star_count : int = 3 :
 	# Clamps the value and emits the signal to update the UI everytime the value is set.
 	set(value):
 		star_count = clampi(value, 0 , 3) 
 		update_ui_signal.emit()
 
 ## The Player's stamina
-var stamina : int = 2 :
+var stamina : int = 12:
 	# Clamps the value and emits the signal to update the UI everytime the value is set.
 	set(value):
 		stamina = clampi(value, 0 , max_player_stamina)
@@ -109,18 +112,21 @@ var player_ko_count : int = 0 :
 	# Clamps the value and emits the signal to update the UI everytime the value is set.
 	set(value):
 		player_ko_count = clampi(value, 0 , 3)
+		print("Playery KD Count: ", player_ko_count)
 		if player_ko_count == 3: # Checks for TKO; 3 knockouts
 			print_rich("[b][u]\nFightManager: TKO Player[/u][/b]")
-			fight_is_over_signal.emit()
+			is_fight_over = true
+			
 
 ## Number of times the player has been knocked down in the current round.
-var enemy_ko_count : int = 0 :
+var enemy_ko_count : int = 2 :
 	# Clamps the value and emits the signal to update the UI everytime the value is set.
 	set(value):
 		enemy_ko_count = clampi(value, 0 , 3)
+		print("Enemy KD Count: ", enemy_ko_count)
 		if enemy_ko_count == 3: # Checks for TKO; 3 knockouts
 			print_rich("[b][u]\nFightManager: TKO enemy[/u][/b]")
-			fight_is_over_signal.emit()
+			is_fight_over = true
 
 ## Which round of the fight it currently is. 0 = 1st round, 1 = 2nd round , 2 = 3rd round.
 var round_idx : int = 0 
@@ -149,11 +155,10 @@ func _ready() -> void:
 	
 func increase_enemy_ko_count() -> void:
 	enemy_ko_count += 1
-		
+
 func increase_player_ko_count() -> void:
 	player_ko_count += 1
 
-		
 func reset_ko_count() -> void:
 	enemy_ko_count = 0
 	player_ko_count = 0
@@ -177,7 +182,6 @@ func lower_stamina() -> void:
 	if stamina == 0:
 		no_stamina_signal.emit()
 
-	
 func set_stamina() -> void: 
 	stamina = max_player_stamina
 

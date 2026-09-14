@@ -39,7 +39,8 @@ func _init() -> void:
 	attack_timer_required = false
 	nested_state_machine = preload("uid://bg1hc7fvrio3n")
 	primary_condition = STATE_CHANGE_CONDITION.AFTER_COMPLETION
-	
+	moveset_type = MOVESET_TYPE_ENUM.PREDETERMINED_ORDER
+
 func _enter_tree() -> void:
 	primary_condition = STATE_CHANGE_CONDITION.AFTER_COMPLETION
 	
@@ -66,7 +67,7 @@ func enter() -> void:
 	animation_tree.animation_finished.connect(increase_count)
 	
 	
-	toggle_important_state_signal_connections()
+	toggle_stunned_signal_connections()
 	
 	match skip_intro: # Resets the attack count when re-entering this state
 		true:
@@ -79,7 +80,7 @@ func enter() -> void:
 
 func exit() -> void:
 	animation_tree.animation_finished.disconnect(increase_count)
-	toggle_important_state_signal_connections()
+	toggle_stunned_signal_connections()
 	
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game

@@ -148,10 +148,9 @@ func exit() -> void:
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
 		return
-	if get_parent().current_state != self:
-		return
-	check_enemy_health_condition()
-	check_if_stun_over()
+	if get_parent().current_state == self:
+		check_enemy_health_condition()
+		check_if_stun_over()
 	
 #endregion
 

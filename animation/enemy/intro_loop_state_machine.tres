@@ -1,19 +1,16 @@
 [gd_resource type="AnimationNodeStateMachine" format=3 uid="uid://bpl60rtp2gv5i"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_lx8ob"]
-animation = &"attack/rush_attack"
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_hvqif"]
-animation = &"RESET"
+animation = &"looping_charge/attack"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_bp15k"]
-animation = &"attack/rush_restart"
+animation = &"looping_charge/restart"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_bmx2d"]
-animation = &"attack/rush_intro"
+animation = &"looping_charge/idle_loop"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_aqtjj"]
-animation = &"attack/rush_restart"
+animation = &"looping_charge/restart"
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_hvqif"]
 advance_mode = 2
@@ -38,16 +35,14 @@ advance_condition = &"ko"
 
 [resource]
 states/End/position = Vector2(676, 125)
-states/Start/position = Vector2(111, 7)
+states/Start/position = Vector2(121, 7)
 states/attack/node = SubResource("AnimationNodeAnimation_lx8ob")
 states/attack/position = Vector2(501, 125)
-states/hub_node/node = SubResource("AnimationNodeAnimation_hvqif")
-states/hub_node/position = Vector2(389, 200.34985)
 states/intro/node = SubResource("AnimationNodeAnimation_bp15k")
 states/intro/position = Vector2(265, 7)
 states/loop/node = SubResource("AnimationNodeAnimation_bmx2d")
-states/loop/position = Vector2(431, 7)
+states/loop/position = Vector2(501, 7)
 states/return/node = SubResource("AnimationNodeAnimation_aqtjj")
-states/return/position = Vector2(260, 125)
+states/return/position = Vector2(265, 125)
 transitions = ["Start", "intro", SubResource("AnimationNodeStateMachineTransition_hvqif"), "intro", "loop", SubResource("AnimationNodeStateMachineTransition_ow3nb"), "attack", "return", SubResource("AnimationNodeStateMachineTransition_qmxu7"), "return", "loop", SubResource("AnimationNodeStateMachineTransition_djx3a"), "attack", "End", SubResource("AnimationNodeStateMachineTransition_lx8ob")]
-graph_offset = Vector2(-374, -89.65014)
+graph_offset = Vector2(-200, 90.34986)

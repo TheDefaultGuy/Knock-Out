@@ -19,6 +19,7 @@ func take_damage(amount : float) -> float:
 
 func reset_hp() -> void:
 	hp = owner.max_hp
+	FightManager.fighter_got_up_signal.emit()
 	owner.isKnockdown = false
 
 ## Heals the fighter by a given amount.

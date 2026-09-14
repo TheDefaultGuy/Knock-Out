@@ -306,7 +306,7 @@
 	#return
 	#
 ### Toggles the signals for going to Spectating, Knocked Down and Stunned state.
-#func toggle_important_state_signal_connections() -> void:
+#func toggle_stunned_signal_connections() -> void:
 	#if FightManager.player_knocked_down_signal.is_connected(check_state_change_condition) == true:
 		#FightManager.player_knocked_down_signal.disconnect(check_state_change_condition)
 	#else:

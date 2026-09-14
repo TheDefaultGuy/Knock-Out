@@ -18,8 +18,9 @@ class_name Fighter extends Node2D
 ## Self-explanatory
 @export var max_hp : float = 100.0
 
-func start_get_up():
-	FightManager.start_get_up_signal.emit()
+var can_get_up : bool = false
 
-func emit_got_up_signal():
-	FightManager.fighter_got_up_signal.emit()
+func start_get_up():
+	FightManager.start_ko_count_signal.emit()
+	can_get_up = true
+	FightManager.fight_is_over_signal.emit()

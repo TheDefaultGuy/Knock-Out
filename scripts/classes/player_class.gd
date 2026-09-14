@@ -17,7 +17,7 @@ func _ready() -> void:
 		printerr(self.name, " doesn't have an Animation Tree assigned.")
 
 	
-func ready_to_fight():
+func ready_to_fight() -> void:
 	#print("Fighter Class: ", name, " is ready")
 	FightManager.player_ready_status = true
 	FightManager.fighter_ready_signal.emit()

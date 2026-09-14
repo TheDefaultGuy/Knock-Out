@@ -10,8 +10,9 @@ func _ready() -> void:
 	FightManager.enemy_knocked_down_signal.connect(toggle_round_timer)
 	FightManager.player_knocked_down_signal.connect(toggle_round_timer)
 	FightManager.resume_fighting_signal.connect(toggle_round_timer)
-	FightManager.start_get_up_signal.connect(start_ko_count)
+	FightManager.start_ko_count_signal.connect(start_ko_count)
 	FightManager.fighter_got_up_signal.connect(stop_ko_count)
+	FightManager.fight_is_over_signal.connect(stop_ko_count)
 	FightManager.start_the_fight_signal.connect(start_the_match)
 	#create_timers()
 	call_deferred("create_timers")
@@ -38,8 +39,9 @@ func start_the_match() -> void:
 	round_timer.paused = false
 	
 func start_ko_count() -> void:
-	ko_timer.start(10.0)
-	animation_player.play("ko_count")
+	if FightManager.is_fight_over == false:
+		ko_timer.start(10.0)
+		animation_player.play("ko_count")
 	
 func stop_ko_count() -> void:
 	ko_timer.stop()
@@ -47,6 +49,7 @@ func stop_ko_count() -> void:
 	
 func end_fight() -> void:
 	print("FIGHT'S OVER")
+	FightManager.is_fight_over = true
 	FightManager.fight_is_over_signal.emit()
 
 func _on_round_timer_timeout() -> void:

@@ -45,7 +45,7 @@ func enter() -> void:
 	
 	FightManager.succesful_hit_signal.connect(change_to_failed_state)
 	
-	toggle_important_state_signal_connections()
+	toggle_stunned_signal_connections()
 	
 	# Sets the hit animation and state machine in the defense component as the hit animation in the state machine.
 	# This is because the defense component is the one responsible for playing the hit animation
@@ -61,7 +61,7 @@ func _validate_property(property: Dictionary) -> void:
 func exit() -> void:
 	
 
-	toggle_important_state_signal_connections()
+	toggle_stunned_signal_connections()
 	FightManager.succesful_hit_signal.disconnect(change_to_failed_state)
 	# Resets the hit animation and state machine in the defense component back to the default hit animation.
 	defense_component.reset_current_animations()

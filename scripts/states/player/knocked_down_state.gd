@@ -17,12 +17,17 @@ func enter() -> void:
 	print_rich("[color=yellow]Player Entered State: [/color]", self.name)
 	animation_tree.set("parameters/conditions/knockeddown", true)
 	animation_tree.set("parameters/conditions/gotup", false)
+	owner.can_get_up = false
 	FightManager.player_ready_status = false
+	
+	
 	input_component.attack_input_signal.connect(perform_attack)
 	input_component.defense_input_signal.connect(perform_defense)
 	FightManager.resume_fighting_signal.connect(transition_to_neutral)
 	FightManager.fight_is_over_signal.connect(failed_to_get_up)
+	
 	self.owner.isKnockdown = true
+	FightManager.fight_is_over_signal.emit()
 	
 func exit() -> void:
 	get_up_progress = 0.0
@@ -31,9 +36,11 @@ func exit() -> void:
 	FightManager.resume_fighting_signal.disconnect(transition_to_neutral)
 	FightManager.fight_is_over_signal.disconnect(failed_to_get_up)
 	self.owner.isKnockdown = false
+	owner.can_get_up = false
 	
 func _process(delta: float) -> void:
-	if get_parent().current_state == self:
+	print("Fight over: ", FightManager.is_fight_over)
+	if get_parent().current_state == self and FightManager.is_fight_over == false and owner.can_get_up == true:
 		get_up_progress = clampf(get_up_progress - get_up_decay_rate * delta, 0.0 , 110.0)
 		animation_tree.set("parameters/get_up_blend/blend_position", get_up_progress)
 
@@ -49,14 +56,14 @@ func perform_defense(_move : int, _action_name : String):
 	pass
 		
 ## When an attack input is Given by the Input Component, increase the get up progress.
-func perform_attack(_height : int, _direction : int, _action_name : String, _special : bool):
+func perform_attack(_height : int, _direction : int, _action_name : String):
 	get_up_progress += get_up_step_value
 	
 ## Doesn't let the player be able to get up after they failed to get up before the 10 count.
 func failed_to_get_up(): 
-	get_up_step_value = 0.0
-	get_up_decay_rate = 2.0 * get_up_decay_rate
-
+	#get_up_step_value = 0.0
+	#get_up_decay_rate = 2.0 * get_up_decay_rate
+	return
 func ready_to_fight():
 	FightManager.player_ready_status = true
 	FightManager.fighter_ready_signal.emit()

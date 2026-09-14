@@ -1,4 +1,5 @@
 @icon("res://assets/icons/MdiStateMachine.svg")
+@tool
 class_name StateMachine extends Node
 
 @export_category("⚠️ Initial State ⚠️")
@@ -20,7 +21,7 @@ class_name StateMachine extends Node
 @export var neutral_state : State
 
 var current_state : State
-
+@export_tool_button("Delete Attack Animation Nodes") var dlt_bttn = delete_attack_animation_nodes
 @onready var animation_tree: AnimationTree = %AnimationTree
 @onready var anim_state_machine = animation_tree["parameters/playback"]
 var root_state_machine : AnimationNodeStateMachine = null
@@ -66,23 +67,46 @@ func on_transition(state, new_state_name):
 ## Deletes all of the animation nodes.
 func delete_attack_animation_nodes() -> void:
 	if owner is Enemy: # Only do this with enemy class
-		var transitions_to_remove : Array = []
-		var nodes_to_remove : Array = []
-		root_state_machine = animation_tree.tree_root
 		
-		for i in range(root_state_machine.get_transition_count()):
-			var from_node : StringName = root_state_machine.get_transition_from(i)
-			var to_node : StringName = root_state_machine.get_transition_to(i)
+		root_state_machine = animation_tree.tree_root
+		var nodes_to_delete_in_root : Array = get_nodes_for_deletion(root_state_machine)
+		
+		for node in nodes_to_delete_in_root: 
+			var nested_state_machine = root_state_machine.get_node(node)
 			
-			if to_node == "hub_node":
-				transitions_to_remove.append({"from": str(from_node), "to": str(to_node)})
+			# Checks if the node that is connected to the "hub_node" is a nested state machine
+			if nested_state_machine is AnimationNodeStateMachine: 
+				var attacks_to_delete_in_nested : Array = get_nodes_for_deletion(nested_state_machine)
 				
-		for trans in transitions_to_remove:
-			root_state_machine.remove_transition(trans["from"], trans["to"])
-			nodes_to_remove.append(trans["from"])
-			root_state_machine.remove_node(trans["from"])
-		#print("Animation nodes to remove: ", nodes_to_remove)
+				# Removes the animation nodes connected to the "hub_node" in the nested animation state machine.
+				for attack in attacks_to_delete_in_nested:
+					nested_state_machine.remove_node(attack)
+		
+		# Removes the animation nodes connected to the "hub_node" in the ROOT animation state machine.
+		for node in nodes_to_delete_in_root:
+			root_state_machine.remove_node(node)
+		
 	return
+
+## Grabs all of the nodes that connect TO the "hub_node" inside of the given Animation Node State Machine
+## Then it removes their transitions and returns all of the nodes as an array.
+## The nodes themselves get deleted later since some nodes can be NESTED state machines
+## and have to go through their own checks.
+func get_nodes_for_deletion(state_machine_node : AnimationNodeStateMachine) -> Array:
+	var transitions_to_remove : Array = []
+	var nodes_to_remove : Array = []
+	
+	for i in range(state_machine_node.get_transition_count()):
+		var from_node : StringName = state_machine_node.get_transition_from(i)
+		var to_node : StringName = state_machine_node.get_transition_to(i)
+		
+		if to_node == "hub_node":
+			transitions_to_remove.append({"from": str(from_node), "to": str(to_node)})
+			
+	for trans in transitions_to_remove:
+		state_machine_node.remove_transition(trans["from"], trans["to"])
+		nodes_to_remove.append(trans["from"])
+	return nodes_to_remove
 	
 func check_for_unnassigned_states():
 	if knocked_down_state == null:

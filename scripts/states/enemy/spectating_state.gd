@@ -9,22 +9,25 @@ func enter() -> void:
 	FightManager.fighter_got_up_signal.connect(back_to_the_fight)
 	FightManager.resume_fighting_signal.connect(transition_to_previous_state)
 	FightManager.enemy_ready_status = false
-	FightManager.fight_is_over_signal.connect(play_win_animation)
+
 	animation_tree.animation_finished.connect(end_match)
 	owner.animation_tree.set("parameters/back_to_the_fight/blend_position", -1)
 	anim_state_machine = animation_tree["parameters/playback"]
-
+	
+	
 func exit() -> void:
 	FightManager.fighter_got_up_signal.disconnect(back_to_the_fight)
 	FightManager.resume_fighting_signal.disconnect(transition_to_previous_state)
-	FightManager.fight_is_over_signal.disconnect(play_win_animation)
+
 	animation_tree.animation_finished.disconnect(end_match)
 
 func back_to_the_fight() -> void:
 	anim_state_machine.travel("back_to_the_fight")
 
 func play_win_animation() -> void:
-	anim_state_machine.travel("outro")
+	await FightManager.fight_is_over_signal
+	if FightManager.is_fight_over == true:
+		anim_state_machine.travel("outro")
 
 func end_match(animation : String) -> void:
 	if animation == "outro":
@@ -37,3 +40,4 @@ func _process(_delta: float) -> void:
 		return
 	if anim_state_machine.get_current_node() == "idle":
 		anim_state_machine.travel("move_to_spectate")
+	play_win_animation()

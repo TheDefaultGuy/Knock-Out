@@ -7,6 +7,8 @@ class_name PickRandomState extends EnemyState
 ## Stores the possible states and then one gets picked at random.
 var state_array : Array[State] = []
 
+func _init() -> void:
+	moveset_dictionary = {"" : 0.0}
 
 #func _enter_tree() -> void:
 	#primary_condition = STATE_CHANGE_CONDITION.AFTER_COMPLETION
@@ -33,7 +35,10 @@ func enter() -> void:
 		printerr(self.name, " only one target state set. There needs to be at least 2 target states for this State to function properly as intended.")
 		transition_to_target(state_array[0])
 		return
+		
 ### Handles showing and hiding applicable exported variables
 #func _validate_property(property: Dictionary) -> void:
 	#if property.name not in ["primary_target_state", "secondary_target_state", "tertiary_target_state"]:
 		#property.usage = PROPERTY_USAGE_NO_EDITOR
+	#if property.name in ["primary_target_state", "secondary_target_state", "tertiary_target_state"]:
+		#property.usage = PROPERTY_USAGE_DEFAULT

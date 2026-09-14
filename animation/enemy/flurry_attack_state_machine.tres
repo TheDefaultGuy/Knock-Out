@@ -1,5 +1,8 @@
 [gd_resource type="AnimationNodeStateMachine" format=3 uid="uid://bg1hc7fvrio3n"]
 
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_d620g"]
+states/End/position = Vector2(568, 100)
+
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_d620g"]
 animation = &"attack/flurry_intro"
 
@@ -44,12 +47,14 @@ advance_condition = &"skip_intro"
 [resource]
 state_machine_type = 1
 states/End/position = Vector2(282.8, -117)
-states/Start/position = Vector2(-127, -128)
+states/Start/position = Vector2(-329, -132)
+states/StateMachine/node = SubResource("AnimationNodeStateMachine_d620g")
+states/StateMachine/position = Vector2(331, -224)
 states/intro/node = SubResource("AnimationNodeAnimation_d620g")
-states/intro/position = Vector2(-127, -229)
+states/intro/position = Vector2(-329, -229)
 states/left_attack/node = SubResource("AnimationNodeAnimation_qd2fh")
 states/left_attack/position = Vector2(76, -229)
 states/right_attack/node = SubResource("AnimationNodeAnimation_benmn")
 states/right_attack/position = Vector2(76, -117)
 transitions = ["Start", "intro", SubResource("AnimationNodeStateMachineTransition_uc24f"), "intro", "left_attack", SubResource("AnimationNodeStateMachineTransition_3mcjc"), "left_attack", "right_attack", SubResource("AnimationNodeStateMachineTransition_vjxxu"), "right_attack", "left_attack", SubResource("AnimationNodeStateMachineTransition_8acya"), "right_attack", "End", SubResource("AnimationNodeStateMachineTransition_d620g"), "left_attack", "End", SubResource("AnimationNodeStateMachineTransition_qd2fh"), "Start", "left_attack", SubResource("AnimationNodeStateMachineTransition_benmn")]
-graph_offset = Vector2(-738, -318)
+graph_offset = Vector2(-547, -283)

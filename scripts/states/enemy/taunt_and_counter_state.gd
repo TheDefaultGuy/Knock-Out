@@ -19,7 +19,8 @@ func _init() -> void:
 	attack_timer_required = true
 	nested_state_machine = preload("uid://bk1eoynjjkrt")
 	nested_machine_name = str(self.name).to_snake_case() 
-
+	moveset_array = ["taunt"]
+	moveset_type = MOVESET_TYPE_ENUM.PREDETERMINED_ORDER
 	block_behavior = BLOCK_BEHAVIOR_ENUM.NOT_APPLICABLE
 	primary_condition = STATE_CHANGE_CONDITION.AFTER_PLAYER_TIRED
 	
@@ -27,12 +28,8 @@ func _enter_tree() -> void:
 	primary_condition = STATE_CHANGE_CONDITION.AFTER_PLAYER_TIRED
 	
 func _validate_property(property: Dictionary) -> void: 
-	#moveset_type = MOVESET_TYPE_ENUM.PREDETERMINED_ORDER
-	#attack_timer_required = true
-	#moveset_array = ["taunt"]
 	update_shown_exported_variables(property)
-	#if primary_condition != STATE_CHANGE_CONDITION.AFTER_PLAYER_TIRED:
-		#printerr(self.name, ' the primary condition MUST be set to "After Player Tired" due to the nature of this state.')
+
 
 func enter() -> void: # Blank enter and exit functions that get overridden by each state's own custom enter and exit functions.
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
@@ -48,7 +45,7 @@ func enter() -> void: # Blank enter and exit functions that get overridden by ea
 	get_parent().interrupted_state = self 
 	
 	# Connects the enemy knocked down, player knocked down and stun signals.
-	toggle_important_state_signal_connections()
+	toggle_stunned_signal_connections()
 	
 	FightManager.succesful_block_signal.connect(start_attack_delay_timer)
 
@@ -72,7 +69,7 @@ func exit() -> void:
 	
 	attack_timer.timeout.disconnect(perform_action)
 		
-	toggle_important_state_signal_connections()
+	toggle_stunned_signal_connections()
 	
 	FightManager.succesful_block_signal.disconnect(start_attack_delay_timer)
 
@@ -80,13 +77,6 @@ func exit() -> void:
 	
 	FightManager.player_threw_punch_signal.disconnect(set_blends)
 
-	
-	## Performs an action, animation or attack after the attack timer has finished.
-func perform_action() -> void:
-	current_animation_state_machine.travel("taunt")
-	await animation_tree.animation_finished # Resets the attack delay timer after attacking
-	start_attack_delay_timer()
-	return
 
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): #Doesnt run the check round time function when in the editor; only when in-game

@@ -9,8 +9,7 @@ var get_up_timer : Timer = null
 @export_custom(PROPERTY_HINT_NONE, "suffix:s") var max_getup_time : float = 8.0
 
 func _ready() -> void:
-	#FightManager.start_get_up_signal.connect(start_get_up_timer)
-	
+
 	get_up_timer = Timer.new()
 	get_up_timer.autostart = false
 	get_up_timer.one_shot = true
@@ -23,7 +22,6 @@ func enter() -> void:
 	FightManager.resume_fighting_signal.connect(transition_to_previous_state)
 	
 func exit() -> void:
-	#FightManager.start_get_up_signal.disconnect(start_get_up_timer)
 	FightManager.resume_fighting_signal.disconnect(transition_to_previous_state)
 	get_up_timer.stop()
 
