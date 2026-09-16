@@ -25,16 +25,19 @@ func _ready() -> void:
 ## It calls functions in the opposing fighter's defense component, giving it the attacks variables as input.
 ## Which the attack covers, the dodge range, how much damage it does, etc...
 ## The defense compomnent then checks if the attack is successful and returns the result.] to the attack component.
-func send_attack_call(punch_height : int, punch_range : int, attack_damage : float, punch_direction : int) -> bool:
+func send_attack_call(punch_height : int, punch_range : int, attack_damage : float, punch_direction : int):
 	if Global.enemy_node != null and Global.player_node != null:
 		match owner:
 			Global.enemy_node: # Checks wether the one attacking, the parent of this component, is the player or enemy.
-				return punch(Global.player_node, punch_height, punch_range, attack_damage, punch_direction)
+				punch(Global.player_node, punch_height, punch_range, attack_damage, punch_direction)
+				return
 			Global.player_node:
-				return punch(Global.enemy_node, punch_height, punch_range, attack_damage, punch_direction)
+				punch(Global.enemy_node, punch_height, punch_range, attack_damage, punch_direction)
+				return
 			_:
 				printerr("Attacking Component: ", owner.name, " is neither the player or the assigned enemy in global.")
-				return false
+				return 
+
 #region Trouble Shooting if statements
 	elif Global.enemy_node != null and Global.player_node == null:
 		printerr("Attacking Component: No player node assigned in global.")
@@ -49,33 +52,37 @@ func send_attack_call(punch_height : int, punch_range : int, attack_damage : flo
 #endregion
 		
 func punch(input_node : Node2D, punch_height : int, punch_range : int, attack_damage : float, punch_direction : int) -> bool:
-	if input_node.defense_component != null: # Checks to see if the enemy has a defense component.
-				if input_node.defense_component.has_method("check_defense") == true: # Checks to see if the defense component has that function
-					
-					if owner is Player and str(animation_tree["parameters/playback"].get_current_node()).contains("star") == true: # If it was a star punch, change the attack damage to reflect the amount of star punches used.
-						attack_damage = calculate_start_punch_damage(attack_damage)
-						print("STAR")
-					
-					if input_node.defense_component.call("check_defense", punch_height, punch_range, attack_damage, punch_direction) == true:
-						if str(animation_tree["parameters/playback"].get_current_node()).contains("star") == true:
-							FightManager.star_punches_landed += 1  # If it was a star punch and the hit was true, then increase the star punch landed variable
-						FightManager.stars_used = 0
-						FightManager.succesful_hit_signal.emit() # emits the signal if the defense component responds that the attack landed
-						return true
-						
-					else:
-						if owner is Player: # Checks to see if the attacker is the player. If the player missed an attack, lower their stamina.
-							FightManager.lower_stamina()
-							FightManager.stars_used = 0
-						return false
-						
-				elif input_node.defense_component.has_method("check_defense") == false:
-					printerr("Attacking Component: Targetted node's defense component doesn't have the function that's being called.")
-					return false
-	elif input_node.defense_component == null:
-		printerr("Attacking Component: No defense component.")
+	if input_node.defense_component == null: # Checks to see if the enemy has a defense component.
+		printerr("Attacking Component: Target node has no defense component.")
 		return false
-	return false
+		
+	if input_node.defense_component.has_method("check_defense") == false:
+		printerr("Attacking Component: Targetted node's defense component doesn't have the function that's being called.")
+		return false # Checks to see if the defense component has that function
+		
+	if owner is Player and str(animation_tree["parameters/playback"].get_current_node()).contains("star") == true: # If it was a star punch, change the attack damage to reflect the amount of star punches used.
+		attack_damage = calculate_start_punch_damage(attack_damage)
+	
+	# Stores the response given by the defense component about whether or not the hit was succesful
+	var defense_response : bool = await input_node.defense_component.check_defense(punch_height, punch_range, attack_damage, punch_direction)
+	
+	match defense_response: 
+		true: # Hit landed/was successful
+			if str(animation_tree["parameters/playback"].get_current_node()).contains("star") == true: # Checks if it was a star punch animation.
+				FightManager.star_punches_landed += 1  # If it was a star punch and the hit was true, then increase the star punch landed variable
+				
+			FightManager.stars_used = 0
+			FightManager.succesful_hit_signal.emit() # emits the signal if the defense component responds that the attack landed
+			return defense_response
+		
+		false: # Punch missed or was blocked.
+			if owner is Player: # Checks to see if the attacker is the player. If the player missed an attack, lower their stamina.
+				FightManager.lower_stamina()
+				FightManager.stars_used = 0
+			return defense_response
+		_: 
+			return false
+
 func attack_flash() -> void:
 	if owner is Enemy:
 		animated_sprite_2d.material.set_shader_parameter("Visible", true)

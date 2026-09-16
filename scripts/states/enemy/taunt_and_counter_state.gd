@@ -11,15 +11,16 @@
 ## DO NOT change anything in the actual .gd file, since it'll screw up compatibility HARD.
 class_name TauntAndCounter extends EnemyState
 
+@export var taunt_animation : String = "taunt"
+@export var counter_attack : String = "counter_uppercut"
 
 #region The Ready, Enter and Exit functions.
 	
 func _init() -> void:
-	state_type = STATE_TYPE_ENUM.NESTED_STATE_MACHINE
+	state_type = STATE_TYPE_ENUM.SIMPLE
 	attack_timer_required = true
-	nested_state_machine = preload("uid://bk1eoynjjkrt")
-	nested_machine_name = str(self.name).to_snake_case() 
-	moveset_array = ["taunt"]
+
+	moveset_array = [taunt_animation, counter_attack]
 	moveset_type = MOVESET_TYPE_ENUM.PREDETERMINED_ORDER
 	block_behavior = BLOCK_BEHAVIOR_ENUM.NOT_APPLICABLE
 	primary_condition = STATE_CHANGE_CONDITION.AFTER_PLAYER_TIRED
@@ -34,9 +35,7 @@ func _validate_property(property: Dictionary) -> void:
 func enter() -> void: # Blank enter and exit functions that get overridden by each state's own custom enter and exit functions.
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
 
-	anim_state_machine.travel(nested_machine_name)
-
-	current_animation_state_machine = animation_tree[str("parameters/",nested_machine_name,"/playback")]
+	current_animation_state_machine = animation_tree["parameters/playback"]
 
 	start_attack_delay_timer()
 	
@@ -47,45 +46,35 @@ func enter() -> void: # Blank enter and exit functions that get overridden by ea
 	# Connects the enemy knocked down, player knocked down and stun signals.
 	toggle_stunned_signal_connections()
 	
-	FightManager.succesful_block_signal.connect(start_attack_delay_timer)
-
+	FightManager.successful_block_signal.connect(throw_counter_punch)
+	
 	# Toggles on the state change timer.
 	toggle_state_change_timer()
-
+	
 	attack_timer.timeout.connect(perform_action)
 	
-	# Sets the block animation and state machine in the defense component as the block animation in the state machine.
-	# This is because the defense component is the one responsible for playing the block animation
-	defense_component.current_anim_state_machine = current_animation_state_machine
-	FightManager.player_threw_punch_signal.connect(set_blends)
-	
-func set_blends(height : int, direction : int) -> void:
-	animation_tree.set(str("parameters/",str(nested_machine_name),"/hit/blend_position"), Vector2i(direction, height))
-	animation_tree.set(str("parameters/",str(nested_machine_name),"/block/blend_position"), Vector2i(direction, height))
-	animation_tree.set(str("parameters/",str(nested_machine_name),"/final_hit/blend_position"), Vector2i(direction, height))
-	animation_tree.set(str("parameters/",str(nested_machine_name),"/stun_hit/blend_position"), Vector2i(direction, height))
-	
+
 func exit() -> void:
-	
 	attack_timer.timeout.disconnect(perform_action)
 		
 	toggle_stunned_signal_connections()
 	
-	FightManager.succesful_block_signal.disconnect(start_attack_delay_timer)
+	FightManager.successful_block_signal.disconnect(throw_counter_punch)
 
-	defense_component.reset_current_animations()
-	
-	FightManager.player_threw_punch_signal.disconnect(set_blends)
+## Waits for the block animation to finish, then does the counter attack.
+func throw_counter_punch():
+	await animation_tree.animation_finished
+	play_attack_start_attack_timer(counter_attack)
 
+## plays the taunt animation
+func perform_action() -> void:
+	play_attack_start_attack_timer(taunt_animation)
 
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): #Doesnt run the check round time function when in the editor; only when in-game
 		return
 	if get_parent().current_state == self:
-		check_round_time()
-		check_player_stamina()
-		check_time_has_passed()
-		check_enemy_health()
-		check_for_knockdowns()
+		check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
+		
 	#print("Nested current node: ", animation_tree[str("parameters/",nested_machine_name,"/playback")].get_current_node())
 #endregion

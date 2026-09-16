@@ -103,4 +103,4 @@ states/rage/position = Vector2(431.8, -311)
 states/return/node = SubResource("AnimationNodeAnimation_6bwfa")
 states/return/position = Vector2(302, -216)
 transitions = ["intro", "middle", SubResource("AnimationNodeStateMachineTransition_hplkv"), "middle", "item_heal", SubResource("AnimationNodeStateMachineTransition_fawrh"), "item_heal", "return", SubResource("AnimationNodeStateMachineTransition_s1vlt"), "return", "End", SubResource("AnimationNodeStateMachineTransition_2t844"), "rage", "End", SubResource("AnimationNodeStateMachineTransition_luax8"), "item_hit", "rage", SubResource("AnimationNodeStateMachineTransition_ta4ff"), "Start", "intro", SubResource("AnimationNodeStateMachineTransition_k8fsp")]
-graph_offset = Vector2(-495, -473)
+graph_offset = Vector2(-439, -473)

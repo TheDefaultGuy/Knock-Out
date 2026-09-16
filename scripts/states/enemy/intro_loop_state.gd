@@ -67,4 +67,4 @@ func _process(_delta: float) -> void:
 	if get_parent().current_state == self or get_parent().current_state is EnemySpectating:
 		animation_tree.set(str("parameters/",nested_machine_name,"/conditions/ko"), Global.player_node.isKnockdown or Global.enemy_node.isKnockdown)
 	if get_parent().current_state == self:
-		check_for_knockdowns()
+		check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.

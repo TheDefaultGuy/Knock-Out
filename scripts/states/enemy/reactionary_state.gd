@@ -51,7 +51,7 @@ func enter() -> void: # Blank enter and exit functions that get overridden by ea
 
 	toggle_stunned_signal_connections()
 	
-	FightManager.succesful_block_signal.connect(start_attack_delay_timer)
+	FightManager.successful_block_signal.connect(start_attack_delay_timer)
 
 	attack_timer.timeout.connect(perform_action)
 	# Sets the block animation and state machine in the defense component as the block animation in the state machine.
@@ -63,7 +63,7 @@ func enter() -> void: # Blank enter and exit functions that get overridden by ea
 func exit() -> void:
 	toggle_stunned_signal_connections()
 	
-	FightManager.succesful_block_signal.disconnect(start_attack_delay_timer)
+	FightManager.successful_block_signal.disconnect(start_attack_delay_timer)
 	
 	defense_component.reset_current_animations()
 	attack_timer.timeout.disconnect(perform_action)
@@ -75,11 +75,8 @@ func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): #Doesnt run the check round time function when in the editor; only when in-game
 		return
 	if get_parent().current_state == self:
-		check_round_time()
-		check_player_stamina()
-		check_time_has_passed()
-		check_enemy_health()
-		check_for_knockdowns()
+		check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
+		
 		#print("REACTIONARY: ", current_animation_state_machine.get_current_node())
 		#print("state_change_timer: ", state_change_timer.time_left)
 #endregion

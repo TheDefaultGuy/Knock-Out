@@ -13,7 +13,7 @@
 ## DO NOT change anything in the actual .gd file, since it'll screw up compatibility HARD.
 class_name RandomizedMoves extends EnemyState
 
-
+#var list_of_check_functions : Array[Callable] = []
 
 #region The Ready, Enter and Exit functions.
 func _init() -> void:
@@ -27,6 +27,7 @@ func _validate_property(property: Dictionary) -> void:
 func enter() -> void:
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
 	
+	
 	# Lets the Animation Tree know that the enemy is neither stunned nor spectating.
 	animation_tree.set("parameters/idle/blend_position", 0)
 	
@@ -35,7 +36,7 @@ func enter() -> void:
 	
 	# If the player or the enemy blocks an attack, it resets the attack delay timer
 	# This is so that the timer doesn't accidently go off right after a block animation is playing.
-	FightManager.succesful_block_signal.connect(handle_block)
+	FightManager.successful_block_signal.connect(handle_block)
 	
 	attack_timer.timeout.connect(perform_action)
 
@@ -58,21 +59,16 @@ func exit() -> void:
 	
 	toggle_stunned_signal_connections() # Disconnects the enemy knocked down, player knocked down and stun signals.
 	
-	FightManager.succesful_block_signal.disconnect(handle_block)
+	FightManager.successful_block_signal.disconnect(handle_block)
 	
 	attack_timer.timeout.disconnect(perform_action)
-	
 
-	
+
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
 		return
 	if get_parent().current_state == self:
-		check_round_time()
-		check_player_stamina()
-		check_time_has_passed()
-		check_enemy_health()
-		check_for_knockdowns()
-		#print("ATTACK TIME LEFT: ", attack_timer.time_left)
+		check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
+
 	
 #endregion

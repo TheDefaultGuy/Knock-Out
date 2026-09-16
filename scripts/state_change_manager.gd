@@ -128,7 +128,7 @@ func enter() -> void:
 	
 	# If the player or the enemy blocks an attack, it resets the attack delay timer
 	## This is so that the timer doesn't accidently go off right after a block animation is playing.
-	#FightManager.succesful_block_signal.connect(handle_block)
+	#FightManager.successful_block_signal.connect(handle_block)
 
 	#defense_component.stunned_signal.connect(transition_to_stunned)
 	
@@ -156,7 +156,7 @@ func exit() -> void:
 	
 	# If the player or the enemy blocks an attack, it resets the attack delay timer
 	# This is so that the timer doesn't accidently go off right after a block animation is playing.
-	#FightManager.succesful_block_signal.disconnect(handle_block)
+	#FightManager.successful_block_signal.disconnect(handle_block)
 
 	
 #func _process(_delta: float) -> void:

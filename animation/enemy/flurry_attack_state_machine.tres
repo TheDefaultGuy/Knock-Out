@@ -57,4 +57,4 @@ states/left_attack/position = Vector2(76, -229)
 states/right_attack/node = SubResource("AnimationNodeAnimation_benmn")
 states/right_attack/position = Vector2(76, -117)
 transitions = ["Start", "intro", SubResource("AnimationNodeStateMachineTransition_uc24f"), "intro", "left_attack", SubResource("AnimationNodeStateMachineTransition_3mcjc"), "left_attack", "right_attack", SubResource("AnimationNodeStateMachineTransition_vjxxu"), "right_attack", "left_attack", SubResource("AnimationNodeStateMachineTransition_8acya"), "right_attack", "End", SubResource("AnimationNodeStateMachineTransition_d620g"), "left_attack", "End", SubResource("AnimationNodeStateMachineTransition_qd2fh"), "Start", "left_attack", SubResource("AnimationNodeStateMachineTransition_benmn")]
-graph_offset = Vector2(-547, -283)
+graph_offset = Vector2(-626, -382)

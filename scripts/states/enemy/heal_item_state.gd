@@ -59,10 +59,10 @@ func _validate_property(property: Dictionary) -> void:
 	update_shown_exported_variables(property)
 	
 func exit() -> void:
-	
-
 	toggle_stunned_signal_connections()
+	
 	FightManager.succesful_hit_signal.disconnect(change_to_failed_state)
+	
 	# Resets the hit animation and state machine in the defense component back to the default hit animation.
 	defense_component.reset_current_animations()
 	interruption_status = false
@@ -73,9 +73,8 @@ func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
 		return
 	if get_parent().current_state == self:
-		check_state_completion()
-		check_for_knockdowns()
-		#print(current_animation_state_machine.get_current_node())
+		check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
+
 
 ## If the player got hit, then the interrupted state will be set to the failed healed state.
 func change_to_failed_state() -> void:

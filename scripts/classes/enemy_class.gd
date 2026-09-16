@@ -2,6 +2,9 @@
 ## The base class for all boxers/fighters, including the player.
 class_name Enemy extends Fighter
 
+@warning_ignore("unused_signal")
+signal hit_by_star_punch_signal
+
 ## Whether the fighter is currently stunned.
 var is_stunned : bool = false
 

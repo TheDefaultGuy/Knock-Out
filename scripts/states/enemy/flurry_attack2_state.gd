@@ -1,0 +1,98 @@
+@icon("res://assets/icons/MaterialSymbolsDeliveryTruckSpeedRounded.svg")
+@tool
+## A state in which the enemy will perform a sequence of attacks or animation.
+## This can be used to chain pre-existing attacks together or to make a "Flurry" attack state like
+## Piston Hondo's "Hondo Rush", Mr Sandman's "Dreamland Express", or Super Macho Man's Clotheslines.
+##
+## In this state, the enemy will perform each attack in the attack array one after the other.
+## After finishing the last attack or the player being knocked out, it will transition to the next state.
+## You can manually do repeated moves by adding duplicate moves in the moveset array.
+## This is how you can achieve something like the "Hondo Rush" or "Dreamland Express".
+##
+## This is a template state used by enemy boxers.
+## To add it as a state, add it as a child node to the State Machine node in the enemy's scene,
+## Then, tweak the exported variables to set it up.
+## DO NOT change anything in the actual .gd file, since it'll screw up compatibility HARD.
+class_name SequentialAttacks extends EnemyState
+
+var attack_count : int = 0
+
+var modified_moveset : Array = []
+var started_attacking : bool = false
+
+#region The Ready, Enter and Exit functions
+func _init() -> void:
+	state_type = STATE_TYPE_ENUM.CHAINED_ATTACKS
+	attack_timer_required = false
+	nested_state_machine = preload("uid://bg1hc7fvrio3n")
+	primary_condition = STATE_CHANGE_CONDITION.AFTER_COMPLETION
+	secondary_condition = STATE_CHANGE_CONDITION.AFTER_PLAYER_KNOCKED_DOWN
+	moveset_type = MOVESET_TYPE_ENUM.PREDETERMINED_ORDER
+	
+
+func _enter_tree() -> void:
+	# Overrides the state change condition so that this state can function properly.
+	primary_condition = STATE_CHANGE_CONDITION.AFTER_COMPLETION
+	moveset_type = MOVESET_TYPE_ENUM.PREDETERMINED_ORDER
+	secondary_condition = STATE_CHANGE_CONDITION.AFTER_PLAYER_KNOCKED_DOWN
+
+func _validate_property(property: Dictionary) -> void: 
+	attack_timer_required = false
+	update_shown_exported_variables(property)
+	
+
+func enter() -> void:
+	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
+	current_animation_state_machine = animation_tree["parameters/playback"]
+	
+	started_attacking = false
+	
+	get_parent().interrupted_state = primary_target_state
+	
+	
+	animation_tree.animation_finished.connect(increase_count)
+	animation_tree.animation_started.connect(set_attacking)
+	
+	# Shenanigans to make sure the animation name when traveling is the same format and order
+	# as the special formatted array that avoids duplicate animation nodes.
+	var reversed_moveset = moveset_array.duplicate()
+	reversed_moveset.reverse()
+	modified_moveset = format_moveset_for_unique_names(reversed_moveset)
+	modified_moveset.reverse()
+	
+	current_animation_state_machine.travel(modified_moveset[0])
+	toggle_stunned_signal_connections()
+	
+func exit() -> void:
+	animation_tree.animation_finished.disconnect(increase_count)
+	animation_tree.animation_started.disconnect(set_attacking)
+	toggle_stunned_signal_connections()
+	started_attacking = false
+
+	
+func _process(_delta: float) -> void:
+	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
+		return
+	if get_parent().current_state == self:
+		if started_attacking == true: # Only checks for state completion after it's started attacking.
+			check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
+
+#endregion
+
+## Just sets the variable when an animation has started:
+func set_attacking(_animation) ->void:
+	started_attacking = true 
+
+## Increases the attack count variable by 1 every time an animation is played in this state.
+func increase_count(_animation) -> void:
+	# Sets this variable true so that it can start checking for state completion in the process functions
+	
+	attack_count += 1 # Increases the attack count index everytime an animation/attack is finished
+	
+	if attack_count == moveset_array.size():
+		print("Attacks are over")
+		return
+		
+	# It manually travels to each attack animation node since linking them can cause problems when the player gets knocked down.
+	if attack_count >= 0 and attack_count < modified_moveset.size():
+		current_animation_state_machine.travel(modified_moveset[attack_count])

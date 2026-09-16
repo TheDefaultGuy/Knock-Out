@@ -100,7 +100,7 @@ func _ready() -> void:
 	dizzy.local_coords = true
 	dizzy.emitting = true
 	dizzy.visible = false
-	
+
 ## Creates the timers with code so that you don't have to make timer node and then manually assign it.
 func create_timers() -> void:
 	stun_timer = Timer.new()
@@ -115,7 +115,7 @@ func enter() -> void: # Blank enter and exit functions that get overridden by ea
 	animation_tree.set("parameters/idle/blend_position", 1)
 	FightManager.enemy_knocked_down_signal.connect(transition_to_knocked_down)
 	FightManager.succesful_hit_signal.connect(increase_punch_count)
-	
+	owner.hit_by_star_punch_signal.connect(set_stun_over)
 	
 	animation_tree.animation_finished.connect(check_if_stun_over.unbind(1))
 	dizzy.visible = true
@@ -138,7 +138,7 @@ func exit() -> void:
 	animation_tree.set("parameters/idle/blend_position", 0)
 	FightManager.enemy_knocked_down_signal.disconnect(transition_to_knocked_down)
 	FightManager.succesful_hit_signal.disconnect(increase_punch_count)
-	
+	owner.hit_by_star_punch_signal.disconnect(set_stun_over)
 	
 	defense_component.reset_current_animations()
 	
@@ -154,6 +154,9 @@ func _process(_delta: float) -> void:
 	
 #endregion
 
+func set_stun_over() -> void:
+	stun_over = true
+
 ## Increases the punch count by one everytime the player lands a punch during stun.
 func increase_punch_count() -> void:
 	if stun_behavior == BEHAVIOR_TYPE.FIXED_NUMBER_OF_PUNCHES or stun_behavior == BEHAVIOR_TYPE.INCREASING_NUMBER_OF_PUNCHES:
@@ -161,7 +164,7 @@ func increase_punch_count() -> void:
 		punch_count = punch_count + 1
 		if punch_count + 1 == stun_punch_length:
 			defense_component.current_hit_animation = "final_hit" # Sets the last hit of the stun to be the final hit animation.
-
+			print("Final hit in stun coming...")
 		if punch_count == stun_punch_length:
 			dizzy.visible = false
 			FightManager.final_stun_hit_signal.emit()

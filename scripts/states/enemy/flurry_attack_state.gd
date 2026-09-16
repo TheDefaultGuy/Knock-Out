@@ -77,19 +77,21 @@ func enter() -> void:
 			
 	await get_tree().create_timer(start_delay).timeout
 	anim_state_machine.travel(nested_machine_name)
-
+	current_animation_state_machine.travel("Start")
 func exit() -> void:
 	animation_tree.animation_finished.disconnect(increase_count)
 	toggle_stunned_signal_connections()
-	
+	current_animation_state_machine.travel("End")
+
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
 		return
 	if get_parent().current_state == self or get_parent().current_state is EnemySpectating:
 		animation_tree.set(str("parameters/",nested_machine_name,"/conditions/ko"), Global.player_node.isKnockdown)
 	if get_parent().current_state == self:
-		check_state_completion()
 		check_for_knockdowns()
+		check_state_completion()
+
 #endregion
 
 ## Increases the attack count variable by 1 every time an animation is played in this state.

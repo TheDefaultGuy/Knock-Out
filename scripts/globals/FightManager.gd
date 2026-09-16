@@ -44,7 +44,7 @@ signal succesful_hit_signal
 
 @warning_ignore("unused_signal")
 ## Signal emitted when either the player or enemy succesfully blocked. Mainly used to trigger sound effects.
-signal succesful_block_signal 
+signal successful_block_signal 
 
 @warning_ignore("unused_signal")
 ## Signal emitted when either the player or enemy completely whiffs a hit. Mainly used to trigger sound effects.
@@ -94,14 +94,14 @@ var enemy_ready_status : bool = true
 var is_fight_over : bool = false
 
 ## The number of stars the player currently has.
-var star_count : int = 0 :
+var star_count : int = 1 :
 	# Clamps the value and emits the signal to update the UI everytime the value is set.
 	set(value):
 		star_count = clampi(value, 0 , 3) 
 		update_ui_signal.emit()
 
 ## The Player's stamina
-var stamina : int = 10:
+var stamina : int = 8 :
 	# Clamps the value and emits the signal to update the UI everytime the value is set.
 	set(value):
 		stamina = clampi(value, 0 , max_player_stamina)
@@ -178,6 +178,7 @@ func use_stars() -> void:
 
 ## Lowers the players stamina by 1 each time it's called
 func lower_stamina() -> void:
+	print("Fight Manager: Lowering stamina...")
 	stamina -= 1
 	if stamina == 0:
 		no_stamina_signal.emit()

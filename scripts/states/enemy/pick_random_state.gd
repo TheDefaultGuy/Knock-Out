@@ -9,11 +9,9 @@ var state_array : Array[State] = []
 
 func _init() -> void:
 	moveset_dictionary = {"" : 0.0}
-
-#func _enter_tree() -> void:
-	#primary_condition = STATE_CHANGE_CONDITION.AFTER_COMPLETION
-	#secondary_condition = STATE_CHANGE_CONDITION.AFTER_COMPLETION
-	#tertiary_condition = STATE_CHANGE_CONDITION.AFTER_COMPLETION
+	primary_condition = STATE_CHANGE_CONDITION.DO_NOT_CHANGE
+	secondary_condition = STATE_CHANGE_CONDITION.DO_NOT_CHANGE
+	tertiary_condition = STATE_CHANGE_CONDITION.DO_NOT_CHANGE
 	
 	
 func enter() -> void:
