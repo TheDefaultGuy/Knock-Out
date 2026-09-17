@@ -19,6 +19,7 @@ enum KO_CONDITION_TYPE{
 	## Will grant a KO if the player hasn't been hit before in the round.
 	NEVER_BEEN_HIT
 }
+@onready var animation_tree: AnimationTree = %AnimationTree
 
 @export var state_machine : StateMachine
 
@@ -93,3 +94,5 @@ func check_for_instant_knock_out() -> bool:
 					print_rich("[color=cyan]Instant KO component:[/color] KO condition met: Never Hit", condition)
 					return true
 	return false
+#
+	#print(animation_tree["parameters/playback"].get_current_node())

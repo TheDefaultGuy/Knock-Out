@@ -812,7 +812,7 @@ func check_for_nested_and_exit_if_so() -> void:
 func set_and_check_interrupted_state(target_state) -> void:
 	if target_state == null:
 		get_parent().interrupted_state = self
-		printerr(str(target_state), " is not set in ", str(self.name))
+		printerr("target_stat  is not set in ", str(self.name))
 		return
 	get_parent().interrupted_state = target_state
 	return

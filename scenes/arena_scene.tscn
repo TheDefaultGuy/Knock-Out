@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://b2o12w57mpc12"]
 
 [ext_resource type="Script" uid="uid://btamot0npdjvw" path="res://scripts/classes/arena_class.gd" id="1_v87wf"]
-[ext_resource type="PackedScene" uid="uid://7858o2inqkak" path="res://scenes/nick_bruiser.tscn" id="2_8k0nb"]
+[ext_resource type="PackedScene" uid="uid://c4mjuykvitlyo" path="res://scenes/Rick_Bruiser.tscn" id="3_3j23c"]
 [ext_resource type="PackedScene" uid="uid://bh3wovdy0myrr" path="res://scenes/player.tscn" id="3_bt4xr"]
 [ext_resource type="Script" uid="uid://cl2bfibqm14vu" path="res://scripts/ui/ko_counters.gd" id="4_3j23c"]
 [ext_resource type="Script" uid="uid://lks1t1wg7nna" path="res://scripts/components/particle_effect_component.gd" id="4_4wfwo"]
@@ -104,7 +104,7 @@ _data = {
 [node name="Main" type="Node2D" unique_id=860723905]
 script = ExtResource("1_v87wf")
 player_scene = ExtResource("3_bt4xr")
-enemy_scene = ExtResource("2_8k0nb")
+enemy_scene = ExtResource("3_3j23c")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=664736061]
 position = Vector2(0, -18)
