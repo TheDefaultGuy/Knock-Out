@@ -35,12 +35,6 @@ blend_point_3/node = SubResource("AnimationNodeAnimation_lqdfj")
 blend_point_3/pos = Vector2(-1, 0)
 blend_point_3/name = &"dodge_lower_left"
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ma6e1"]
-animation = &"attack/fakeout"
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_51pjw"]
-animation = &"attack/fakeout_uppercut"
-
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_gvj01"]
 animation = &"final_hit/upper_left"
 
@@ -100,12 +94,6 @@ blend_point_2/name = &"hit_lower_right"
 blend_point_3/node = SubResource("AnimationNodeAnimation_0himb")
 blend_point_3/pos = Vector2(-1, 0)
 blend_point_3/name = &"hit_lower_left"
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_kn42k"]
-animation = &"attack/hook_left"
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_t36s3"]
-animation = &"attack/hook_right"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_nd7h3"]
 animation = &"RESET"
@@ -199,22 +187,6 @@ advance_mode = 2
 switch_mode = 2
 advance_mode = 2
 
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_jfq4d"]
-switch_mode = 2
-advance_mode = 2
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_fi3h3"]
-switch_mode = 2
-advance_mode = 2
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_7hafc"]
-switch_mode = 2
-advance_mode = 2
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_5jfpe"]
-switch_mode = 2
-advance_mode = 2
-
 [resource]
 state_machine_type = 1
 states/End/position = Vector2(1126, -83)
@@ -225,18 +197,10 @@ states/counter/node = SubResource("AnimationNodeAnimation_42tpu")
 states/counter/position = Vector2(960, -185)
 states/dodge/node = SubResource("AnimationNodeBlendSpace2D_3lfaa")
 states/dodge/position = Vector2(1106, -185)
-states/fakeout/node = SubResource("AnimationNodeAnimation_ma6e1")
-states/fakeout/position = Vector2(1100, -500)
-states/fakeout_uppercut/node = SubResource("AnimationNodeAnimation_51pjw")
-states/fakeout_uppercut/position = Vector2(1100, -560)
 states/final_hit/node = SubResource("AnimationNodeBlendSpace2D_2to7t")
 states/final_hit/position = Vector2(669, -47)
 states/hit/node = SubResource("AnimationNodeBlendSpace2D_gvj01")
 states/hit/position = Vector2(942, -47)
-states/hook_left/node = SubResource("AnimationNodeAnimation_kn42k")
-states/hook_left/position = Vector2(1275, -500)
-states/hook_right/node = SubResource("AnimationNodeAnimation_t36s3")
-states/hook_right/position = Vector2(1275, -560)
 states/hub_node/node = SubResource("AnimationNodeAnimation_nd7h3")
 states/hub_node/position = Vector2(819, -343)
 states/idle/node = SubResource("AnimationNodeAnimation_53oty")
@@ -245,5 +209,5 @@ states/punish/node = SubResource("AnimationNodeBlendSpace1D_q82gs")
 states/punish/position = Vector2(942, -282)
 states/stun_hit/node = SubResource("AnimationNodeBlendSpace2D_f4x83")
 states/stun_hit/position = Vector2(669, -185)
-transitions = ["dodge", "counter", SubResource("AnimationNodeStateMachineTransition_17ux5"), "Start", "RESET", SubResource("AnimationNodeStateMachineTransition_k0xx6"), "RESET", "idle", SubResource("AnimationNodeStateMachineTransition_e307x"), "counter", "RESET", SubResource("AnimationNodeStateMachineTransition_vrtra"), "punish", "RESET", SubResource("AnimationNodeStateMachineTransition_ma6e1"), "final_hit", "RESET", SubResource("AnimationNodeStateMachineTransition_lqdfj"), "hit", "RESET", SubResource("AnimationNodeStateMachineTransition_3dqe3"), "stun_hit", "RESET", SubResource("AnimationNodeStateMachineTransition_mks2u"), "hub_node", "RESET", SubResource("AnimationNodeStateMachineTransition_t36s3"), "fakeout", "hub_node", SubResource("AnimationNodeStateMachineTransition_jfq4d"), "fakeout_uppercut", "hub_node", SubResource("AnimationNodeStateMachineTransition_fi3h3"), "hook_left", "hub_node", SubResource("AnimationNodeStateMachineTransition_7hafc"), "hook_right", "hub_node", SubResource("AnimationNodeStateMachineTransition_5jfpe")]
+transitions = ["dodge", "counter", SubResource("AnimationNodeStateMachineTransition_17ux5"), "Start", "RESET", SubResource("AnimationNodeStateMachineTransition_k0xx6"), "RESET", "idle", SubResource("AnimationNodeStateMachineTransition_e307x"), "counter", "RESET", SubResource("AnimationNodeStateMachineTransition_vrtra"), "punish", "RESET", SubResource("AnimationNodeStateMachineTransition_ma6e1"), "final_hit", "RESET", SubResource("AnimationNodeStateMachineTransition_lqdfj"), "hit", "RESET", SubResource("AnimationNodeStateMachineTransition_3dqe3"), "stun_hit", "RESET", SubResource("AnimationNodeStateMachineTransition_mks2u"), "hub_node", "RESET", SubResource("AnimationNodeStateMachineTransition_t36s3")]
 graph_offset = Vector2(83, -623)

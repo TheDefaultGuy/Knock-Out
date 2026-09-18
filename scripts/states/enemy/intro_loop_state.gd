@@ -1,5 +1,8 @@
 @icon("res://assets/icons/IntroLoop.svg")
 @tool
+
+class_name LoopingCharge extends EnemyState
+
 ## This is a template state used by enemy boxers.
 ##
 ## In this state, the enemy will first perform an intro animation,
@@ -10,7 +13,6 @@
 ## To add it as a state, add it as a child node to the State Machine node in the enemy's scene,
 ## Then, tweak the exported variables to set it up.
 ## DO NOT change anything in the actual .gd file, since it'll screw up compatibility HARD.
-class_name LoopingCharge extends EnemyState
 
 
 #region The Ready, Enter and Exit functions
@@ -34,10 +36,17 @@ func _enter_tree() -> void:
 	primary_condition = STATE_CHANGE_CONDITION.AFTER_PLAYER_KNOCKED_DOWN
 	secondary_condition = STATE_CHANGE_CONDITION.AFTER_ENEMY_KNOCKED_DOWN
 	
+func _process(_delta: float) -> void:
+	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
+		return
+	if get_parent().current_state == self or get_parent().current_state is EnemySpectating:
+		animation_tree.set(str("parameters/",nested_machine_name,"/conditions/ko"), Global.player_node.isKnockdown or Global.enemy_node.isKnockdown)
+	if get_parent().current_state == self:
+		check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
+	
 	## Handles showing and hiding applicable exported variables
 func _validate_property(property: Dictionary) -> void:
 	update_shown_exported_variables(property)
-
 
 func enter() -> void:
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
@@ -59,12 +68,3 @@ func exit() -> void:
 	toggle_stunned_signal_connections()
 	attack_timer.timeout.disconnect(perform_action)
 #endregion
-
-	
-func _process(_delta: float) -> void:
-	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
-		return
-	if get_parent().current_state == self or get_parent().current_state is EnemySpectating:
-		animation_tree.set(str("parameters/",nested_machine_name,"/conditions/ko"), Global.player_node.isKnockdown or Global.enemy_node.isKnockdown)
-	if get_parent().current_state == self:
-		check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.

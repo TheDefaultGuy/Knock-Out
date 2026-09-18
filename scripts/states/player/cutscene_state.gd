@@ -1,9 +1,10 @@
 @icon("res://assets/icons/RiMovie2Line.svg")
+
+class_name CutSceneState extends State
+
 ## This is the state where the enemy and/or player are in during cutscenes (Beginning and end of the fight.)
 ##
 ## This state is required and used by both the player and enemies
-class_name CutSceneState extends State
-
 
 
 @export var next_state : State

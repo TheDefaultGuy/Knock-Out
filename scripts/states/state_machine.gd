@@ -2,6 +2,10 @@
 @tool
 class_name StateMachine extends Node
 
+## In-charge of transitioning and storing the player and enemy states.
+##
+## 
+
 @export_category("⚠️ Initial State ⚠️")
 ## The first state or the default state the enemy or player is when starting the match.
 @export var initial_state : State

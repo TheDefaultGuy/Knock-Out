@@ -1,41 +1,45 @@
 @icon("res://assets/icons/EmojioneMonotoneDizzy.svg")
 @tool
+
+class_name StunState extends State
+
 ## This is the state in which the enemy is stunned and can't fight back.
 ##
-## It is a required state for all enemies.
-##
-## The stun behavior is customizable.
+## It is a required state for all enemies.[br]
+## 
+## The stun behavior is customizable:[br]
 ## FIXED TIMER DURATION: after a given amount of time,
 ## The enemy will automatically leave the stun state, regardless of how many punches the player lands.
-## FIXED NUMBER OF PUNCHES: which means that stun will allow the player to land a given number of punches guaranteed.
+## [br]FIXED NUMBER OF PUNCHES: which means that stun will allow the player to land a given number of punches guaranteed.
 ## If the player stops attacking for some reason, it'll leave the stun state after the given stun duration has elapsed.
-## INCREASING_NUMBER_OF_PUNCHES : Instead of a fixed number of punches, it'll only allow a small number of punches at first,
+## [br]INCREASING_NUMBER_OF_PUNCHES : Instead of a fixed number of punches, it'll only allow a small number of punches at first,
 ## but every time the enemy enters the stun state, the amount of punches they'll allow will increase by one, until they reach the max desired cap.
 ## Basically, the more the enemy enters stun state during the match, the longer the stun will be.
 ## Resets after a new round.
-class_name StunState extends State
-
 
 #region Exported Variables and function that handles which variables to show.
 ## How stun will work/behave for the fighter.
 enum BEHAVIOR_TYPE{
+	
 	## Stun will last a given amount of time.
 	## After time is up, they will automatically switch state.
 	FIXED_TIME_DURATION,
+	
 	## Stun will last for a fixed given number of punches, or after the given time has passed.
 	## Every time a punch lands the timer for the stun duration will restart.
 	FIXED_NUMBER_OF_PUNCHES,
+	
 	## Stun will last for a given number of punches,
 	## but will increase by 1 for each time the enemy enters stun state.
 	## The more the enemy enters stun, the longer stun will be for the rest of the match.
 	## That, or after the given time has passed.
 	## Every time a punch lands the timer for the stun duration will restart.
-	INCREASING_NUMBER_OF_PUNCHES
+	INCREASING_NUMBER_OF_PUNCHES,
 }
 
-var stun_timer : Timer = null
-
 @export_category("💫 Stun Behavior")
+
+## How the enemy will behave during stun.
 @export var stun_behavior := BEHAVIOR_TYPE.FIXED_TIME_DURATION: 
 	set(value):
 		stun_behavior = value
@@ -63,17 +67,22 @@ var stun_timer : Timer = null
 ## The state in which the enemy attempts to heal.
 @export var heal_state : ItemHeal 
 
+## Stores the next state that this state will transition too
 var target_state : State
 
 ## How many punches the player has landed during this state.
 var punch_count: int = 0
+
 ## How many punches the player can land before the enemy changes state.
 var stun_punch_length: int = 0
 
 ## Variable checked to see when to transition out of stun.
 var stun_over : bool = false
 const DIZZY_EFFECT = preload("uid://1gxun2up65jb")
+
 var dizzy : CPUParticles2D = null
+
+var stun_timer : Timer = null
 
 ## Handles showing and hiding applicable exported variables
 func _validate_property(property: Dictionary) -> void: 
@@ -100,7 +109,16 @@ func _ready() -> void:
 	dizzy.local_coords = true
 	dizzy.emitting = true
 	dizzy.visible = false
-
+	
+	
+## Constantly checks the conditions to change state.
+func _process(_delta: float) -> void:
+	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
+		return
+	if get_parent().current_state == self:
+		check_enemy_health_condition()
+		check_if_stun_over()
+		
 ## Creates the timers with code so that you don't have to make timer node and then manually assign it.
 func create_timers() -> void:
 	stun_timer = Timer.new()
@@ -144,14 +162,7 @@ func exit() -> void:
 	
 	animation_tree.animation_finished.disconnect(check_if_stun_over)
 
-	dizzy.visible = false
-func _process(_delta: float) -> void:
-	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
-		return
-	if get_parent().current_state == self:
-		check_enemy_health_condition()
-		check_if_stun_over()
-	
+	dizzy.visible = false	
 #endregion
 
 func set_stun_over() -> void:

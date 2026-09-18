@@ -1,102 +1,14 @@
 @tool
 @icon("res://assets/icons/LucideSkull.svg")
+
 class_name EnemyState extends State
 
-#region Exported Variables
-@export_category("⇄ State Changing Conditions")
-
-## The primary condition for changing state and the first one being checked.
-##
-## If the condition is met, it will transition to the primary target state.
-## If it's not, it will check the secondary condition.
-@export var primary_condition := STATE_CHANGE_CONDITION.AT_ROUND_TIME: 
-	set(value):
-		if primary_condition != value:
-			primary_condition = value
-			notify_property_list_changed()
-
-## The secondary condition for changing state and the second one being checked.
-##
-## If the condition is met, it will transition to the secondary target state.
-@export var secondary_condition := STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
-	set(value):
-		if secondary_condition != value:
-			secondary_condition = value
-			notify_property_list_changed()
-## The ertiary condition for changing state and the second one being checked.
-##
-## If the condition is met, it will transition to the ertiary target state.
-@export var tertiary_condition := STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
-	set(value):
-		if tertiary_condition != value:
-			tertiary_condition = value
-			notify_property_list_changed()
-		
-@export_category("🎯 Target States")
-## The state the enemy will transition to after the primary condition is met.
-@export var primary_target_state : State
-
-## The state the enemy will transition to after the secondary condition is met.
-@export var secondary_target_state : State
-
-## The state the enemy will transition to after the tertiary condition is met.
-@export var tertiary_target_state : State
-
-
-@export_category("*️⃣ State Changing Arguments")
-## The time in the round (in seconds) where the enemy changes to the target state.
-@export_range(10.0, 180.0, 1.0, "suffix:s") var target_round_time : float
-
-## The amount of time the enemy waits (in seconds) before changing to the target state.
-@export_range(1.0, 120.0, 1.0, "suffix:s") var time_to_wait : float = 5.0
-
-## The HP the enemy has to reach before changing to the target state.
-@export_range(1.0, 100.0, 1.0, "suffix:hp") var target_hp : float = 30.0
-
-@export_category("🎬 Animations & Moveset")
-## What type of moveset is available in this state.
-@export var moveset_type := MOVESET_TYPE_ENUM.WEIGHTED_DICTIONARY:
-	set(value):
-		if moveset_type != value:
-			moveset_type = value
-			notify_property_list_changed()
-
-## The available animations that can be called by the attack timer in this state stored as a weighted Dictionary.
-## The 1st variable or "key" is a string corresponding to the name of the move, and the 2nd variable corresponds to the weight or chance of that move.
-@export var moveset_dictionary : Dictionary[String, float] = {}
-
-## The available animations that can be called by the attack timer in this state stored as an array.
-@export var moveset_array : Array[String] = []
-
-## The current index of the moveset array.
-## Used so that it can loop back to the start and not look for a value beyond the range of the array
-var moveset_index : int = 0
-
-
-@export_category("⏱ Attack Delays")
-## What to do when an attack is blocked by either the player or the enemy when in this state.
-@export var block_behavior := BLOCK_BEHAVIOR_ENUM.PAUSE_TIMER
-
-## How long will the attack timer be paused for if the enemy or player blocks.
-@export_custom(PROPERTY_HINT_NONE, "suffix:s") var block_cooldown : float = 0.5
-
-## How the delay between each attack is handled.
-@export var attack_delay_type := ATTACK_DELAY.FLOAT: 
-	set(value):
-		if attack_delay_type != value:
-			attack_delay_type = value
-			notify_property_list_changed()
-		
-## The minimum amount of time (in seconds) the enemy will wait before performing an action.
-@export_range(0.2, 6.0, 0.2, "suffix:s") var min_wait_time : float = 1.0
-
-## The maximum amount of time (in seconds) the enemy will wait before performing an action.
-@export_range(0.2, 6.0, 0.2, "suffix:s") var max_wait_time : float = 3.0
-
-## An array of predetermined attack delay amounts. 
-## Instead of choosing a number BETWEEN a minumum and a maximum value, it will choose randomly from the list of provided values instead.
-@export_custom(PROPERTY_HINT_NONE, "suffix:s") var attack_delay_array : Array[float]
-#endregion
+## The base state used by all attacking enemy states.
+## 
+## Depending on the state that inherits it, it's possible to set the conditions
+## for transitioning to a different as well as which state to transition to.
+## The moveset/attacks that the enemy will perform in the state.
+## How the enemy will behave in terms of choosing the attack, how they handle blocking, how they delay attacks, etc..
 
 #region Enumerations
 ## What kind of state this is and whether it's a simple state or a state that uses a nested state machine.
@@ -199,11 +111,108 @@ enum BLOCK_BEHAVIOR_ENUM{
 }
 #endregion
 
-#region Stored Variables
-@onready var animation_player: AnimationPlayer = %AnimationPlayer
+#region Constants
+## Offset added to each animation node's position so that they dont all overlap.
+const node_positional_offset := Vector2(175.0, 0.0)
+## The point in the animation tree where the nodes will be added.
+const node_position_origin := Vector2(-1000.0,-500.0) 
+#endregion
 
+#region Exported Variables
+@export_category("⇄ State Changing Conditions")
+
+## The primary condition for changing state and the first one being checked.
+##
+## If the condition is met, it will transition to the primary target state.
+## If it's not, it will check the secondary condition.
+@export var primary_condition := STATE_CHANGE_CONDITION.AT_ROUND_TIME: 
+	set(value):
+		if primary_condition != value:
+			primary_condition = value
+			notify_property_list_changed()
+
+## The secondary condition for changing state and the second one being checked.
+##
+## If the condition is met, it will transition to the secondary target state.
+@export var secondary_condition := STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
+	set(value):
+		if secondary_condition != value:
+			secondary_condition = value
+			notify_property_list_changed()
+## The ertiary condition for changing state and the second one being checked.
+##
+## If the condition is met, it will transition to the ertiary target state.
+@export var tertiary_condition := STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
+	set(value):
+		if tertiary_condition != value:
+			tertiary_condition = value
+			notify_property_list_changed()
+		
+@export_category("🎯 Target States")
+## The state the enemy will transition to after the primary condition is met.
+@export var primary_target_state : State
+
+## The state the enemy will transition to after the secondary condition is met.
+@export var secondary_target_state : State
+
+## The state the enemy will transition to after the tertiary condition is met.
+@export var tertiary_target_state : State
+
+
+@export_category("*️⃣ State Changing Arguments")
+## The time in the round (in seconds) where the enemy changes to the target state.
+@export_range(10.0, 180.0, 1.0, "suffix:s") var target_round_time : float
+
+## The amount of time the enemy waits (in seconds) before changing to the target state.
+@export_range(1.0, 120.0, 1.0, "suffix:s") var time_to_wait : float = 5.0
+
+## The HP the enemy has to reach before changing to the target state.
+@export_range(1.0, 100.0, 1.0, "suffix:hp") var target_hp : float = 30.0
+
+@export_category("🎬 Animations & Moveset")
+## What type of moveset is available in this state.
+@export var moveset_type := MOVESET_TYPE_ENUM.WEIGHTED_DICTIONARY:
+	set(value):
+		if moveset_type != value:
+			moveset_type = value
+			notify_property_list_changed()
+
+## The available animations that can be called by the attack timer in this state stored as a weighted Dictionary.
+## The 1st variable or "key" is a string corresponding to the name of the move, and the 2nd variable corresponds to the weight or chance of that move.
+@export var moveset_dictionary : Dictionary[String, float] = {}
+
+## The available animations that can be called by the attack timer in this state stored as an array.
+@export var moveset_array : Array[String] = []
+
+@export_category("⏱ Attack Delays")
+## What to do when an attack is blocked by either the player or the enemy when in this state.
+@export var block_behavior := BLOCK_BEHAVIOR_ENUM.PAUSE_TIMER
+
+## How long will the attack timer be paused for if the enemy or player blocks.
+@export_custom(PROPERTY_HINT_NONE, "suffix:s") var block_cooldown : float = 0.5
+
+## How the delay between each attack is handled.
+@export var attack_delay_type := ATTACK_DELAY.FLOAT: 
+	set(value):
+		if attack_delay_type != value:
+			attack_delay_type = value
+			notify_property_list_changed()
+		
+## The minimum amount of time (in seconds) the enemy will wait before performing an action.
+@export_range(0.2, 6.0, 0.2, "suffix:s") var min_wait_time : float = 1.0
+
+## The maximum amount of time (in seconds) the enemy will wait before performing an action.
+@export_range(0.2, 6.0, 0.2, "suffix:s") var max_wait_time : float = 3.0
+
+## An array of predetermined attack delay amounts. 
+## Instead of choosing a number BETWEEN a minumum and a maximum value, it will choose randomly from the list of provided values instead.
+@export_custom(PROPERTY_HINT_NONE, "suffix:s") var attack_delay_array : Array[float]
+#endregion
+
+#region Stored Variables
 ## The timer used to automatically go to the next state after time's up.
 var state_change_timer : Timer = null
+
 ## Timer used to automatically perform one of the given attacks.
 var attack_timer : Timer = null
 
@@ -236,14 +245,14 @@ var interruption_status : bool = false
 ## The array/list of functions the state will check during process
 ## That way it only runs the functions that check for the conditions its assigned to,
 var list_of_check_functions : Array[Callable] = []
+
+## The current index of the moveset array.
+## Used so that it can loop back to the start and not look for a value beyond the range of the array
+var moveset_index : int = 0
+
+@onready var animation_player: AnimationPlayer = %AnimationPlayer
 #endregion
 
-#region Constants
-## Offset added to each animation node's position so that they dont all overlap.
-const node_positional_offset := Vector2(175.0, 0.0)
-## The point in the animation tree where the nodes will be added.
-const node_position_origin := Vector2(-1000.0,-500.0) 
-#endregion
 
 func _ready() -> void:
 	nested_machine_name = str(self.name).to_snake_case() 
@@ -394,6 +403,8 @@ func start_attack_delay_timer() -> void:
 		ATTACK_DELAY.PREDETERMINED:
 			attack_timer.start(attack_delay_array.pick_random()) # Randomly chooses one of the values in the attack delay array.
 	print("STARTED ATTACK TIMER")
+	return
+	
 ## Function called when a block occurs.
 ## Handle attack delay times after a block.
 func handle_block() -> void:

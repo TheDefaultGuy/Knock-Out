@@ -1,5 +1,7 @@
 @icon("res://assets/icons/MaterialSymbolsDeliveryTruckSpeedRounded.svg")
 @tool
+class_name SequentialAttacks extends EnemyState
+
 ## A state in which the enemy will perform a sequence of attacks or animation.
 ## This can be used to chain pre-existing attacks together or to make a "Flurry" attack state like
 ## Piston Hondo's "Hondo Rush", Mr Sandman's "Dreamland Express", or Super Macho Man's Clotheslines.
@@ -13,11 +15,13 @@
 ## To add it as a state, add it as a child node to the State Machine node in the enemy's scene,
 ## Then, tweak the exported variables to set it up.
 ## DO NOT change anything in the actual .gd file, since it'll screw up compatibility HARD.
-class_name SequentialAttacks extends EnemyState
 
+## Stores how many attacks/animations have been finished in this state.
 var attack_count : int = 0
 
 var modified_moveset : Array = []
+
+## Variable that stores whether or not the attack animations of this state have started playing.
 var started_attacking : bool = false
 
 #region The Ready, Enter and Exit functions
@@ -35,6 +39,14 @@ func _enter_tree() -> void:
 	primary_condition = STATE_CHANGE_CONDITION.AFTER_COMPLETION
 	moveset_type = MOVESET_TYPE_ENUM.PREDETERMINED_ORDER
 	secondary_condition = STATE_CHANGE_CONDITION.AFTER_PLAYER_KNOCKED_DOWN
+
+func _process(_delta: float) -> void:
+	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
+		return
+	if get_parent().current_state == self:
+		if started_attacking == true: # Only checks for state completion after it's started attacking.
+			check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
+
 
 func _validate_property(property: Dictionary) -> void: 
 	attack_timer_required = false
@@ -70,13 +82,6 @@ func exit() -> void:
 	started_attacking = false
 
 	
-func _process(_delta: float) -> void:
-	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
-		return
-	if get_parent().current_state == self:
-		if started_attacking == true: # Only checks for state completion after it's started attacking.
-			check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
-
 #endregion
 
 ## Just sets the variable when an animation has started:

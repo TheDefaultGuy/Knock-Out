@@ -1,8 +1,14 @@
 @icon("res://assets/icons/MdiDice.svg")
 @tool
-## This isn't a real state where the enemy attacks.
-## Its just a pseudo-state you can choose to randomly choose one of the three states.
 class_name PickRandomState extends EnemyState
+
+
+## Pseudo-state where it randomly choose one of the three states.
+##
+## This isn't a real state where the enemy attacks.
+## As soon as the enemy enters this "state", it picks a random one,
+## and then transitions immeadiately to the chosen state.
+
 
 ## Stores the possible states and then one gets picked at random.
 var state_array : Array[State] = []

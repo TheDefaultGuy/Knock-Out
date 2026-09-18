@@ -3234,6 +3234,7 @@ tracks/11/keys = {
 
 [sub_resource type="Animation" id="Animation_e5w0m"]
 resource_name = "hook_left"
+length = 1.2
 tracks/0/type = "method"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -3377,6 +3378,7 @@ tracks/10/keys = {
 
 [sub_resource type="Animation" id="Animation_3kwnv"]
 resource_name = "hook_right"
+length = 1.2
 tracks/0/type = "method"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -8740,10 +8742,9 @@ unique_name_in_owner = true
 script = ExtResource("50_rfikt")
 metadata/_custom_type_script = "uid://by7b3lklkcynb"
 
-[node name="InstantKOComponent" type="Node" parent="." unique_id=81177286 node_paths=PackedStringArray("state_machine", "expected_state_A")]
+[node name="InstantKOComponent" type="Node" parent="." unique_id=81177286 node_paths=PackedStringArray("expected_state_A")]
 unique_name_in_owner = true
 script = ExtResource("51_mvukc")
-state_machine = NodePath("../StateMachine")
 expected_state_A = NodePath("../StateMachine/Stunned")
 number_of_stars = 2
 metadata/_custom_type_script = "uid://c15nwhylsnm6w"
@@ -8818,8 +8819,7 @@ primary_target_state = NodePath("../WeirdAttacks2")
 time_to_wait = 30.0
 moveset_type = 1
 moveset_array = Array[String](["great_tiger_uppercut", "great_tiger_uppercut_2"])
-min_wait_time = 0.6000000000000001
-max_wait_time = 1.8
+max_wait_time = 2.0
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
 [node name="WeirdAttacks2" type="Node" parent="StateMachine" unique_id=455264741]
@@ -8827,8 +8827,7 @@ script = ExtResource("57_cegiy")
 primary_condition = 10
 moveset_type = 1
 moveset_array = Array[String](["great_tiger_uppercut", "jab_high_combo", "great_tiger_uppercut_2", "great_tiger_fakeout"])
-min_wait_time = 0.6000000000000001
-max_wait_time = 1.2
+max_wait_time = 2.0
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
 [node name="SkillCheck" type="Node" parent="StateMachine" unique_id=1728563805 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
@@ -8859,8 +8858,7 @@ moveset_dictionary = Dictionary[String, float]({
 "hook_left": 25.0,
 "hook_right": 25.0
 })
-min_wait_time = 0.8
-max_wait_time = 1.8
+max_wait_time = 2.0
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
 [node name="LoopingCharge" type="Node" parent="StateMachine" unique_id=61317170 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]

@@ -1,10 +1,22 @@
 @icon("res://assets/icons/BoxiconsMehBlank.svg")
 
 class_name PlayerNeutral extends State
+## The neutral/default player state where the player can attack, dodge, block and duck normally.
+## 
+## Since this is a state exclusive to the player, NONE of the variables, code, etc... can be changed.
+## Everything MUST be kept as is.
+## Eventually, once the code for the player is cleaned up, the option to add custom playes might be added.
 
 @onready var input_component: InputComponent = %InputComponent
 @onready var player = self.owner
 @onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
+
+func _process(_delta: float) -> void:
+	if get_parent().current_state == self:
+		if anim_state_machine.get_current_node() == "hit":
+			animated_sprite_2d.material.set_shader_parameter("Visible", true)
+			return
+		animated_sprite_2d.material.set_shader_parameter("Visible", false)
 
 func enter() -> void:
 	print_rich("[color=yellow]Player Entered State: [/color]", self.name)
@@ -26,6 +38,7 @@ func exit() -> void:
 	FightManager.no_stamina_signal.disconnect(transition_to_tired)
 	FightManager.enemy_knocked_down_signal.disconnect(transition_to_spectating)
 	FightManager.player_knocked_down_signal.disconnect(transition_to_knocked_down)
+
 ## Performs the appropriate defense animation when the input component sends the signal.
 func perform_defense(move : int, action_name : String) -> void:
 	if anim_state_machine.get_current_node() == "neutral":
@@ -62,10 +75,3 @@ func perform_attack(height : int, direction : int, action_name : String) -> void
 		
 	else:
 		input_component.store_unhandled_input(action_name) # If the player is currently already dodging or attacking, it'll store the attack they wanted to do so that it's buffered.	
-
-func _process(_delta: float) -> void:
-	if get_parent().current_state == self:
-		if anim_state_machine.get_current_node() == "hit":
-			animated_sprite_2d.material.set_shader_parameter("Visible", true)
-			return
-		animated_sprite_2d.material.set_shader_parameter("Visible", false)

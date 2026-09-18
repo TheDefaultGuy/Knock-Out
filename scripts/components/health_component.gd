@@ -1,13 +1,18 @@
 @icon("res://assets/icons/GriddyIconsHealthCrossFilled.svg")
 class_name HealthComponent extends Node
+## The component that handles Health Points and any calculations related to it.
+## 
+## Mainly called upon by the defense component.
+## Has the responsability of chacking if the fighter is knocked-down or not.
+
+## Signal emitted when the health value has changed.
+signal health_changed_signal
 
 @export var max_hp : float = 100.0
 @export var hp : float = 100.0 :
 	set(value):
 		hp = clampf(value, 0.0, max_hp) # Automatically clamps the HP
 		health_changed_signal.emit()
-
-signal health_changed_signal
 
 func _ready() -> void:
 	max_hp = hp

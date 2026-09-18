@@ -1,5 +1,7 @@
 @icon("res://assets/icons/TablerEyeExclamation.svg")
 @tool
+class_name Reactionary extends EnemyState
+
 ## This is a template state used by enemy boxers.
 ## In this state, the enemy will react to the player's actions.
 ## The enemy can dodge if the player throws a punch, throw a fake out punch and then punish if the player dodged.
@@ -8,9 +10,8 @@
 ## To add it as a state, add it as a child node to the State Machine node in the enemy's scene,
 ## Then, tweak the exported variables to set it up.
 ## DO NOT change anything in the actual .gd file, since it'll screw up compatibility HARD.
-class_name Reactionary extends EnemyState
 
-#region Exported Variables and function that handles which variables to show
+
 
 ## The fakeout animation that will play in this state.
 @export var fakeout_animation : String = "fakeout"
@@ -28,7 +29,15 @@ func _init() -> void:
 	
 	check_for_attack_and_append(fakeout_animation)
 	
-	
+func _process(_delta: float) -> void:
+	if Engine.is_editor_hint(): #Doesnt run the check round time function when in the editor; only when in-game
+		return
+	if get_parent().current_state == self:
+		check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
+		
+		#print("REACTIONARY: ", current_animation_state_machine.get_current_node())
+		#print("state_change_timer: ", state_change_timer.time_left)
+
 ## Handles showing and hiding applicable exported variables
 func _validate_property(property: Dictionary) -> void:
 	update_shown_exported_variables(property)
@@ -71,14 +80,7 @@ func exit() -> void:
 	FightManager.player_dodged_signal.disconnect(play_punish_animation)
 	toggle_state_change_timer() 
 	
-func _process(_delta: float) -> void:
-	if Engine.is_editor_hint(): #Doesnt run the check round time function when in the editor; only when in-game
-		return
-	if get_parent().current_state == self:
-		check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
-		
-		#print("REACTIONARY: ", current_animation_state_machine.get_current_node())
-		#print("state_change_timer: ", state_change_timer.time_left)
+
 #endregion
 
 func play_dodge_animation(height : int, direction : int) -> void:

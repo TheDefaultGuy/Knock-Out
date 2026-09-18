@@ -1,8 +1,15 @@
 @icon("res://assets/icons/FluentEmojiHighContrastSweatDroplets.svg")
 class_name Tired extends State
 
-@onready var input_component: InputComponent = %InputComponent
+## The tired state where the player can only dodge and cannot attack.
+## 
+## Since this is a state exclusive to the player, NONE of the variables, code, etc... can be changed.
+## Everything MUST be kept as is.
+## Eventually, once the code for the player is cleaned up, the option to add custom playes might be added.
+
 var player = self.owner
+
+@onready var input_component: InputComponent = %InputComponent
 @onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
 
 func enter() -> void:
@@ -11,7 +18,6 @@ func enter() -> void:
 	
 	animation_tree.set("parameters/neutral/blend_position", 1)
 	
-	input_component.attack_input_signal.connect(perform_attack)
 	input_component.defense_input_signal.connect(perform_defense)
 	defense_component.succesful_dodge.connect(succesful_dodge)
 	animated_sprite_2d.material.set_shader_parameter("Visible", true)
@@ -19,7 +25,6 @@ func enter() -> void:
 	
 func exit() -> void:
 	animation_tree.set("parameters/neutral/blend_position", 0)
-	input_component.attack_input_signal.disconnect(perform_attack)
 	input_component.defense_input_signal.disconnect(perform_defense)
 	defense_component.succesful_dodge.disconnect(succesful_dodge)
 	animated_sprite_2d.material.set_shader_parameter("Visible", false)
@@ -37,9 +42,6 @@ func perform_defense(move : int, action_name : String) -> void:
 		FightManager.sfx_dodge_signal.emit()
 	else:
 		input_component.store_unhandled_input(action_name) # If the player is currently already dodging or attacking, it'll store the attack they wanted to do so that it's buffered.
-		
-func perform_attack(_height : int, _direction : int, _action_name : String) -> void:
-	pass
 
 func succesful_dodge() -> void:
 	FightManager.set_stamina()

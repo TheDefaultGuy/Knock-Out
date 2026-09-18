@@ -1,5 +1,7 @@
 @icon("res://assets/icons/WhhRandom.svg")
 @tool
+class_name RandomizedMoves extends EnemyState
+
 ## A state in which the enemy will randomly choose an attack from a given list of attacks.
 ##
 ## In this state, the enemy will randomly select between a weighted list of moves.
@@ -11,14 +13,19 @@
 ## To add it as a state, add it as a child node to the State Machine node in the enemy's scene,
 ## Then, tweak the exported variables to set it up.
 ## DO NOT change anything in the actual .gd file, since it'll screw up compatibility HARD.
-class_name RandomizedMoves extends EnemyState
 
-#var list_of_check_functions : Array[Callable] = []
 
 #region The Ready, Enter and Exit functions.
 func _init() -> void:
 	state_type = STATE_TYPE_ENUM.SIMPLE
 	attack_timer_required  = true
+
+func _process(_delta: float) -> void:
+	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
+		return
+	if get_parent().current_state == self:
+		check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
+
 
 ## Handles showing and hiding applicable exported variables
 func _validate_property(property: Dictionary) -> void:
@@ -54,21 +61,13 @@ func enter() -> void:
 	toggle_state_change_timer()
 	
 func exit() -> void:
-	attack_timer.stop() # Full on stops the attack timer since it's leaving the state.
+	# Full on stops the attack timer since it's leaving the state.
+	attack_timer.stop() 
 	toggle_state_change_timer()
 	
-	toggle_stunned_signal_connections() # Disconnects the enemy knocked down, player knocked down and stun signals.
+	toggle_stunned_signal_connections() # Disconnects the stun signal.
 	
 	FightManager.successful_block_signal.disconnect(handle_block)
 	
 	attack_timer.timeout.disconnect(perform_action)
-
-
-func _process(_delta: float) -> void:
-	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
-		return
-	if get_parent().current_state == self:
-		check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
-
-	
 #endregion

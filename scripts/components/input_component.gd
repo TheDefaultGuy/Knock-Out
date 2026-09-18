@@ -1,24 +1,40 @@
 @icon("res://assets/icons/StreamlineController1.svg")
-## This is the component that handles the players input and then relays that to the player states
 class_name InputComponent extends Node
+## This is the component that handles the players input and then relays that to the player states. in the [StateMachine]
+
+## Signal emitted to the player states
+## whenever a player performs an attack.
+signal attack_input_signal(height, range, direction, special)
+
+## Signal emitted to the player states
+## whenever a player performs a defensive move
+## such as blocking, dodging or ducking.
+signal defense_input_signal(move)
+
+## The time in seconds an action will be stored/buffered for before being cleared away
+@export var buffer_time : float = 0.3
+
+## The amount of time in seconds a block has to be
+## within an incoming attack for the balck to be considered a parry.
+@export var parry_window : float = 0.1
+@export var final_stun_hit_attack_cooldown : float = 0.6
 
 var input_buffer_timer: Timer = null
 var parry_timer: Timer = null
 var unhandled_input = null
 var latest_action = null
 
-signal attack_input_signal(height, range, direction, special)
-signal defense_input_signal(move)
 
-## Variable that stores if the player is holding fown the left or right button respectively.
+
+## Variable that stores if the player is holding down the left button.
 var holding_left : bool = false
-## Variable that stores if the player is holding fown the left or right button respectively.
+
+## Variable that stores if the player is holding down the right button.
 var holding_right : bool = false
+
 ## Variable that stores if the player can perform any inputs.
 var allow_inputs : bool = false
-@export var buffer_time : float = 0.3
-@export var parry_window : float = 0.1
-@export var final_stun_hit_attack_cooldown : float = 0.6
+
 
 func _ready() -> void:
 	# Creates a new input buffer Timer on ready
@@ -35,6 +51,29 @@ func _ready() -> void:
 	add_child(parry_timer)
 	FightManager.final_stun_hit_signal.connect(final_stun_hit)
 	
+func _process(_delta: float) -> void:
+	if allow_inputs == false:
+		return
+		
+	var blend_vector : Vector2i = Vector2i( \
+	int(Input.is_action_pressed("block") or Input.is_action_pressed("block_upper") or Input.is_action_pressed("block_lower")), \
+	int((Input.is_action_pressed("block") and Input.is_action_pressed("up")) or Input.is_action_pressed("block_upper"))\
+	)
+	
+	owner.animation_tree.set("parameters/neutral/idle/blend_position", blend_vector)
+	if Input.is_action_pressed("left"):
+		owner.animation_tree.set("parameters/dodge/dodge_left/dodge_blend_left/blend_position", Global.range.LEFT)
+	
+	elif Input.is_action_pressed("right"):
+		owner.animation_tree.set("parameters/dodge/dodge_right/dodge_blend_right/blend_position", Global.range.RIGHT)
+		
+	elif Input.is_action_pressed("down"):
+		owner.animation_tree.set("parameters/dodge/duck/duck_blend/blend_position", -1)
+	
+	owner.animation_tree.set("parameters/dodge/dodge_left/conditions/holding_left", Input.is_action_pressed("left"))
+	owner.animation_tree.set("parameters/dodge/dodge_right/conditions/holding_right", Input.is_action_pressed("right"))
+	owner.animation_tree.set("parameters/dodge/duck/conditions/holding_down", Input.is_action_pressed("down"))
+
 func _input(_event: InputEvent) -> void:
 	if allow_inputs == false:
 		return
@@ -73,29 +112,7 @@ func _input(_event: InputEvent) -> void:
 		elif Input.is_action_just_pressed("star_punch"):
 			perform_action("star_punch_upper")
 	
-func _process(_delta: float) -> void:
-	if allow_inputs == false:
-		return
-		
-	var blend_vector : Vector2i = Vector2i( \
-	int(Input.is_action_pressed("block") or Input.is_action_pressed("block_upper") or Input.is_action_pressed("block_lower")), \
-	int((Input.is_action_pressed("block") and Input.is_action_pressed("up")) or Input.is_action_pressed("block_upper"))\
-	)
-	
-	owner.animation_tree.set("parameters/neutral/idle/blend_position", blend_vector)
-	if Input.is_action_pressed("left"):
-		owner.animation_tree.set("parameters/dodge/dodge_left/dodge_blend_left/blend_position", Global.range.LEFT)
-	
-	elif Input.is_action_pressed("right"):
-		owner.animation_tree.set("parameters/dodge/dodge_right/dodge_blend_right/blend_position", Global.range.RIGHT)
-		
-	elif Input.is_action_pressed("down"):
-		owner.animation_tree.set("parameters/dodge/duck/duck_blend/blend_position", -1)
-	
-	owner.animation_tree.set("parameters/dodge/dodge_left/conditions/holding_left", Input.is_action_pressed("left"))
-	owner.animation_tree.set("parameters/dodge/dodge_right/conditions/holding_right", Input.is_action_pressed("right"))
-	owner.animation_tree.set("parameters/dodge/duck/conditions/holding_down", Input.is_action_pressed("down"))
-
+## Emits a signal depending on the action that will be used by the player states.
 func perform_action(action_name : String):
 	match action_name:
 		"left_low_punch":

@@ -1,5 +1,8 @@
 @icon("res://assets/icons/PinheadPillBottleWithGreekCross.svg")
 @tool
+
+class_name ItemHeal extends EnemyState
+
 ## A state in which the enemy will attempt to heal with an item,
 ## similar to Doc Louis with his chocolate and Soda Popinski with his "Soda".
 ##
@@ -11,7 +14,6 @@
 ## To add it as a state, add it as a child node to the State Machine node in the enemy's scene,
 ## Then, tweak the exported variables to set it up.
 ## DO NOT change anything in the actual .gd file, since it'll screw up compatibility HARD.
-class_name ItemHeal extends EnemyState
 
 
 #region The Ready, Enter and Exit functions
@@ -32,7 +34,13 @@ func _enter_tree() -> void:
 	# Given the nature of this state, these 2 conditions MUST ALWAYS be enabled and have corresponding target states.
 	primary_condition = STATE_CHANGE_CONDITION.AFTER_COMPLETION
 	secondary_condition = STATE_CHANGE_CONDITION.STATE_INTERRUPTED
-	
+
+func _process(_delta: float) -> void:
+	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
+		return
+	if get_parent().current_state == self:
+		check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
+
 func enter() -> void:
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
 
@@ -52,7 +60,6 @@ func enter() -> void:
 	defense_component.current_hit_animation = "item_hit"
 	defense_component.current_anim_state_machine = current_animation_state_machine
 
-	
 
 ## Handles showing and hiding applicable exported variables
 func _validate_property(property: Dictionary) -> void:
@@ -68,13 +75,6 @@ func exit() -> void:
 	interruption_status = false
 
 #endregion
-
-func _process(_delta: float) -> void:
-	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
-		return
-	if get_parent().current_state == self:
-		check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
-
 
 ## If the player got hit, then the interrupted state will be set to the failed healed state.
 func change_to_failed_state() -> void:

@@ -1,6 +1,10 @@
 @icon("res://assets/icons/IconParkSolidArena.svg")
 
 class_name Arena extends Node2D
+## The main scene where fights take place.
+##
+## You can select the player and enemy scenes.
+
 @export_category("Fighters")
 ## Place the player or the controllable fighter node here.
 @export var player_scene : PackedScene
@@ -9,7 +13,13 @@ class_name Arena extends Node2D
 ## The timer used for tracking the time left in the round.
 
 
+var player_node = null
+var enemy_node = null
 
+var lerp_timer : Timer = null
+
+var enemy_starting_hp : float = 0.0
+var player_starting_hp : float = 0.0
 
 var target_time_scale := 0.025
 var secs := 1.25
@@ -36,13 +46,7 @@ var secs := 1.25
 @onready var fight_logic_component : FightLogicComponent = %FightLogicComponent
 @onready var match_settings : MatchSettings = %MatchSettings
 
-var player_node = null
-var enemy_node = null
 
-var lerp_timer : Timer = null
-
-var enemy_starting_hp : float = 0.0
-var player_starting_hp : float = 0.0
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:

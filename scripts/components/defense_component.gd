@@ -1,14 +1,15 @@
 @icon("res://assets/icons/BoxiconsShieldHalf.svg")
+
+class_name DefenseComponent extends Node
 ## This component is in charge of setting the status of defense of the player / enemy.
 ##
-## It is a required component for the [annotation Fighter] class, which includes the Player and all enemy boxers.
-## It interacts with the opposing Fighter's [annotation Attack Component], as it gets called by it.
+## It is a required component for the [Fighter] class, which includes the Player and all enemy boxers.
+## It interacts with the opposing Fighter's [AttackingComponent], as it gets called by it.
 ## It mainly checks if an attack lands given the fighter's blocking, dodging, state, etc...
-class_name DefenseComponent extends Node
 
 @onready var animation_tree: AnimationTree = %AnimationTree
 
-
+## Signal emitted when the player successully performs a parry.
 signal player_parried_signal
 
 #region Exported Variables

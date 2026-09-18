@@ -1,6 +1,12 @@
 @icon("res://assets/icons/BoxiconsBinocularFilled.svg")
 class_name PlayerSpectating extends State
 
+## The state the player is in when the enemy is knocked down.
+
+func _process(_delta: float) -> void:
+	if get_parent().current_state == self:
+		play_win_animation()
+
 func enter() -> void:
 	print_rich("[color=yellow]Player Entered State: [/color]", self.name)
 	animation_tree.set("parameters/conditions/spectating", true)
@@ -26,15 +32,6 @@ func ready_to_fight() -> void:
 	FightManager.player_ready_status = true
 	FightManager.fighter_ready_signal.emit()
 	
-func perform_attack(_height : int, _direction : int, _action_name : String) -> void:
-	return
-	
-func perform_defense(_move : int, _action_name : String) -> void:
-	return
-	
-func _process(_delta: float) -> void:
-	if get_parent().current_state == self:
-		play_win_animation()
 	
 func end_match(animation : String) -> void:
 	if animation == "outro":

@@ -1,12 +1,19 @@
 @icon("res://assets/icons/StreamlineSleepSolid.svg")
-## This is the state in which the enemy is knocked down.
-## It is a required state for all enemies.
+
 class_name EnemyKnockedDown extends State
+## This is the state in which the enemy is knocked down.
+##
+## It is a required state for all enemies.
 
-var get_up_timer : Timer = null
 
+## The minimum amount of time in seconds the enemy will get up from being knocked down.
 @export_custom(PROPERTY_HINT_NONE, "suffix:s") var min_getup_time : float = 1.0
+
+## The maximum amount of time in seconds the enemy will get up from being knocked down.
 @export_custom(PROPERTY_HINT_NONE, "suffix:s") var max_getup_time : float = 8.0
+
+## The timer used to count the get up time.
+var get_up_timer : Timer = null
 
 func _ready() -> void:
 

@@ -1,10 +1,11 @@
 @icon("res://assets/icons/MdiAlarmBell.svg")
 @tool
+class_name InstantKOComponent extends Node
+
 ## This is the component in charge of storing and checking the conditions for instant Knock-Out tricks for enemy fighters.
 ##
-## The main function is the check_for_instant_ko() function. It's called by the Defense Component if the enemy has the instant_ko_window variable set to true.
+## The main function is the check_for_instant_ko() function. It's called by the [DefenseComponent] if the enemy has the [param instant_ko_window] variable set to true.
 ## To properly set up an instant KO condition, you need to choose which states
-class_name InstantKOComponent extends Node
 
 
 #region Exported Variables and function that handles which variables to show
@@ -19,9 +20,7 @@ enum KO_CONDITION_TYPE{
 	## Will grant a KO if the player hasn't been hit before in the round.
 	NEVER_BEEN_HIT
 }
-@onready var animation_tree: AnimationTree = %AnimationTree
 
-@export var state_machine : StateMachine
 
 @export_category("Instant KO Conditions")
 ## What condition type to use for granting an instant KO.
@@ -36,19 +35,20 @@ enum KO_CONDITION_TYPE{
 @export var expected_state_B : State
 #@export var conditional_animation : String = "jab"
 
-
 ## The number of stars required for the star punch to grant an instant KO.
 @export_range (1, 3) var number_of_stars : int = 3
 
 ## The number of star punches landed required to grant an instant KO.
 @export_range (1, 12) var star_punches_received : int = 6
 
-
 ## The number of star punches landed required to grant an instant KO.
 @export_range (1, 6) var knock_downs_required : int = 1
 
 ## The round time required to grant an instant KO.
 @export_range(10.0, 180.0, 1.0, "suffix:s") var ko_round_time : float
+
+@onready var animation_tree: AnimationTree = %AnimationTree
+@onready var state_machine: StateMachine = %StateMachine
 
 ## Handles showing and hiding applicable exported variables
 func _validate_property(property: Dictionary) -> void: 

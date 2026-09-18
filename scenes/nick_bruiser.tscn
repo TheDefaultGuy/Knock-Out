@@ -8620,6 +8620,7 @@ texture_filter = 1
 material = ExtResource("2_v64oh")
 sprite_frames = SubResource("SpriteFrames_m0jec")
 animation = &"idle"
+frame = 1
 
 [node name="DefenseComponent" type="Node" parent="." unique_id=2045134485]
 unique_name_in_owner = true
@@ -8635,10 +8636,9 @@ unique_name_in_owner = true
 script = ExtResource("14_6ij5c")
 metadata/_custom_type_script = "uid://by7b3lklkcynb"
 
-[node name="InstantKOComponent" type="Node" parent="." unique_id=81177286 node_paths=PackedStringArray("state_machine", "expected_state_A")]
+[node name="InstantKOComponent" type="Node" parent="." unique_id=81177286 node_paths=PackedStringArray("expected_state_A")]
 unique_name_in_owner = true
 script = ExtResource("55_xom0j")
-state_machine = NodePath("../StateMachine")
 expected_state_A = NodePath("../StateMachine/Stunned")
 number_of_stars = 2
 metadata/_custom_type_script = "uid://c15nwhylsnm6w"
@@ -8768,10 +8768,11 @@ primary_target_state = NodePath("../Aggressive")
 secondary_target_state = NodePath("../Mad")
 metadata/_custom_type_script = "uid://c73a2o5xnqs0k"
 
-[node name="ItemHeal2" type="Node" parent="StateMachine" unique_id=2134981292 node_paths=PackedStringArray("secondary_target_state")]
+[node name="ItemHeal2" type="Node" parent="StateMachine" unique_id=2134981292 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
 script = ExtResource("58_v64oh")
 primary_condition = 8
 secondary_condition = 9
+primary_target_state = NodePath("../HookedOnAFeeling")
 secondary_target_state = NodePath("../Mad2")
 metadata/_custom_type_script = "uid://c73a2o5xnqs0k"
 
@@ -8810,11 +8811,12 @@ moveset_type = 2
 moveset_array = Array[String](["attack"])
 metadata/_custom_type_script = "uid://be0a0n2xv87g7"
 
-[node name="TauntAndCounter" type="Node" parent="StateMachine" unique_id=343560956 node_paths=PackedStringArray("secondary_target_state", "tertiary_target_state")]
+[node name="TauntAndCounter" type="Node" parent="StateMachine" unique_id=343560956 node_paths=PackedStringArray("primary_target_state", "secondary_target_state", "tertiary_target_state")]
 script = ExtResource("63_jgm8d")
 primary_condition = 4
 secondary_condition = 0
 tertiary_condition = 5
+primary_target_state = NodePath("../LoopingCharge")
 secondary_target_state = NodePath("../LoopingCharge")
 tertiary_target_state = NodePath("../ItemHeal")
 time_to_wait = 8.0
