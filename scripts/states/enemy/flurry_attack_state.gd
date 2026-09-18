@@ -47,7 +47,7 @@ func _enter_tree() -> void:
 ## Overrides te state change condition so that this state can function properly.
 func _validate_property(property: Dictionary) -> void: 
 	attack_timer_required = false
-	update_shown_exported_variables(property)
+	super(property)
 	
 
 func enter() -> void:

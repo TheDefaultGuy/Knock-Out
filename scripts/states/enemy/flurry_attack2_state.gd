@@ -2,19 +2,20 @@
 @tool
 class_name SequentialAttacks extends EnemyState
 
-## A state in which the enemy will perform a sequence of attacks or animation.
-## This can be used to chain pre-existing attacks together or to make a "Flurry" attack state like
-## Piston Hondo's "Hondo Rush", Mr Sandman's "Dreamland Express", or Super Macho Man's Clotheslines.
+## A state in which the [Enemy] will perform a sequence of attacks or animations.
 ##
-## In this state, the enemy will perform each attack in the attack array one after the other.
+## This can be used to chain pre-existing attacks together or to make a "Flurry" attack state like
+## Piston Hondo's "Hondo Rush", Mr Sandman's "Dreamland Express", or Super Macho Man's Clotheslines.[br]
+##
+## In this state, the [Enemy] will perform each attack in the [param moveset_array] one after the other.
 ## After finishing the last attack or the player being knocked out, it will transition to the next state.
-## You can manually do repeated moves by adding duplicate moves in the moveset array.
+## You can manually do repeated moves by adding duplicate moves in the [param moveset_array].
 ## This is how you can achieve something like the "Hondo Rush" or "Dreamland Express".
 ##
-## This is a template state used by enemy boxers.
-## To add it as a state, add it as a child node to the State Machine node in the enemy's scene,
-## Then, tweak the exported variables to set it up.
-## DO NOT change anything in the actual .gd file, since it'll screw up compatibility HARD.
+## This is a template [EnemyState] used by [Enemy] boxers.
+## To add it as a [State], add it as a child node to the [StateMachine] node in the enemy's scene.
+## Then, tweak the exported variables to set it up how you'd like.
+## DO NOT change anything in the actual .gd file, since it'll mess up compatibility.
 
 ## Stores how many attacks/animations have been finished in this state.
 var attack_count : int = 0
@@ -29,16 +30,14 @@ func _init() -> void:
 	state_type = STATE_TYPE_ENUM.CHAINED_ATTACKS
 	attack_timer_required = false
 	nested_state_machine = preload("uid://bg1hc7fvrio3n")
+	
+	moveset_type = MOVESET_TYPE_ENUM.PREDETERMINED_ORDER
+	
+	# Overrides the state change condition so that this state can function properly.
 	primary_condition = STATE_CHANGE_CONDITION.AFTER_COMPLETION
 	secondary_condition = STATE_CHANGE_CONDITION.AFTER_PLAYER_KNOCKED_DOWN
 	moveset_type = MOVESET_TYPE_ENUM.PREDETERMINED_ORDER
 	
-
-func _enter_tree() -> void:
-	# Overrides the state change condition so that this state can function properly.
-	primary_condition = STATE_CHANGE_CONDITION.AFTER_COMPLETION
-	moveset_type = MOVESET_TYPE_ENUM.PREDETERMINED_ORDER
-	secondary_condition = STATE_CHANGE_CONDITION.AFTER_PLAYER_KNOCKED_DOWN
 
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
@@ -50,18 +49,13 @@ func _process(_delta: float) -> void:
 
 func _validate_property(property: Dictionary) -> void: 
 	attack_timer_required = false
-	update_shown_exported_variables(property)
+	super(property)
 	
 
 func enter() -> void:
-	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
-	current_animation_state_machine = animation_tree["parameters/playback"]
+	super() # Runs the base EnemyState enter function and then runs everything below.
 	
 	started_attacking = false
-	
-	get_parent().interrupted_state = primary_target_state
-	
-	
 	animation_tree.animation_finished.connect(increase_count)
 	animation_tree.animation_started.connect(set_attacking)
 	
@@ -69,19 +63,21 @@ func enter() -> void:
 	# as the special formatted array that avoids duplicate animation nodes.
 	var reversed_moveset = moveset_array.duplicate()
 	reversed_moveset.reverse()
+	
 	modified_moveset = format_moveset_for_unique_names(reversed_moveset)
 	modified_moveset.reverse()
 	
+	# Travels to the first attack/animation
 	current_animation_state_machine.travel(modified_moveset[0])
-	toggle_stunned_signal_connections()
+	
 	
 func exit() -> void:
+	super() # Runs the base EnemyState exit function and then runs everything below.
+	
+	# Disconnecting signals.
 	animation_tree.animation_finished.disconnect(increase_count)
 	animation_tree.animation_started.disconnect(set_attacking)
-	toggle_stunned_signal_connections()
-	started_attacking = false
 
-	
 #endregion
 
 ## Just sets the variable when an animation has started:

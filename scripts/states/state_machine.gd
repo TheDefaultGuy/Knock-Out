@@ -2,43 +2,58 @@
 @tool
 class_name StateMachine extends Node
 
-## In-charge of transitioning and storing the player and enemy states.
+## The node In-charge of transitioning and storing the [Player] and [Enemy] states.
 ##
-## 
+## Only nodes that inherit from [State] or [EnemyState] can be accessed by or added as a child of the [StateMachine]
 
 @export_category("⚠️ Initial State ⚠️")
-## The first state or the default state the enemy or player is when starting the match.
+
+## The first [State] or the default [State] the [Enemy] or [Player] is when starting the match.
 @export var initial_state : State
+
 @export_category("⚠️ Required States ⚠️")
-## The state where the enemy is temporarily stunned and can't fight back.
+
+## The [State] where the [Enemy] is temporarily stunned and can't fight back.
 @export var stun_state : State
-## The state where the player or enemy is knocked down and the count to get back up has started.
+
+## The [State] where the [Player] or [Enemy] is knocked down and the count to get back up has started.
 @export var knocked_down_state : State
-## The state where the player or enemy is knocked down and the count to get back up has started.
+
+## The [State] where the [Player] or [Enemy] is knocked down and the count to get back up has started.
 @export var spectating_state : State
-## The state where the player is tired and can only dodge.
+
+## The [State] where the [Player] is tired and can only dodge.
 @export var tired_state : State
-## The state where the player and enemy are starting the match or are at the end of the match.
+
+## The [State] where the [Player] and [Enemy] are starting the match or are at the end of the match.
 @export var cutscene_state : State
 
-## The state where the player can attack.
+## The [State] where the [Player] can attack.
 @export var neutral_state : State
 
-var current_state : State
 @export_tool_button("Delete Attack Animation Nodes") var dlt_bttn = delete_attack_animation_nodes
-@onready var animation_tree: AnimationTree = %AnimationTree
-@onready var anim_state_machine = animation_tree["parameters/playback"]
+
+## The current [State] that active and running.
+var current_state : State
+
+
+
 var root_state_machine : AnimationNodeStateMachine = null
-# Used to store a state that the enemy was currently at before it got interrupted
-# be it by being stunned, knocked down, etc...
+
+## Used to store a [State] that the [Enemy] was currently at before it got interrupted
+## be it by being stunned, knocked down, etc...
 var interrupted_state: State 
 
+## The list of states inside the [StateMachine] / children of the [StateMachine].
 var states : Dictionary = {}
+
+@onready var animation_tree: AnimationTree = %AnimationTree
+@onready var anim_state_machine = animation_tree["parameters/playback"]
 
 func _ready() -> void:
 	delete_attack_animation_nodes()
 	for child in get_children():
-		if child is State:
+		if child is State or EnemyState:
 
 			states[child] = child # basically checks all of the states and adds them to the states dictionary
 			
@@ -70,7 +85,7 @@ func on_transition(state, new_state_name):
 
 ## Deletes all of the animation nodes.
 func delete_attack_animation_nodes() -> void:
-	if owner is Enemy: # Only do this with enemy class
+	if owner is Enemy: # Only do this with Enemy class
 		
 		root_state_machine = animation_tree.tree_root
 		var nodes_to_delete_in_root : Array = get_nodes_for_deletion(root_state_machine)

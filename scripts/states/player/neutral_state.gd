@@ -1,11 +1,11 @@
 @icon("res://assets/icons/BoxiconsMehBlank.svg")
 
 class_name PlayerNeutral extends State
-## The neutral/default player state where the player can attack, dodge, block and duck normally.
+## The neutral/default player state where the [Player] can attack, dodge, block and duck normally.
 ## 
-## Since this is a state exclusive to the player, NONE of the variables, code, etc... can be changed.
+## Since this is a state exclusive to the [Player], NONE of the variables, code, etc... can be changed.
 ## Everything MUST be kept as is.
-## Eventually, once the code for the player is cleaned up, the option to add custom playes might be added.
+## Eventually, once the code for the [Player] is cleaned up, the option to add custom playes might be added.
 
 @onready var input_component: InputComponent = %InputComponent
 @onready var player = self.owner

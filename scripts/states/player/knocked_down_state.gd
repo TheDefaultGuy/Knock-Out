@@ -68,8 +68,8 @@ func perform_attack(_height : int, _direction : int, _action_name : String):
 	
 ## Doesn't let the player be able to get up after they failed to get up before the 10 count.
 func failed_to_get_up(): 
-	get_up_step_value = 0.0
-	get_up_decay_rate = 2.0 * get_up_decay_rate
+	#get_up_step_value = 0.0
+	#get_up_decay_rate = 2.0 * get_up_decay_rate
 	return
 	
 func ready_to_fight():

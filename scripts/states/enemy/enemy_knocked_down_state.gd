@@ -1,9 +1,9 @@
 @icon("res://assets/icons/StreamlineSleepSolid.svg")
 
 class_name EnemyKnockedDown extends State
-## This is the state in which the enemy is knocked down.
+## This is the state in which the [Enemy] is knocked down.
 ##
-## It is a required state for all enemies.
+## It is a required state for all [Enemy].
 
 
 ## The minimum amount of time in seconds the enemy will get up from being knocked down.

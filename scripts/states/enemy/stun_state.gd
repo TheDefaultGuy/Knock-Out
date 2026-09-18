@@ -5,7 +5,7 @@ class_name StunState extends State
 
 ## This is the state in which the enemy is stunned and can't fight back.
 ##
-## It is a required state for all enemies.[br]
+## It is a required state for all [Enemy].[br]
 ## 
 ## The stun behavior is customizable:[br]
 ## FIXED TIMER DURATION: after a given amount of time,
@@ -37,6 +37,8 @@ enum BEHAVIOR_TYPE{
 	INCREASING_NUMBER_OF_PUNCHES,
 }
 
+const DIZZY_EFFECT = preload("uid://1gxun2up65jb")
+
 @export_category("💫 Stun Behavior")
 
 ## How the enemy will behave during stun.
@@ -51,16 +53,21 @@ enum BEHAVIOR_TYPE{
 ## regardless of how many punches the player has landed.
 ## FIXED_NUMBER_OF_PUNCHES and INCREASING_NUMBER_OF_PUNCHES: How long does the player have to NOT punch for the enemy to recover automatically.
 @export_range(0.5, 3.0, 0.25, "suffix:s") var stun_duration : float = 2.0 
+
 ## The minimum amount of punches that stun will last for.
 @export_custom(PROPERTY_HINT_NONE, "suffix:punches") var min_stun_length : int = 3
+
 ## The maximum amount of punches that stun will last for.
 @export_custom(PROPERTY_HINT_NONE, "suffix:punches") var max_stun_length : int = 15
+
 ## The fixed amount of punches that stun will last for.
 @export_custom(PROPERTY_HINT_NONE, "suffix:punches") var fixed_stun_length : int = 5
 
 @export_category("🍾 Heal After Recovering?")
+
 ## Whether the enemy transitions to a healing state after stun is over 
 @export var heal_after_stun : bool = false
+
 ## The amount of time the enemy waits (in seconds) before changing to the target state.
 @export_range(5.0, 100.0, 1.0, "suffix:hp") var target_health : float = 20.0
 
@@ -78,10 +85,10 @@ var stun_punch_length: int = 0
 
 ## Variable checked to see when to transition out of stun.
 var stun_over : bool = false
-const DIZZY_EFFECT = preload("uid://1gxun2up65jb")
 
 var dizzy : CPUParticles2D = null
 
+## Timer used to keep track of how long the enemy has been in stun.
 var stun_timer : Timer = null
 
 ## Handles showing and hiding applicable exported variables
@@ -129,7 +136,7 @@ func create_timers() -> void:
 
 func enter() -> void: # Blank enter and exit functions that get overridden by each state's own custom enter and exit functions.
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
-
+	
 	animation_tree.set("parameters/idle/blend_position", 1)
 	FightManager.enemy_knocked_down_signal.connect(transition_to_knocked_down)
 	FightManager.succesful_hit_signal.connect(increase_punch_count)
@@ -162,7 +169,7 @@ func exit() -> void:
 	
 	animation_tree.animation_finished.disconnect(check_if_stun_over)
 
-	dizzy.visible = false	
+	dizzy.visible = false
 #endregion
 
 func set_stun_over() -> void:
@@ -170,12 +177,15 @@ func set_stun_over() -> void:
 
 ## Increases the punch count by one everytime the player lands a punch during stun.
 func increase_punch_count() -> void:
-	if stun_behavior == BEHAVIOR_TYPE.FIXED_NUMBER_OF_PUNCHES or stun_behavior == BEHAVIOR_TYPE.INCREASING_NUMBER_OF_PUNCHES:
-		stun_timer.start(stun_duration)
+	if stun_behavior == BEHAVIOR_TYPE.FIXED_NUMBER_OF_PUNCHES or stun_behavior == BEHAVIOR_TYPE.INCREASING_NUMBER_OF_PUNCHES :
+		stun_timer.start(stun_duration) # Restarts the stun duration timer.
+		
 		punch_count = punch_count + 1
+		
 		if punch_count + 1 == stun_punch_length:
 			defense_component.current_hit_animation = "final_hit" # Sets the last hit of the stun to be the final hit animation.
 			print("Final hit in stun coming...")
+			
 		if punch_count == stun_punch_length:
 			dizzy.visible = false
 			FightManager.final_stun_hit_signal.emit()
@@ -186,6 +196,7 @@ func check_if_stun_over() -> void:
 	if stun_timer.time_left == 0.0 :
 		transition_to_target()
 		return
+		
 	await animation_tree.animation_finished
 	if stun_over == true:
 		transition_to_target()
@@ -193,11 +204,11 @@ func check_if_stun_over() -> void:
 
 func transition_to_target() -> void:
 	if anim_state_machine.get_current_node() == "idle": # Checks to see if the enemy is idle so that it doesn't interrupt a hit, block, or any other animation.
-		transition(self, target_state)
+		transition(target_state)
 
 func reset_stun_length() -> void:
 	pass
-	
+
 ## Checks the enemy's own HP and transitions to heal state once it reaches it.
 func check_enemy_health_condition() -> void:
 	if health_component.hp <= target_health and heal_after_stun == true:

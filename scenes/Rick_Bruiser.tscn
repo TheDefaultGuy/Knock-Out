@@ -8920,20 +8920,8 @@ parameters/final_hit/blend_position = Vector2(-1.2386009, 2.2694063)
 parameters/get_up/blend_position = -1.0043597
 parameters/hit/blend_position = Vector2(1.4105186, 1.3653846)
 parameters/idle/blend_position = 0.0
-parameters/item_heal/item_hit/blend_position = Vector2(0, 0)
-parameters/item_heal_2/item_hit/blend_position = Vector2(0, 0)
 parameters/knock_down/blend_position = Vector2(-1.0533643, 1.0897703)
 parameters/looping_charge/conditions/ko = false
-parameters/reactionary/dodge/blend_position = Vector2(0, 0)
-parameters/reactionary/final_hit/blend_position = Vector2(0, 0)
-parameters/reactionary/hit/blend_position = Vector2(0, 0)
-parameters/reactionary/punish/blend_position = 0.0
-parameters/reactionary/stun_hit/blend_position = Vector2(0, 0)
-parameters/reactionary_2/dodge/blend_position = Vector2(0, 0)
-parameters/reactionary_2/final_hit/blend_position = Vector2(0, 0)
-parameters/reactionary_2/hit/blend_position = Vector2(0, 0)
-parameters/reactionary_2/punish/blend_position = 0.0
-parameters/reactionary_2/stun_hit/blend_position = Vector2(0, 0)
 parameters/stun_hit/blend_position = Vector2(-0.9225484, 0.86757994)
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1565675371]

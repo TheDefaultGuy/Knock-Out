@@ -5,6 +5,9 @@
 ## For example, it should be used for sound effects like: succesful hits, dodges, blocks, gaining a star, being stunned, etc...
 class_name SoundEffectsComponent extends Node
 
+const MATCH_BGM = preload("uid://bxvahixjtads2")
+const KO_BGM = preload("uid://cwd0ahjeaqarg")
+
 @export var punch_hit : AudioStream
 @export var punch_miss : AudioStream
 @export var dodge : AudioStream
@@ -15,8 +18,6 @@ class_name SoundEffectsComponent extends Node
 @export var knock_down : AudioStream
 @export var parry : AudioStream
 
-const MATCH_BGM = preload("uid://bxvahixjtads2")
-const KO_BGM = preload("uid://cwd0ahjeaqarg")
 var background_music : AudioStreamPlayer = null
 
 # Called when the node enters the scene tree for the first time.

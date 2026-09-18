@@ -22,8 +22,8 @@ func exit() -> void:
 #func _process(_delta: float) -> void:
 	#return
 	
-func transition(current, target_state) -> void:
-	transition_state.emit(current, target_state)
+func transition(target_state) -> void:
+	transition_state.emit(self, target_state)
 
 	
 ## Function that transitions from the current state to the knocked down state.

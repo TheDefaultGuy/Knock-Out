@@ -19,12 +19,14 @@ signal defense_input_signal(move)
 @export var parry_window : float = 0.1
 @export var final_stun_hit_attack_cooldown : float = 0.6
 
+## The timer used to set the duration of how long it stores the unhandled inputs
 var input_buffer_timer: Timer = null
+
+## Timer that gets started when the player blocks and is then checked to see if it's still running to determine if it was a parry or not.
 var parry_timer: Timer = null
+
+## Variable that stores the unhandled input
 var unhandled_input = null
-var latest_action = null
-
-
 
 ## Variable that stores if the player is holding down the left button.
 var holding_left : bool = false
@@ -150,7 +152,7 @@ func perform_buffered_action():
 		perform_action(unhandled_input)
 		unhandled_input = null
 		
-## When the buffer timer runs out, clear the unhandled input
+## When the [member input_buffer_timer] runs out, clear the unhandled input
 func _on_input_buffer_timer_timeout() -> void: 
 	unhandled_input = null
 	
@@ -159,7 +161,7 @@ func reset_blend_positions() -> void:
 	owner.animation_tree.set("parameters/dodge_blend_right/blend_position", 0)
 	owner.animation_tree.set("parameters/duck_blend/blend_position", 0)
 
-## This function is used so that players can't attack aafter the enemy got hit on the last punch allowable of their stun state.
+## This function is used so that players can't attack aafter the [Enemy] got hit on the last punch allowable of their [StunState].
 ## This is so that players don't throw another punch that won't land and waste stamina.
 func final_stun_hit() -> void:
 	allow_inputs = false

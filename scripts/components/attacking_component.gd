@@ -1,6 +1,7 @@
 @icon("res://assets/icons/MdiSwordCross.svg")
 
 class_name AttackingComponent extends Node
+
 ## This component is responsible for performing the attacks.
 ##
 ## It's used by the attack animations in the Move Set Animation Player and iteracts with the [DefenseComponent].

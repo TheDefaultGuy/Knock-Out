@@ -3,26 +3,25 @@
 
 class_name LoopingCharge extends EnemyState
 
-## This is a template state used by enemy boxers.
-##
 ## In this state, the enemy will first perform an intro animation,
 ## and then loop another animation or a series of animations over and over until either they or the player are knocked down.
-## This should be used to recreate attacks like Bald Bull's Bull Rush, where the enemy won't stop until somebody is knocked down.
+## This should be used to recreate attacks like Bald Bull's Bull Charge.[br]
 ##
-## This is a template state used by enemy boxers.
-## To add it as a state, add it as a child node to the State Machine node in the enemy's scene,
-## Then, tweak the exported variables to set it up.
-## DO NOT change anything in the actual .gd file, since it'll screw up compatibility HARD.
+## This is a template [EnemyState] used by [Enemy] boxers.
+## To add it as a [State], add it as a child node to the [StateMachine] node in the enemy's scene.
+## Then, tweak the exported variables to set it up how you'd like.
+## DO NOT change anything in the actual .gd file, since it'll mess up compatibility.
 
-
-#region The Ready, Enter and Exit functions
 func _init() -> void:
 	state_type = STATE_TYPE_ENUM.NESTED_STATE_MACHINE
 	attack_timer_required  = true
 	nested_state_machine = preload("uid://bpl60rtp2gv5i")
 	moveset_array = ["attack"]
 	moveset_type = MOVESET_TYPE_ENUM.PREDETERMINED_ORDER
-
+	
+	# Given the nature of this state, these 2 conditions MUST ALWAYS be set and have a target state to transition to.
+	primary_condition = STATE_CHANGE_CONDITION.AFTER_PLAYER_KNOCKED_DOWN
+	secondary_condition = STATE_CHANGE_CONDITION.AFTER_ENEMY_KNOCKED_DOWN
 
 	if primary_target_state == null and secondary_target_state != null:
 		primary_target_state = secondary_target_state
@@ -31,10 +30,7 @@ func _init() -> void:
 		secondary_target_state = primary_target_state
 		push_warning(self.name, " Secondary target state wasn't set, but used the primary target state as a fallback.")
 		
-func _enter_tree() -> void:
-	# Given the nature of this state, these 2 conditions MUST ALWAYS be set and have a target state to transition to.
-	primary_condition = STATE_CHANGE_CONDITION.AFTER_PLAYER_KNOCKED_DOWN
-	secondary_condition = STATE_CHANGE_CONDITION.AFTER_ENEMY_KNOCKED_DOWN
+
 	
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
@@ -43,28 +39,3 @@ func _process(_delta: float) -> void:
 		animation_tree.set(str("parameters/",nested_machine_name,"/conditions/ko"), Global.player_node.isKnockdown or Global.enemy_node.isKnockdown)
 	if get_parent().current_state == self:
 		check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
-	
-	## Handles showing and hiding applicable exported variables
-func _validate_property(property: Dictionary) -> void:
-	update_shown_exported_variables(property)
-
-func enter() -> void:
-	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
-	
-	toggle_stunned_signal_connections()
-	
-	current_animation_state_machine = animation_tree[str("parameters/",nested_machine_name,"/playback")]
-	
-	# Travels to the nested state machine from the Root node
-	anim_state_machine.travel(nested_machine_name)
-	
-	# Connects the attack timer so that the enemy can perform actions.
-	attack_timer.timeout.connect(perform_action)
-	
-	# Starts the attack delay timer so that the enemy can start attacking.
-	start_attack_delay_timer()
-	
-func exit() -> void:
-	toggle_stunned_signal_connections()
-	attack_timer.timeout.disconnect(perform_action)
-#endregion

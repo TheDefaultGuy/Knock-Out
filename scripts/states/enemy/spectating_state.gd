@@ -2,8 +2,9 @@
 
 class_name EnemySpectating extends State
 
-## It's the state entered when the player is knocked down.
-## This is a required state for enemy boxers.
+## It's the state entered when the [Player] is knocked down and the [Enemy] is watching them.
+##
+## It is a required state for all [Enemy].
 
 func enter() -> void:
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)

@@ -6,14 +6,17 @@ class_name Arena extends Node2D
 ## You can select the player and enemy scenes.
 
 @export_category("Fighters")
-## Place the player or the controllable fighter node here.
+## Place the [Player] or the controllable fighter node here.
 @export var player_scene : PackedScene
-## Place the opponent node here.
+
+## Place the [Enemy] node here.
 @export var enemy_scene : PackedScene
-## The timer used for tracking the time left in the round.
 
 
+## Stores the [Player] node/scene.
 var player_node = null
+
+## Stores the [Enemy] node/scene.
 var enemy_node = null
 
 var lerp_timer : Timer = null
@@ -29,12 +32,16 @@ var secs := 1.25
 
 ## The player's health bar.
 @onready var player_bar: ProgressBar = $Camera2D/UI/PlayerBar
+
 ## The enemy's health bar.
 @onready var enemy_bar: ProgressBar = $Camera2D/UI/EnemyBar
+
 ## The label that displays the player's health bar.
 @onready var star_count_label: Label = $Camera2D/UI/StarCountLabel
+
 ## The label that displays the player's stamina.
 @onready var stamina_label: Label = $Camera2D/UI/StaminaLabel
+
 ##The label that displays the time left in the round..
 @onready var time_left_label: Label = $Camera2D/UI/TimeLeftLabel
 @onready var state_label: Label = $Camera2D/UI/StateLabel
@@ -45,7 +52,6 @@ var secs := 1.25
 
 @onready var fight_logic_component : FightLogicComponent = %FightLogicComponent
 @onready var match_settings : MatchSettings = %MatchSettings
-
 
 
 # Called when the node enters the scene tree for the first time.

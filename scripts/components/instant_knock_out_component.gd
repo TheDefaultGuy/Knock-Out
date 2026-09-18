@@ -11,14 +11,18 @@ class_name InstantKOComponent extends Node
 #region Exported Variables and function that handles which variables to show
 ## Sets the condition for the player to get an instant KO.
 enum KO_CONDITION_TYPE{
+	
 	## Will grant a KO if the player lands a  punch that is at least worth the given star amount.
 	STARS_USED,
+	
 	## Will grant a KO if the player lands another star punch after the enemy has already received the given star punch amount.
 	STAR_PUNCHES_RECEIVED,
+	
 	## Will grant a KO if the player has already knocked down the enemy a given number of times before the given round time.
 	KNOCK_DOWNS_BEFORE_ROUND_TIME,
+	
 	## Will grant a KO if the player hasn't been hit before in the round.
-	NEVER_BEEN_HIT
+	NEVER_BEEN_HIT,
 }
 
 
@@ -31,8 +35,10 @@ enum KO_CONDITION_TYPE{
 
 ## The first checked state in which the instant KO will occur.
 @export var expected_state_A : State
+
 ## The state in which the instant KO will occur.
 @export var expected_state_B : State
+
 #@export var conditional_animation : String = "jab"
 
 ## The number of stars required for the star punch to grant an instant KO.

@@ -1,11 +1,11 @@
 @icon("res://assets/icons/FluentEmojiHighContrastSweatDroplets.svg")
-class_name Tired extends State
+class_name TiredState extends State
 
-## The tired state where the player can only dodge and cannot attack.
+## The tired state where the [Player] can only dodge and cannot attack.
 ## 
-## Since this is a state exclusive to the player, NONE of the variables, code, etc... can be changed.
+## Since this is a state exclusive to the [Player], NONE of the variables, code, etc... can be changed.
 ## Everything MUST be kept as is.
-## Eventually, once the code for the player is cleaned up, the option to add custom playes might be added.
+## Eventually, once the code for the [Player] is cleaned up, the option to add custom playes might be added.
 
 var player = self.owner
 
