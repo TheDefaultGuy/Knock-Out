@@ -1,0 +1,70 @@
+[gd_scene format=3 uid="uid://bvyokq5qbudmq"]
+
+[ext_resource type="Script" uid="uid://btiaashsbg4mv" path="res://scripts/character_selection_menu.gd" id="1_1aubv"]
+[ext_resource type="Texture2D" uid="uid://2dpi7133uaol" path="res://assets/nick_portrait.png" id="2_qma75"]
+[ext_resource type="Texture2D" uid="uid://caf00njq2f2j4" path="res://assets/rick_portrait.png" id="3_npab4"]
+[ext_resource type="Texture2D" uid="uid://g11ebud3tjcc" path="res://assets/controller scheme.svg" id="4_qma75"]
+
+[node name="Control" type="Control" unique_id=1479655235]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_1aubv")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1447477549]
+layout_mode = 0
+offset_right = 1152.0
+offset_bottom = 648.0
+theme_override_constants/margin_left = 64
+theme_override_constants/margin_top = 64
+theme_override_constants/margin_right = 64
+theme_override_constants/margin_bottom = 64
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1603289325]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1765992356]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 33
+text = "Choose your opponent:"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Button" type="Button" parent="MarginContainer/VBoxContainer" unique_id=378937222]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 32
+text = "Nick Bruiser
+(For Experienced Punch-Out Players)"
+icon = ExtResource("2_qma75")
+
+[node name="Button2" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1921885383]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 32
+text = "Rick Bruiser
+(For players new to Punch-Out)"
+icon = ExtResource("3_npab4")
+
+[node name="Control2" type="Control" parent="MarginContainer/VBoxContainer" unique_id=1550732919]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 4.85
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1008836303]
+layout_mode = 0
+offset_left = 293.0
+offset_top = 295.0
+offset_right = 1089.0619
+offset_bottom = 809.56
+scale = Vector2(0.7511978, 0.7511978)
+texture = ExtResource("4_qma75")
+expand_mode = 5
+stretch_mode = 5
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Button2" to="." method="_on_button_2_pressed"]

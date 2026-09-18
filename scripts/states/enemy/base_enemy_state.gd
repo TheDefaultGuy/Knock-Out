@@ -27,7 +27,7 @@ enum STATE_TYPE_ENUM{
 
 ## Enum that stores all of the possible state change conditions.
 enum STATE_CHANGE_CONDITION{
-	## The [Enemy] will change to the target state AFTER the specified [member time_to_wait] has elapsed.
+	## The [Enemy] will change to the target state AFTER the specified [member time_to_change_state] has elapsed.
 	## Different to At Round Time since this can happen at different points in the round.
 	AFTER_TIME_PASSED,
 	
@@ -46,8 +46,8 @@ enum STATE_CHANGE_CONDITION{
 	## The [Enemy] will change to the target state the moment their health drops below [member target_hp].
 	AFTER_HEALTH_DROPS_BELOW,
 	
-	### The [Enemy] will change to the target state after taking a given amount of damage during the state.
-	#AFTER_TAKEN_AMOUNT_OF_DAMAGE,
+	## The [Enemy] will change to the target state after taking a given amount of damage during the state and during [StunState].
+	AFTER_TAKEN_AMOUNT_OF_DAMAGE,
 	
 	## The [Enemy] will change to the target state once the [Player] leaves the [TiredState].
 	AFTER_PLAYER_NOT_TIRED,
@@ -132,7 +132,7 @@ const node_position_origin := Vector2(-1000.0,-500.0)
 ##
 ## If the condition is met, it will transition to the [member primary_target_state]
 ## If it's not, it will check the [member secondary_condition]
-@export var primary_condition := STATE_CHANGE_CONDITION.AT_ROUND_TIME : 
+@export var primary_condition := STATE_CHANGE_CONDITION.AFTER_TIME_PASSED : 
 	set(value):
 		if primary_condition != value :
 			primary_condition = value
@@ -144,7 +144,7 @@ const node_position_origin := Vector2(-1000.0,-500.0)
 ## If it's not, it will check the [member tertiary_condition]
 @export var secondary_condition := STATE_CHANGE_CONDITION.DO_NOT_CHANGE :
 	set(value):
-		if secondary_condition != value:
+		if secondary_condition != value :
 			secondary_condition = value
 			notify_property_list_changed()
 
@@ -152,7 +152,7 @@ const node_position_origin := Vector2(-1000.0,-500.0)
 ##
 ## If the condition is met, it will transition to the [member tertiary_target_state].
 @export var tertiary_condition := STATE_CHANGE_CONDITION.DO_NOT_CHANGE :
-	set(value):
+	set(value): 
 		if tertiary_condition != value :
 			tertiary_condition = value
 			notify_property_list_changed()
@@ -169,14 +169,21 @@ const node_position_origin := Vector2(-1000.0,-500.0)
 
 
 @export_category("*️⃣ State Changing Arguments")
+### Basically, ignore/override the conditions of the current state and transition to this state, 
+### regardless of the current state, whenever the conditions of this state are met.
+#@export var override_current_state : bool = false
+
 ## The time in the round (in seconds) where the [Enemy] changes to the target state.
-@export_range(10.0, 180.0, 1.0, "suffix:s") var target_round_time : float
+@export_range(10.0, 180.0, 1.0, "suffix:s") var target_round_time : float = 20.0
 
 ## The amount of time the [Enemy] waits (in seconds) before changing to the target state.
-@export_range(1.0, 120.0, 1.0, "suffix:s") var time_to_wait : float = 5.0
+@export_range(1.0, 90.0, 1.0, "suffix:s") var time_to_change_state : float = 5.0
 
 ## The HP the [Enemy] has to reach before changing to the target state.
 @export_range(1.0, 100.0, 1.0, "suffix:hp") var target_hp : float = 30.0
+
+## The HP the [Enemy] has to loose in this state before changing to the target state.
+@export_range(1.0, 100.0, 1.0, "suffix:hp") var target_damage_taken : float = 30.0
 
 @export_category("🎬 Animations & Moveset")
 
@@ -203,8 +210,6 @@ const node_position_origin := Vector2(-1000.0,-500.0)
 			block_behavior = value
 			notify_property_list_changed()
 		
-## How long will the [member attack_timer] be paused for if the [Enemy] or [Player] blocks.
-@export_custom(PROPERTY_HINT_NONE, "suffix:s") var block_cooldown : float = 0.5
 
 ## The attack that the [Enemy] will perform after blocking.
 @export var counter_attack : String = "counter_uppercut"
@@ -228,6 +233,10 @@ const node_position_origin := Vector2(-1000.0,-500.0)
 #endregion
 
 #region Stored Variables
+
+## Stores the required conditions of the state.
+var required_conditions : Array[int] = []
+
 ## The timer used to automatically go to the next state after time's up.
 var state_change_timer : Timer = null
 
@@ -269,24 +278,38 @@ var list_of_check_functions : Array[Callable] = []
 ## Used so that it can loop back to the start and not look for a value beyond the range of the array
 var moveset_index : int = 0
 
+## Stores how much damage the enemy has received during this state so far.
+var damage_taken_so_far : float = 0.0
+
 @onready var animation_player: AnimationPlayer = %AnimationPlayer
 #endregion
 func _init() -> void:
+	#print(self.name, ": _init()")
+	override_conditions_and_state_parameters()
 	pass
+
 func _enter_tree() -> void:
+	#print(self.name, ": _enter_tree()")
+	override_conditions_and_state_parameters()
 	pass
 
 func _ready() -> void:
 	nested_machine_name = str(self.name).to_snake_case() 
 	
+	# Array that stores the moves/animations that need to be added as animation nodes to the animation tree.
 	var moves_arr : Array = match_moveset_type()
+	
+	
+	# Adds the counter_attack animation to the list of moves if the block behavior is counter attack.
+	if block_behavior == BLOCK_BEHAVIOR_ENUM.COUNTER_ATTACK : 
+		moves_arr.append(counter_attack)
 	
 	set_conditions_and_targets_dictionary()
 	
-	current_animation_state_machine = anim_state_machine
+	current_animation_state_machine = anim_state_machine 
 	
 	if STATE_CHANGE_CONDITION.AFTER_TIME_PASSED in conditions_and_targets_dict.keys():
-		state_change_timer = create_timer("Wait Timer", true, time_to_wait)
+		state_change_timer = create_timer("Wait Timer", true, time_to_change_state)
 		add_child(state_change_timer)
 		
 	# Creates and adds the attack timer as a child and connects it if it's required for the state.
@@ -299,20 +322,25 @@ func _ready() -> void:
 	match state_type: # Checks the type of state it is so that it can properly set up the animation nodes in the animation tree.
 		STATE_TYPE_ENUM.NESTED_STATE_MACHINE:
 			call_deferred("add_nested_state_machine_node")
-			call_deferred("add_attack_nodes_to_nested_state_machine", nested_state_machine, moves_arr)
+			if moves_arr != [] or null :
+				call_deferred("add_attack_nodes_to_nested_state_machine", nested_state_machine, moves_arr)
 		STATE_TYPE_ENUM.SIMPLE:
-			call_deferred("add_attack_animation_nodes", animation_tree.tree_root, moves_arr)
+			if moves_arr != [] or null :
+				call_deferred("add_attack_animation_nodes", animation_tree.tree_root, moves_arr)
 		STATE_TYPE_ENUM.CHAINED_ATTACKS:
-			call_deferred("add_chained_attack_animation_nodes", animation_tree.tree_root, moves_arr)
+			if moves_arr != [] or null :
+				call_deferred("add_chained_attack_animation_nodes", animation_tree.tree_root, moves_arr)
 			
 	# Sets the check condition functions that the state will run during process function of that state.
 	set_condition_check_functions_based_on_conditions() 
 
-func _process(_delta: float) -> void:
-	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
-		return
-	if get_parent().current_state == self:
-		check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
+#func _process(_delta: float) -> void:
+	#if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
+		#return
+	#if get_parent().current_state == self:
+		#print(self.name)
+		#print(list_of_check_functions)
+		#check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
 
 #region Enter and Exit functions
 func enter() -> void:
@@ -345,7 +373,7 @@ func enter() -> void:
 	
 	# Sets the interrupted state in the state machine as itself.
 	# That way, if it gets interrupted by another state like stunned, it'll come back to this one.
-	get_parent().interrupted_state = self 
+	state_machine.interrupted_state = self 
 	
 	if attack_timer != null and attack_timer_required == true :
 		# Starts the attack delay timer so that the enemy can start attacking.
@@ -400,12 +428,18 @@ func match_moveset_type() -> Array:
 	match moveset_type:
 		MOVESET_TYPE_ENUM.WEIGHTED_DICTIONARY:
 			return moveset_dictionary.keys()
+			
 		MOVESET_TYPE_ENUM.PICK_RANDOM:
 			return moveset_array
+			
 		MOVESET_TYPE_ENUM.PREDETERMINED_ORDER:
 			return moveset_array
+			
+		MOVESET_TYPE_ENUM.NOT_APPLICABLE:
+			return [] # Since the concept of a moveset doesn't apply, return empty array
+			
 		_:
-			printerr(self.name, " match_moveset_type() unnaccounted 4th option, returning moveset_array...")
+			printerr(self.name, " match_moveset_type() unnaccounted 5th option, returning moveset_array...")
 			return moveset_array
 
 ## Checks for a required attack and then appends/adds it to the moveset dictionary or array if it's not found.
@@ -545,7 +579,7 @@ func toggle_state_change_timer() -> void:
 		state_change_timer.paused = !state_change_timer.paused
 		return
 	elif state_change_timer.time_left == 0.0 :
-		state_change_timer.wait_time = time_to_wait
+		state_change_timer.wait_time = time_to_change_state
 		return
 #endregion
 
@@ -564,6 +598,7 @@ func check_all_assigned_conditions() -> void:
 ## Checks to see if the current round time matches [member target_round_time] to change state.
 func check_round_time() -> bool:
 	if FightManager.round_time >= target_round_time:
+		prints(FightManager.round_time, target_round_time)
 		condition_match_direct_transition(STATE_CHANGE_CONDITION.AT_ROUND_TIME)
 		return true
 	return false
@@ -623,12 +658,12 @@ func check_for_knockdowns() -> bool:
 	match true:
 		Global.enemy_node.isKnockdown:
 			condition_match_change_interrupted_state(STATE_CHANGE_CONDITION.AFTER_ENEMY_KNOCKED_DOWN)
-			transition_to_target(get_parent().knocked_down_state)
+			transition_to_target(state_machine.knocked_down_state)
 			return true
 			
 		Global.player_node.isKnockdown:
 			condition_match_change_interrupted_state(STATE_CHANGE_CONDITION.AFTER_PLAYER_KNOCKED_DOWN)
-			transition_to_target(get_parent().spectating_state)
+			transition_to_target(state_machine.spectating_state)
 			return true
 	return false
 
@@ -896,37 +931,57 @@ func transition_to_target(target_state : State) -> void:
 		attack_timer.stop() # Stops the attack timer to avoid shenanigans.
 		
 	#print("\ntransition_to_target function: ")
-	#print("CURRENT NODE: ",current_animation_state_machine.get_current_node())
-	#print("target_state: ", target_state.name)
+	#print("CURRENT NODE AT START: ",current_animation_state_machine.get_current_node())
+	#print("target_state: ", target_state)
+	#print("IS target_state SPECTATING: ", target_state is EnemySpectating)
 
-
-	# Checks to see if the enemy is in a "safe animation" so that it doesn't interrupt a hit, block, or any other animation.
+	# Checks to see if the enemy is already in a "safe animation" so that it doesn't interrupt a hit, block, or any other animation.
 	if current_animation_state_machine.get_current_node() in ["idle", "idle_guard", "End"]:
-		check_for_nested_and_exit_if_so()
+		
+		# Checks if the animation tree is currently in a NESTED animation state machine or the ROOT animation state machine
+		check_for_nested_and_exit_if_so() 
+		
 		transition(target_state)
 		return
 	
 	else:
-		#print("Other option")
+		#print("Not on a safe animation to transition on.")
 		
 		# If the current animation node isn't one of the "safe animations" like "idle", "idle_guard" or "End,
 		# Then wait till the animation finishes playing, then travel to the "hub_node" and then return.
 		# This will force the animation tree to land on one of the "safe animation" nodes so that it can then transition state.
 		
-		#print("PRE-AWAIT")
-		await animation_tree.animation_finished
-		#print("POST-AWAIT")
-		check_for_nested_and_exit_if_so()
-		#print("POST NESTED")
-		if current_animation_state_machine.get_current_node() not in ["knock_down", "get_up", "move_to_spectate", "spectating"]:
-			current_animation_state_machine.travel("hub_node")
+		# If the target state is EnemyKnockedDown, then travel to the "knock_down" animation
+		# and transition to the knockdown state.
+		# This cuts off any animation and is required since going into knock down has way more priority than anything else.
+		if target_state is EnemyKnockedDown : 
+			#print("Traveling to knock_down")
+			current_animation_state_machine.travel("knock_down")
+			transition(target_state)
 			return
-		#if target_state is EnemyKnockedDown:
-			#current_animation_state_machine.travel("knock_down")
-		#elif target_state is EnemySpectating:
-			#current_animation_state_machine.travel("move_to_spectate")
-		transition(target_state)
-		return
+		
+		#print("PRE-AWAIT ANIMATION FINISHED")
+		await animation_tree.animation_finished # Waits until the current attack/animation is finished before changing state.
+		#print("POST-AWAIT ANIMATION FINISHED")
+		
+		# Checks if the animation tree is currently in a NESTED animation state machine or the ROOT animation state machine
+		check_for_nested_and_exit_if_so() 
+		#print("POST NESTED")
+		
+		#print("CURRENT NODE AFTER WAITING: ", current_animation_state_machine.get_current_node())
+
+		# If the enemy is gonna enter Spectating, then it transitions after the current attack animation is finished.
+		if target_state is EnemySpectating : 
+			#print("Traveling to move_to_spectate")
+			current_animation_state_machine.travel("move_to_spectate")
+			transition(target_state)
+			return
+			
+		if current_animation_state_machine.get_current_node() not in ["knock_down", "get_up", "move_to_spectate", "spectating"] :
+			current_animation_state_machine.travel("hub_node") # Travels to the "hub_node" to go to the next state.
+			transition(target_state)
+			return
+	return
 
 ## Checks if the [member current_animation_state_machine] is the ROOT state machine or a NESTED state machine.
 ## Then, it exits the nested state machine and resets the ROOT state machine as the current one.
@@ -946,13 +1001,13 @@ func set_and_check_interrupted_state(target_state) -> void:
 	if target_state == null : # Checks if the target state hasn't been set.
 		
 		# Sets the state itself as the interrupted state as a fallback.
-		get_parent().interrupted_state = self 
+		state_machine.interrupted_state = self 
 		
 		printerr("target_state  is not set in ", str(self.name))
 		return
 	
 	# If the target state HAS been set, then it set the interrupted state.
-	get_parent().interrupted_state = target_state
+	state_machine.interrupted_state = target_state
 	return
 	
 ## Toggles the signals for going to [StunState].
@@ -1025,19 +1080,18 @@ func get_weighted_choice(weight_dict: Dictionary) -> String:
 #endregion
 
 ## Handles showing and hiding applicable exported variables in the inspector.
+##
 ## If a specific condition is set, then it'll hide the variables that dont get used.
-## This is stored as a seperate function in the Enemy State Class since some state have to override
-## some of the variables before updated the exported variables.
 func _validate_property(property : Dictionary) -> void:
-	if Engine.is_editor_hint() == false: #Doesnt run the check outside of the Editor
+	if Engine.is_editor_hint() == false: # Doesn't run the check outside of the Editor
 		return
 	
 	set_conditions_and_targets_dictionary()
-	var conditions = conditions_and_targets_dict.keys()
-	
+	var conditions : Array = conditions_and_targets_dict.keys() # Grabs all of the conditions and puts them in an array for easier checking.
+
 	if property.name == "target_round_time" and STATE_CHANGE_CONDITION.AT_ROUND_TIME not in conditions:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "time_to_wait" and STATE_CHANGE_CONDITION.AFTER_TIME_PASSED not in conditions:
+	if property.name == "time_to_change_state" and STATE_CHANGE_CONDITION.AFTER_TIME_PASSED not in conditions:
 		property.usage = PROPERTY_USAGE_NONE
 	if property.name == "state_change_timer" and STATE_CHANGE_CONDITION.AFTER_TIME_PASSED not in conditions:
 		property.usage = PROPERTY_USAGE_NONE
@@ -1057,8 +1111,6 @@ func _validate_property(property : Dictionary) -> void:
 	if property.name == "tertiary_target_state" and tertiary_condition == STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
 		property.usage = PROPERTY_USAGE_NONE
 		
-	if property.name == "block_cooldown" and block_behavior != BLOCK_BEHAVIOR_ENUM.PAUSE_TIMER:
-		property.usage = PROPERTY_USAGE_NONE
 		
 	if property.name == "max_wait_time" and attack_timer_required == false:
 		property.usage = PROPERTY_USAGE_NONE
@@ -1078,5 +1130,13 @@ func _validate_property(property : Dictionary) -> void:
 		property.usage = PROPERTY_USAGE_NONE
 	if property.name == "counter_attack" and block_behavior != BLOCK_BEHAVIOR_ENUM.COUNTER_ATTACK:
 		property.usage = PROPERTY_USAGE_NONE
-		
+	if property.name == "target_damage_taken" and STATE_CHANGE_CONDITION.AFTER_TAKEN_AMOUNT_OF_DAMAGE not in conditions:
+		property.usage = PROPERTY_USAGE_NONE
+	
+	#Global.exported_properties_changed_signal.emit()
 	return
+
+## Overrides the default conditions and parameters for the state depending on the nature of the state.
+## Each state should have it's own version of this function.
+func override_conditions_and_state_parameters() -> void:
+	pass

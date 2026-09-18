@@ -5,7 +5,7 @@ class_name TiredState extends State
 ## 
 ## Since this is a state exclusive to the [Player], NONE of the variables, code, etc... can be changed.
 ## Everything MUST be kept as is.
-## Eventually, once the code for the [Player] is cleaned up, the option to add custom playes might be added.
+## Eventually, once the code for the [Player] is cleaned up, the option to add custom players might be added.
 
 var player = self.owner
 

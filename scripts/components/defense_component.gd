@@ -221,21 +221,24 @@ func choose_hit_region(punch_height : int, damage_amount : float, punch_directio
 		
 	check_for_star_and_stun(punch_height) # Checks the star punch and stun windows
 	
-	owner.animation_tree.set(str("parameters/",str(current_hit_animation),"/blend_position"), Vector2i(punch_direction, punch_height))
-	
 	if owner is Enemy:
 		play_impact_effect(punch_height)
 		
 		# If the damage passes a certain amount, then play the final hit animation instead.
 		if damage_amount > 15.0:
+			
 			current_hit_animation = "final_hit"
 			owner.hit_by_star_punch_signal.emit()
-			
+	
+	# Sets the blend of the current hit animation based on the punch height and the direction.
+	owner.animation_tree.set(str("parameters/",str(current_hit_animation),"/blend_position"), Vector2i(punch_direction, punch_height))
+	
 	play_animation(str(current_hit_animation))
 	
 	return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
 
-## Checks to see if the attack can be rewarded a star. 
+## Checks to see if the attack can be rewarded a star and if the [Enemy] enters [StunState]. 
+##
 ## Then, it checks to see if the attack landed during a stun window.
 ## Returns true if stunned, and false if not
 func check_for_star_and_stun(punch_height : int) -> bool: 

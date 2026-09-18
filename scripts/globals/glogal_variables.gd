@@ -1,12 +1,37 @@
 extends Node
-# Used to store the player's and enemy as Node2Ds
-var player_node : Node2D = null 
-var enemy_node : Node2D = null
-# The heights for attacks.
-# LOW is for lower body punches
-# HIGH is for High head punches
-# BOTH is for moves like crouching upper cuts that cover both ducking and blocking face.
-enum height{LOW = 0, HIGH = 1, BOTH = 2}
+## Holds constants and nodes that are used by almost all components.
+##
+## [DefenseComponent] and [AttackingComponent] use [enum height] and [enum range] for having a consistent and readable way
+## to determine the height of attacks, the range they conver, the direction of the attack, the dodge position, etc...
 
-# The range (X - axis) for attacks.
-enum range{LEFT = -1, NEUTRAL = 0, RIGHT = 1}
+## The possible heights for attacks.
+enum height{
+	
+	## For lower body or gut punches
+	LOW = 0,
+	
+	## For upper or face punches
+	HIGH = 1,
+	
+	## For moves that cover both upper and lower regions..
+	BOTH = 2,
+	}
+
+## The range (X - axis) for attack range, dodge direction, or punch direction.
+enum range{
+	
+	## Left, from the players point of reference
+	LEFT = -1,
+	
+	## Dead Center, from the players point of reference
+	NEUTRAL = 0,
+	
+	## Right, from the players point of reference
+	RIGHT = 1,
+	}
+
+## Used to store the [Player] as [Node2D]
+var player_node : Node2D = null 
+
+## Used to store the [Enemy] as [Node2D]
+var enemy_node : Node2D = null

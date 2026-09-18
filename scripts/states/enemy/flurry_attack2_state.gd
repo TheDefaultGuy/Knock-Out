@@ -26,31 +26,14 @@ var modified_moveset : Array = []
 var started_attacking : bool = false
 
 #region The Ready, Enter and Exit functions
-func _init() -> void:
-	state_type = STATE_TYPE_ENUM.CHAINED_ATTACKS
-	attack_timer_required = false
-	nested_state_machine = preload("uid://bg1hc7fvrio3n")
-	
-	moveset_type = MOVESET_TYPE_ENUM.PREDETERMINED_ORDER
-	
-	# Overrides the state change condition so that this state can function properly.
-	primary_condition = STATE_CHANGE_CONDITION.AFTER_COMPLETION
-	secondary_condition = STATE_CHANGE_CONDITION.AFTER_PLAYER_KNOCKED_DOWN
-	moveset_type = MOVESET_TYPE_ENUM.PREDETERMINED_ORDER
-	
 
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
 		return
-	if get_parent().current_state == self:
+	if state_machine.current_state == self:
 		if started_attacking == true: # Only checks for state completion after it's started attacking.
 			check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
 
-
-func _validate_property(property: Dictionary) -> void: 
-	attack_timer_required = false
-	super(property)
-	
 
 func enter() -> void:
 	super() # Runs the base EnemyState enter function and then runs everything below.
@@ -97,3 +80,19 @@ func increase_count(_animation) -> void:
 	# It manually travels to each attack animation node since linking them can cause problems when the player gets knocked down.
 	if attack_count >= 0 and attack_count < modified_moveset.size():
 		current_animation_state_machine.travel(modified_moveset[attack_count])
+
+func override_conditions_and_state_parameters() -> void:
+	state_type = STATE_TYPE_ENUM.CHAINED_ATTACKS
+	attack_timer_required = false
+	nested_state_machine = preload("uid://bg1hc7fvrio3n")
+	
+	moveset_type = MOVESET_TYPE_ENUM.PREDETERMINED_ORDER
+	
+	# Overrides the state change condition so that this state can function properly.
+	primary_condition = STATE_CHANGE_CONDITION.AFTER_COMPLETION
+	secondary_condition = STATE_CHANGE_CONDITION.AFTER_PLAYER_KNOCKED_DOWN
+	moveset_type = MOVESET_TYPE_ENUM.PREDETERMINED_ORDER
+
+func _validate_property(property: Dictionary) -> void: 
+	attack_timer_required = false
+	super(property)

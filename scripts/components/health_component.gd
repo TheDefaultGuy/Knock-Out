@@ -8,6 +8,9 @@ class_name HealthComponent extends Node
 ## Signal emitted when the health value has changed.
 signal health_changed_signal
 
+## Signal emitted when the [Fighter] has taken damage.
+signal damage_taken_signal(amount)
+
 @export var max_hp : float = 100.0
 @export var hp : float = 100.0 :
 	set(value):
@@ -20,6 +23,7 @@ func _ready() -> void:
 ## Deals damage to the fighter by the given amount.
 func take_damage(amount : float) -> float:
 	hp -= abs(amount) # Absolute value to avoid negative values that would heal instead.
+	damage_taken_signal.emit(abs(amount))
 	return hp
 
 func reset_hp() -> void:

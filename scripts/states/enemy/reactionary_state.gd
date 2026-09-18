@@ -14,15 +14,11 @@ class_name Reactionary extends EnemyState
 ## The fakeout animation that will play in this state.
 @export var fakeout_animation : String = "fakeout"
 
-func _init() -> void:
-	state_type = STATE_TYPE_ENUM.NESTED_STATE_MACHINE
-	attack_timer_required  = true
-	nested_state_machine = preload("uid://c1biuhgyv30i1")
-	nested_machine_name = str(self.name).to_snake_case()
-	
-	block_behavior = BLOCK_BEHAVIOR_ENUM.RESET_TIMER
-	
-	check_for_attack_and_append(fakeout_animation)
+func _process(_delta: float) -> void:
+	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
+		return
+	if state_machine.current_state == self:
+		check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
 
 func enter() -> void: 
 	
@@ -55,3 +51,20 @@ func play_punish_animation(dodge_direction : int) -> void:
 	if current_animation_state_machine.get_current_node() == str(fakeout_animation) :
 		animation_tree.set(str("parameters/",str(nested_machine_name),"/punish/blend_position"), dodge_direction)
 		current_animation_state_machine.travel("punish")
+		
+func override_conditions_and_state_parameters() -> void:
+	state_type = STATE_TYPE_ENUM.NESTED_STATE_MACHINE
+	attack_timer_required  = true
+	nested_state_machine = preload("uid://c1biuhgyv30i1")
+	nested_machine_name = str(self.name).to_snake_case()
+	
+	block_behavior = BLOCK_BEHAVIOR_ENUM.RESET_TIMER
+	
+	check_for_attack_and_append(fakeout_animation)
+
+## Sets the required conditions as Read Only so that they can't be changed.
+func _validate_property(property : Dictionary) -> void:
+	if property.name == "block_behavior" :
+		property.usage |= PROPERTY_USAGE_READ_ONLY
+
+	super(property) # Calls the base EnemyState function right after.

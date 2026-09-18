@@ -43,7 +43,7 @@ func end_match(animation : String) -> void:
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
 		return
-	if get_parent().current_state != self:
+	if state_machine.current_state != self:
 		return
 	if anim_state_machine.get_current_node() == "idle":
 		anim_state_machine.travel("move_to_spectate")

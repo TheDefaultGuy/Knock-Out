@@ -91,6 +91,9 @@ var dizzy : CPUParticles2D = null
 ## Timer used to keep track of how long the enemy has been in stun.
 var stun_timer : Timer = null
 
+## Stores how much damage the enemy has received during this state so far.
+var damage_taken_so_far : float = 0.0
+
 ## Handles showing and hiding applicable exported variables
 func _validate_property(property: Dictionary) -> void: 
 	if property.name == "fixed_stun_length" and stun_behavior != BEHAVIOR_TYPE.FIXED_NUMBER_OF_PUNCHES:
@@ -122,7 +125,7 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
 		return
-	if get_parent().current_state == self:
+	if state_machine.current_state == self:
 		check_enemy_health_condition()
 		check_if_stun_over()
 		
@@ -140,6 +143,9 @@ func enter() -> void: # Blank enter and exit functions that get overridden by ea
 	animation_tree.set("parameters/idle/blend_position", 1)
 	FightManager.enemy_knocked_down_signal.connect(transition_to_knocked_down)
 	FightManager.succesful_hit_signal.connect(increase_punch_count)
+	
+	health_component.damage_taken_signal.connect(accumulate_damage)
+	
 	owner.hit_by_star_punch_signal.connect(set_stun_over)
 	
 	animation_tree.animation_finished.connect(check_if_stun_over.unbind(1))
@@ -148,7 +154,7 @@ func enter() -> void: # Blank enter and exit functions that get overridden by ea
 	# Resets punch count everytime the enemy enters stun.
 	punch_count = 0
 	stun_over = false
-	target_state = get_parent().interrupted_state
+	target_state = state_machine.interrupted_state
 	
 	match stun_behavior:
 		BEHAVIOR_TYPE.FIXED_TIME_DURATION:
@@ -164,13 +170,18 @@ func exit() -> void:
 	FightManager.enemy_knocked_down_signal.disconnect(transition_to_knocked_down)
 	FightManager.succesful_hit_signal.disconnect(increase_punch_count)
 	owner.hit_by_star_punch_signal.disconnect(set_stun_over)
-	
+	health_component.damage_taken_signal.disconnect(accumulate_damage)
 	defense_component.reset_current_animations()
 	
 	animation_tree.animation_finished.disconnect(check_if_stun_over)
 
 	dizzy.visible = false
 #endregion
+
+## Adds up the damage taken during this state.
+func accumulate_damage(damage_amount : float) -> void:
+	damage_taken_so_far += abs(damage_amount)
+	#print("damage_taken_so_far: ", damage_taken_so_far)
 
 func set_stun_over() -> void:
 	stun_over = true

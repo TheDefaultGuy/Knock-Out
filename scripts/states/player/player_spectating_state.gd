@@ -4,7 +4,7 @@ class_name PlayerSpectating extends State
 ## The state the player is in when the enemy is knocked down.
 
 func _process(_delta: float) -> void:
-	if get_parent().current_state == self:
+	if state_machine.current_state == self:
 		play_win_animation()
 
 func enter() -> void:

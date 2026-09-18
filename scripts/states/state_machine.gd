@@ -52,20 +52,31 @@ var states : Dictionary = {}
 
 func _ready() -> void:
 	delete_attack_animation_nodes()
+	#print(get_children())
 	for child in get_children():
-		if child is State or EnemyState:
+		#prints(child, child is State or child is EnemyState)
+		if child is Node :
+			if child is State or child is EnemyState :
 
-			states[child] = child # basically checks all of the states and adds them to the states dictionary
-			
-			child.transition_state.connect(on_transition)
-			
-	if initial_state: # Checks to see if it has an initial state, if so, enter it.
+				states[child] = child # basically checks all of the states and adds them to the states dictionary
+				
+				child.transition_state.connect(on_transition)
+			else:
+				if child.get_children() != []:
+					for node in child.get_children():
+						if node is State or EnemyState:
+							states[node] = node # basically checks all of the states and adds them to the states dictionary
+							
+							node.transition_state.connect(on_transition)
+						
+	if initial_state != null and initial_state is State : # Checks to see if it has an initial state, if so, enter it.
 		initial_state.enter()
 		current_state = initial_state
 	#print("States: ", states)
 	
 	check_for_unnassigned_states()
-	
+	return
+
 func on_transition(state, new_state_name):
 	if  state != current_state:
 		return # If the state that is calling this function is NOT the current state, ignore it.
@@ -82,6 +93,7 @@ func on_transition(state, new_state_name):
 	
 	current_state = new_state # Sets the current state to the new state
 	#print("Current State: ", current_state)
+	return
 
 ## Deletes all of the animation nodes.
 func delete_attack_animation_nodes() -> void:
@@ -126,8 +138,8 @@ func get_nodes_for_deletion(state_machine_node : AnimationNodeStateMachine) -> A
 		state_machine_node.remove_transition(trans["from"], trans["to"])
 		nodes_to_remove.append(trans["from"])
 	return nodes_to_remove
-	
-func check_for_unnassigned_states():
+
+func check_for_unnassigned_states() -> void:
 	if knocked_down_state == null:
 		printerr(get_parent().name, " doesn't have a Knocked Down State assigned.")
 	if spectating_state == null:
@@ -142,3 +154,4 @@ func check_for_unnassigned_states():
 	if get_parent() is Enemy:
 		if stun_state == null:
 			printerr(get_parent().name, " doesn't have a Stunned State assigned.")
+	return

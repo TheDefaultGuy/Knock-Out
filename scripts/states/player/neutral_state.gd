@@ -12,7 +12,7 @@ class_name PlayerNeutral extends State
 @onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
 
 func _process(_delta: float) -> void:
-	if get_parent().current_state == self:
+	if state_machine.current_state == self:
 		if anim_state_machine.get_current_node() == "hit":
 			animated_sprite_2d.material.set_shader_parameter("Visible", true)
 			return

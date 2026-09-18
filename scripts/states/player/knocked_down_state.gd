@@ -25,7 +25,7 @@ class_name PlayerKnockedDown extends State
 
 func _process(delta: float) -> void:
 
-	if get_parent().current_state == self and owner.can_get_up == true and FightManager.is_fight_over == false: #
+	if state_machine.current_state == self and owner.can_get_up == true and FightManager.is_fight_over == false: #
 		get_up_progress = clampf(get_up_progress - get_up_decay_rate * delta, 0.0 , 110.0)
 		animation_tree.set("parameters/get_up_blend/blend_position", get_up_progress)
 

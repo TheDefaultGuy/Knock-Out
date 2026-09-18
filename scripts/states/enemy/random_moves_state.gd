@@ -14,7 +14,14 @@ class_name RandomizedMoves extends EnemyState
 ## Then, tweak the exported variables to set it up how you'd like.
 ## DO NOT change anything in the actual .gd file, since it'll mess up compatibility.
 
+func _process(_delta: float) -> void:
+	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
+		return
+	if state_machine.current_state == self:
+		#print(self.name)
+		#print(list_of_check_functions)
+		check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
 
-func _init() -> void:
+func override_conditions_and_state_parameters() -> void:
 	state_type = STATE_TYPE_ENUM.SIMPLE
 	attack_timer_required = true

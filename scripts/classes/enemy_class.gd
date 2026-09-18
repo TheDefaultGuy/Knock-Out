@@ -1,18 +1,18 @@
 @icon("res://assets/icons/RiBoxingFill.svg")
 class_name Enemy extends Fighter
 
-## The class used by enemy fighters/boxers.
+## The class used by [Enemy] fighters/boxers.
 ##
-## It extends from fighter and is its own class to make
-## checking between enemy and player easier and to
-## avoid having unused variables in the player class.
+## It extends from [Fighter] and is its own class to make
+## checking between [Enemy] and [Player] easier and to
+## avoid having unused variables in the [Player] class.
 
 
 @warning_ignore("unused_signal")
 ## Signal emitted when the enemy is confirmed to have been hit by a star punch.
 signal hit_by_star_punch_signal
 
-## Whether the fighter is currently stunned.
+## Whether the [Enemy] is currently stunned/in [StunState].
 var is_stunned : bool = false
 
 @onready var instant_ko_component: InstantKOComponent = %InstantKOComponent

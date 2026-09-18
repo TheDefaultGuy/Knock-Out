@@ -15,7 +15,6 @@ func _enter_tree() -> void:
 	%"Dev Tools Button".get_popup().id_pressed.connect(_on_dev_tool_item_selected)
 	%"Dev Tools".visible = plugin.settings.dev_mode
 
-
 func populate_from_scene() -> void:
 	editor.clear()
 	editor.load(view_manager.active_local_view)

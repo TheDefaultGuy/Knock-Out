@@ -13,12 +13,15 @@ class_name PickRandomState extends EnemyState
 ## Stores the possible states and then one gets picked at random.
 var state_array : Array[State] = []
 
-func _init() -> void:
-	moveset_dictionary = {"" : 0.0}
-	primary_condition = STATE_CHANGE_CONDITION.DO_NOT_CHANGE
-	secondary_condition = STATE_CHANGE_CONDITION.DO_NOT_CHANGE
-	tertiary_condition = STATE_CHANGE_CONDITION.DO_NOT_CHANGE
+func override_conditions_and_state_parameters() -> void:
 	
+	moveset_type = MOVESET_TYPE_ENUM.NOT_APPLICABLE
+	attack_timer_required = false
+	primary_condition = STATE_CHANGE_CONDITION.AFTER_COMPLETION
+	secondary_condition = STATE_CHANGE_CONDITION.AFTER_COMPLETION
+	tertiary_condition = STATE_CHANGE_CONDITION.AFTER_COMPLETION
+	
+	block_behavior = BLOCK_BEHAVIOR_ENUM.NOT_APPLICABLE
 	
 func enter() -> void:
 	state_array = []
@@ -39,10 +42,25 @@ func enter() -> void:
 		printerr(self.name, " only one target state set. There needs to be at least 2 target states for this State to function properly as intended.")
 		transition_to_target(state_array[0])
 		return
+	
+## Sets the required conditions as Read Only so that they can't be changed.
+func _validate_property(property : Dictionary) -> void:
+	if property.name == "primary_target_state" :
+		property.usage |= PROPERTY_USAGE_DEFAULT
+	if property.name == "secondary_target_state" :
+		property.usage |= PROPERTY_USAGE_DEFAULT
+	if property.name == "tertiary_target_state" :
+		property.usage |= PROPERTY_USAGE_DEFAULT
 		
-### Handles showing and hiding applicable exported variables
-#func _validate_property(property: Dictionary) -> void:
-	#if property.name not in ["primary_target_state", "secondary_target_state", "tertiary_target_state"]:
-		#property.usage = PROPERTY_USAGE_NO_EDITOR
-	#if property.name in ["primary_target_state", "secondary_target_state", "tertiary_target_state"]:
-		#property.usage = PROPERTY_USAGE_DEFAULT
+	if property.name == "primary_condition" :
+		property.usage |= PROPERTY_USAGE_READ_ONLY
+	if property.name == "secondary_condition" :
+		property.usage |= PROPERTY_USAGE_READ_ONLY
+	if property.name == "tertiary_condition" :
+		property.usage |= PROPERTY_USAGE_READ_ONLY
+		
+	if property.name == "block_behavior" :
+		property.usage |= PROPERTY_USAGE_READ_ONLY
+	if property.name == "moveset_type" :
+		property.usage |= PROPERTY_USAGE_READ_ONLY
+	super(property) # Calls the base EnemyState function right after.
