@@ -528,7 +528,7 @@ func start_attack_delay_timer() -> void:
 	if attack_timer == null : # Checks if the attack timer even exists.
 		return
 	
-	print("STARTED ATTACK TIMER")
+	#print("STARTED ATTACK TIMER")
 	
 	match attack_delay_type: # Matches the selected attack delay type
 		ATTACK_DELAY.FLOAT:
@@ -1047,7 +1047,7 @@ func play_attack_start_attack_timer(animation : String) -> void:
 	# Travels to the given animation on the animation tree.
 	current_animation_state_machine.travel(animation)
 	
-	print("PERFORMING ATTACK: ", animation)
+	#print("PERFORMING ATTACK: ", animation)
 
 	# Waits for the attack animation to finish before restarting the attack delay timer.
 	await animation_tree.animation_finished

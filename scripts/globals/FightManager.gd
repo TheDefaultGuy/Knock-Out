@@ -101,7 +101,7 @@ var star_count : int = 0 :
 		update_ui_signal.emit()
 
 ## The Player's stamina
-var stamina : int = 10 :
+var stamina : int = 120 :
 	# Clamps the value and emits the signal to update the UI everytime the value is set.
 	set(value):
 		stamina = clampi(value, 0 , max_player_stamina)
@@ -135,7 +135,7 @@ var round_idx : int = 0
 var round_time : float = 0.0
 
 ## The maximum players stamina.
-var max_player_stamina : int = 15
+var max_player_stamina : int = 125
 
 ## The number of stars the player used in their star punch.
 ## Used by the Attack Component to calculate the damage of the star punch and by the Instant KO Component to validate if it was a KO.
@@ -178,7 +178,7 @@ func use_stars() -> void:
 
 ## Lowers the players stamina by 1 each time it's called
 func lower_stamina() -> void:
-	print("Fight Manager: Lowering stamina...")
+	#print("Fight Manager: Lowering stamina...")
 	stamina -= 1
 	if stamina == 0:
 		no_stamina_signal.emit()

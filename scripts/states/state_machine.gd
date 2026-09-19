@@ -48,7 +48,7 @@ var interrupted_state: State
 var states : Dictionary = {}
 
 @onready var animation_tree: AnimationTree = %AnimationTree
-@onready var anim_state_machine = animation_tree["parameters/playback"]
+@onready var anim_state_machine : AnimationNodeStateMachinePlayback = animation_tree["parameters/playback"]
 
 func _ready() -> void:
 	delete_attack_animation_nodes()

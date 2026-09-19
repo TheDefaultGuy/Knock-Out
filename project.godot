@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="PunchOutTest"
-run/main_scene="uid://bvyokq5qbudmq"
+run/main_scene="uid://b2o12w57mpc12"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="uid://cgmsoi7qkgxod"
 

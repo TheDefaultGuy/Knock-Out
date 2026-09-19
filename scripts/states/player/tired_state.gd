@@ -12,6 +12,14 @@ var player = self.owner
 @onready var input_component: InputComponent = %InputComponent
 @onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
 
+func _process(_delta: float) -> void:
+	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
+		return
+	
+	if state_machine.current_state == self:
+		print(anim_state_machine.get_current_node())
+
+
 func enter() -> void:
 	print_rich("[color=yellow]Player Entered State: [/color]", self.name)
 

@@ -16,7 +16,7 @@ signal transition_state(current_state, target_state)
 @onready var state_machine: StateMachine = %StateMachine
 
 ## The default/root animation state machine in the animation tree.
-@onready var anim_state_machine = animation_tree["parameters/playback"]
+@onready var anim_state_machine : AnimationNodeStateMachinePlayback = animation_tree["parameters/playback"]
 
 ## The Function that will run as soon as the state machine enters the state.
 ## Can be overwritten by extended state, but still be reliably called by the state machine.

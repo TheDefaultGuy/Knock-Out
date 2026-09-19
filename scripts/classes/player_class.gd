@@ -15,7 +15,8 @@ func _ready() -> void:
 		printerr(self.name, " doesn't have a Health Component assigned.")
 	if animation_tree == null:
 		printerr(self.name, " doesn't have an Animation Tree assigned.")
-
+	else:
+		animation_tree.process_priority = -1 # Sets the process priority of the Animation tree lower so that it RUNS BEFORE other nodes in the tree. 
 	
 func ready_to_fight() -> void:
 	#print("Fighter Class: ", name, " is ready")

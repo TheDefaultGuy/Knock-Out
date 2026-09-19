@@ -47,13 +47,16 @@ func send_attack_call(punch_height : int, punch_range : int, attack_damage : flo
 	if Global.enemy_node == null or Global.player_node == null:
 		printerr("Attacking Component: No enemy node or no player node assigned in global.")
 		return false
+	
 	match owner:
 		Global.enemy_node: # Checks wether the one attacking, the parent of this component, is the player or enemy.
 			punch(Global.player_node, punch_height, punch_range, attack_damage, punch_direction)
 			return
+			
 		Global.player_node:
 			punch(Global.enemy_node, punch_height, punch_range, attack_damage, punch_direction)
 			return
+			
 		_:
 			printerr("Attacking Component: ", owner.name, " is neither the player or the assigned enemy in global.")
 			return 
@@ -67,7 +70,8 @@ func punch(input_node : Node2D, punch_height : int, punch_range : int, attack_da
 		printerr("Attacking Component: Targetted node's defense component doesn't have the function that's being called.")
 		return false # Checks to see if the defense component has that function
 		
-	if owner is Player and str(animation_tree["parameters/playback"].get_current_node()).contains("star") == true: # If it was a star punch, change the attack damage to reflect the amount of star punches used.
+	# If it was a star punch, change the attack damage to reflect the amount of star punches used.
+	if owner is Player and str(animation_tree["parameters/playback"].get_current_node()).contains("star") == true: 
 		attack_damage = calculate_start_punch_damage(attack_damage)
 	
 	# Stores the response given by the defense component about whether or not the hit was succesful

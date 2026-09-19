@@ -37,7 +37,6 @@ func exit() -> void:
 	FightManager.succesful_hit_signal.disconnect(change_to_failed_state)
 	interruption_status = false
 
-
 ## If the [Enemy] got hit, then the [member StateMachine.interrupted_state] will be set to the failed healed state.
 func change_to_failed_state() -> void:
 	interruption_status = true
@@ -47,7 +46,7 @@ func override_conditions_and_state_parameters() -> void:
 	
 	moveset_type = MOVESET_TYPE_ENUM.NOT_APPLICABLE
 	
-	attack_timer_required  = false
+	attack_timer_required = false
 	
 	nested_state_machine = preload("uid://dt6b8hv77b0dh")
 	

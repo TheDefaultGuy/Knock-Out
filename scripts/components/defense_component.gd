@@ -18,6 +18,9 @@ signal succesful_dodge
 ## Signal emitted when the [Enemy] was hit during the stunned window. Used to transition into [StunState].
 signal stunned_signal
 
+## Signal emitted whenthe [Fighter] has registered a hit.
+signal hit_registered_signal
+
 const IMPACT_EFFECT = preload("uid://mbb7yyvjhw12")
 const PARRY_EFFECT = preload("uid://c2vbdtoq1noj0")
 
@@ -103,6 +106,9 @@ var star_window_array : Array[bool] = [lower_star_window, upper_star_window]
 @onready var animation_tree: AnimationTree = %AnimationTree
 #endregion
 
+#func _init() -> void:
+	#self.process_priority = -2
+
 func _ready() -> void:
 	set_anim_state_machine.call_deferred() # gotta defer this for it to work for some reason.
 	if owner is Enemy: # Enemies can't get hurt when they block.
@@ -123,7 +129,8 @@ func set_anim_state_machine() -> void:
 ## punch_range is what dodge positions (X axis) the attack covers; this is used for real hit ditection.
 ## Punch direction is which direction the punch is coming from from the player's perspective; this is mainly used for selecting animations.
 func check_defense(punch_height : int, punch_range : int, damage_amount : float, punch_direction : int) -> bool: 
-	set_defense_variables_arrays()
+	
+	set_defense_variables_arrays() # Sets the defense variables arrays for easier checking
 	
 	# First, it checks for invulnerabilities and dodges.
 	if is_invulnerable(punch_height) or is_punch_dodged(punch_range) == true: # If the player is invulnerable or is not in the area the punch covers, it missed.
@@ -140,6 +147,7 @@ func check_defense(punch_height : int, punch_range : int, damage_amount : float,
 				if handle_damage_and_knockdown(damage_amount, 1.0, punch_height, punch_direction) == false:
 					owner.animation_tree.set(str("parameters/",str(current_hit_animation),"/blend_position"), Vector2i(punch_direction, punch_height))
 					play_animation(str(current_hit_animation))
+					
 				return true
 				
 			_: 
@@ -159,20 +167,7 @@ func check_blocking_status(blocking_status : bool, damage_amount : float, punch_
 		true: # IS blocking
 			if owner is Player: # Only applies to the player.
 				
-				# Basically, if you're blocking, but the punch isn't straight ahead, you still get hit.
-				if dodge_position == Global.range.NEUTRAL:
-					if punch_range != Global.range.NEUTRAL:
-						return choose_hit_region(punch_height, damage_amount, punch_direction)
-				
-				if owner.input_component.parry_timer.time_left > 0.0: # If the parry timer hasn't reached 0, then it's considered a successful parry.
-					FightManager.sfx_parry_signal.emit()
-					player_parried_signal.emit()
-					current_block_animation = "fast_block" # Sets the block animation as the fast block.
-					play_parry_effect(punch_height)
-				else: 
-					current_block_animation = "block"
-					
-				FightManager.lower_stamina() # Lowers the player stamina after a block.
+				handle_player_blocking_and_parry(damage_amount, punch_height, punch_direction, punch_range)
 				
 			# Plays the corresponding block animation if it wasn't enough damage for a knockdown.
 			owner.animation_tree.set(str("parameters/",str(current_block_animation),"/blend_position"),  Vector2i(punch_direction, punch_height))
@@ -190,17 +185,35 @@ func check_blocking_status(blocking_status : bool, damage_amount : float, punch_
 	return false  # Returns that the hit was NOT successful. Mainly as an answer to the attacking component.
 			
 #region Helper/short functions
+
+func handle_player_blocking_and_parry(damage_amount : float, punch_height : int, punch_direction : int, punch_range : int)-> void:
+	# Basically, if you're blocking, but the punch isn't straight ahead, you still get hit.
+	if dodge_position == Global.range.NEUTRAL:
+		if punch_range != Global.range.NEUTRAL:
+			return choose_hit_region(punch_height, damage_amount, punch_direction)
+	
+	if owner.input_component.parry_timer.time_left > 0.0: # If the parry timer hasn't reached 0, then it's considered a successful parry.
+		FightManager.sfx_parry_signal.emit()
+		player_parried_signal.emit()
+		current_block_animation = "fast_block" # Sets the block animation as the fast block.
+		play_parry_effect(punch_height)
+	else: 
+		current_block_animation = "block"
+		
+	FightManager.lower_stamina() # Lowers the player stamina after a block.
+
 ## Helper function. Deals damage and returns whether or not the attack resulted in a knock down.
 ##
 ## Mainly does this by calling [method HealthComponent.deal_damage_and_check_for_knockdown]
 ## Also emits the the signal that the hit was successful.
 func handle_damage_and_knockdown(damage_amount : float, multiplier : float, punch_height : int, punch_direction : int) -> bool:
+	
 	if owner is Player: # checks to see if the defender is the player. If the player got hit, lower their stamina.
 		FightManager.lower_stamina()
 	
 	elif owner is Enemy:
-		if check_instant_ko() == true: # If the instant KO conditions were met, multiply the hell out of the damage.
-			damage_amount = damage_amount * 2000.0
+		if check_instant_ko() == true: # If the instant KO conditions were met, then set the damage to a high value to guarantee a Knockdown
+			damage_amount = 3000.0
 	
 	# Checks to see if the health component returned that the attack resulted in a knockdown.
 	if owner.health_component.deal_damage_and_check_for_knockdown(damage_amount, multiplier) == true: 
@@ -216,12 +229,10 @@ func handle_damage_and_knockdown(damage_amount : float, multiplier : float, punc
 
 ## Chooses which region the attack landed and does calls all of the pertinent functions.
 func choose_hit_region(punch_height : int, damage_amount : float, punch_direction : int) -> bool:
-	if handle_damage_and_knockdown(damage_amount, multiplier_array[punch_height], punch_height, punch_direction) == true:
-		return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
-		
-	check_for_star_and_stun(punch_height) # Checks the star punch and stun windows
 	
 	if owner is Enemy:
+		check_for_star_and_stun(punch_height) # Checks the star punch and stun windows
+		
 		play_impact_effect(punch_height)
 		
 		# If the damage passes a certain amount, then play the final hit animation instead.
@@ -230,10 +241,21 @@ func choose_hit_region(punch_height : int, damage_amount : float, punch_directio
 			current_hit_animation = "final_hit"
 			owner.hit_by_star_punch_signal.emit()
 	
+	if handle_damage_and_knockdown(damage_amount, multiplier_array[punch_height], punch_height, punch_direction) == true:
+		
+		hit_registered_signal.emit() # Emits that a hit has been registered.
+		
+		return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
+	
 	# Sets the blend of the current hit animation based on the punch height and the direction.
 	owner.animation_tree.set(str("parameters/",str(current_hit_animation),"/blend_position"), Vector2i(punch_direction, punch_height))
+	print("HIT REGISTERED")
 	
+	#current_anim_state_machine.start(current_hit_animation)
 	play_animation(str(current_hit_animation))
+	#await animation_tree.animation_started
+	
+	hit_registered_signal.emit()
 	
 	return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
 
@@ -255,9 +277,27 @@ func check_for_star_and_stun(punch_height : int) -> bool:
 		
 	return false
 	
-## A shorthand way to call the travel function.
-func play_animation(animation_name : String) -> void: 
-	current_anim_state_machine.travel(animation_name)
+## Function dedicated to playing a given animation and making sure that it gets played and not be interrupted.
+##
+## Mainly used so that the [Player] doesn't perform a bug where frame perfect dodges would result in getting hit
+## and receiving damage, but playing the dodge animation instead of the hit animation.
+func play_animation(animation_name : String) -> void:
+	current_anim_state_machine.stop() # Stops the current animation if there is one playing
+	
+	# While the current animation being played ISN'T the given animation the function wants to be playing,
+	# keep repeating the start() function until it is.
+	while current_anim_state_machine.get_current_node() != animation_name: 
+		
+		current_anim_state_machine.start(animation_name) # Starts the desired animation
+		
+		# Waits until the signal for an animation starting has been emitted.
+		# That way it only checks when it has to.
+		await animation_tree.animation_started 
+		
+		# If the current animation playing IS the desired one, then exit loop since work here is done.
+		if current_anim_state_machine.get_current_node() == animation_name: 
+			break
+	return
 
 ## Helper function that makes the vulnurability checking simpler.
 func is_invulnerable(punch_height: int) -> bool:

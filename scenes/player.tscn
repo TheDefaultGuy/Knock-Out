@@ -3375,6 +3375,7 @@ libraries/knock_down = SubResource("AnimationLibrary_mx1m4")
 
 [node name="AnimationTree" type="AnimationTree" parent="." unique_id=1441227393]
 unique_name_in_owner = true
+process_priority = -1
 root_node = NodePath("%AnimationTree/..")
 tree_root = ExtResource("32_t4otl")
 anim_player = NodePath("../MoveSetAnim")
