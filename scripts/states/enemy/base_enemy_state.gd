@@ -75,7 +75,7 @@ enum STATE_CHANGE_CONDITION{
 
 ## The behavior for the attack delay, or the time between each attack.
 enum ATTACK_DELAY{
-	## Will choose a float value BETWEEN the [member min_wait_time] and [member max_wait_time].
+	## Will choose a float value BETWEEN the [member min_delay_time] and [member max_delay_time].
 	FLOAT,
 	
 	## Instead of choosing a number BETWEEN a minumum and a maximum value, it will choose randomly from [member attack_delay_array].
@@ -222,10 +222,10 @@ const node_position_origin := Vector2(-1000.0,-500.0)
 			notify_property_list_changed()
 		
 ## The minimum amount of time (in seconds) the [Enemy] will wait before calling [method perform_action].
-@export_range(0.2, 6.0, 0.2, "suffix:s") var min_wait_time : float = 1.0
+@export_range(0.2, 6.0, 0.2, "suffix:s") var min_delay_time : float = 1.0
 
 ## The maximum amount of time (in seconds) the [Enemy] will wait before calling [method perform_action].
-@export_range(0.2, 6.0, 0.2, "suffix:s") var max_wait_time : float = 3.0
+@export_range(0.2, 6.0, 0.2, "suffix:s") var max_delay_time : float = 3.0
 
 ## An array of predetermined attack delay amounts. 
 ## Instead of choosing a number BETWEEN a minumum and a maximum value, it will choose randomly from the list of provided values instead.
@@ -281,6 +281,10 @@ var moveset_index : int = 0
 ## Stores how much damage the enemy has received during this state so far.
 var damage_taken_so_far : float = 0.0
 
+## Stores an array of animations that need to be added to the animation tree,
+## but aren't considered part of the moveset.
+var additional_animations_to_add : Array[String] = []
+
 @onready var animation_player: AnimationPlayer = %AnimationPlayer
 #endregion
 func _init() -> void:
@@ -295,10 +299,15 @@ func _enter_tree() -> void:
 
 func _ready() -> void:
 	nested_machine_name = str(self.name).to_snake_case() 
-	
+
 	# Array that stores the moves/animations that need to be added as animation nodes to the animation tree.
 	var moves_arr : Array = match_moveset_type()
 	
+	# Checks if there are any additional animations to add.
+	if additional_animations_to_add != []:
+		
+		# Adds the additional animations so that they're added to the animation tree.
+		moves_arr += additional_animations_to_add 
 	
 	# Adds the counter_attack animation to the list of moves if the block behavior is counter attack.
 	if block_behavior == BLOCK_BEHAVIOR_ENUM.COUNTER_ATTACK : 
@@ -314,7 +323,7 @@ func _ready() -> void:
 		
 	# Creates and adds the attack timer as a child and connects it if it's required for the state.
 	if attack_timer_required == true: 
-		attack_timer = create_timer("Attack Delay Timer", true, max_wait_time)
+		attack_timer = create_timer("Attack Delay Timer", true, max_delay_time)
 		add_child(attack_timer)
 		
 	check_for_unassigned_variables() # Self-explanatory.
@@ -444,9 +453,11 @@ func match_moveset_type() -> Array:
 
 ## Checks for a required attack and then appends/adds it to the moveset dictionary or array if it's not found.
 func check_for_attack_and_append(attack : String) -> void:
+	
+	# Checks if the animation is in the moveset array or dictionary (it depends which of the 2 based on the moveset type)
 	if attack not in match_moveset_type():
-		print(self.get_script())
-		push_warning(self.name, " did NOT have a required animation in its moveset, which is required for this state. The fakeout animation has been added.")
+		#print(self.get_script())
+		#push_warning(self.name, " did NOT have a required animation in its moveset, which is required for this state. The fakeout animation has been added.")
 		
 		match moveset_type:
 			MOVESET_TYPE_ENUM.WEIGHTED_DICTIONARY:
@@ -532,7 +543,7 @@ func start_attack_delay_timer() -> void:
 	
 	match attack_delay_type: # Matches the selected attack delay type
 		ATTACK_DELAY.FLOAT:
-			attack_timer.start(randf_range(min_wait_time, max_wait_time)) # Sets the time as a random float value between the minimum and maximum values.
+			attack_timer.start(randf_range(min_delay_time, max_delay_time)) # Sets the time as a random float value between the minimum and maximum values.
 			return
 			
 		ATTACK_DELAY.PREDETERMINED:
@@ -912,7 +923,7 @@ func match_animation_library(attack : String) -> String:
 				if library == "": # If it's the global library, the return the name of the animation without the forward slash "/"
 					return str(animation)
 					
-				# Returns the name of the animation alongside the preffix of the animation libray it belongs to.
+				# Returns the name of the animation alongside the preffix of the animation library it belongs to.
 				return str(library,"/",animation)
 				
 			continue # Go back to the start of the loop if the given attack name doesn't match the current animation name.
@@ -1099,9 +1110,9 @@ func _validate_property(property : Dictionary) -> void:
 		property.usage = PROPERTY_USAGE_NONE
 	if property.name == "attack_delay_array" and attack_delay_type == ATTACK_DELAY.FLOAT:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "max_wait_time" and attack_delay_type == ATTACK_DELAY.PREDETERMINED:
+	if property.name == "max_delay_time" and attack_delay_type == ATTACK_DELAY.PREDETERMINED:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "min_wait_time" and attack_delay_type == ATTACK_DELAY.PREDETERMINED:
+	if property.name == "min_delay_time" and attack_delay_type == ATTACK_DELAY.PREDETERMINED:
 		property.usage = PROPERTY_USAGE_NONE
 		
 	if property.name == "primary_target_state" and primary_condition == STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
@@ -1112,9 +1123,9 @@ func _validate_property(property : Dictionary) -> void:
 		property.usage = PROPERTY_USAGE_NONE
 		
 		
-	if property.name == "max_wait_time" and attack_timer_required == false:
+	if property.name == "max_delay_time" and attack_timer_required == false:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "min_wait_time" and attack_timer_required == false:
+	if property.name == "min_delay_time" and attack_timer_required == false:
 		property.usage = PROPERTY_USAGE_NONE
 	if property.name == "attack_delay_type" and attack_timer_required == false:
 		property.usage = PROPERTY_USAGE_NONE

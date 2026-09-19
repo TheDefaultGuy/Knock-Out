@@ -12,7 +12,23 @@ class_name Reactionary extends EnemyState
 ## DO NOT change anything in the actual .gd file, since it'll mess up compatibility.
 
 ## The fakeout animation that will play in this state.
-@export var fakeout_animation : String = "fakeout"
+@export var fakeout_animation: String = "fakeout"
+
+@export var left_dodge_punish: String = "punish_left"
+@export var right_dodge_punish: String = "punish_right"
+@export var duck_punish: String = "punish_duck"
+
+func _ready() -> void:
+	
+	check_for_attack_and_append(fakeout_animation)
+	
+	additional_animations_to_add = [ # Adds these animations to the additional_animations_to_add Array so that they can be added to the animation tree
+		left_dodge_punish,
+		right_dodge_punish,
+		duck_punish,
+		]
+	super()
+
 
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
@@ -21,10 +37,9 @@ func _process(_delta: float) -> void:
 		check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
 
 func enter() -> void: 
-	
 	super() # Runs the base EnemyState enter function and then runs everything below.
 	
-	FightManager.player_threw_punch_signal.connect(set_blends)
+	# Plays the punish animation when the player dodges.
 	FightManager.player_dodged_signal.connect(play_punish_animation)
 	
 	# Sets the block animation and state machine in the defense component as the block animation in the state machine.
@@ -35,32 +50,35 @@ func enter() -> void:
 func exit() -> void:
 	
 	super()  # Runs the base EnemyState exit function and then runs everything below.
-	
-	# Disconnecting signals
-	FightManager.player_threw_punch_signal.disconnect(set_blends)
+
 	FightManager.player_dodged_signal.disconnect(play_punish_animation)
 
-## Sets the blends of the hit, and dodge animations depending on the punch thrown by the player.
-func set_blends(height : int, direction : int) -> void:
-	animation_tree.set(str("parameters/",str(nested_machine_name),"/dodge/blend_position"), Vector2i(direction, height))
-	animation_tree.set(str("parameters/",str(nested_machine_name),"/hit/blend_position"), Vector2i(direction, height))
-	animation_tree.set(str("parameters/",str(nested_machine_name),"/stun_hit/blend_position"), Vector2i(direction, height))
-	animation_tree.set(str("parameters/",str(nested_machine_name),"/final_hit/blend_position"), Vector2i(direction, height))
-	
 func play_punish_animation(dodge_direction : int) -> void:
 	if current_animation_state_machine.get_current_node() == str(fakeout_animation) :
-		animation_tree.set(str("parameters/",str(nested_machine_name),"/punish/blend_position"), dodge_direction)
-		current_animation_state_machine.travel("punish")
-		
+		match dodge_direction :
+			Global.range.LEFT:
+				current_animation_state_machine.travel(left_dodge_punish)
+				return
+				
+			Global.range.RIGHT:
+				current_animation_state_machine.travel(right_dodge_punish)
+				return
+				
+			Global.range.NEUTRAL:
+				current_animation_state_machine.travel(duck_punish)
+				return
+
 func override_conditions_and_state_parameters() -> void:
-	state_type = STATE_TYPE_ENUM.NESTED_STATE_MACHINE
+	state_type = STATE_TYPE_ENUM.SIMPLE
 	attack_timer_required  = true
 	nested_state_machine = preload("uid://c1biuhgyv30i1")
 	nested_machine_name = str(self.name).to_snake_case()
 	
-	block_behavior = BLOCK_BEHAVIOR_ENUM.RESET_TIMER
+	moveset_type = MOVESET_TYPE_ENUM.PICK_RANDOM
 	
-	check_for_attack_and_append(fakeout_animation)
+	
+	block_behavior = BLOCK_BEHAVIOR_ENUM.COUNTER_ATTACK
+	
 
 ## Sets the required conditions as Read Only so that they can't be changed.
 func _validate_property(property : Dictionary) -> void:

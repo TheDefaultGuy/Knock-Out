@@ -45,4 +45,4 @@ states/loop/position = Vector2(501, 7)
 states/return/node = SubResource("AnimationNodeAnimation_aqtjj")
 states/return/position = Vector2(265, 125)
 transitions = ["Start", "intro", SubResource("AnimationNodeStateMachineTransition_hvqif"), "intro", "loop", SubResource("AnimationNodeStateMachineTransition_ow3nb"), "attack", "return", SubResource("AnimationNodeStateMachineTransition_qmxu7"), "return", "loop", SubResource("AnimationNodeStateMachineTransition_djx3a"), "attack", "End", SubResource("AnimationNodeStateMachineTransition_lx8ob")]
-graph_offset = Vector2(-200, 90.34986)
+graph_offset = Vector2(-325, -181.65015)

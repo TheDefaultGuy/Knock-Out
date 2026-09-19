@@ -7655,6 +7655,99 @@ tracks/6/keys = {
 }
 tracks/6/use_blend = true
 
+[sub_resource type="Animation" id="Animation_wknah"]
+resource_name = "punish_duck"
+length = 0.8
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AttackingComponent")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.2),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [2, 0, 20.0, -1],
+"method": &"send_attack_call"
+}]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimatedSprite2D:animation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"uppercut"]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("AnimatedSprite2D:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [2, 1]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("AnimatedSprite2D:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.099999994, 0.2, 0.26666665, 0.3333333, 0.39999998, 0.4739372),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, -12), Vector2(0, 10), Vector2(0, -10), Vector2(0, 4), Vector2(0, -10)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("DefenseComponent:upper_invulnerability")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.8),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("DefenseComponent:lower_invulnerability")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.8),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/6/type = "audio"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("AudioStreamPlayer")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"clips": [{
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("62_poxia")
+}],
+"times": PackedFloat32Array(0.13333334)
+}
+tracks/6/use_blend = true
+
 [sub_resource type="Animation" id="Animation_ail1p"]
 resource_name = "hook_left"
 length = 0.8
@@ -7759,99 +7852,6 @@ tracks/7/keys = {
 "update": 1,
 "values": [true]
 }
-
-[sub_resource type="Animation" id="Animation_wknah"]
-resource_name = "elbow_punish"
-length = 0.8
-tracks/0/type = "method"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("AttackingComponent")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0.2),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [2, 0, 20.0, -1],
-"method": &"send_attack_call"
-}]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("AnimatedSprite2D:animation")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [&"uppercut"]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("AnimatedSprite2D:frame")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.2),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [2, 1]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("AnimatedSprite2D:position")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0.099999994, 0.2, 0.26666665, 0.3333333, 0.39999998, 0.4739372),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
-"update": 0,
-"values": [Vector2(0, 0), Vector2(0, -12), Vector2(0, 10), Vector2(0, -10), Vector2(0, 4), Vector2(0, -10)]
-}
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("DefenseComponent:upper_invulnerability")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
-"times": PackedFloat32Array(0, 0.8),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [true, false]
-}
-tracks/5/type = "value"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath("DefenseComponent:lower_invulnerability")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
-"times": PackedFloat32Array(0, 0.8),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [true, false]
-}
-tracks/6/type = "audio"
-tracks/6/imported = false
-tracks/6/enabled = true
-tracks/6/path = NodePath("AudioStreamPlayer")
-tracks/6/interp = 1
-tracks/6/loop_wrap = true
-tracks/6/keys = {
-"clips": [{
-"end_offset": 0.0,
-"start_offset": 0.0,
-"stream": ExtResource("62_poxia")
-}],
-"times": PackedFloat32Array(0.13333334)
-}
-tracks/6/use_blend = true
 
 [sub_resource type="Animation" id="Animation_uhtxd"]
 resource_name = "hook_right"
@@ -7960,9 +7960,9 @@ tracks/7/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_3axiy"]
 _data = {
-&"counter": SubResource("Animation_gtqkv"),
+&"counter_jab": SubResource("Animation_gtqkv"),
+&"punish_duck": SubResource("Animation_wknah"),
 &"punish_left": SubResource("Animation_ail1p"),
-&"punish_middle": SubResource("Animation_wknah"),
 &"punish_right": SubResource("Animation_uhtxd")
 }
 
@@ -8796,7 +8796,7 @@ metadata/_custom_type_script = "uid://c15nwhylsnm6w"
 [node name="StateMachine" type="Node" parent="." unique_id=1256866169 node_paths=PackedStringArray("initial_state", "stun_state", "knocked_down_state", "spectating_state", "cutscene_state")]
 unique_name_in_owner = true
 script = ExtResource("15_l7qsa")
-initial_state = NodePath("Randomized Attacks/Debug")
+initial_state = NodePath("LoopingCharge")
 stun_state = NodePath("Required States/Stunned")
 knocked_down_state = NodePath("Required States/KnockedDown")
 spectating_state = NodePath("Required States/Spectating")
@@ -8829,11 +8829,10 @@ metadata/_custom_type_script = "uid://bd3i8gnmviajw"
 
 [node name="Randomized Attacks" type="Node" parent="StateMachine" unique_id=236151705]
 
-[node name="CalmState" type="Node" parent="StateMachine/Randomized Attacks" unique_id=1646714070 node_paths=PackedStringArray("primary_target_state", "secondary_target_state", "tertiary_target_state")]
+[node name="CalmState" type="Node" parent="StateMachine/Randomized Attacks" unique_id=1646714070 node_paths=PackedStringArray("secondary_target_state", "tertiary_target_state")]
 script = ExtResource("44_wdmnt")
 secondary_condition = 5
 tertiary_condition = 1
-primary_target_state = NodePath("../../FlurryAttack")
 secondary_target_state = NodePath("../../ItemHeal2")
 tertiary_target_state = NodePath("../../TauntAndCounter")
 target_round_time = 25.0
@@ -8841,7 +8840,6 @@ time_to_change_state = 20.0
 target_hp = 70.0
 moveset_type = 1
 moveset_array = Array[String](["jab_low", "jab_high"])
-max_wait_time = 1.8
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
 [node name="Debug" type="Node" parent="StateMachine/Randomized Attacks" unique_id=1997623450]
@@ -8849,8 +8847,6 @@ script = ExtResource("44_wdmnt")
 primary_condition = 11
 moveset_type = 1
 moveset_array = Array[String](["insta_jab"])
-min_wait_time = 0.6000000000000001
-max_wait_time = 0.6000000000000001
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
 [node name="Aggressive" type="Node" parent="StateMachine/Randomized Attacks" unique_id=550832782 node_paths=PackedStringArray("secondary_target_state")]
@@ -8864,7 +8860,6 @@ moveset_dictionary = Dictionary[String, float]({
 "jab_low": 15.0,
 "uppercut": 25.0
 })
-max_wait_time = 1.8
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
 [node name="WeirdAttacks" type="Node" parent="StateMachine/Randomized Attacks" unique_id=2144043967 node_paths=PackedStringArray("primary_target_state")]
@@ -8881,8 +8876,6 @@ primary_target_state = NodePath("../SkillCheck")
 time_to_change_state = 25.0
 moveset_type = 1
 moveset_array = Array[String](["great_tiger_uppercut", "great_tiger_uppercut_2", "great_tiger_fakeout", "fakeout_uppercut"])
-min_wait_time = 0.6000000000000001
-max_wait_time = 1.4
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
 [node name="SkillCheck" type="Node" parent="StateMachine/Randomized Attacks" unique_id=1728563805]
@@ -8890,8 +8883,6 @@ script = ExtResource("44_wdmnt")
 time_to_change_state = 15.0
 moveset_type = 1
 moveset_array = Array[String](["hook_left", "uppercut", "jab_high"])
-min_wait_time = 0.8
-max_wait_time = 1.6
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
 [node name="HookedOnAFeeling" type="Node" parent="StateMachine/Randomized Attacks" unique_id=1266210396 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
@@ -8932,8 +8923,9 @@ secondary_target_state = NodePath("../ItemHeal")
 time_to_change_state = 21.0
 target_hp = 50.0
 moveset_type = 1
-moveset_array = Array[String](["fakeout"])
-block_behavior = 1
+moveset_array = Array[String](["fakeout", "fakeout_uppercut"])
+block_behavior = 2
+counter_attack = "counter_jab"
 metadata/_custom_type_script = "uid://bjtexblqp5cmp"
 
 [node name="Reactionary2" type="Node" parent="StateMachine" unique_id=137125735 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
@@ -8943,19 +8935,20 @@ primary_target_state = NodePath("../Randomized Attacks/WeirdAttacks2")
 secondary_target_state = NodePath("../Randomized Attacks/SkillCheck")
 time_to_change_state = 12.0
 moveset_type = 1
-moveset_array = Array[String](["fakeout", "fakeout_uppercut", "uppercut"])
-block_behavior = 1
+moveset_array = Array[String](["fakeout"])
+block_behavior = 2
 metadata/_custom_type_script = "uid://bjtexblqp5cmp"
 
 [node name="LoopingCharge" type="Node" parent="StateMachine" unique_id=61317170 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
 script = ExtResource("60_7b5nu")
+intro_animation = "restart"
 primary_condition = 3
 secondary_condition = 2
 primary_target_state = NodePath("../TauntAndCounter2")
 secondary_target_state = NodePath("../Randomized Attacks/WeirdAttacks2")
 moveset_type = 2
-moveset_array = Array[String](["attack"])
 block_behavior = 3
+max_delay_time = 4.0
 metadata/_custom_type_script = "uid://be0a0n2xv87g7"
 
 [node name="TauntAndCounter" type="Node" parent="StateMachine" unique_id=343560956 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
@@ -9046,6 +9039,7 @@ tree_root = ExtResource("62_v64oh")
 anim_player = NodePath("../AnimationPlayer")
 parameters/back_to_the_fight/blend_position = -0.00054496527
 parameters/block/blend_position = Vector2(0, 0)
+parameters/dodge/blend_position = Vector2(0, 0)
 parameters/final_hit/blend_position = Vector2(-1.2386009, 2.2694063)
 parameters/get_up/blend_position = -1.0043597
 parameters/hit/blend_position = Vector2(1.4105186, 1.3653846)
@@ -9053,17 +9047,6 @@ parameters/idle/blend_position = 0.0
 parameters/item_heal/item_hit/blend_position = Vector2(0, 0)
 parameters/item_heal_2/item_hit/blend_position = Vector2(0, 0)
 parameters/knock_down/blend_position = Vector2(-1.0533643, 1.0897703)
-parameters/looping_charge/conditions/ko = false
-parameters/reactionary/dodge/blend_position = Vector2(0, 0)
-parameters/reactionary/final_hit/blend_position = Vector2(0, 0)
-parameters/reactionary/hit/blend_position = Vector2(0, 0)
-parameters/reactionary/punish/blend_position = 0.0
-parameters/reactionary/stun_hit/blend_position = Vector2(0, 0)
-parameters/reactionary_2/dodge/blend_position = Vector2(0, 0)
-parameters/reactionary_2/final_hit/blend_position = Vector2(0, 0)
-parameters/reactionary_2/hit/blend_position = Vector2(0, 0)
-parameters/reactionary_2/punish/blend_position = 0.0
-parameters/reactionary_2/stun_hit/blend_position = Vector2(0, 0)
 parameters/stun_hit/blend_position = Vector2(-0.9225484, 0.86757994)
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1565675371]
