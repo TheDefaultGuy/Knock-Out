@@ -15,40 +15,62 @@ class_name ItemHeal extends EnemyState
 ## Then, tweak the exported variables to set it up how you'd like.
 ## DO NOT change anything in the actual .gd file, since it'll mess up compatibility.
 
+## The animation that plays when entering the state for the first time.
+@export var intro_animation : String = "heal_intro"
+
+## The animation that gets played when the enemy gets hit and fails healing during this state.
+@export var failed_animation : String = "heal_failed"
+
+## The animation played when the player doesn't stop the heal on time.
+@export var successful_animation : String = "heal_successful"
+
+func _ready() -> void:
+	additional_animations_to_add = [ # Adds these animations to the additional_animations_to_add Array so that they can be added to the animation tree
+		intro_animation,
+		failed_animation,
+		successful_animation,
+		]
+	
+	super() # Runs the Base EnemyState _ready() function after running this code.
+
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
 		return
 	if state_machine.current_state == self:
+		
 		check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
-
+		return
+		
 func enter() -> void:
 	super() # Runs the base EnemyState enter function and then runs everything below.
 	
-	FightManager.succesful_hit_signal.connect(change_to_failed_state)
+	anim_state_machine.travel(intro_animation)
+	
+	await animation_tree.animation_started
+	animation_tree.animation_finished.connect(check_animation)
 	
 	# Sets the hit animation and state machine in the defense component as the hit animation in the state machine.
 	# This is because the defense component is the one responsible for playing the hit animation
-	defense_component.current_hit_animation = "item_hit"
-	defense_component.current_anim_state_machine = current_animation_state_machine
+	defense_component.current_hit_animation = failed_animation
 
 func exit() -> void:
 	super() # Runs the base EnemyState exit function and then runs everything below.
 	
-	FightManager.succesful_hit_signal.disconnect(change_to_failed_state)
+	#FightManager.succesful_hit_signal.disconnect(change_to_failed_state)
 	interruption_status = false
-
-## If the [Enemy] got hit, then the [member StateMachine.interrupted_state] will be set to the failed healed state.
-func change_to_failed_state() -> void:
-	interruption_status = true
+	animation_tree.animation_finished.disconnect(check_animation)
 	
+
 func override_conditions_and_state_parameters() -> void:
-	state_type = STATE_TYPE_ENUM.NESTED_STATE_MACHINE
+	state_type = STATE_TYPE_ENUM.SIMPLE
 	
 	moveset_type = MOVESET_TYPE_ENUM.NOT_APPLICABLE
 	
+	moveset_array = []
+	
 	attack_timer_required = false
 	
-	nested_state_machine = preload("uid://dt6b8hv77b0dh")
+	#nested_state_machine = preload("uid://dt6b8hv77b0dh")
 	
 	block_behavior = BLOCK_BEHAVIOR_ENUM.NOT_APPLICABLE
 	
@@ -59,7 +81,29 @@ func override_conditions_and_state_parameters() -> void:
 	if secondary_target_state == null and primary_target_state != null:
 		secondary_target_state = primary_target_state
 		printerr(self.name, " does NOT have secondary target state set, but has used the primary target state as a fallback.")
-		
+
+func check_animation(animation_name : String) -> void:
+	print(animation_name)
+	print(intro_animation)
+	match remove_library_preffix(animation_name):
+		intro_animation:
+			print("AWSWEIJHAOI")
+			anim_state_machine.travel(successful_animation)
+			interruption_status = false
+			await animation_tree.animation_started
+			return
+			
+		failed_animation: 
+			interruption_status = true
+			#anim_state_machine.start("hub_node")
+			await animation_tree.animation_started
+			return
+			
+		successful_animation: 
+			interruption_status = false
+			#anim_state_machine.start("hub_node")
+			await animation_tree.animation_started
+			return
 ## Sets the required conditions as Read Only so that they can't be changed.
 func _validate_property(property : Dictionary) -> void:
 	if property.name == "primary_condition" :

@@ -29,7 +29,6 @@ func _ready() -> void:
 		]
 	super()
 
-
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
 		return
@@ -45,7 +44,6 @@ func enter() -> void:
 	# Sets the block animation and state machine in the defense component as the block animation in the state machine.
 	# This is because the defense component is the one responsible for playing the block animation
 	defense_component.current_block_animation = "dodge"
-	defense_component.current_anim_state_machine = current_animation_state_machine
 
 func exit() -> void:
 	
@@ -54,28 +52,25 @@ func exit() -> void:
 	FightManager.player_dodged_signal.disconnect(play_punish_animation)
 
 func play_punish_animation(dodge_direction : int) -> void:
-	if current_animation_state_machine.get_current_node() == str(fakeout_animation) :
+	if anim_state_machine.get_current_node() == str(fakeout_animation) :
 		match dodge_direction :
 			Global.range.LEFT:
-				current_animation_state_machine.travel(left_dodge_punish)
+				anim_state_machine.travel(left_dodge_punish)
 				return
 				
 			Global.range.RIGHT:
-				current_animation_state_machine.travel(right_dodge_punish)
+				anim_state_machine.travel(right_dodge_punish)
 				return
 				
 			Global.range.NEUTRAL:
-				current_animation_state_machine.travel(duck_punish)
+				anim_state_machine.travel(duck_punish)
 				return
 
 func override_conditions_and_state_parameters() -> void:
 	state_type = STATE_TYPE_ENUM.SIMPLE
 	attack_timer_required  = true
-	nested_state_machine = preload("uid://c1biuhgyv30i1")
-	nested_machine_name = str(self.name).to_snake_case()
 	
 	moveset_type = MOVESET_TYPE_ENUM.PICK_RANDOM
-	
 	
 	block_behavior = BLOCK_BEHAVIOR_ENUM.COUNTER_ATTACK
 	

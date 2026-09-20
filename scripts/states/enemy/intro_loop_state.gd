@@ -12,12 +12,16 @@ class_name LoopingCharge extends EnemyState
 ## Then, tweak the exported variables to set it up how you'd like.
 ## DO NOT change anything in the actual .gd file, since it'll mess up compatibility.
 
+## The animation that plays when entering the state for the first time.
 @export var intro_animation : String = "loop_intro"
 
+## The idle animation that loops until the [member attack_animation] is played.
 @export var idle_loop_animation : String = "idle_loop"
 
+## The animation played after [member attack_animation], where the enemy goes back to [member idle_loop_animation]
 @export var restart_animation : String = "restart"
 
+## The actual attacking animation that the [Player] can counter punch to knock down the [Enemy].
 @export var attack_animation : String = "attack"
 
 func _ready() -> void:
@@ -34,7 +38,7 @@ func _ready() -> void:
 func enter() -> void:
 	super()
 	
-	current_animation_state_machine.travel(intro_animation)
+	anim_state_machine.travel(intro_animation)
 	await animation_tree.animation_started
 	animation_tree.animation_finished.connect(check_animation)
 
@@ -48,36 +52,27 @@ func check_animation(animation_name : String) -> void:
 
 	match remove_library_preffix(animation_name):
 		intro_animation:
-			current_animation_state_machine.travel(idle_loop_animation)
+			anim_state_machine.travel(idle_loop_animation)
 			return
 		attack_animation:
 			if Global.player_node.isKnockdown != true or Global.enemy_node.isKnockdown != true :
-				current_animation_state_machine.travel(restart_animation)
+				anim_state_machine.travel(restart_animation)
 				return
 		restart_animation:
-			current_animation_state_machine.travel(idle_loop_animation)
+			anim_state_machine.travel(idle_loop_animation)
 			return
 			
-## Removes the library name/preffix from the incoming animation so that it can be compared against the ones listed above.
-func remove_library_preffix(animation : String) -> String:
-	var number_of_preffixes = animation.count("/", 0, 0)
-	print(number_of_preffixes)
-
-	print(animation.get_slice("/",number_of_preffixes))
-	return animation.get_slice("/",number_of_preffixes)
 
 func override_conditions_and_state_parameters() -> void:
 
 	state_type = STATE_TYPE_ENUM.SIMPLE
 	attack_timer_required  = true
-	#nested_state_machine = preload("uid://bpl60rtp2gv5i")
 	
 	block_behavior = BLOCK_BEHAVIOR_ENUM.NOT_APPLICABLE
 	
-	moveset_array = [attack_animation]
-	
 	moveset_type = MOVESET_TYPE_ENUM.PREDETERMINED_ORDER
 	
+	moveset_array = [attack_animation]
 	# Given the nature of this state, these 2 conditions MUST ALWAYS be set and have a target state to transition to.
 	primary_condition = STATE_CHANGE_CONDITION.AFTER_PLAYER_KNOCKED_DOWN
 	secondary_condition = STATE_CHANGE_CONDITION.AFTER_ENEMY_KNOCKED_DOWN

@@ -18,9 +18,6 @@ enum STATE_TYPE_ENUM{
 	## Usually means a state that does simple things like throw out attacks, block, get hit, get stunned, etc... 
 	SIMPLE,
 	
-	## Means that this state DOES require a nested state machine to work.
-	NESTED_STATE_MACHINE,
-	
 	## Means that the state doesn't require a Nested State Machine, but has multiple attacks chained together. 
 	CHAINED_ATTACKS,
 }
@@ -234,30 +231,14 @@ const node_position_origin := Vector2(-1000.0,-500.0)
 
 #region Stored Variables
 
-## Stores the required conditions of the state.
-var required_conditions : Array[int] = []
-
 ## The timer used to automatically go to the next state after time's up.
 var state_change_timer : Timer = null
 
 ## Timer used to automatically perform one of the given attacks.
 var attack_timer : Timer = null
 
-## The Root State Machine of the Animation Tree.
-## Its the base where all of the animations and nested state machines lie.
-var root_state_machine: AnimationNodeStateMachine = null
-
-## The name of the nested state machine, if required.
-var nested_machine_name : StringName = ""
-
-## The actual nested state machine.
-var nested_state_machine : AnimationNodeStateMachine = null
-
 ## Dictionary that will store all of the Conditions and Target states.
 var conditions_and_targets_dict: Dictionary[int, State] = { }
-
-## The current animation state machine that the animation tree is currently in where the animations will be called/traveled to from.
-var current_animation_state_machine = null
 
 ## Stores the state type.
 ## This can be overwritten by inherited states.
@@ -298,10 +279,9 @@ func _enter_tree() -> void:
 	pass
 
 func _ready() -> void:
-	nested_machine_name = str(self.name).to_snake_case() 
 
 	# Array that stores the moves/animations that need to be added as animation nodes to the animation tree.
-	var moves_arr : Array = match_moveset_type()
+	var moves_arr : Array[String] = match_moveset_type()
 	
 	# Checks if there are any additional animations to add.
 	if additional_animations_to_add != []:
@@ -313,9 +293,9 @@ func _ready() -> void:
 	if block_behavior == BLOCK_BEHAVIOR_ENUM.COUNTER_ATTACK : 
 		moves_arr.append(counter_attack)
 	
-	set_conditions_and_targets_dictionary()
+	#print(self.name, moves_arr)
 	
-	current_animation_state_machine = anim_state_machine 
+	set_conditions_and_targets_dictionary()
 	
 	if STATE_CHANGE_CONDITION.AFTER_TIME_PASSED in conditions_and_targets_dict.keys():
 		state_change_timer = create_timer("Wait Timer", true, time_to_change_state)
@@ -329,10 +309,10 @@ func _ready() -> void:
 	check_for_unassigned_variables() # Self-explanatory.
 	
 	match state_type: # Checks the type of state it is so that it can properly set up the animation nodes in the animation tree.
-		STATE_TYPE_ENUM.NESTED_STATE_MACHINE:
-			call_deferred("add_nested_state_machine_node")
-			if moves_arr != [] or null :
-				call_deferred("add_attack_nodes_to_nested_state_machine", nested_state_machine, moves_arr)
+		#STATE_TYPE_ENUM.NESTED_STATE_MACHINE:
+			#call_deferred("add_nested_state_machine_node")
+			#if moves_arr != [] or null :
+				#call_deferred("add_attack_nodes_to_nested_state_machine", nested_state_machine, moves_arr)
 		STATE_TYPE_ENUM.SIMPLE:
 			if moves_arr != [] or null :
 				call_deferred("add_attack_animation_nodes", animation_tree.tree_root, moves_arr)
@@ -355,17 +335,6 @@ func _ready() -> void:
 func enter() -> void:
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
 	
-	if state_type == STATE_TYPE_ENUM.NESTED_STATE_MACHINE : # Checks if the state is simple or nested.
-		
-		anim_state_machine.travel(nested_machine_name) # If nested, travel to the nested state machine
-		
-		# Sets the animation state machine as the nested one. 
-		# Now all of the travel calls will be done inside of the nested state machine and not the root.
-		current_animation_state_machine = animation_tree[str("parameters/",str(nested_machine_name),"/playback")]
-		
-		# Travels to the "Start" animation to make sure it enters the animation state machine from the start.
-		# This avoids re-entering the state and then instantly attacking because the nested state machine was exitted durring an attack.
-		current_animation_state_machine.travel("Start")
 	
 	# Sets the idle blend to not stunned
 	animation_tree.set("parameters/idle/blend_position", 0)
@@ -398,7 +367,7 @@ func exit() -> void:
 	if attack_timer != null and attack_timer_required == true : # Checks if the state even has an attack timer
 		attack_timer.stop() # Full on stops the attack timer since it's leaving the state.
 		attack_timer.timeout.disconnect(perform_action)
-		
+	
 	toggle_state_change_timer()
 	
 	toggle_stunned_signal_connections() # Disconnects the stun signal.
@@ -421,8 +390,7 @@ func check_for_unassigned_variables() -> void:
 		push_warning(self.name, " : Tertiary Target State has not been assigned despite having a condition set.")
 	if animation_tree == null:
 		printerr(self.name, " : Animation tree not found/is null.")
-	if state_type == STATE_TYPE_ENUM.NESTED_STATE_MACHINE and nested_state_machine == null:
-		printerr(self.name, " : Nested State Machine has not been declared despite the state being set as Nested State Machine")
+
 	return
 
 ## Checks for errors and also returns an array with all of the moves.
@@ -445,7 +413,8 @@ func match_moveset_type() -> Array:
 			return moveset_array
 			
 		MOVESET_TYPE_ENUM.NOT_APPLICABLE:
-			return [] # Since the concept of a moveset doesn't apply, return empty array
+			var empty : Array[String] = [] # Since the concept of a moveset doesn't apply, return empty array
+			return empty
 			
 		_:
 			printerr(self.name, " match_moveset_type() unnaccounted 5th option, returning moveset_array...")
@@ -654,7 +623,7 @@ func check_player_not_tired() -> bool:
 
 ## Checks if the state has completed or been interrupted and then changes accordingly.
 func check_state_completion() -> bool:
-	if current_animation_state_machine.get_current_node() in ["End", "idle"] :
+	if anim_state_machine.get_current_node() in ["End", "idle"] :
 		if interruption_status == true :
 			condition_match_direct_transition(STATE_CHANGE_CONDITION.STATE_INTERRUPTED)
 			return true
@@ -711,30 +680,7 @@ func condition_match_change_interrupted_state(condition : int) -> void:
 #endregion
 
 #region Add Attack Animation Nodes Functions
-## Adds a nested animation state machine node to the root animation state machine.
-func add_nested_state_machine_node() -> void:
-	root_state_machine = animation_tree.tree_root
-	
-	if root_state_machine.has_node("hub_node") == false:
-		printerr(self.name, ': ROOT state machine does NOT have a "hub_node" to attach the attacks to.')
-		return
-	
-	# Makes the name of the state machine the name of the node itself.
-	# This helps avoid state machine nodes with similar names since nodes need unique names
-	nested_machine_name = str(self.name).to_snake_case() 
-	
-	if root_state_machine.has_node(nested_machine_name): # Checks to see if the root state machine already has a nested state machine of that name
-		push_warning("Root State Machine already has a Nested State Machine of the same name: ", str(nested_machine_name))
-		return
-	
-	var new_origin = node_position_origin + (self.get_index() * node_positional_offset)
-	
-	# Adds the state machine as a node in the Root state machine in the animation tree.
-	root_state_machine.add_node(nested_machine_name, nested_state_machine, new_origin)
-	
-	root_state_machine.add_transition(nested_machine_name, "hub_node", create_node_transition(AnimationNodeStateMachineTransition.ADVANCE_MODE_AUTO))
-	return
-	
+
 ## Automatically adds all of the attack names as nodes in the animation tree.
 ## Theoretically allows attack animations to be in nested nodes by giving it the nested
 ## State machine as an argument instead of the root state machine.
@@ -753,6 +699,7 @@ func add_attack_animation_nodes(root_node : AnimationRootNode, moveset : Array[S
 		
 		# If there is already an Animation node with that animation name, skip it.
 		if root_node.has_node(str(attack)): 
+			print("Already has the following animation: ", attack)
 			continue
 		if attack == "": # Catches empty strings
 			continue
@@ -836,7 +783,7 @@ func format_moveset_for_unique_names(array : Array) -> Array:
 	for i in range(array.size()): # Formats the names so that they're all unique.
 		modified_arr.append(str(abs(i - array.size()), "_", get_index(), "_") + str(array[i]))
 	return modified_arr
-	
+
 ## Short little function that removes any duplicate entries in an Array.
 func array_remove_duplicates(array: Array) -> Array:
 	var output : Array = []
@@ -854,44 +801,15 @@ func array_remove_empty_entries(array: Array) -> Array:
 			continue
 	return output
 
-## Automatically adds all of the attack names as nodes in a Nested State machine that is in the Root State Machine of the animation tree.
-## Theoretically allows attack animations to be in nested nodes by giving it the nested
-## State machine as an argument instead of the root state machine.
-func add_attack_nodes_to_nested_state_machine(target_node : AnimationNodeStateMachine, moveset : Array[String]) -> void:
+## Removes the library name/preffix from the incoming animation so that it can be compared against the ones listed above.
+func remove_library_preffix(animation : String) -> String:
 	
-	var new_origin = node_position_origin + (self.get_index() * node_positional_offset) # Offsets the node's position based on the child index.
+	# Counts the number of slashes "/" in the string.
+	var number_of_preffixes = animation.count("/", 0, 0) 
 	
-	if target_node.has_node("hub_node") == false:
-		push_warning(self.name, ': target node does not have a "hub_node" to attach the attacks to.')
-		return
-		
-	array_remove_empty_entries(moveset) # Removes any empty entries to avoid any problems.
-	
-	# Iterates through each of the attacks in the moveset dictionary to add their animations to the root state machine.
-	for attack in moveset:
-		
-		# If there is already an Animation node with that animation name, skip it.
-		if target_node.has_node(str(attack)): 
-			continue
-			
-		if attack == "" or attack == null: # Catches empty strings
-			push_warning("add_attack_nodes_to_nested_state_machine(): Found an empty string.")
-			continue
-			
-		# Creates a new AnimationNodeAnimation that'll be added to the Root State Machine
-		var node_animation : AnimationNodeAnimation = AnimationNodeAnimation.new()
-		
-		# Sets the Node's animation as the attack animation given.
-		node_animation.animation = match_animation_library(attack)
-		
-		# Adds the state machine as a node in the Root state machine in the animation tree.
-		target_node.add_node(str(attack), node_animation, new_origin) 
-		
-		new_origin += Vector2(0.0, -60.0) # Offsets each node's position so that they dont all overlap in the animation tree.
-		
-		# Connects the animation to the "hub_node", where all attack animations connect to.
-		target_node.call_deferred("add_transition", str(attack), "hub_node", create_node_transition(AnimationNodeStateMachineTransition.ADVANCE_MODE_AUTO))
-	return
+	# Returns the whole string after the given number of slashes "/"
+	return animation.get_slice("/",number_of_preffixes)
+
 
 ## Creates and returns an Animation Node State Machine Transition.
 func create_node_transition(mode) -> AnimationNodeStateMachineTransition:
@@ -942,15 +860,13 @@ func transition_to_target(target_state : State) -> void:
 		attack_timer.stop() # Stops the attack timer to avoid shenanigans.
 		
 	#print("\ntransition_to_target function: ")
-	#print("CURRENT NODE AT START: ",current_animation_state_machine.get_current_node())
+	#print("CURRENT NODE AT START: ",anim_state_machine.get_current_node())
 	#print("target_state: ", target_state)
 	#print("IS target_state SPECTATING: ", target_state is EnemySpectating)
 
 	# Checks to see if the enemy is already in a "safe animation" so that it doesn't interrupt a hit, block, or any other animation.
-	if current_animation_state_machine.get_current_node() in ["idle", "idle_guard", "End"]:
+	if anim_state_machine.get_current_node() in ["idle", "idle_guard", "End"]:
 		
-		# Checks if the animation tree is currently in a NESTED animation state machine or the ROOT animation state machine
-		check_for_nested_and_exit_if_so() 
 		
 		transition(target_state)
 		return
@@ -967,7 +883,7 @@ func transition_to_target(target_state : State) -> void:
 		# This cuts off any animation and is required since going into knock down has way more priority than anything else.
 		if target_state is EnemyKnockedDown : 
 			#print("Traveling to knock_down")
-			current_animation_state_machine.travel("knock_down")
+			anim_state_machine.travel("knock_down")
 			transition(target_state)
 			return
 		
@@ -975,37 +891,22 @@ func transition_to_target(target_state : State) -> void:
 		await animation_tree.animation_finished # Waits until the current attack/animation is finished before changing state.
 		#print("POST-AWAIT ANIMATION FINISHED")
 		
-		# Checks if the animation tree is currently in a NESTED animation state machine or the ROOT animation state machine
-		check_for_nested_and_exit_if_so() 
-		#print("POST NESTED")
 		
-		#print("CURRENT NODE AFTER WAITING: ", current_animation_state_machine.get_current_node())
+		#print("CURRENT NODE AFTER WAITING: ", anim_state_machine.get_current_node())
 
 		# If the enemy is gonna enter Spectating, then it transitions after the current attack animation is finished.
 		if target_state is EnemySpectating : 
 			#print("Traveling to move_to_spectate")
-			current_animation_state_machine.travel("move_to_spectate")
+			anim_state_machine.travel("move_to_spectate")
 			transition(target_state)
 			return
 			
-		if current_animation_state_machine.get_current_node() not in ["knock_down", "get_up", "move_to_spectate", "spectating"] :
-			current_animation_state_machine.travel("hub_node") # Travels to the "hub_node" to go to the next state.
+		if anim_state_machine.get_current_node() not in ["knock_down", "get_up", "move_to_spectate", "spectating"] :
+			anim_state_machine.travel("hub_node") # Travels to the "hub_node" to go to the next state.
 			transition(target_state)
 			return
 	return
 
-## Checks if the [member current_animation_state_machine] is the ROOT state machine or a NESTED state machine.
-## Then, it exits the nested state machine and resets the ROOT state machine as the current one.
-func check_for_nested_and_exit_if_so() -> void:
-	# Checks if the current animation state machine is the ROOT state machine or a NESTED state machine.
-	if current_animation_state_machine != animation_tree["parameters/playback"]:
-		
-		# If it is a NESTED state machine, it exits by traveling to the "End" animation and then
-		# Sets the current_animation_state_machine as the ROOT state machine.
-		current_animation_state_machine.travel("End")
-		current_animation_state_machine = animation_tree["parameters/playback"]
-		print("Was a nested state machine, exiting now...")
-		return
 
 ## Checks to see if there is no target state set and then corrects it if there isnt.
 func set_and_check_interrupted_state(target_state) -> void:
@@ -1056,7 +957,7 @@ func play_attack_start_attack_timer(animation : String) -> void:
 		attack_timer.stop()
 	
 	# Travels to the given animation on the animation tree.
-	current_animation_state_machine.travel(animation)
+	anim_state_machine.travel(animation)
 	
 	#print("PERFORMING ATTACK: ", animation)
 

@@ -89,7 +89,7 @@ var current_hit_animation : String = "hit"
 var current_block_animation : String = "block"
 
 ## Stores the current animation state machine, which can change when entering or leaving nested animation state machines.
-var current_anim_state_machine : AnimationNodeStateMachinePlayback = null
+var anim_state_machine : AnimationNodeStateMachinePlayback = null
 
 ## The position where effects will spawn.
 var effect_position = [-10.0, -54.0]
@@ -121,7 +121,7 @@ func set_defense_variables_arrays() -> void:
 	star_window_array = [lower_star_window, upper_star_window]
 
 func set_anim_state_machine() -> void:
-	current_anim_state_machine = owner.anim_state_machine
+	anim_state_machine = owner.anim_state_machine
 
 ## This is the main function used to check if a hit is succesful or not and is called by the opposing fighter's [AttackingComponent].
 ## 
@@ -282,20 +282,20 @@ func check_for_star_and_stun(punch_height : int) -> bool:
 ## Mainly used so that the [Player] doesn't perform a bug where frame perfect dodges would result in getting hit
 ## and receiving damage, but playing the dodge animation instead of the hit animation.
 func play_animation(animation_name : String) -> void:
-	current_anim_state_machine.stop() # Stops the current animation if there is one playing
+	anim_state_machine.stop() # Stops the current animation if there is one playing
 	
 	# While the current animation being played ISN'T the given animation the function wants to be playing,
 	# keep repeating the start() function until it is.
-	while current_anim_state_machine.get_current_node() != animation_name: 
+	while anim_state_machine.get_current_node() != animation_name: 
 		
-		current_anim_state_machine.start(animation_name) # Starts the desired animation
+		anim_state_machine.start(animation_name) # Starts the desired animation
 		
 		# Waits until the signal for an animation starting has been emitted.
 		# That way it only checks when it has to.
 		await animation_tree.animation_started 
 		
 		# If the current animation playing IS the desired one, then exit loop since work here is done.
-		if current_anim_state_machine.get_current_node() == animation_name: 
+		if anim_state_machine.get_current_node() == animation_name: 
 			break
 	return
 
@@ -335,8 +335,7 @@ func check_instant_ko() -> bool:
 func reset_current_animations() -> void:
 	current_hit_animation = "hit"
 	current_block_animation = "block"
-	current_anim_state_machine = owner.animation_tree["parameters/playback"]
-	
+
 #endregion
 
 func play_impact_effect(punch_height) -> void:

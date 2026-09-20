@@ -68,7 +68,7 @@
 [ext_resource type="Script" uid="uid://c4q24a656iry7" path="res://scripts/states/enemy/taunt_and_counter_state.gd" id="63_jgm8d"]
 [ext_resource type="AudioStream" uid="uid://ghulw4avu2eq" path="res://assets/sound/sfx/star_punch_start.wav" id="63_pkcvl"]
 [ext_resource type="Script" uid="uid://fdadbh4p2tg5" path="res://scripts/classes/round_state_container.gd" id="64_e5w0m"]
-[ext_resource type="Script" uid="uid://dt50cn0l8twro" path="res://scripts/states/enemy/flurry_attack2_state.gd" id="64_jgm8d"]
+[ext_resource type="Script" uid="uid://dt50cn0l8twro" path="res://scripts/states/enemy/sequential_attacks_state.gd" id="64_jgm8d"]
 [ext_resource type="AudioStream" uid="uid://763gm60yi6v4" path="res://assets/sound/sfx/knock_down_enemy.wav" id="65_ssxbu"]
 [ext_resource type="AudioStream" uid="uid://bvei8do7tp40f" path="res://assets/sound/sfx/duck.wav" id="66_40p5w"]
 
@@ -6191,97 +6191,8 @@ _data = {
 &"upper_right": SubResource("Animation_poxia")
 }
 
-[sub_resource type="Animation" id="Animation_cutrh"]
-resource_name = "fili_heal"
-length = 0.8
-tracks/0/type = "method"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("AttackingComponent")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(),
-"transitions": PackedFloat32Array(),
-"values": []
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("AnimatedSprite2D:animation")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [&"fili"]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("AnimatedSprite2D:frame")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [2]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("AnimatedSprite2D:position")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(8, -16)]
-}
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("DefenseComponent:upper_invulnerability")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
-"times": PackedFloat32Array(-1.4901161e-08),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/5/type = "value"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath("DefenseComponent:lower_invulnerability")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/6/type = "method"
-tracks/6/imported = false
-tracks/6/enabled = true
-tracks/6/path = NodePath("HealthComponent")
-tracks/6/interp = 1
-tracks/6/loop_wrap = true
-tracks/6/keys = {
-"times": PackedFloat32Array(0.56666666),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [30.0],
-"method": &"heal"
-}]
-}
-
 [sub_resource type="Animation" id="Animation_m1ty1"]
-resource_name = "fili_hit"
+resource_name = "heal_failed"
 length = 0.4
 tracks/0/type = "method"
 tracks/0/imported = false
@@ -6301,121 +6212,34 @@ tracks/1/path = NodePath("AnimatedSprite2D:animation")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [&"fili"]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("AnimatedSprite2D:frame")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [0]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("AnimatedSprite2D:position")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0, 0.06666667, 0.13333334),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [Vector2(8, -16), Vector2(8, -22), Vector2(8, -16)]
-}
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("DefenseComponent:upper_invulnerability")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
-"times": PackedFloat32Array(-1.4901161e-08),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/5/type = "value"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath("DefenseComponent:lower_invulnerability")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/6/type = "value"
-tracks/6/imported = false
-tracks/6/enabled = true
-tracks/6/path = NodePath("DefenseComponent:lower_damage_multiplier")
-tracks/6/interp = 1
-tracks/6/loop_wrap = true
-tracks/6/keys = {
-"times": PackedFloat32Array(),
-"transitions": PackedFloat32Array(),
-"update": 0,
-"values": []
-}
-
-[sub_resource type="Animation" id="Animation_lh7pq"]
-resource_name = "fili_start"
-length = 0.8
-tracks/0/type = "method"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("AttackingComponent")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(),
-"transitions": PackedFloat32Array(),
-"values": []
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("AnimatedSprite2D:animation")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [&"guard_down"]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("AnimatedSprite2D:frame")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.2, 0.4),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 1,
-"values": [1, 0, 1]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("AnimatedSprite2D:position")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0, 0.2),
+"times": PackedFloat32Array(0, 0.20000002),
 "transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [&"fili", &"guard_down"]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("AnimatedSprite2D:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.20000002, 0.23333335, 0.26666668, 0.3, 0.33333337, 0.36666667),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 0, 1, 0, 1, 0]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("AnimatedSprite2D:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.06666667, 0.13333334, 0.20000002, 0.40000004),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
-"values": [Vector2(0, 0), Vector2(8, -16)]
+"values": [Vector2(8, -16), Vector2(8, -22), Vector2(8, -16), Vector2(8, -16), Vector2(0, 0)]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
@@ -6424,10 +6248,10 @@ tracks/4/path = NodePath("DefenseComponent:upper_invulnerability")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"times": PackedFloat32Array(-1.4901161e-08),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(-1.4901161e-08, 0.2),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [true]
+"values": [true, true]
 }
 tracks/5/type = "value"
 tracks/5/imported = false
@@ -6436,10 +6260,10 @@ tracks/5/path = NodePath("DefenseComponent:lower_invulnerability")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 0.20000002),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [true]
+"values": [true, true]
 }
 tracks/6/type = "value"
 tracks/6/imported = false
@@ -6455,7 +6279,8 @@ tracks/6/keys = {
 }
 
 [sub_resource type="Animation" id="Animation_c2kvk"]
-resource_name = "fili_middle"
+resource_name = "heal_intro"
+length = 1.6
 tracks/0/type = "method"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -6474,10 +6299,10 @@ tracks/1/path = NodePath("AnimatedSprite2D:animation")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 0.6),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [&"fili"]
+"values": [&"guard_down", &"fili"]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
@@ -6486,10 +6311,10 @@ tracks/2/path = NodePath("AnimatedSprite2D:frame")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 0.20000002, 0.4, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 1,
-"values": [1]
+"values": [1, 0, 1, 1]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -6498,10 +6323,10 @@ tracks/3/path = NodePath("AnimatedSprite2D:position")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 0.20000002, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [Vector2(8, -16)]
+"values": [Vector2(0, 0), Vector2(8, -16), Vector2(8, -16)]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
@@ -6510,10 +6335,10 @@ tracks/4/path = NodePath("DefenseComponent:upper_invulnerability")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"times": PackedFloat32Array(-1.4901161e-08),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(-1.4901161e-08, 0.6),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [false]
+"values": [true, false]
 }
 tracks/5/type = "value"
 tracks/5/imported = false
@@ -6522,10 +6347,10 @@ tracks/5/path = NodePath("DefenseComponent:lower_invulnerability")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 0.6),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [true]
+"values": [true, true]
 }
 tracks/6/type = "audio"
 tracks/6/imported = false
@@ -6539,13 +6364,13 @@ tracks/6/keys = {
 "start_offset": 0.4136474,
 "stream": ExtResource("63_7b5nu")
 }],
-"times": PackedFloat32Array(0)
+"times": PackedFloat32Array(0.6)
 }
 tracks/6/use_blend = true
 
-[sub_resource type="Animation" id="Animation_jmqel"]
-resource_name = "fili_return"
-length = 0.2
+[sub_resource type="Animation" id="Animation_cutrh"]
+resource_name = "heal_successful"
+length = 1.6
 tracks/0/type = "method"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -6564,10 +6389,10 @@ tracks/1/path = NodePath("AnimatedSprite2D:animation")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 0.8),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [&"guard_down"]
+"values": [&"fili", &"guard_down"]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
@@ -6576,10 +6401,10 @@ tracks/2/path = NodePath("AnimatedSprite2D:frame")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.033333335, 0.06666667, 0.1, 0.13333334, 0.16666667),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0, 0.8, 1, 1.2, 1.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 1,
-"values": [1, 0, 1, 0, 1, 0]
+"values": [2, 1, 0, 1, 0]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
@@ -6588,10 +6413,10 @@ tracks/3/path = NodePath("AnimatedSprite2D:position")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0, 0.2),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0, 0.8, 1.4),
+"transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
-"values": [Vector2(8, -16), Vector2(0, 0)]
+"values": [Vector2(8, -16), Vector2(8, -16), Vector2(0, 0)]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
@@ -6600,85 +6425,10 @@ tracks/4/path = NodePath("DefenseComponent:upper_invulnerability")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"times": PackedFloat32Array(-1.4901161e-08),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-tracks/5/type = "value"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath("DefenseComponent:lower_invulnerability")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
-
-[sub_resource type="Animation" id="Animation_x660i"]
-resource_name = "fili_return"
-length = 0.6
-tracks/0/type = "method"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("AttackingComponent")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(),
-"transitions": PackedFloat32Array(),
-"values": []
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("AnimatedSprite2D:animation")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [&"guard_down"]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("AnimatedSprite2D:frame")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.2, 0.4, 0.6),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 1,
-"values": [1, 0, 1, 0]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("AnimatedSprite2D:position")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0, 0.6),
+"times": PackedFloat32Array(-1.4901161e-08, 0.8),
 "transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(8, -16), Vector2(0, 0)]
-}
-tracks/4/type = "value"
-tracks/4/imported = false
-tracks/4/enabled = true
-tracks/4/path = NodePath("DefenseComponent:upper_invulnerability")
-tracks/4/interp = 1
-tracks/4/loop_wrap = true
-tracks/4/keys = {
-"times": PackedFloat32Array(-1.4901161e-08),
-"transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [true]
+"values": [true, true]
 }
 tracks/5/type = "value"
 tracks/5/imported = false
@@ -6687,20 +6437,31 @@ tracks/5/path = NodePath("DefenseComponent:lower_invulnerability")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 0.8),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [true]
+"values": [true, true]
+}
+tracks/6/type = "method"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("HealthComponent")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0.56666666),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [30.0],
+"method": &"heal"
+}]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_367aj"]
 _data = {
-&"heal": SubResource("Animation_cutrh"),
-&"hit": SubResource("Animation_m1ty1"),
-&"intro": SubResource("Animation_lh7pq"),
-&"middle": SubResource("Animation_c2kvk"),
-&"rage": SubResource("Animation_jmqel"),
-&"return": SubResource("Animation_x660i")
+&"heal_failed": SubResource("Animation_m1ty1"),
+&"heal_intro": SubResource("Animation_c2kvk"),
+&"heal_successful": SubResource("Animation_cutrh")
 }
 
 [sub_resource type="Animation" id="Animation_pkcvl"]
@@ -8796,7 +8557,7 @@ metadata/_custom_type_script = "uid://c15nwhylsnm6w"
 [node name="StateMachine" type="Node" parent="." unique_id=1256866169 node_paths=PackedStringArray("initial_state", "stun_state", "knocked_down_state", "spectating_state", "cutscene_state")]
 unique_name_in_owner = true
 script = ExtResource("15_l7qsa")
-initial_state = NodePath("LoopingCharge")
+initial_state = NodePath("ItemHeal2")
 stun_state = NodePath("Required States/Stunned")
 knocked_down_state = NodePath("Required States/KnockedDown")
 spectating_state = NodePath("Required States/Spectating")
@@ -9044,8 +8805,6 @@ parameters/final_hit/blend_position = Vector2(-1.2386009, 2.2694063)
 parameters/get_up/blend_position = -1.0043597
 parameters/hit/blend_position = Vector2(1.4105186, 1.3653846)
 parameters/idle/blend_position = 0.0
-parameters/item_heal/item_hit/blend_position = Vector2(0, 0)
-parameters/item_heal_2/item_hit/blend_position = Vector2(0, 0)
 parameters/knock_down/blend_position = Vector2(-1.0533643, 1.0897703)
 parameters/stun_hit/blend_position = Vector2(-0.9225484, 0.86757994)
 

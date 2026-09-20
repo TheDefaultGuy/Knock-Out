@@ -33,7 +33,7 @@ func enter() -> void:
 	
 	animation_tree.set("parameters/neutral/blend_position", 0)
 	
-	defense_component.current_anim_state_machine = anim_state_machine
+	defense_component.anim_state_machine = anim_state_machine
 	
 	input_component.attack_input_signal.connect(perform_attack)
 	input_component.defense_input_signal.connect(perform_defense)

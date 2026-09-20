@@ -51,9 +51,9 @@ func enter() -> void:
 	modified_moveset.reverse()
 	
 	# Travels to the first attack/animation
-	current_animation_state_machine.travel(modified_moveset[0])
+	anim_state_machine.travel(modified_moveset[0])
 	
-	
+
 func exit() -> void:
 	super() # Runs the base EnemyState exit function and then runs everything below.
 	
@@ -79,13 +79,12 @@ func increase_count(_animation) -> void:
 		
 	# It manually travels to each attack animation node since linking them can cause problems when the player gets knocked down.
 	if attack_count >= 0 and attack_count < modified_moveset.size():
-		current_animation_state_machine.travel(modified_moveset[attack_count])
+		anim_state_machine.travel(modified_moveset[attack_count])
 
 func override_conditions_and_state_parameters() -> void:
 	state_type = STATE_TYPE_ENUM.CHAINED_ATTACKS
 	attack_timer_required = false
-	nested_state_machine = preload("uid://bg1hc7fvrio3n")
-	
+		
 	moveset_type = MOVESET_TYPE_ENUM.PREDETERMINED_ORDER
 	
 	# Overrides the state change condition so that this state can function properly.
