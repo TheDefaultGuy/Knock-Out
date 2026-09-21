@@ -8,15 +8,18 @@ class_name SoundEffectsComponent extends Node
 const MATCH_BGM = preload("uid://bxvahixjtads2")
 const KO_BGM = preload("uid://cwd0ahjeaqarg")
 
-@export var punch_hit : AudioStream
-@export var punch_miss : AudioStream
-@export var dodge : AudioStream
-@export var star_awarded : AudioStream
-@export var star_punch : AudioStream
-@export var duck : AudioStream
-@export var block : AudioStream
-@export var knock_down : AudioStream
-@export var parry : AudioStream
+@export var sfx_library : Dictionary[String, AudioStream] = {
+	"punch_hit": preload("uid://cvaro8jabddtv"),
+	"punch_miss": null,
+	"dodge": preload("uid://dprc3kyxjg5n3"),
+	"star_awarded": preload("uid://6pfk531417bv"),
+	"star_punch": preload("uid://ghulw4avu2eq"),
+	"duck": preload("uid://bvei8do7tp40f"),
+	"block": preload("uid://iy6ipv2pkmm8"),
+	"knock_down": preload("uid://bmdkkm11kix7e"),
+	"parry": preload("uid://d2j7ay5j7gx3p"),
+	
+}
 
 var background_music : AudioStreamPlayer = null
 
@@ -27,22 +30,31 @@ func _ready() -> void:
 	background_music.autoplay = true
 	add_child(background_music)
 	background_music.play()
-	FightManager.succesful_hit_signal.connect(play_sound_effect.bind(punch_hit))
-	FightManager.star_awarded_signal.connect(play_sound_effect.bind(star_awarded))
-	FightManager.sfx_dodge_signal.connect(play_sound_effect.bind(dodge))
-	FightManager.sfx_star_punch_thrown_signal.connect(play_sound_effect.bind(star_punch))
-	FightManager.successful_block_signal.connect(play_sound_effect.bind(block))
-	FightManager.sfx_duck_signal.connect(play_sound_effect.bind(duck))
-	FightManager.sfx_parry_signal.connect(play_sound_effect.bind(parry))
-	FightManager.enemy_knocked_down_signal.connect(play_sound_effect.bind(knock_down))
-	FightManager.player_knocked_down_signal.connect(play_sound_effect.bind(knock_down))
+	FightManager.succesful_hit_signal.connect(play_sound_effect.bind("punch_hit"))
+	FightManager.star_awarded_signal.connect(play_sound_effect.bind("star_awarded"))
+	FightManager.successful_block_signal.connect(play_sound_effect.bind("block"))
+	
+	#FightManager.sfx_dodge_signal.connect(play_sound_effect.bind(dodge))
+	#FightManager.sfx_star_punch_thrown_signal.connect(play_sound_effect.bind(star_punch))
+	
+	#FightManager.sfx_duck_signal.connect(play_sound_effect.bind(duck))
+	#FightManager.sfx_parry_signal.connect(play_sound_effect.bind(parry))
+	
+	FightManager.enemy_knocked_down_signal.connect(play_sound_effect.bind("knock_down"))
+	FightManager.player_knocked_down_signal.connect(play_sound_effect.bind("knock_down"))
+	
+	FightManager.play_sfx_signal.connect(play_sound_effect)
+	
 	FightManager.enemy_knocked_down_signal.connect(change_BGM.bind(KO_BGM))
 	FightManager.player_knocked_down_signal.connect(change_BGM.bind(KO_BGM))
 	FightManager.fighter_got_up_signal.connect(change_BGM.bind(MATCH_BGM))
 	
-func play_sound_effect(sound_effect : AudioStream):
-	var sfx_player = AudioStreamPlayer.new()
-	sfx_player.stream = sound_effect
+func play_sound_effect(sound_effect : String):
+	
+	var sfx : AudioStream = sfx_library[sound_effect]
+	
+	var sfx_player : AudioStreamPlayer = AudioStreamPlayer.new()
+	sfx_player.stream = sfx
 	sfx_player.bus = "SFX"
 	get_tree().root.add_child(sfx_player)
 	sfx_player.play()

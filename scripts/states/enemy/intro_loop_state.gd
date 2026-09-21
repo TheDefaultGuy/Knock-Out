@@ -54,17 +54,18 @@ func check_animation(animation_name : String) -> void:
 		intro_animation:
 			anim_state_machine.travel(idle_loop_animation)
 			return
+			
 		attack_animation:
 			if Global.player_node.isKnockdown != true or Global.enemy_node.isKnockdown != true :
 				anim_state_machine.travel(restart_animation)
 				return
+				
 		restart_animation:
 			anim_state_machine.travel(idle_loop_animation)
 			return
 			
 
 func override_conditions_and_state_parameters() -> void:
-
 	state_type = STATE_TYPE_ENUM.SIMPLE
 	attack_timer_required  = true
 	
@@ -73,6 +74,7 @@ func override_conditions_and_state_parameters() -> void:
 	moveset_type = MOVESET_TYPE_ENUM.PREDETERMINED_ORDER
 	
 	moveset_array = [attack_animation]
+	
 	# Given the nature of this state, these 2 conditions MUST ALWAYS be set and have a target state to transition to.
 	primary_condition = STATE_CHANGE_CONDITION.AFTER_PLAYER_KNOCKED_DOWN
 	secondary_condition = STATE_CHANGE_CONDITION.AFTER_ENEMY_KNOCKED_DOWN

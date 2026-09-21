@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="VariableDebugTool" format=3 uid="uid://b5fpo64etbs3w"]
+
+[ext_resource type="Script" uid="uid://cmsulrr82fpft" path="res://scripts/globals/global_fight_values.gd" id="1_52f1q"]
+
+[resource]
+script = ExtResource("1_52f1q")
+metadata/_custom_type_script = "uid://cmsulrr82fpft"

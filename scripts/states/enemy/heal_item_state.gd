@@ -25,7 +25,8 @@ class_name ItemHeal extends EnemyState
 @export var successful_animation : String = "heal_successful"
 
 func _ready() -> void:
-	additional_animations_to_add = [ # Adds these animations to the additional_animations_to_add Array so that they can be added to the animation tree
+	# Adds these animations to the additional_animations_to_add Array so that they can be added to the animation tree
+	additional_animations_to_add = [
 		intro_animation,
 		failed_animation,
 		successful_animation,
@@ -70,8 +71,6 @@ func override_conditions_and_state_parameters() -> void:
 	
 	attack_timer_required = false
 	
-	#nested_state_machine = preload("uid://dt6b8hv77b0dh")
-	
 	block_behavior = BLOCK_BEHAVIOR_ENUM.NOT_APPLICABLE
 	
 	# Given the nature of this state, these 2 conditions MUST ALWAYS be enabled and have corresponding target states.
@@ -104,6 +103,7 @@ func check_animation(animation_name : String) -> void:
 			#anim_state_machine.start("hub_node")
 			await animation_tree.animation_started
 			return
+
 ## Sets the required conditions as Read Only so that they can't be changed.
 func _validate_property(property : Dictionary) -> void:
 	if property.name == "primary_condition" :

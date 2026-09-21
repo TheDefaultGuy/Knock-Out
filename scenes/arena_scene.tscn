@@ -7,19 +7,11 @@
 [ext_resource type="Script" uid="uid://lks1t1wg7nna" path="res://scripts/components/particle_effect_component.gd" id="4_4wfwo"]
 [ext_resource type="Script" uid="uid://c8kyx1g3lvmgb" path="res://scripts/components/sfx_component.gd" id="4_8k0nb"]
 [ext_resource type="Texture2D" uid="uid://ujuvvpjfs7ty" path="res://assets/ring1.png" id="4_p4q4o"]
-[ext_resource type="AudioStream" uid="uid://cvaro8jabddtv" path="res://assets/sound/sfx/hit.wav" id="5_efdj8"]
 [ext_resource type="Texture2D" uid="uid://dbrq43tue7gf2" path="res://assets/ring2.png" id="5_or0bq"]
 [ext_resource type="Texture2D" uid="uid://dgd8463fc3h8u" path="res://assets/ring3.png" id="6_3j23c"]
-[ext_resource type="AudioStream" uid="uid://dprc3kyxjg5n3" path="res://assets/sound/sfx/dodge.wav" id="6_hhgcq"]
-[ext_resource type="AudioStream" uid="uid://6pfk531417bv" path="res://assets/sound/sfx/star_awarded.wav" id="7_4wfwo"]
 [ext_resource type="Texture2D" uid="uid://daeyep1j18c81" path="res://assets/ring4.png" id="7_wiy1v"]
-[ext_resource type="AudioStream" uid="uid://ghulw4avu2eq" path="res://assets/sound/sfx/star_punch_start.wav" id="8_tqdu3"]
-[ext_resource type="AudioStream" uid="uid://bvei8do7tp40f" path="res://assets/sound/sfx/duck.wav" id="9_5bpft"]
-[ext_resource type="AudioStream" uid="uid://iy6ipv2pkmm8" path="res://assets/sound/sfx/block.wav" id="10_h4xjg"]
-[ext_resource type="AudioStream" uid="uid://bmdkkm11kix7e" path="res://assets/sound/sfx/knock_down_player.wav" id="11_5bpft"]
 [ext_resource type="Script" uid="uid://cguhik1wigmds" path="res://scripts/components/fight_logic_component.gd" id="12_4wfwo"]
 [ext_resource type="Script" uid="uid://kmaq2e83r45t" path="res://scripts/components/match_settings_component.gd" id="13_tqdu3"]
-[ext_resource type="AudioStream" uid="uid://d2j7ay5j7gx3p" path="res://assets/sound/sfx/parry-ultrakill.mp3" id="16_3j23c"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_hpwni"]
 
@@ -294,14 +286,6 @@ libraries/ = SubResource("AnimationLibrary_bt4xr")
 [node name="SoundEffectsComponent" type="Node" parent="." unique_id=1369961966]
 unique_name_in_owner = true
 script = ExtResource("4_8k0nb")
-punch_hit = ExtResource("5_efdj8")
-dodge = ExtResource("6_hhgcq")
-star_awarded = ExtResource("7_4wfwo")
-star_punch = ExtResource("8_tqdu3")
-duck = ExtResource("9_5bpft")
-block = ExtResource("10_h4xjg")
-knock_down = ExtResource("11_5bpft")
-parry = ExtResource("16_3j23c")
 metadata/_custom_type_script = "uid://c8kyx1g3lvmgb"
 
 [node name="ParticleEffectComponent" type="Node" parent="." unique_id=1861586519]

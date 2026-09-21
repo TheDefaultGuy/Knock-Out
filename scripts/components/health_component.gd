@@ -28,13 +28,14 @@ func take_damage(amount : float) -> float:
 
 func reset_hp() -> void:
 	hp = owner.max_hp
+	print(owner.name, " emitting got up signal...")
 	FightManager.fighter_got_up_signal.emit()
 	owner.isKnockdown = false
 
 ## Heals the fighter by a given amount.
 func heal(amount : float) -> void:
 	hp += abs(amount) # Absolute value to avoid negative values that would take away HP.
-	
+	return
 
 ## Function responsible for decreasing HP and checking to see if HP falls below zero, which would be a knock down.
 func deal_damage_and_check_for_knockdown(damage_amount : float, damage_multiplier : float) -> bool:

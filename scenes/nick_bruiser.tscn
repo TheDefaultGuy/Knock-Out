@@ -3573,7 +3573,7 @@ tracks/10/keys = {
 
 [sub_resource type="Animation" id="Animation_hoe72"]
 resource_name = "insta_jab"
-length = 0.1
+length = 0.001
 tracks/0/type = "method"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -7316,11 +7316,99 @@ tracks/6/keys = {
 "values": []
 }
 
+[sub_resource type="Animation" id="Animation_lh7pq"]
+resource_name = "restart_2"
+length = 0.3
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AttackingComponent")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(),
+"transitions": PackedFloat32Array(),
+"values": []
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimatedSprite2D:animation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [&"uppercut"]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("AnimatedSprite2D:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("AnimatedSprite2D:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(64, -24)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("DefenseComponent:upper_invulnerability")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(-1.4901161e-08),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("DefenseComponent:lower_invulnerability")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("DefenseComponent:lower_damage_multiplier")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(),
+"transitions": PackedFloat32Array(),
+"update": 0,
+"values": []
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_bptvf"]
 _data = {
 &"attack": SubResource("Animation_x8a8v"),
 &"idle_loop": SubResource("Animation_3v6ls"),
-&"restart": SubResource("Animation_inj67")
+&"restart": SubResource("Animation_inj67"),
+&"restart_2": SubResource("Animation_lh7pq")
 }
 
 [sub_resource type="Animation" id="Animation_gtqkv"]
@@ -8557,7 +8645,7 @@ metadata/_custom_type_script = "uid://c15nwhylsnm6w"
 [node name="StateMachine" type="Node" parent="." unique_id=1256866169 node_paths=PackedStringArray("initial_state", "stun_state", "knocked_down_state", "spectating_state", "cutscene_state")]
 unique_name_in_owner = true
 script = ExtResource("15_l7qsa")
-initial_state = NodePath("ItemHeal2")
+initial_state = NodePath("FlurryAttack")
 stun_state = NodePath("Required States/Stunned")
 knocked_down_state = NodePath("Required States/KnockedDown")
 spectating_state = NodePath("Required States/Spectating")
@@ -8608,6 +8696,8 @@ script = ExtResource("44_wdmnt")
 primary_condition = 11
 moveset_type = 1
 moveset_array = Array[String](["insta_jab"])
+min_delay_time = 0.4
+max_delay_time = 0.54
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
 [node name="Aggressive" type="Node" parent="StateMachine/Randomized Attacks" unique_id=550832782 node_paths=PackedStringArray("secondary_target_state")]
@@ -8702,7 +8792,7 @@ metadata/_custom_type_script = "uid://bjtexblqp5cmp"
 
 [node name="LoopingCharge" type="Node" parent="StateMachine" unique_id=61317170 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
 script = ExtResource("60_7b5nu")
-intro_animation = "restart"
+intro_animation = "restart_2"
 primary_condition = 3
 secondary_condition = 2
 primary_target_state = NodePath("../TauntAndCounter2")
@@ -8719,7 +8809,7 @@ secondary_condition = 5
 primary_target_state = NodePath("../LoopingCharge")
 secondary_target_state = NodePath("../ItemHeal")
 moveset_type = 2
-moveset_array = Array[String](["taunt", "counter_uppercut"])
+moveset_array = Array[String](["taunt"])
 block_behavior = 2
 metadata/_custom_type_script = "uid://c4q24a656iry7"
 
@@ -8731,7 +8821,7 @@ primary_target_state = NodePath("../Randomized Attacks/WeirdAttacks2")
 secondary_target_state = NodePath("../Randomized Attacks/Aggressive")
 time_to_change_state = 14.0
 moveset_type = 2
-moveset_array = Array[String](["taunt", "counter_uppercut"])
+moveset_array = Array[String](["taunt"])
 block_behavior = 2
 metadata/_custom_type_script = "uid://c4q24a656iry7"
 

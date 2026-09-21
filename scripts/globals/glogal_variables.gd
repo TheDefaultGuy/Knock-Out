@@ -7,13 +7,13 @@ extends Node
 ## The possible heights for attacks.
 enum height{
 	
-	## For lower body or gut punches
+	## For lower body or gut punches.
 	LOW = 0,
 	
-	## For upper or face punches
+	## For upper or face punches.
 	HIGH = 1,
 	
-	## For moves that cover both upper and lower regions..
+	## For moves that cover both upper and lower regions.
 	BOTH = 2,
 	}
 
@@ -30,8 +30,8 @@ enum range{
 	RIGHT = 1,
 	}
 
-## Used to store the [Player] as [Node2D]
+## Used to store the [Player] as a [Node2D]
 var player_node : Node2D = null 
 
-## Used to store the [Enemy] as [Node2D]
+## Used to store the [Enemy] as a [Node2D]
 var enemy_node : Node2D = null

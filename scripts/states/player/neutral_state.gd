@@ -66,12 +66,12 @@ func perform_defense(move : int, action_name : String) -> void:
 		
 		if move == Global.range.NEUTRAL: # Checks if it was a duck instead of a Left or Right Dodge
 			
-			# Emits the signal for the sound effect.
-			FightManager.sfx_duck_signal.emit() 
+			# Emits the signal for the duck sound effect.
+			FightManager.play_sfx_signal.emit("duck") 
 			return
 			
-		# Emits the signal for the sound effect.
-		FightManager.sfx_dodge_signal.emit()
+		# Emits the signal for the dodge sound effect.
+		FightManager.play_sfx_signal.emit("dodge")
 		return
 		
 	# If the player is currently already dodging, attacking or hit, it'll store the attack they wanted to do so that it's buffered.
@@ -98,7 +98,7 @@ func perform_attack(height : int, direction : int, action_name : String) -> void
 				anim_state_machine.travel("star_punch")
 				
 				# Emits the signal for the sound effect.
-				FightManager.sfx_star_punch_thrown_signal.emit()
+				FightManager.play_sfx_signal.emit("star_punch")
 				return
 		else:
 			
@@ -109,10 +109,9 @@ func perform_attack(height : int, direction : int, action_name : String) -> void
 			# Plays the actual attack animation
 			anim_state_machine.travel("attack")
 			
-			FightManager.player_threw_punch_signal.emit(height, direction)
 			
 			# Emits the signal for the sound effect.
-			FightManager.sfx_punch_thrown_signal.emit()
+			#FightManager.sfx_punch_thrown_signal.emit()
 			return
 		
 	# If the player is currently already dodging, attacking or hit, it'll store the attack they wanted to do so that it's buffered.

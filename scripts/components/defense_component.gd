@@ -193,7 +193,9 @@ func handle_player_blocking_and_parry(damage_amount : float, punch_height : int,
 			return choose_hit_region(punch_height, damage_amount, punch_direction)
 	
 	if owner.input_component.parry_timer.time_left > 0.0: # If the parry timer hasn't reached 0, then it's considered a successful parry.
-		FightManager.sfx_parry_signal.emit()
+		
+		FightManager.play_sfx_signal.emit("parry")
+		
 		player_parried_signal.emit()
 		current_block_animation = "fast_block" # Sets the block animation as the fast block.
 		play_parry_effect(punch_height)
@@ -282,21 +284,59 @@ func check_for_star_and_stun(punch_height : int) -> bool:
 ## Mainly used so that the [Player] doesn't perform a bug where frame perfect dodges would result in getting hit
 ## and receiving damage, but playing the dodge animation instead of the hit animation.
 func play_animation(animation_name : String) -> void:
+	
+	## The threshold value for checking the current animation's playback position. Used mainly for readability.
+	## If the animation's playback position is GREATER THAN (>) PLAY_POS_THRESH, then the animation is considered to be currently playing.
+	## If the animation's playback position is LESS THAN (<) PLAY_POS_THRESH, then the animation is considered to have been restarted or is back at the start.
+	const PLAY_POS_THRESH: float = 0.05
+	
+	print("Playing animation: ", animation_name)
+	#print("Animation Play Position: ", anim_state_machine.get_current_play_position())
+	
 	anim_state_machine.stop() # Stops the current animation if there is one playing
 	
-	# While the current animation being played ISN'T the given animation the function wants to be playing,
-	# keep repeating the start() function until it is.
-	while anim_state_machine.get_current_node() != animation_name: 
+	# Checks to see if the current node of animation_state_machine matches the animation that is being given.
+	# If it does match, then it restarts the animation.
+	if anim_state_machine.get_current_node() == animation_name :
 		
-		anim_state_machine.start(animation_name) # Starts the desired animation
+		#print("Current node matches animation!")
 		
-		# Waits until the signal for an animation starting has been emitted.
-		# That way it only checks when it has to.
-		await animation_tree.animation_started 
+		# Repeats the following as long as the playback position of the current animation is slightly larger than zero
+		while anim_state_machine.get_current_play_position() > PLAY_POS_THRESH : 
+			
+			#print("Current node Play position: ", anim_state_machine.get_current_play_position())
+			
+			anim_state_machine.start(animation_name) # Starts the desired animation first.
 		
-		# If the current animation playing IS the desired one, then exit loop since work here is done.
-		if anim_state_machine.get_current_node() == animation_name: 
-			break
+			# Waits until the signal for an animation starting has been emitted.
+			# That way it only checks when it has to.
+			await animation_tree.animation_started 
+			
+			# Checks to see if the current animation's play back position is Zero.
+			# If it is Zero, then animation was successfully restarted.
+			if anim_state_machine.get_current_play_position() < PLAY_POS_THRESH :
+				print("Successfully Restarted Animation: ", animation_name)
+				return
+	
+	# Does the following if the current animation is different than the given animation_name
+	elif anim_state_machine.get_current_node() != animation_name :
+		
+		# While the current animation being played ISN'T the given animation the function wants to be playing,
+		# keep repeating the start() function until it is.
+		while anim_state_machine.get_current_node() != animation_name : 
+			
+			anim_state_machine.start(animation_name) # Starts the desired animation
+			
+			# Waits until the signal for an animation starting has been emitted.
+			# That way it only checks when it has to.
+			await animation_tree.animation_started 
+			
+			
+			
+			# If the current animation playing IS the desired one, then exit loop since work here is done.
+			if anim_state_machine.get_current_node() == animation_name: 
+				print("Successfully Started Animation: ", animation_name)
+				return
 	return
 
 ## Helper function that makes the vulnurability checking simpler.

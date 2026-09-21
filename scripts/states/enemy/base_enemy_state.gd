@@ -203,7 +203,7 @@ const node_position_origin := Vector2(-1000.0,-500.0)
 ## What to do when an attack is blocked by either the [Player] or the [Enemy] when in this state.
 @export var block_behavior := BLOCK_BEHAVIOR_ENUM.PAUSE_TIMER :
 	set(value):
-		if block_behavior != value:
+		if block_behavior != value :
 			block_behavior = value
 			notify_property_list_changed()
 		
@@ -214,15 +214,27 @@ const node_position_origin := Vector2(-1000.0,-500.0)
 ## How the delay between each attack is handled.
 @export var attack_delay_type := ATTACK_DELAY.FLOAT : 
 	set(value):
-		if attack_delay_type != value:
+		if attack_delay_type != value :
 			attack_delay_type = value
-			notify_property_list_changed()
+			#notify_property_list_changed()
 		
 ## The minimum amount of time (in seconds) the [Enemy] will wait before calling [method perform_action].
-@export_range(0.2, 6.0, 0.2, "suffix:s") var min_delay_time : float = 1.0
+@export_range(0.0, 6.0, 0.02, "suffix:s") var min_delay_time : float = 1.0 :
+	
+	# Makes sure the set value is more than or equal to the minimum delay time.
+	set(value):
+		min_delay_time = value
+		if max_delay_time < value :
+			max_delay_time = value
 
 ## The maximum amount of time (in seconds) the [Enemy] will wait before calling [method perform_action].
-@export_range(0.2, 6.0, 0.2, "suffix:s") var max_delay_time : float = 3.0
+@export_range(0.0, 6.0, 0.02, "suffix:s") var max_delay_time : float = 3.0 :
+	
+	# Makes sure the set value is more than or equal to the minimum delay time.
+	set(value):
+		if min_delay_time > value : 
+			return
+		max_delay_time = value
 
 ## An array of predetermined attack delay amounts. 
 ## Instead of choosing a number BETWEEN a minumum and a maximum value, it will choose randomly from the list of provided values instead.
@@ -308,11 +320,9 @@ func _ready() -> void:
 		
 	check_for_unassigned_variables() # Self-explanatory.
 	
-	match state_type: # Checks the type of state it is so that it can properly set up the animation nodes in the animation tree.
-		#STATE_TYPE_ENUM.NESTED_STATE_MACHINE:
-			#call_deferred("add_nested_state_machine_node")
-			#if moves_arr != [] or null :
-				#call_deferred("add_attack_nodes_to_nested_state_machine", nested_state_machine, moves_arr)
+	
+	# Checks the type of state it is so that it can properly set up the animation nodes in the animation tree.
+	match state_type: 
 		STATE_TYPE_ENUM.SIMPLE:
 			if moves_arr != [] or null :
 				call_deferred("add_attack_animation_nodes", animation_tree.tree_root, moves_arr)

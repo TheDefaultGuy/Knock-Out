@@ -16,8 +16,8 @@ func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
 		return
 	
-	if state_machine.current_state == self:
-		print(anim_state_machine.get_current_node())
+	#if state_machine.current_state == self:
+		#print(anim_state_machine.get_current_node())
 
 
 func enter() -> void:
@@ -45,9 +45,9 @@ func perform_defense(move : int, action_name : String) -> void:
 		anim_state_machine.travel("dodge")
 		FightManager.player_dodged_signal.emit(move)
 		if move == Global.range.NEUTRAL:
-			FightManager.sfx_duck_signal.emit()
+			FightManager.play_sfx_signal.emit("duck")
 			return
-		FightManager.sfx_dodge_signal.emit()
+		FightManager.play_sfx_signal.emit("dodge")
 	else:
 		input_component.store_unhandled_input(action_name) # If the player is currently already dodging or attacking, it'll store the attack they wanted to do so that it's buffered.
 

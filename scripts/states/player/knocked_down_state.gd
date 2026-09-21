@@ -24,7 +24,10 @@ class_name PlayerKnockedDown extends State
 @onready var input_component: InputComponent = %InputComponent
 
 func _process(delta: float) -> void:
-
+	
+	if self.owner.isKnockdown == false :
+		return
+	
 	if state_machine.current_state == self and owner.can_get_up == true and FightManager.is_fight_over == false: #
 		get_up_progress = clampf(get_up_progress - get_up_decay_rate * delta, 0.0 , 110.0)
 		animation_tree.set("parameters/get_up_blend/blend_position", get_up_progress)
@@ -34,7 +37,8 @@ func _process(delta: float) -> void:
 			animation_tree.set("parameters/conditions/knockeddown", false)
 			animation_tree.set("parameters/conditions/gotup", true)
 			
-			FightManager.fighter_got_up_signal.emit() # Emits the global signal
+			health_component.reset_hp()
+			#FightManager.fighter_got_up_signal.emit() # Emits the global signal
 	return
 
 func enter() -> void:
@@ -44,13 +48,14 @@ func enter() -> void:
 	owner.can_get_up = false
 	FightManager.player_ready_status = false
 	
+	get_up_progress = 0.0
 	
 	input_component.attack_input_signal.connect(perform_attack)
 	FightManager.resume_fighting_signal.connect(transition_to_neutral)
 	FightManager.fight_is_over_signal.connect(failed_to_get_up)
 	
 	self.owner.isKnockdown = true
-	FightManager.fight_is_over_signal.emit()
+	#FightManager.fight_is_over_signal.emit()
 	
 func exit() -> void:
 	get_up_progress = 0.0
