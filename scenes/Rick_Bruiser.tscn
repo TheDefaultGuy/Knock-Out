@@ -8775,9 +8775,8 @@ metadata/_custom_type_script = "uid://ch1gb3rys2tfm"
 [node name="Stunned" type="Node" parent="StateMachine/Required States" unique_id=642401764]
 script = ExtResource("53_7ka3d")
 stun_behavior = 2
-stun_duration = 1.0
-min_stun_length = 2
-max_stun_length = 5
+stun_duration = 1.25
+max_stun_length = 8
 metadata/_custom_type_script = "uid://d2mk31geekmgb"
 
 [node name="Spectating" type="Node" parent="StateMachine/Required States" unique_id=1977724816]

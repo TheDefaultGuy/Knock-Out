@@ -7,10 +7,12 @@ class_name Arena extends Node2D
 
 @export_category("Fighters")
 ## Place the [Player] or the controllable fighter node here.
-@export var player_scene : PackedScene
+@export var player_scene : PackedScene = null
 
 ## Place the [Enemy] node here.
-@export var enemy_scene : PackedScene
+@export var enemy_scene : PackedScene = null
+
+const RESULTS_SCREEN = preload("uid://b4unduv261ia0")
 
 
 ## Stores the [Player] node/scene.
@@ -21,8 +23,8 @@ var enemy_node = null
 
 var lerp_timer : Timer = null
 
-var enemy_starting_hp : float = 0.0
-var player_starting_hp : float = 0.0
+#var enemy_starting_hp : float = 0.0
+#var player_starting_hp : float = 0.0
 
 var target_time_scale := 0.025
 var secs := 1.25
@@ -75,6 +77,8 @@ func _ready() -> void:
 	
 	FightManager.enemy_knocked_down_signal.connect(enemy_ko_counter.update_ko_counters)
 	FightManager.player_knocked_down_signal.connect(player_ko_counter.update_ko_counters)
+	
+	FightManager.go_to_results_screen_signal.connect(go_to_results_screen)
 	update_ui()
 	
 	if match_settings == null:
@@ -109,3 +113,7 @@ func update_ui() -> void:
 	#lerp_timer.wait_time = 1.0
 	#lerp_timer.one_shot = true
 	
+func go_to_results_screen() -> void:
+	var results : Control = RESULTS_SCREEN.instantiate()
+	get_tree().change_scene_to_node(results)
+	self.queue_free()

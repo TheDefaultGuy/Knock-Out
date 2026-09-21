@@ -42,6 +42,7 @@ func check_finished_animation(animation : String) -> void:
 	#print("ANIMATION: ", animation)
 	match animation:
 		outro_animation:
+			FightManager.go_to_results_screen_signal.emit()
 			print("Fight's over for real this time.")
 			return
 		

@@ -39,6 +39,7 @@ func check_finished_animation(animation : String) -> void:
 			print("PLAYER READY")
 			FightManager.fighter_ready_signal.emit()
 		"outro":
+			FightManager.go_to_results_screen_signal.emit()
 			print("Fight's over for real this time.")
 
 

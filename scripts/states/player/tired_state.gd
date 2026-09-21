@@ -10,7 +10,6 @@ class_name TiredState extends State
 @onready var input_component: InputComponent = %InputComponent
 @onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
 
-
 func enter() -> void:
 	print_rich("[color=yellow]Player Entered State: [/color]", self.name)
 	
@@ -22,7 +21,7 @@ func enter() -> void:
 	animated_sprite_2d.material.set_shader_parameter("Visible", true)
 	
 	FightManager.player_knocked_down_signal.connect(transition_to_knocked_down)
-	
+
 func exit() -> void:
 	animation_tree.set("parameters/neutral/blend_position", 0)
 	
@@ -32,7 +31,7 @@ func exit() -> void:
 	animated_sprite_2d.material.set_shader_parameter("Visible", false)
 	
 	FightManager.player_knocked_down_signal.disconnect(transition_to_knocked_down)
-	
+
 ## Performs the appropriate defense animation when the [InputComponent] sends the [signal InputComponent.defense_input_signal].
 func perform_defense(move : int, action_name : String) -> void:
 	

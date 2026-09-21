@@ -69,6 +69,9 @@ signal final_stun_hit_signal
 ## Mainly used by [Reactionary] State to read the player's dodge.
 @warning_ignore("unused_signal")
 signal player_dodged_signal(direction)
+
+@warning_ignore("unused_signal")
+signal go_to_results_screen_signal
 #endregion
 
 #region Stored variables
@@ -108,17 +111,19 @@ var player_ko_count : int = 0 :
 		print("Playery KD Count: ", player_ko_count)
 		if player_ko_count == 3: # Checks for TKO; 3 knockouts
 			print_rich("[b][u]\nFightManager: TKO Player[/u][/b]")
+			Global.winner = Global.enemy_node
 			is_fight_over = true
 			
 
 ## Number of times the [Enemy] has been knocked down in the current round.
-var enemy_ko_count : int = 0 :
+var enemy_ko_count : int = 2 :
 	# Clamps the value and emits the signal to update the UI everytime the value is set.
 	set(value):
 		enemy_ko_count = clampi(value, 0 , 3)
 		print("Enemy KD Count: ", enemy_ko_count)
 		if enemy_ko_count == 3: # Checks for TKO; 3 knockouts
 			print_rich("[b][u]\nFightManager: TKO enemy[/u][/b]")
+			Global.winner = Global.player_node
 			is_fight_over = true
 
 ## Which round of the fight it currently is. 0 = 1st round, 1 = 2nd round , 2 = 3rd round.
@@ -145,6 +150,7 @@ func _ready() -> void:
 	fighter_ready_signal.connect(start_the_fight)
 	stars_used = 0
 	star_punches_landed = 0
+	Global.winner = null
 
 ## Increases [member enemy_ko_count] by 1.
 func increase_enemy_ko_count() -> void:

@@ -10,14 +10,14 @@ class_name AttackingComponent extends Node
 ## The defense then checks against the defense variables it has and returns whether or not the attack landed.
 
 
-## Multiplier for the attack's damage. mainly used by the player.
+## Multiplier for the attack's damage. mainly used by the [Player].
 @export_custom(PROPERTY_HINT_NONE, "suffix:x") var attack_multiplier : float = 1.0 
 
 ## Curve used to extrapolate the damage bonus over time after a parry has been performed.
 @export var parry_damage_curve : Curve
 
 ## How long the parry attack bonus lasts for in seconds.
-## This is used for the input of the parry_damage_curve.
+## This is used for the input of the [member parry_damage_curve].
 @export_custom(PROPERTY_HINT_NONE, "suffix:s") var parry_bonus_duration : float = 2.0
 
 ## How long the attack flash lasts for in seconds.
@@ -40,9 +40,9 @@ func _process(_delta: float) -> void:
 
 ## Function that called by the attack animations
 ##
-## It calls functions in the opposing fighter's defense component, giving it the attacks variables as input.
+## It calls functions in the opposing fighter's [DefenseComponent], giving it the attacks variables as input.
 ## Which the attack covers, the dodge range, how much damage it does, etc...
-## The defense compomnent then checks if the attack is successful and returns the result.] to the attack component.
+## The defense compomnent then checks if the attack is successful and returns the result to the [AttackingComponent].
 func send_attack_call(punch_height : int, punch_range : int, attack_damage : float, punch_direction : int):
 	if Global.enemy_node == null or Global.player_node == null:
 		printerr("Attacking Component: No enemy node or no player node assigned in global.")
@@ -60,7 +60,7 @@ func send_attack_call(punch_height : int, punch_range : int, attack_damage : flo
 		_:
 			printerr("Attacking Component: ", owner.name, " is neither the player or the assigned enemy in global.")
 			return 
-	
+
 func punch(input_node : Node2D, punch_height : int, punch_range : int, attack_damage : float, punch_direction : int) -> bool:
 	if input_node.defense_component == null: # Checks to see if the enemy has a defense component.
 		printerr("Attacking Component: Target node has no defense component.")
@@ -105,14 +105,13 @@ func attack_flash() -> void:
 func parry_damage_bonus() -> void:
 		parry_attack_timer.start()
 
-
 func create_parry_timer() -> void:
 	parry_attack_timer = Timer.new()
 	parry_attack_timer.name = "Attack Delay Timer"
 	parry_attack_timer.wait_time = parry_bonus_duration
 	parry_attack_timer.one_shot = true
 	add_child(parry_attack_timer)
-	
+
 ## This is the equation used for calculating star punch damage in relation to the amount of stars used.
 ##
 ## @tutorial: https://www.desmos.com/calculator/ck5t9wejr0

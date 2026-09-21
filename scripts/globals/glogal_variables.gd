@@ -35,3 +35,9 @@ var player_node : Node2D = null
 
 ## Used to store the [Enemy] as a [Node2D]
 var enemy_node : Node2D = null
+
+## Stores the winner of the match as a [Node2D]
+var winner : Node2D = null :
+	set(value):
+		winner = value
+		print("Winner Set: ", winner)

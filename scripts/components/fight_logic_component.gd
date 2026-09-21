@@ -46,9 +46,7 @@ func start_ko_count() -> void:
 		print("START KO COUNT")
 		ko_timer.start(10.0)
 		animation_player.play("ko_count")
-	#elif FightManager.is_fight_over == true:
-		#stop_ko_count()
-		
+
 func stop_ko_count() -> void:
 	
 	ko_timer.stop()
@@ -56,11 +54,22 @@ func stop_ko_count() -> void:
 	
 func end_fight() -> void:
 	print("FIGHTER COULDNT GET UP")
+	
+	match true:
+		Global.player_node.is_knocked_down:
+			Global.winner = Global.enemy_node
+			
+		Global.enemy_node.is_knocked_down:
+			Global.winner = Global.player_node
+	
 	FightManager.is_fight_over = true
 	FightManager.fight_is_over_signal.emit()
 
 func _on_round_timer_timeout() -> void:
 	print('ROUND OVER; TIMES UP')
+
+
+
 
 ## Creates the timers with code so that  you don't have to make a round timer node and then manually assign it.
 func create_timers() -> void:
