@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://dd1s1esnijof7"]
+
+[ext_resource type="Script" uid="uid://cs28cuwm0o6tr" path="res://addons/AnyObjectInspector/Types/BaseType.gd" id="1_vif7f"]
+
+[node name="BaseType" type="HBoxContainer" unique_id=1427990053]
+offset_right = 40.0
+offset_bottom = 40.0
+size_flags_horizontal = 3
+script = ExtResource("1_vif7f")
+
+[node name="Label" type="Label" parent="." unique_id=1217595013]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "NAME"
+clip_text = true

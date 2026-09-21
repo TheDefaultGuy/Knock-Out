@@ -1,0 +1,62 @@
+[gd_scene format=3 uid="uid://cy8kwk8mro1ff"]
+
+[ext_resource type="PackedScene" uid="uid://dng45yj4dgker" path="res://addons/AnyObjectInspector/any_object_inspector.tscn" id="2_30hhp"]
+
+[sub_resource type="SystemFont" id="SystemFont_lqbq4"]
+font_names = PackedStringArray("Helvetica")
+
+[sub_resource type="LabelSettings" id="LabelSettings_ctmxw"]
+font = SubResource("SystemFont_lqbq4")
+font_size = 64
+outline_size = 32
+outline_color = Color(0.1251387, 0.1251387, 0.1251387, 1)
+
+[node name="ColorRect" type="ColorRect" unique_id=793671348]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.21960784, 0.45490196, 0.45490196, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=270833831]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="Test" type="HBoxContainer" parent="MarginContainer" unique_id=243183241]
+layout_mode = 2
+
+[node name="ReferenceRect2" type="ReferenceRect" parent="MarginContainer/Test" unique_id=950290551]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AnyObjectInspector" parent="MarginContainer/Test" unique_id=1468341480 node_paths=PackedStringArray("display_object") instance=ExtResource("2_30hhp")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_stretch_ratio = 3.0
+display_object = NodePath(".")
+hide_packedArrays = true
+
+[node name="ReferenceRect" type="ReferenceRect" parent="MarginContainer/Test" unique_id=1716822159]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="." unique_id=1806385103]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "The Any Object Inspector Node"
+label_settings = SubResource("LabelSettings_ctmxw")
+horizontal_alignment = 1
+vertical_alignment = 1

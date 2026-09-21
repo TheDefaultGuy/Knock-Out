@@ -29,7 +29,7 @@ func _process(_delta: float) -> void:
 	var minutes: int = int(FightManager.round_time) / 60
 	var seconds: int = int(fmod(FightManager.round_time, 60))
 	var milliseconds : int = int((FightManager.round_time - int(FightManager.round_time)) * 1000)
-	get_parent().time_left_label.text = str( "%d'%02d\"%03d" % [minutes, seconds, milliseconds])
+	owner.arena_ui.time_left_label.text = str( "%d'%02d\"%03d" % [minutes, seconds, milliseconds])
 	
 	if FightManager.is_fight_over == true:
 		stop_ko_count()
@@ -57,10 +57,10 @@ func end_fight() -> void:
 	
 	match true:
 		Global.player_node.is_knocked_down:
-			Global.winner = Global.enemy_node
+			Global.winner = Global.WINNER.ENEMY
 			
 		Global.enemy_node.is_knocked_down:
-			Global.winner = Global.player_node
+			Global.winner = Global.WINNER.PLAYER
 	
 	FightManager.is_fight_over = true
 	FightManager.fight_is_over_signal.emit()

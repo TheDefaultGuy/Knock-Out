@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://cagvx2cappndf"]
+
+[ext_resource type="Script" uid="uid://b2ja3u56710cd" path="res://addons/AnyObjectInspector/Types/enums.gd" id="1_o4sfo"]
+
+[node name="Enums" type="HBoxContainer" unique_id=1427990053]
+offset_right = 40.0
+offset_bottom = 40.0
+size_flags_horizontal = 3
+script = ExtResource("1_o4sfo")
+
+[node name="Label" type="Label" parent="." unique_id=1217595013]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "NAME"
+clip_text = true
+
+[node name="OptionButton" type="OptionButton" parent="." unique_id=1476886759]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+fit_to_longest_item = false
+
+[connection signal="item_selected" from="OptionButton" to="." method="_on_option_button_item_selected"]

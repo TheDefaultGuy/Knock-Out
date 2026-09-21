@@ -6,7 +6,7 @@ class_name MatchSettings extends Node
 
 @export_category("🥊 Fight Variables")
 @export_range(0.0, 180.0, 5.0, "suffix:s") var round_length: float = 180.0
-@export_custom(PROPERTY_HINT_RANGE, "suffix:rounds") var number_of_rounds : int = 3
+@export_range(0, 3, 1, "suffix:rounds") var number_of_rounds : int = 3
 #@export var override_player_hp : bool = false
 #@export var override_enemy_hp : bool = false
 

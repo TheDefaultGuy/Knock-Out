@@ -1,0 +1,34 @@
+[gd_scene format=3 uid="uid://py6vtdm8q2re"]
+
+[ext_resource type="Script" uid="uid://dib0v0kw6rre8" path="res://addons/AnyObjectInspector/Types/bool.gd" id="1_3ixfl"]
+
+[node name="Bool" type="HBoxContainer" unique_id=1427990053]
+offset_right = 40.0
+offset_bottom = 40.0
+size_flags_horizontal = 3
+script = ExtResource("1_3ixfl")
+
+[node name="Label" type="Label" parent="." unique_id=464008886]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+text = "test"
+vertical_alignment = 1
+clip_text = true
+
+[node name="CheckBox" type="CheckBox" parent="." unique_id=1028014662]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "On"
+
+[node name="Panel" type="Panel" parent="CheckBox" unique_id=910007234]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[connection signal="pressed" from="CheckBox" to="." method="_on_check_box_pressed"]

@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://nm2gxiwo6noh"]
+
+[ext_resource type="Script" uid="uid://cs28cuwm0o6tr" path="res://addons/AnyObjectInspector/Types/BaseType.gd" id="1_sbwug"]
+
+[node name="self" type="HBoxContainer" unique_id=1427990053]
+offset_right = 40.0
+offset_bottom = 40.0
+size_flags_horizontal = 3
+script = ExtResource("1_sbwug")
+
+[node name="Label" type="Label" parent="." unique_id=1217595013]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "NAME"
+clip_text = true
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=505719650]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label2" type="Label" parent="PanelContainer" unique_id=749274897]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "<Self Reference>"
+horizontal_alignment = 1
+vertical_alignment = 1
+clip_text = true

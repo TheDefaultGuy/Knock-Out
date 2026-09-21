@@ -30,6 +30,12 @@ enum range{
 	RIGHT = 1,
 	}
 
+enum WINNER {
+	PLAYER,
+	ENEMY,
+}
+
+
 ## Used to store the [Player] as a [Node2D]
 var player_node : Node2D = null 
 
@@ -37,7 +43,7 @@ var player_node : Node2D = null
 var enemy_node : Node2D = null
 
 ## Stores the winner of the match as a [Node2D]
-var winner : Node2D = null :
-	set(value):
-		winner = value
-		print("Winner Set: ", winner)
+var winner : int = 0 
+	#set(value):
+		#winner = value
+		#print("Winner Set: ", winner)
