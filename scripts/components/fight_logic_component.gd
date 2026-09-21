@@ -13,8 +13,8 @@ func _ready() -> void:
 	FightManager.start_ko_count_signal.connect(start_ko_count)
 	FightManager.fighter_got_up_signal.connect(stop_ko_count)
 	#FightManager.fight_is_over_signal.connect(stop_ko_count)
-	FightManager.start_the_fight_signal.connect(start_the_match)
-	#create_timers()
+	#FightManager.start_the_fight_signal.connect(start_the_match)
+	
 	call_deferred("create_timers")
 	
 	await get_tree().create_timer(0.4).timeout

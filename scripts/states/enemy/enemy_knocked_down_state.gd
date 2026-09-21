@@ -16,34 +16,53 @@ class_name EnemyKnockedDown extends State
 var get_up_timer : Timer = null
 
 func _ready() -> void:
-
 	get_up_timer = Timer.new()
 	get_up_timer.autostart = false
 	get_up_timer.one_shot = true
 	add_child(get_up_timer)
-	get_up_timer.timeout.connect(get_up)
+	get_up_timer.timeout.connect(play_get_up_animation)
 	
 func enter() -> void:
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
 	FightManager.enemy_ready_status = false
 	FightManager.resume_fighting_signal.connect(transition_to_previous_state)
+	animation_tree.animation_finished.connect(check_finished_animation)
 	
 func exit() -> void:
 	FightManager.resume_fighting_signal.disconnect(transition_to_previous_state)
 	get_up_timer.stop()
+	animation_tree.animation_finished.disconnect(check_finished_animation)
 
-func get_up() -> void:
+func play_get_up_animation() -> void:
 	anim_state_machine.travel("get_up")
-	health_component.reset_hp()
-	
+
 func start_get_up_timer() -> void:
 	if FightManager.is_fight_over == true:
 		print("Not getting up.")
 		FightManager.fight_is_over_signal.emit()
 		return
+		
 	FightManager.start_ko_count_signal.emit()
+	
 	print("STARTING GETUP TIMER")
 	get_up_timer.start(randf_range(min_getup_time, max_getup_time))
 
+func check_finished_animation(animation : String) -> void:
+	
+	#animation = remove_library_preffix(animation)
+	print("ANIMATION: ", animation)
 	
 	
+	if animation.contains("knock_down") == true :
+		start_get_up_timer()
+		return
+		
+	elif animation.contains("get_up") == true :
+		health_component.reset_hp()
+		return
+		
+	elif animation.contains("return_to_fight") == true :
+		FightManager.enemy_ready_status = true
+		print("ENEMY READY")
+		FightManager.fighter_ready_signal.emit()
+		return

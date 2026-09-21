@@ -29,9 +29,3 @@ func _ready() -> void:
 		printerr(self.name, " doesn't have an Animation Tree assigned.")
 	if instant_ko_component == null:
 		push_warning(self.name, " doesn't have an Instant KO Component assigned")
-
-## Function called by the get_up animations to let functions know that the fighter is ready to fight.
-func ready_to_fight() -> void:
-	FightManager.enemy_ready_status = true
-	FightManager.fighter_ready_signal.emit()
-	

@@ -36,11 +36,15 @@ func _ready() -> void:
 	super() # Runs the Base EnemyState _ready() function after running this code.
 
 func enter() -> void:
-	super()
 	
 	anim_state_machine.travel(intro_animation)
 	await animation_tree.animation_started
 	animation_tree.animation_finished.connect(check_animation)
+	
+	super()
+	
+	
+	
 
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
@@ -56,7 +60,7 @@ func check_animation(animation_name : String) -> void:
 			return
 			
 		attack_animation:
-			if Global.player_node.isKnockdown != true or Global.enemy_node.isKnockdown != true :
+			if Global.player_node.is_knocked_down != true or Global.enemy_node.is_knocked_down != true :
 				anim_state_machine.travel(restart_animation)
 				return
 				

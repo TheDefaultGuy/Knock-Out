@@ -6,46 +6,61 @@ class_name EnemySpectating extends State
 ##
 ## It is a required state for all [Enemy].
 
+@export var move_to_spectate_animation : String = "move_to_spectate"
+@export var outro_animation : String = "outro"
+@export var return_animation : String = "back_to_the_fight"
+@export var spectating_animation : String = "spectating"
+
 func enter() -> void:
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
+	
+	
 	FightManager.fighter_got_up_signal.connect(back_to_the_fight)
+	
 	FightManager.resume_fighting_signal.connect(transition_to_previous_state)
 	
 	FightManager.enemy_ready_status = false
 	
-	animation_tree.animation_finished.connect(end_match)
+	animation_tree.animation_finished.connect(check_finished_animation)
+	
 	owner.animation_tree.set("parameters/back_to_the_fight/blend_position", -1)
-	anim_state_machine = animation_tree["parameters/playback"]
-	
-	
+
+
 func exit() -> void:
 	FightManager.fighter_got_up_signal.disconnect(back_to_the_fight)
+	
 	FightManager.resume_fighting_signal.disconnect(transition_to_previous_state)
-
-	animation_tree.animation_finished.disconnect(end_match)
+	
+	animation_tree.animation_finished.disconnect(check_finished_animation)
 
 func back_to_the_fight() -> void:
-	anim_state_machine.travel("back_to_the_fight")
+	anim_state_machine.travel("from_spectate")
 
-func play_win_animation() -> void:
-	await FightManager.fight_is_over_signal
-
-	if anim_state_machine.get_current_node() != "spectating" or anim_state_machine.get_current_node() != "move_to_spectate":
-
-		await animation_tree.animation_finished
-
-	if FightManager.is_fight_over == true:
-		anim_state_machine.travel("outro")
-
-func end_match(animation : String) -> void:
-	if animation == "outro":
-		print("Fight's over for real this time.")
+func check_finished_animation(animation : String) -> void:
+	
+	animation = remove_library_preffix(animation)
+	#print("ANIMATION: ", animation)
+	match animation:
+		outro_animation:
+			print("Fight's over for real this time.")
+			return
 		
-func _process(_delta: float) -> void:
-	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
-		return
-	if state_machine.current_state == self:	
-		if anim_state_machine.get_current_node() == "idle":
-			anim_state_machine.travel("move_to_spectate")
-		play_win_animation()
-	return
+		move_to_spectate_animation:
+			if FightManager.is_fight_over == true:
+				anim_state_machine.travel(outro_animation)
+				return
+			
+			print("Emitting fighter_can_start_getup_signal")
+			FightManager.fighter_can_start_getup_signal.emit()
+			return
+			
+		"left", "right", "from_spectate":
+			print("ENEMY READY")
+			FightManager.enemy_ready_status = true
+			FightManager.fighter_ready_signal.emit()
+			return
+			
+		_:
+			if anim_state_machine.get_current_node() == "idle":
+				anim_state_machine.travel(move_to_spectate_animation)
+				return

@@ -59,3 +59,12 @@ func transition_to_tired() -> void:
 func transition_to_neutral() -> void:
 	transition_state.emit(self, state_machine.neutral_state)
 #endregion
+
+## Removes the library name/preffix from the incoming animation so that it can be compared against the ones listed above.
+func remove_library_preffix(animation : String) -> String:
+	
+	# Counts the number of slashes "/" in the string.
+	var number_of_preffixes = animation.count("/", 0, 0) 
+	
+	# Returns the whole string after the given number of slashes "/"
+	return animation.get_slice("/",number_of_preffixes)

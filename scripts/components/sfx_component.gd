@@ -34,11 +34,6 @@ func _ready() -> void:
 	FightManager.star_awarded_signal.connect(play_sound_effect.bind("star_awarded"))
 	FightManager.successful_block_signal.connect(play_sound_effect.bind("block"))
 	
-	#FightManager.sfx_dodge_signal.connect(play_sound_effect.bind(dodge))
-	#FightManager.sfx_star_punch_thrown_signal.connect(play_sound_effect.bind(star_punch))
-	
-	#FightManager.sfx_duck_signal.connect(play_sound_effect.bind(duck))
-	#FightManager.sfx_parry_signal.connect(play_sound_effect.bind(parry))
 	
 	FightManager.enemy_knocked_down_signal.connect(play_sound_effect.bind("knock_down"))
 	FightManager.player_knocked_down_signal.connect(play_sound_effect.bind("knock_down"))

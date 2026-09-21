@@ -305,7 +305,7 @@ func _ready() -> void:
 	if block_behavior == BLOCK_BEHAVIOR_ENUM.COUNTER_ATTACK : 
 		moves_arr.append(counter_attack)
 	
-	#print(self.name, moves_arr)
+	#print(self.name, list_of_check_functions)
 	
 	set_conditions_and_targets_dictionary()
 	
@@ -499,6 +499,7 @@ func set_condition_check_functions_based_on_conditions() -> void:
 				#list_of_check_functions.append()
 			#STATE_CHANGE_CONDITION:
 				#list_of_check_functions.append()
+				
 	return
 #endregion
 
@@ -555,7 +556,7 @@ func handle_block() -> void:
 		
 		BLOCK_BEHAVIOR_ENUM.NOT_APPLICABLE: # If it's not applicable, do nothing.
 			return
-			
+
 ## Toggles on and off the [member state_change_timer] when entering and exiting the state.
 func toggle_state_change_timer() -> void:
 	if state_change_timer == null : # Do nothing if there's no state change timer
@@ -577,10 +578,12 @@ func toggle_state_change_timer() -> void:
 ## Goes through all of the functions in the [member list_of_check_functions] and calls each one.
 ## Also checks if any of the conditions are true and stops checking any condition that is lower priority.
 func check_all_assigned_conditions() -> void:
+	#print("check_all_assigned_conditions")
+	
 	# Runs each of the check functions in the order of priority.
 	# Only runs the functions that check for the conditions the state has set.
 	for check_function in list_of_check_functions: 
-		
+	
 	# If the check function is returning true, then don't run any other check function after it.
 		if check_function.call() == true: 
 			return
@@ -602,6 +605,7 @@ func check_enemy_health() -> bool:
 
 ## Checks to see if the [member state_change_timer] has ran out so that the enemy can change state.
 func check_time_has_passed() -> bool:
+	#print("timepased")
 	if state_change_timer == null:
 		if STATE_CHANGE_CONDITION.AFTER_TIME_PASSED in conditions_and_targets_dict.keys() : # Checks if not having a state change timer is intended behavior.
 			printerr(self.name, " has no State Change timer but is calling the check_time_has_passed() function")
@@ -646,17 +650,25 @@ func check_state_completion() -> bool:
 ## Checks if the [Enemy] or the [Player] have been knocked down and then changes to the state of the matching condition.
 func check_for_knockdowns() -> bool:
 	match true:
-		Global.enemy_node.isKnockdown:
+		Global.enemy_node.is_knocked_down:
 			condition_match_change_interrupted_state(STATE_CHANGE_CONDITION.AFTER_ENEMY_KNOCKED_DOWN)
 			transition_to_target(state_machine.knocked_down_state)
 			return true
 			
-		Global.player_node.isKnockdown:
+		Global.player_node.is_knocked_down:
 			condition_match_change_interrupted_state(STATE_CHANGE_CONDITION.AFTER_PLAYER_KNOCKED_DOWN)
 			transition_to_target(state_machine.spectating_state)
 			return true
 	return false
 
+#func check_after_player_knocked_down():
+	#condition_match_change_interrupted_state(STATE_CHANGE_CONDITION.AFTER_PLAYER_KNOCKED_DOWN)
+	#transition_to_target(state_machine.spectating_state)
+	##return true
+	#
+#func check_after_enemy_knocked_down():
+	#condition_match_change_interrupted_state(STATE_CHANGE_CONDITION.AFTER_ENEMY_KNOCKED_DOWN)
+	#transition_to_target(state_machine.knocked_down_state)
 #endregion
 
 #region Condition Match Functions
@@ -774,7 +786,6 @@ func add_chained_attack_animation_nodes(root_node : AnimationRootNode, moveset :
 		node_animation.animation = match_animation_library(reveresed_moveset[i])
 		
 		
-		
 		# Adds the state machine as a node in the Root state machine in the animation tree.
 		root_node.add_node(str(modified_moveset[i]), node_animation, new_origin) 
 		
@@ -810,15 +821,6 @@ func array_remove_empty_entries(array: Array) -> Array:
 			output.append(element)
 			continue
 	return output
-
-## Removes the library name/preffix from the incoming animation so that it can be compared against the ones listed above.
-func remove_library_preffix(animation : String) -> String:
-	
-	# Counts the number of slashes "/" in the string.
-	var number_of_preffixes = animation.count("/", 0, 0) 
-	
-	# Returns the whole string after the given number of slashes "/"
-	return animation.get_slice("/",number_of_preffixes)
 
 
 ## Creates and returns an Animation Node State Machine Transition.

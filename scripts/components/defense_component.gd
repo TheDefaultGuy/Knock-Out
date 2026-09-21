@@ -136,7 +136,7 @@ func check_defense(punch_height : int, punch_range : int, damage_amount : float,
 	if is_invulnerable(punch_height) or is_punch_dodged(punch_range) == true: # If the player is invulnerable or is not in the area the punch covers, it missed.
 		if owner is Player: # Sends a signal that the player successfully dodged so that they can leave the Tired State.
 			succesful_dodge.emit()
-		FightManager.missed_attack_signal.emit()
+		#FightManager.missed_attack_signal.emit()
 		return false # Returns that the hit was NOT successful. Mainly as an answer to the attacking component.
 		
 	else:

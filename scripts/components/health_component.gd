@@ -28,9 +28,9 @@ func take_damage(amount : float) -> float:
 
 func reset_hp() -> void:
 	hp = owner.max_hp
-	print(owner.name, " emitting got up signal...")
+	print(owner.name, " resetting HP and emitting got up signal...")
 	FightManager.fighter_got_up_signal.emit()
-	owner.isKnockdown = false
+	owner.is_knocked_down = false
 
 ## Heals the fighter by a given amount.
 func heal(amount : float) -> void:
@@ -40,17 +40,16 @@ func heal(amount : float) -> void:
 ## Function responsible for decreasing HP and checking to see if HP falls below zero, which would be a knock down.
 func deal_damage_and_check_for_knockdown(damage_amount : float, damage_multiplier : float) -> bool:
 	# If Health Component calculates the health and it returns as <= 0, then that means they're knocked down.
-	if take_damage(damage_amount * damage_multiplier) <= 0.0: 
+	if take_damage(damage_amount * damage_multiplier) <= 0.0 : 
 		
 		if owner is Player: # Checks to see whether the parent is the enemy or the player and then sends the global signal accordingly.
 			FightManager.player_knocked_down_signal.emit()
-			
 			print_rich('[color=green]Health Component:[/color] Player Knocked Down!')
 			
 		elif owner is Enemy:
 			FightManager.enemy_knocked_down_signal.emit()
 			print_rich('[color=green]Health Component:[/color] Enemy Knocked Down!')
 			
-		owner.isKnockdown = true
+		owner.is_knocked_down = true
 		return true
 	return false

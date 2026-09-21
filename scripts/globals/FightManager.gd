@@ -37,22 +37,18 @@ signal succesful_hit_signal
 @warning_ignore("unused_signal")
 signal successful_block_signal 
 
-## Signal emitted when either the [Player] or [Enemy] completely whiffs a hit.
-@warning_ignore("unused_signal")
-signal missed_attack_signal 
-
 ## Signal emitted when it's time to resume/start fighting.
 @warning_ignore("unused_signal")
 signal resume_fighting_signal 
-
-## Signal emitted when it's time to start the fight.
-@warning_ignore("unused_signal")
-signal start_the_fight_signal 
-
-## Signal emitted to let the [Enemy] know when to start their intro animation at the start of the fight.
-@warning_ignore("unused_signal")
-signal start_intro_animation_signal
-
+#
+### Signal emitted when it's time to start the fight.
+#@warning_ignore("unused_signal")
+#signal start_the_fight_signal 
+#
+### Signal emitted to let the [Enemy] know when to start their intro animation at the start of the fight.
+#@warning_ignore("unused_signal")
+#signal start_intro_animation_signal
+#
 ## Signal emitted when a [Fighter] is ready to start fighting. Emitted by both [Player] and [Enemy] once they finish their getting up animations.
 signal fighter_ready_signal 
 
@@ -88,7 +84,7 @@ var enemy_ready_status : bool = true
 var is_fight_over : bool = false
 
 ## The number of stars the [Player] currently has.
-var star_count : int = 0 :
+var star_count : int = 2 :
 	# Clamps the value and emits the signal to update the UI everytime the value is set.
 	set(value):
 		star_count = clampi(value, 0 , 3) 
@@ -105,7 +101,7 @@ var stamina : int = 10 :
 			no_stamina_signal.emit()
 
 ## Number of times the [Player] has been knocked down in the current round.
-var player_ko_count : int = 0 :
+var player_ko_count : int = 0 : 
 	# Clamps the value and emits the signal to update the UI everytime the value is set.
 	set(value):
 		player_ko_count = clampi(value, 0 , 3)
