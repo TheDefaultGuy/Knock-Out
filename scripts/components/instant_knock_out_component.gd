@@ -100,5 +100,3 @@ func check_for_instant_knock_out() -> bool:
 					print_rich("[color=cyan]Instant KO component:[/color] KO condition met: Never Hit", condition)
 					return true
 	return false
-#
-	#print(animation_tree["parameters/playback"].get_current_node())

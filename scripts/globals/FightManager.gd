@@ -74,6 +74,55 @@ signal player_dodged_signal(direction)
 signal go_to_results_screen_signal
 #endregion
 
+#region Exported Variables
+## The number of stars the [Player] currently has.
+@export var star_count : int = 0 :
+	# Clamps the value and emits the signal to update the UI everytime the value is set.
+	set(value):
+		star_count = clampi(value, 0 , 3) 
+		update_ui_signal.emit()
+
+## The Player's stamina. Drains if they're hit, block, or miss an attack.
+@export var stamina : int = 10 :
+	# Clamps the value and emits the signal to update the UI everytime the value is set.
+	set(value):
+		stamina = clampi(value, 0 , max_player_stamina)
+		update_ui_signal.emit()
+		
+		if stamina == 0 : # If stamina reaches 0, emit the no_stamina_signal
+			no_stamina_signal.emit()
+
+## The maximum [Player] [member stamina].
+@export var max_player_stamina : int = 10
+
+@export_category("KO Counts")
+## Number of times the [Player] has been knocked down in the current round.
+@export var player_ko_count : int = 0 : 
+	# Clamps the value and emits the signal to update the UI everytime the value is set.
+	set(value):
+		player_ko_count = clampi(value, 0 , 3)
+		print("Playery KD Count: ", player_ko_count)
+		if player_ko_count == 3: # Checks for TKO; 3 knockouts
+			print_rich("[b][u]\nFightManager: TKO Player[/u][/b]")
+			Global.winner = Global.WINNER.ENEMY
+			is_fight_over = true
+			
+
+## Number of times the [Enemy] has been knocked down in the current round.
+@export var enemy_ko_count : int = 0 :
+	# Clamps the value and emits the signal to update the UI everytime the value is set.
+	set(value):
+		enemy_ko_count = clampi(value, 0 , 3)
+		print("Enemy KD Count: ", enemy_ko_count)
+		if enemy_ko_count == 3: # Checks for TKO; 3 knockouts
+			print_rich("[b][u]\nFightManager: TKO enemy[/u][/b]")
+			Global.winner = Global.WINNER.PLAYER
+			is_fight_over = true
+
+## Which round of the fight it currently is. 0 = 1st round, 1 = 2nd round , 2 = 3rd round.
+@export var round_idx : int = 0 
+#endregion
+
 #region Stored variables
 ## Whether the [Player] has finished any animation and are ready to fight.
 ## This is used so that even if the [Player] and [Enemy] have different animation lengths, they get synchronized and can start fighting at the same time.
@@ -86,54 +135,8 @@ var enemy_ready_status : bool = true
 ## Keeps track of whether the fight is over.
 var is_fight_over : bool = false
 
-## The number of stars the [Player] currently has.
-var star_count : int = 2 :
-	# Clamps the value and emits the signal to update the UI everytime the value is set.
-	set(value):
-		star_count = clampi(value, 0 , 3) 
-		update_ui_signal.emit()
-
-## The Player's stamina. Drains if they're hit, block, or miss an attack.
-var stamina : int = 10 :
-	# Clamps the value and emits the signal to update the UI everytime the value is set.
-	set(value):
-		stamina = clampi(value, 0 , max_player_stamina)
-		update_ui_signal.emit()
-		
-		if stamina == 0 : # If stamina reaches 0, emit the no_stamina_signal
-			no_stamina_signal.emit()
-
-## Number of times the [Player] has been knocked down in the current round.
-var player_ko_count : int = 0 : 
-	# Clamps the value and emits the signal to update the UI everytime the value is set.
-	set(value):
-		player_ko_count = clampi(value, 0 , 3)
-		print("Playery KD Count: ", player_ko_count)
-		if player_ko_count == 3: # Checks for TKO; 3 knockouts
-			print_rich("[b][u]\nFightManager: TKO Player[/u][/b]")
-			Global.winner = Global.WINNER.ENEMY
-			is_fight_over = true
-			
-
-## Number of times the [Enemy] has been knocked down in the current round.
-var enemy_ko_count : int = 0 :
-	# Clamps the value and emits the signal to update the UI everytime the value is set.
-	set(value):
-		enemy_ko_count = clampi(value, 0 , 3)
-		print("Enemy KD Count: ", enemy_ko_count)
-		if enemy_ko_count == 3: # Checks for TKO; 3 knockouts
-			print_rich("[b][u]\nFightManager: TKO enemy[/u][/b]")
-			Global.winner = Global.WINNER.PLAYER
-			is_fight_over = true
-
-## Which round of the fight it currently is. 0 = 1st round, 1 = 2nd round , 2 = 3rd round.
-var round_idx : int = 0 
-
 ## The current round time in seconds.
 var round_time : float = 0.0
-
-## The maximum [Player] [member stamina].
-var max_player_stamina : int = 12
 
 ## The number of stars the [Player] used in their star punch.
 ## Used by the [AttackingComponent] to calculate the damage of the star punch and by the [InstantKOComponent] to validate if it was a KO.

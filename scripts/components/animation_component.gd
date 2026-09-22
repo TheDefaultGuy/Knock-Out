@@ -1,47 +1,81 @@
+@icon("res://assets/icons/MdiMovieOpenOutline.svg")
+
 class_name AnimationComponent extends Node
+#
+### Stores the hit animation. It can change depending on the state.
+#var current_hit_animation : String = "hit"
+#
+### Stores the block animation. It can change depending on the state.
+#var current_block_animation : String = "block"
 
 
-@onready var anim_sprite: AnimatedSprite2D = %"Player Sprite"
+@onready var animation_tree: AnimationTree = %AnimationTree
 
-var tween : Tween = null
-const anim_speed := 0.3
-const anim_distance := 16.0
+#
+### Resets [member current_hit_animation] and [member current_block_animation] as well as the [member current_anim_state_machine] back to the default ones.
+#func reset_current_animations() -> void:
+	#current_hit_animation = "hit"
+	#current_block_animation = "block"
 
-func _ready() -> void:
-	pass
+## Sets the blend of the given animation using the given blend_vector.
+func set_animation_blend(animation : String, blend_vector : Vector2) -> void:
+	owner.animation_tree.set(str("parameters/", animation,"/blend_position"),  blend_vector)
+	return
+
+## Function dedicated to playing a given animation and making sure that it gets played and not be interrupted.
+##
+## Mainly used so that the [Player] doesn't perform a bug where frame perfect dodges would result in getting hit
+## and receiving damage, but playing the dodge animation instead of the hit animation.
+func play_animation(animation_name : String) -> void:
 	
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-	pass
+	## The threshold value for checking the current animation's playback position. Used mainly for readability.
+	## If the animation's playback position is GREATER THAN (>) PLAY_POS_THRESH, then the animation is considered to be currently playing.
+	## If the animation's playback position is LESS THAN (<) PLAY_POS_THRESH, then the animation is considered to have been restarted or is back at the start.
+	const PLAY_POS_THRESH: float = 0.05
 	
-func dodge_animation(direction : String):
-	if direction == "right":
-		print("dodge right animation")
-		reset_tween()
-		tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
-		tween.tween_property(anim_sprite, "position", Vector2(anim_sprite.position.x + anim_distance, 0.0), anim_speed)
-		tween.tween_property(anim_sprite, "position", Vector2(anim_sprite.position.x, 0.0), anim_speed)
+	print("Playing animation: ", animation_name)
+	#print("Animation Play Position: ", anim_state_machine.get_current_play_position())
 	
-	elif direction == "left":
-		print("dodge left animation")
-		reset_tween()
-		tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
-		tween.tween_property(anim_sprite, "position", Vector2(anim_sprite.position.x - anim_distance, 0.0), anim_speed)
-		tween.tween_property(anim_sprite, "position", Vector2(anim_sprite.position.x, 0.0), anim_speed)
-	else:
-		print("Invalid direction. Animation component.")
+	owner.anim_state_machine.stop() # Stops the current animation if there is one playing
+	
+	# Checks to see if the current node of animation_state_machine matches the animation that is being given.
+	# If it does match, then it restarts the animation.
+	if owner.anim_state_machine.get_current_node() == animation_name :
 		
-func low_punch_animation(_direction):
-	anim_sprite.play("low")
-	await anim_sprite.animation_finished
-	anim_sprite.play("idle")
+		#print("Current node matches animation!")
+		
+		# Repeats the following as long as the playback position of the current animation is slightly larger than zero
+		while owner.anim_state_machine.get_current_play_position() > PLAY_POS_THRESH : 
+			
+			#print("Current node Play position: ", owner.anim_state_machine.get_current_play_position())
+			
+			owner.anim_state_machine.start(animation_name) # Starts the desired animation first.
+		
+			# Waits until the signal for an animation starting has been emitted.
+			# That way it only checks when it has to.
+			await animation_tree.animation_started 
+			
+			# Checks to see if the current animation's play back position is Zero.
+			# If it is Zero, then animation was successfully restarted.
+			if owner.anim_state_machine.get_current_play_position() < PLAY_POS_THRESH :
+				print("Successfully Restarted Animation: ", animation_name)
+				return
 	
-func high_punch_animation(_direction):
-	anim_sprite.play("high")
-	await anim_sprite.animation_finished
-	anim_sprite.play("idle")
-	
-func reset_tween() -> void:
-	if tween: # If a tween exists already, kill it and make a new one.
-		tween.kill()
-	tween = create_tween()
+	# Does the following if the current animation is different than the given animation_name
+	elif owner.anim_state_machine.get_current_node() != animation_name :
+		
+		# While the current animation being played ISN'T the given animation the function wants to be playing,
+		# keep repeating the start() function until it is.
+		while owner.anim_state_machine.get_current_node() != animation_name : 
+			
+			owner.anim_state_machine.start(animation_name) # Starts the desired animation
+			
+			# Waits until the signal for an animation starting has been emitted.
+			# That way it only checks when it has to.
+			await animation_tree.animation_started 
+			
+			# If the current animation playing IS the desired one, then exit loop since work here is done.
+			if owner.anim_state_machine.get_current_node() == animation_name: 
+				print("Successfully Started Animation: ", animation_name)
+				return
+	return
