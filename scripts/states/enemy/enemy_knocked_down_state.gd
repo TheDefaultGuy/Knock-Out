@@ -44,6 +44,10 @@ func start_get_up_timer() -> void:
 		
 	FightManager.start_ko_count_signal.emit()
 	
+	if owner.instant_kd_component.is_fully_knocked_out == true:
+		print("Not getting up.")
+		return
+		
 	print("STARTING GETUP TIMER")
 	get_up_timer.start(randf_range(min_getup_time, max_getup_time))
 
@@ -53,7 +57,7 @@ func check_finished_animation(animation : String) -> void:
 	print("ANIMATION: ", animation)
 	
 	
-	if animation.contains("knock_down") == true :
+	if animation.contains("knockdown") == true :
 		start_get_up_timer()
 		return
 		

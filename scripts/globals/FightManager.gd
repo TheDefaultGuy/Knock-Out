@@ -52,7 +52,7 @@ signal resume_fighting_signal
 ## Signal emitted when a [Fighter] is ready to start fighting. Emitted by both [Player] and [Enemy] once they finish their getting up animations.
 signal fighter_ready_signal 
 
-## Signal emitted when a [Fighter] finished the knock down animation and is time to get up.
+## Signal emitted when a [Fighter] finished the Knockdown animation and is time to get up.
 @warning_ignore("unused_signal")
 signal start_ko_count_signal 
 
@@ -76,7 +76,7 @@ signal go_to_results_screen_signal
 
 #region Exported Variables
 ## The number of stars the [Player] currently has.
-@export var star_count : int = 0 :
+@export var star_count : int = 2 :
 	# Clamps the value and emits the signal to update the UI everytime the value is set.
 	set(value):
 		star_count = clampi(value, 0 , 3) 
@@ -139,11 +139,11 @@ var is_fight_over : bool = false
 var round_time : float = 0.0
 
 ## The number of stars the [Player] used in their star punch.
-## Used by the [AttackingComponent] to calculate the damage of the star punch and by the [InstantKOComponent] to validate if it was a KO.
+## Used by the [AttackingComponent] to calculate the damage of the star punch and by the [InstantKDComponent] to validate if it was a KO.
 var stars_used : int = 0
 
 ## Keeps track of the amount of star punches the [Player] has used.
-## Used mainly by the [InstantKOComponent].
+## Used mainly by the [InstantKDComponent].
 var star_punches_landed : int = 0
 #endregion
 
@@ -191,6 +191,7 @@ func lower_stamina() -> void:
 	#print("Fight Manager: Lowering stamina...")
 	stamina -= 1
 
+## Resets the player's [member stamina] to the [member max_player_stamina]
 func set_stamina() -> void: 
 	stamina = max_player_stamina
 

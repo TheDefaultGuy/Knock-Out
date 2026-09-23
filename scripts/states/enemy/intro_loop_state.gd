@@ -21,7 +21,7 @@ class_name LoopingCharge extends EnemyState
 ## The animation played after [member attack_animation], where the enemy goes back to [member idle_loop_animation]
 @export var restart_animation : String = "restart"
 
-## The actual attacking animation that the [Player] can counter punch to knock down the [Enemy].
+## The actual attacking animation that the [Player] can counter punch to Knockdown the [Enemy].
 @export var attack_animation : String = "attack"
 
 func _ready() -> void:

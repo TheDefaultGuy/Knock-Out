@@ -57,6 +57,7 @@
 [ext_resource type="Script" uid="uid://bxdm4cxh3jw0n" path="res://scripts/states/enemy/enemy_knocked_down_state.gd" id="47_2mgcc"]
 [ext_resource type="Script" uid="uid://bd3i8gnmviajw" path="res://scripts/states/player/cutscene_state.gd" id="50_wnc28"]
 [ext_resource type="Script" uid="uid://ctgr0jt66jjuu" path="res://scripts/components/animation_component.gd" id="51_e5w0m"]
+[ext_resource type="Script" uid="uid://d2mqtrvejoarc" path="res://scripts/resources/knockdown_conditions.gd" id="53_40p5w"]
 [ext_resource type="Script" uid="uid://c15nwhylsnm6w" path="res://scripts/components/instant_knock_out_component.gd" id="55_xom0j"]
 [ext_resource type="Script" uid="uid://c73a2o5xnqs0k" path="res://scripts/states/enemy/heal_item_state.gd" id="58_v64oh"]
 [ext_resource type="Script" uid="uid://bjtexblqp5cmp" path="res://scripts/states/enemy/reactionary_state.gd" id="59_poxia"]
@@ -394,6 +395,13 @@ animations = [{
 "name": &"walking_out",
 "speed": 5.0
 }]
+
+[sub_resource type="Resource" id="Resource_40p5w"]
+script = ExtResource("53_40p5w")
+punch_type_flags = 1
+expected_animation = ""
+number_of_stars = 2
+resulting_outcome = 1
 
 [sub_resource type="Animation" id="Animation_s1ycm"]
 length = 0.001
@@ -8629,11 +8637,16 @@ unique_name_in_owner = true
 script = ExtResource("51_e5w0m")
 metadata/_custom_type_script = "uid://ctgr0jt66jjuu"
 
-[node name="InstantKOComponent" type="Node" parent="." unique_id=81177286 node_paths=PackedStringArray("expected_state_A")]
+[node name="InstantKDComponent" type="Node" parent="." unique_id=81177286 node_paths=PackedStringArray("expected_state", "active_conditions_dictionary")]
 unique_name_in_owner = true
 script = ExtResource("55_xom0j")
-expected_state_A = NodePath("../StateMachine/Required States/Stunned")
+expected_state = NodePath("../StateMachine/Required States/Stunned")
+punch_type_flags = 1
 number_of_stars = 2
+resulting_outcome = 1
+active_conditions_dictionary = {
+NodePath("../StateMachine/Required States/Stunned"): SubResource("Resource_40p5w")
+}
 metadata/_custom_type_script = "uid://c15nwhylsnm6w"
 
 [node name="StateMachine" type="Node" parent="." unique_id=1256866169 node_paths=PackedStringArray("initial_state", "stun_state", "knocked_down_state", "spectating_state", "cutscene_state")]
@@ -8678,66 +8691,41 @@ secondary_condition = 5
 tertiary_condition = 1
 secondary_target_state = NodePath("../../ItemHeal2")
 tertiary_target_state = NodePath("../../TauntAndCounter")
-target_round_time = 25.0
-time_to_change_state = 18.0
 target_hp = 70.0
 moveset_type = 1
-moveset_array = Array[String](["jab_low", "jab_high"])
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
 [node name="Debug" type="Node" parent="StateMachine/Randomized Attacks" unique_id=1997623450]
 script = ExtResource("44_wdmnt")
 primary_condition = 11
 moveset_type = 1
-moveset_array = Array[String](["insta_jab"])
-min_delay_time = 0.4
-max_delay_time = 0.54
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
-[node name="Aggressive" type="Node" parent="StateMachine/Randomized Attacks" unique_id=550832782 node_paths=PackedStringArray("secondary_target_state")]
+[node name="Aggressive" type="Node" parent="StateMachine/Randomized Attacks" unique_id=550832782]
 script = ExtResource("44_wdmnt")
 secondary_condition = 4
-secondary_target_state = NodePath("../SkillCheck")
-time_to_change_state = 12.0
-moveset_dictionary = Dictionary[String, float]({
-"elbow": 20.0,
-"hook_right": 10.0,
-"jab_low": 15.0,
-"uppercut": 25.0
-})
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
-[node name="WeirdAttacks" type="Node" parent="StateMachine/Randomized Attacks" unique_id=2144043967 node_paths=PackedStringArray("primary_target_state")]
+[node name="WeirdAttacks" type="Node" parent="StateMachine/Randomized Attacks" unique_id=2144043967]
 script = ExtResource("44_wdmnt")
-primary_target_state = NodePath("../../Reactionary2")
-time_to_change_state = 20.0
 moveset_type = 1
-moveset_array = Array[String](["great_tiger_uppercut", "great_tiger_uppercut_2", "jab_high_combo"])
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
-[node name="WeirdAttacks2" type="Node" parent="StateMachine/Randomized Attacks" unique_id=455264741 node_paths=PackedStringArray("primary_target_state")]
+[node name="WeirdAttacks2" type="Node" parent="StateMachine/Randomized Attacks" unique_id=455264741]
 script = ExtResource("44_wdmnt")
-primary_target_state = NodePath("../SkillCheck")
-time_to_change_state = 25.0
 moveset_type = 1
-moveset_array = Array[String](["great_tiger_uppercut", "great_tiger_uppercut_2", "great_tiger_fakeout", "fakeout_uppercut"])
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
 [node name="SkillCheck" type="Node" parent="StateMachine/Randomized Attacks" unique_id=1728563805]
 script = ExtResource("44_wdmnt")
-time_to_change_state = 15.0
 moveset_type = 1
-moveset_array = Array[String](["hook_left", "uppercut", "jab_high"])
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
-[node name="HookedOnAFeeling" type="Node" parent="StateMachine/Randomized Attacks" unique_id=1266210396 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
+[node name="HookedOnAFeeling" type="Node" parent="StateMachine/Randomized Attacks" unique_id=1266210396 node_paths=PackedStringArray("primary_target_state")]
 script = ExtResource("44_wdmnt")
 secondary_condition = 2
 primary_target_state = NodePath("../../Reactionary2")
-secondary_target_state = NodePath("../WeirdAttacks")
-time_to_change_state = 20.0
 moveset_type = 1
-moveset_array = Array[String](["hook_left", "hook_right"])
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
 [node name="ItemHeal" type="Node" parent="StateMachine" unique_id=2059746833 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
@@ -8745,7 +8733,7 @@ script = ExtResource("58_v64oh")
 primary_condition = 9
 secondary_condition = 10
 primary_target_state = NodePath("../Randomized Attacks/Aggressive")
-secondary_target_state = NodePath("../Mad")
+secondary_target_state = NodePath("../Randomized Attacks/Aggressive")
 moveset_type = 3
 block_behavior = 3
 metadata/_custom_type_script = "uid://c73a2o5xnqs0k"
@@ -8755,30 +8743,25 @@ script = ExtResource("58_v64oh")
 primary_condition = 9
 secondary_condition = 10
 primary_target_state = NodePath("../Randomized Attacks/HookedOnAFeeling")
-secondary_target_state = NodePath("../Mad2")
+secondary_target_state = NodePath("../Randomized Attacks/HookedOnAFeeling")
 moveset_type = 3
 block_behavior = 3
 metadata/_custom_type_script = "uid://c73a2o5xnqs0k"
 
-[node name="Reactionary" type="Node" parent="StateMachine" unique_id=1539633508 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
+[node name="Reactionary" type="Node" parent="StateMachine" unique_id=1539633508 node_paths=PackedStringArray("primary_target_state")]
 script = ExtResource("59_poxia")
 secondary_condition = 5
 primary_target_state = NodePath("../Randomized Attacks/WeirdAttacks")
-secondary_target_state = NodePath("../ItemHeal")
-time_to_change_state = 21.0
 target_hp = 50.0
 moveset_type = 1
-moveset_array = Array[String](["fakeout", "fakeout_uppercut"])
+moveset_array = Array[String](["fakeout"])
 block_behavior = 2
-counter_attack = "counter_jab"
 metadata/_custom_type_script = "uid://bjtexblqp5cmp"
 
-[node name="Reactionary2" type="Node" parent="StateMachine" unique_id=137125735 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
+[node name="Reactionary2" type="Node" parent="StateMachine" unique_id=137125735 node_paths=PackedStringArray("primary_target_state")]
 script = ExtResource("59_poxia")
 secondary_condition = 3
 primary_target_state = NodePath("../Randomized Attacks/WeirdAttacks2")
-secondary_target_state = NodePath("../Randomized Attacks/SkillCheck")
-time_to_change_state = 12.0
 moveset_type = 1
 moveset_array = Array[String](["fakeout"])
 block_behavior = 2
@@ -8790,29 +8773,26 @@ intro_animation = "restart_2"
 primary_condition = 3
 secondary_condition = 2
 primary_target_state = NodePath("../TauntAndCounter2")
-secondary_target_state = NodePath("../Randomized Attacks/WeirdAttacks2")
+secondary_target_state = NodePath("../TauntAndCounter2")
 moveset_type = 2
 block_behavior = 3
-max_delay_time = 4.0
 metadata/_custom_type_script = "uid://be0a0n2xv87g7"
 
-[node name="TauntAndCounter" type="Node" parent="StateMachine" unique_id=343560956 node_paths=PackedStringArray("secondary_target_state")]
+[node name="TauntAndCounter" type="Node" parent="StateMachine" unique_id=343560956]
 script = ExtResource("63_jgm8d")
 primary_condition = 4
 secondary_condition = 0
-secondary_target_state = NodePath("../LoopingCharge")
-time_to_change_state = 1.0
+time_to_change_state = 90.0
 moveset_type = 2
 moveset_array = Array[String](["taunt", "counter_uppercut"])
 block_behavior = 2
 metadata/_custom_type_script = "uid://c4q24a656iry7"
 
-[node name="TauntAndCounter2" type="Node" parent="StateMachine" unique_id=2001566302 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
+[node name="TauntAndCounter2" type="Node" parent="StateMachine" unique_id=2001566302 node_paths=PackedStringArray("primary_target_state")]
 script = ExtResource("63_jgm8d")
 primary_condition = 4
 secondary_condition = 0
 primary_target_state = NodePath("../Randomized Attacks/WeirdAttacks2")
-secondary_target_state = NodePath("../Randomized Attacks/Aggressive")
 time_to_change_state = 14.0
 moveset_type = 2
 moveset_array = Array[String](["taunt", "counter_uppercut"])
@@ -8828,14 +8808,12 @@ moveset_type = 3
 block_behavior = 3
 metadata/_custom_type_script = "uid://bsaimsql061lj"
 
-[node name="FlurryAttack" type="Node" parent="StateMachine" unique_id=1581601111 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
+[node name="FlurryAttack" type="Node" parent="StateMachine" unique_id=1581601111 node_paths=PackedStringArray("primary_target_state")]
 script = ExtResource("64_jgm8d")
 primary_condition = 9
 secondary_condition = 3
 primary_target_state = NodePath("../Reactionary")
-secondary_target_state = NodePath("../TauntAndCounter")
 moveset_type = 2
-moveset_array = Array[String](["flurry_intro", "fast_uppercut_left", "fast_uppercut_right", "fast_uppercut_left"])
 metadata/_custom_type_script = "uid://dt50cn0l8twro"
 
 [node name="Mad" type="Node" parent="StateMachine" unique_id=128763251 node_paths=PackedStringArray("primary_target_state")]
@@ -8844,17 +8822,14 @@ primary_condition = 9
 secondary_condition = 3
 primary_target_state = NodePath("../Randomized Attacks/WeirdAttacks2")
 moveset_type = 2
-moveset_array = Array[String](["fast_uppercut_left", "fast_uppercut_right", "fast_uppercut_left", "fast_uppercut_right", "fast_uppercut_left"])
 metadata/_custom_type_script = "uid://dt50cn0l8twro"
 
-[node name="Mad2" type="Node" parent="StateMachine" unique_id=973736486 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
+[node name="Mad2" type="Node" parent="StateMachine" unique_id=973736486 node_paths=PackedStringArray("primary_target_state")]
 script = ExtResource("64_jgm8d")
 primary_condition = 9
 secondary_condition = 3
 primary_target_state = NodePath("../Randomized Attacks/WeirdAttacks")
-secondary_target_state = NodePath("../Randomized Attacks/HookedOnAFeeling")
 moveset_type = 2
-moveset_array = Array[String](["fast_uppercut_left", "fast_uppercut_right", "fast_uppercut_left"])
 metadata/_custom_type_script = "uid://dt50cn0l8twro"
 
 [node name="RoundCountainer" type="Node" parent="StateMachine" unique_id=1084699241]
@@ -8871,7 +8846,7 @@ libraries/final_hit = SubResource("AnimationLibrary_w4tmc")
 libraries/get_up = SubResource("AnimationLibrary_3jrpy")
 libraries/hit = SubResource("AnimationLibrary_7b5nu")
 libraries/item_heal = SubResource("AnimationLibrary_367aj")
-libraries/knock_down = SubResource("AnimationLibrary_uh3is")
+libraries/knockdown = SubResource("AnimationLibrary_uh3is")
 libraries/looping_charge = SubResource("AnimationLibrary_bptvf")
 libraries/reactionary = SubResource("AnimationLibrary_3axiy")
 libraries/return_to_fight = SubResource("AnimationLibrary_gtqkv")
@@ -8889,7 +8864,7 @@ parameters/final_hit/blend_position = Vector2(-1.2386009, 2.2694063)
 parameters/get_up/blend_position = -1.0043597
 parameters/hit/blend_position = Vector2(1.4105186, 1.3653846)
 parameters/idle/blend_position = 0.0
-parameters/knock_down/blend_position = Vector2(-1.0533643, 1.0897703)
+parameters/knockdown/blend_position = Vector2(-1.0533643, 1.0897703)
 parameters/stun_hit/blend_position = Vector2(-0.9225484, 0.86757994)
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1565675371]

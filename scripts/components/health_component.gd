@@ -42,7 +42,7 @@ func heal(amount : float) -> void:
 	hp += abs(amount) # Absolute value to avoid negative values that would take away HP.
 	return
 
-## Function responsible for decreasing HP and checking to see if HP falls below zero, which would be a knock down.
+## Function responsible for decreasing HP and checking to see if HP falls below zero, which would be a Knockdown.
 func deal_damage_and_check_for_knockdown(damage_amount : float, damage_multiplier : float) -> bool:
 	# If Health Component calculates the health and it returns as <= 0, then that means they're knocked down.
 	if take_damage(damage_amount * damage_multiplier) <= 0.0 : 
@@ -59,7 +59,7 @@ func deal_damage_and_check_for_knockdown(damage_amount : float, damage_multiplie
 		return true
 	return false
 
-## Helper function. Deals damage and returns whether or not the attack resulted in a knock down.
+## Helper function. Deals damage and returns whether or not the attack resulted in a Knockdown.
 ##
 ## Mainly does this by calling [method deal_damage_and_check_for_knockdown]
 ## Also emits the the signal that the hit was successful.
@@ -71,20 +71,21 @@ func handle_damage_and_knockdown(damage_amount : float, multiplier : float, punc
 		FightManager.lower_stamina()
 	
 	elif owner is Enemy :
-		# If the instant KO conditions were met,
+		
+		# If the instant KD conditions were met,
 		# then set the damage to a high value to guarantee a Knockdown.
 		# This is some Spy backstab TF2 Spaghetti code type shit.
-		if defense_component.check_instant_ko() == true :
+		if owner.instant_kd_component.check_for_instant_knockdown(damage_amount, punch_height)  == true :
 			damage_amount = 3000.0
 	
 	# Checks to see if the health component returned that the attack resulted in a knockdown.
 	if owner.health_component.deal_damage_and_check_for_knockdown(damage_amount, multiplier) == true: 
 		
 		# Sets the blend for where the enemy is going to land during their knockdown animation.
-		animation_component.set_animation_blend("knock_down", Vector2i(punch_direction, punch_height))
+		animation_component.set_animation_blend("knockdown", Vector2i(punch_direction, punch_height))
 		
-		# Plays the actual Knock Down animation.
-		animation_component.play_animation("knock_down")
+		# Plays the actual Knockdown animation.
+		animation_component.play_animation("knockdown")
 		
 		# If the fighter is the enemy, set the blend positions for the getup and back to the fight animations.
 		if owner is Enemy :

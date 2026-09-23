@@ -123,6 +123,9 @@ const node_position_origin := Vector2(-1000.0,-500.0)
 #endregion
 
 #region Exported Variables
+
+#@export var condictionary : Dictionary[NodePath, StateChangeConditions]
+
 @export_category("⇄ State Changing Conditions")
 
 ## The primary condition for changing state and the first one being checked.
@@ -163,6 +166,8 @@ const node_position_origin := Vector2(-1000.0,-500.0)
 
 ## The state the [Enemy] will transition to after the [member tertiary_condition] is met.
 @export var tertiary_target_state : State
+
+
 
 
 @export_category("*️⃣ State Changing Arguments")
@@ -890,12 +895,12 @@ func transition_to_target(target_state : State) -> void:
 		# Then wait till the animation finishes playing, then travel to the "hub_node" and then return.
 		# This will force the animation tree to land on one of the "safe animation" nodes so that it can then transition state.
 		
-		# If the target state is EnemyKnockedDown, then travel to the "knock_down" animation
+		# If the target state is EnemyKnockedDown, then travel to the "knockdown" animation
 		# and transition to the knockdown state.
-		# This cuts off any animation and is required since going into knock down has way more priority than anything else.
+		# This cuts off any animation and is required since going into Knockdown has way more priority than anything else.
 		if target_state is EnemyKnockedDown : 
-			#print("Traveling to knock_down")
-			anim_state_machine.travel("knock_down")
+			#print("Traveling to knockdown")
+			anim_state_machine.travel("knockdown")
 			transition(target_state)
 			return
 		
@@ -913,7 +918,7 @@ func transition_to_target(target_state : State) -> void:
 			transition(target_state)
 			return
 			
-		if anim_state_machine.get_current_node() not in ["knock_down", "get_up", "move_to_spectate", "spectating"] :
+		if anim_state_machine.get_current_node() not in ["knockdown", "get_up", "move_to_spectate", "spectating"] :
 			anim_state_machine.travel("hub_node") # Travels to the "hub_node" to go to the next state.
 			transition(target_state)
 			return

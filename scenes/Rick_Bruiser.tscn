@@ -8739,6 +8739,7 @@ texture_filter = 1
 material = ExtResource("2_u5lb0")
 sprite_frames = SubResource("SpriteFrames_m0jec")
 animation = &"idle"
+frame = 1
 
 [node name="DefenseComponent" type="Node" parent="." unique_id=2045134485]
 unique_name_in_owner = true
@@ -8758,10 +8759,10 @@ metadata/_custom_type_script = "uid://by7b3lklkcynb"
 script = ExtResource("55_u5lb0")
 metadata/_custom_type_script = "uid://ctgr0jt66jjuu"
 
-[node name="InstantKOComponent" type="Node" parent="." unique_id=81177286 node_paths=PackedStringArray("expected_state_A")]
+[node name="InstantKOComponent" type="Node" parent="." unique_id=81177286]
 unique_name_in_owner = true
 script = ExtResource("51_mvukc")
-expected_state_A = NodePath("../StateMachine/Required States/Stunned")
+knockdown_condition = null
 number_of_stars = 2
 metadata/_custom_type_script = "uid://c15nwhylsnm6w"
 
@@ -8885,7 +8886,7 @@ primary_target_state = NodePath("../Aggressive")
 secondary_target_state = NodePath("../Aggressive2")
 time_to_change_state = 12.0
 moveset_type = 2
-moveset_array = Array[String](["taunt"])
+moveset_array = Array[String](["taunt", "counter_uppercut"])
 block_behavior = 2
 metadata/_custom_type_script = "uid://c4q24a656iry7"
 
@@ -8909,7 +8910,7 @@ libraries/final_hit = SubResource("AnimationLibrary_w4tmc")
 libraries/get_up = SubResource("AnimationLibrary_3jrpy")
 libraries/hit = SubResource("AnimationLibrary_7b5nu")
 libraries/item_heal = SubResource("AnimationLibrary_367aj")
-libraries/knock_down = SubResource("AnimationLibrary_uh3is")
+libraries/knockdown = SubResource("AnimationLibrary_uh3is")
 libraries/looping_charge = SubResource("AnimationLibrary_bptvf")
 libraries/reactionary = SubResource("AnimationLibrary_3axiy")
 libraries/return_to_fight = SubResource("AnimationLibrary_gtqkv")

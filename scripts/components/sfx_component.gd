@@ -16,7 +16,7 @@ const KO_BGM = preload("uid://cwd0ahjeaqarg")
 	"star_punch": preload("uid://ghulw4avu2eq"),
 	"duck": preload("uid://bvei8do7tp40f"),
 	"block": preload("uid://iy6ipv2pkmm8"),
-	"knock_down": preload("uid://bmdkkm11kix7e"),
+	"knockdown": preload("uid://bmdkkm11kix7e"),
 	"parry": preload("uid://d2j7ay5j7gx3p"),
 	
 }
@@ -35,8 +35,8 @@ func _ready() -> void:
 	FightManager.successful_block_signal.connect(play_sound_effect.bind("block"))
 	
 	
-	FightManager.enemy_knocked_down_signal.connect(play_sound_effect.bind("knock_down"))
-	FightManager.player_knocked_down_signal.connect(play_sound_effect.bind("knock_down"))
+	FightManager.enemy_knocked_down_signal.connect(play_sound_effect.bind("knockdown"))
+	FightManager.player_knocked_down_signal.connect(play_sound_effect.bind("knockdown"))
 	
 	FightManager.play_sfx_signal.connect(play_sound_effect)
 	

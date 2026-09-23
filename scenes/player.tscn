@@ -3265,7 +3265,7 @@ libraries/block = SubResource("AnimationLibrary_au7lq")
 libraries/dodge = SubResource("AnimationLibrary_vdulj")
 libraries/guard = SubResource("AnimationLibrary_6e8lb")
 libraries/hit = SubResource("AnimationLibrary_0yhus")
-libraries/knock_down = SubResource("AnimationLibrary_mx1m4")
+libraries/knockdown = SubResource("AnimationLibrary_mx1m4")
 
 [node name="AnimationTree" type="AnimationTree" parent="." unique_id=1441227393]
 unique_name_in_owner = true
@@ -3287,7 +3287,7 @@ parameters/dodge/duck/duck_blend/blend_position = 0.0
 parameters/fast_block/blend_position = Vector2(0, 0)
 parameters/get_up_blend/blend_position = 0.0
 parameters/hit/blend_position = Vector2(0, 0)
-parameters/knock_down/blend_position = Vector2(0, 0)
+parameters/knockdown/blend_position = Vector2(0, 0)
 parameters/neutral/blend_position = 0.0
 parameters/neutral/idle/blend_position = Vector2(0, 0)
 parameters/star_punch/blend_position = 0.0

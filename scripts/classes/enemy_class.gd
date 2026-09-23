@@ -15,7 +15,7 @@ signal hit_by_star_punch_signal
 ## Whether the [Enemy] is currently stunned/in [StunState].
 var is_stunned : bool = false
 
-@onready var instant_ko_component: InstantKOComponent = %InstantKOComponent
+@onready var instant_kd_component: InstantKDComponent = %InstantKDComponent
 @onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
 
 func _ready() -> void:
@@ -27,5 +27,5 @@ func _ready() -> void:
 		printerr(self.name, " doesn't have a Health Component assigned.")
 	if animation_tree == null:
 		printerr(self.name, " doesn't have an Animation Tree assigned.")
-	if instant_ko_component == null:
+	if instant_kd_component == null:
 		push_warning(self.name, " doesn't have an Instant KO Component assigned")

@@ -288,15 +288,6 @@ func is_punch_dodged(punch_range: int) -> bool:
 	# Returns true if any of them are true.
 	return dodged_neutral or dodged_right or dodged_left
 
-## Checks the [member instant_ko_component]  and then calls [method InstantKOComponent.check_for_instant_knock_out] to check and return whether or not it's an instant KO.
-func check_instant_ko() -> bool:
-	if instant_ko_window == true :
-		if owner.instant_ko_component != null :
-			if owner.instant_ko_component.check_for_instant_knock_out() == true:
-				return true
-		else:
-			push_warning("Defense Component: ", owner.name, " doesn't have an Instant KO Component.")
-	return false
 
 ## Resets [member current_hit_animation] and [member current_block_animation] as well as the [member current_anim_state_machine] back to the default ones.
 func reset_current_animations() -> void:
