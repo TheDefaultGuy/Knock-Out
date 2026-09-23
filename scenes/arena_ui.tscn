@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bj8nea7mg1hsi"]
 
 [ext_resource type="Script" uid="uid://cl2bfibqm14vu" path="res://scripts/ui/ko_counters.gd" id="1_o6qmt"]
+[ext_resource type="Script" uid="uid://c7he3uglxhsv2" path="res://scripts/arena_ui.gd" id="1_q80ng"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_hpwni"]
 
@@ -20,6 +21,7 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 2
+script = ExtResource("1_q80ng")
 
 [node name="PlayerBar" type="ProgressBar" parent="." unique_id=519980197]
 layout_mode = 0

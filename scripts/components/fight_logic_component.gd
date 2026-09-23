@@ -12,8 +12,6 @@ func _ready() -> void:
 	FightManager.resume_fighting_signal.connect(toggle_round_timer)
 	FightManager.start_ko_count_signal.connect(start_ko_count)
 	FightManager.fighter_got_up_signal.connect(stop_ko_count)
-	#FightManager.fight_is_over_signal.connect(stop_ko_count)
-	#FightManager.start_the_fight_signal.connect(start_the_match)
 	
 	call_deferred("create_timers")
 	
@@ -22,9 +20,9 @@ func _ready() -> void:
 	start_the_match()
 
 func _process(_delta: float) -> void:
-	## Does the match to convert the seconds to M:SS format.
+	
+	# Does the math to convert the seconds to M:SS:MSS format.
 	FightManager.round_time = (round_timer.wait_time - round_timer.time_left)
-	#print("ROUND TIME : ", FightManager.round_time)
 	@warning_ignore("integer_division")
 	var minutes: int = int(FightManager.round_time) / 60
 	var seconds: int = int(fmod(FightManager.round_time, 60))
@@ -43,17 +41,16 @@ func start_the_match() -> void:
 func start_ko_count() -> void:
 	print("star tko count: ", FightManager.is_fight_over )
 	if FightManager.is_fight_over == false:
-		print("START KO COUNT")
+		print("Fight Logic Component: Starting KO count...")
 		ko_timer.start(10.0)
 		animation_player.play("ko_count")
 
 func stop_ko_count() -> void:
-	
 	ko_timer.stop()
 	animation_player.play("RESET")
 	
 func end_fight() -> void:
-	print("FIGHTER COULDNT GET UP")
+	print("Fight Logic Component: FIGHTER COULDNT GET UP")
 	
 	match true:
 		Global.player_node.is_knocked_down:
@@ -66,7 +63,7 @@ func end_fight() -> void:
 	FightManager.fight_is_over_signal.emit()
 
 func _on_round_timer_timeout() -> void:
-	print('ROUND OVER; TIMES UP')
+	print("Fight Logic Component: ROUND OVER; TIMES UP")
 
 
 

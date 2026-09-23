@@ -36,8 +36,6 @@ class_name StateMachine extends Node
 ## The current [State] that active and running.
 var current_state : State
 
-
-
 var root_state_machine : AnimationNodeStateMachine = null
 
 ## Used to store a [State] that the [Enemy] was currently at before it got interrupted
@@ -48,7 +46,7 @@ var interrupted_state: State
 var states : Dictionary = {}
 
 @onready var animation_tree: AnimationTree = %AnimationTree
-@onready var anim_state_machine : AnimationNodeStateMachinePlayback = animation_tree["parameters/playback"]
+#@onready var anim_state_machine : AnimationNodeStateMachinePlayback = animation_tree["parameters/playback"]
 
 func _ready() -> void:
 	delete_attack_animation_nodes()

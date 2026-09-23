@@ -19,9 +19,6 @@ signal damage_taken_signal(amount)
 		hp = clampf(value, 0.0, max_hp) # Automatically clamps the HP
 		health_changed_signal.emit()
 
-@onready var defense_component: DefenseComponent = %DefenseComponent
-@onready var animation_component: AnimationComponent = %AnimationComponent
-
 func _ready() -> void:
 	max_hp = hp
 
@@ -32,8 +29,8 @@ func take_damage(amount : float) -> float:
 	return hp
 
 func reset_hp() -> void:
-	hp = owner.max_hp
-	print(owner.name, " resetting HP and emitting got up signal...")
+	hp = max_hp
+	print_rich("[color=green]Health Component:[/color] ", owner.name, " resetting HP and emitting got up signal...")
 	FightManager.fighter_got_up_signal.emit()
 	owner.is_knocked_down = false
 
@@ -82,10 +79,10 @@ func handle_damage_and_knockdown(damage_amount : float, multiplier : float, punc
 	if owner.health_component.deal_damage_and_check_for_knockdown(damage_amount, multiplier) == true: 
 		
 		# Sets the blend for where the enemy is going to land during their knockdown animation.
-		animation_component.set_animation_blend("knockdown", Vector2i(punch_direction, punch_height))
+		owner.animation_component.set_animation_blend("knockdown", Vector2i(punch_direction, punch_height))
 		
 		# Plays the actual Knockdown animation.
-		animation_component.play_animation("knockdown")
+		owner.animation_component.play_animation("knockdown")
 		
 		# If the fighter is the enemy, set the blend positions for the getup and back to the fight animations.
 		if owner is Enemy :

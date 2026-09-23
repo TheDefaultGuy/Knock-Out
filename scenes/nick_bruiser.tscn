@@ -8784,7 +8784,7 @@ primary_condition = 4
 secondary_condition = 0
 time_to_change_state = 90.0
 moveset_type = 2
-moveset_array = Array[String](["taunt", "counter_uppercut"])
+moveset_array = Array[String](["taunt"])
 block_behavior = 2
 metadata/_custom_type_script = "uid://c4q24a656iry7"
 
@@ -8795,7 +8795,7 @@ secondary_condition = 0
 primary_target_state = NodePath("../Randomized Attacks/WeirdAttacks2")
 time_to_change_state = 14.0
 moveset_type = 2
-moveset_array = Array[String](["taunt", "counter_uppercut"])
+moveset_array = Array[String](["taunt"])
 block_behavior = 2
 metadata/_custom_type_script = "uid://c4q24a656iry7"
 

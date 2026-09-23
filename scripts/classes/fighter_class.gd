@@ -5,7 +5,6 @@ class_name Fighter extends Node2D
 ### Whether the [Fighter] is currently knocked down.
 var is_knocked_down : bool = false
 
-#@export_category("Required Gameplay Components")
 ## The [DefenseComponent] assigned to the [Fighter].
 @onready var defense_component: DefenseComponent = %DefenseComponent
 
@@ -14,6 +13,9 @@ var is_knocked_down : bool = false
 
 ## The [AttackingComponent] assigned to the [Fighter]
 @onready var attacking_component: AttackingComponent = %AttackingComponent
+
+## The [AnimationComponent] assigned to the [Fighter]
+@onready var animation_component: AnimationComponent = %AnimationComponent
 
 ## The [AnimationTree] assigned to the [Fighter].
 @onready var animation_tree: AnimationTree = %AnimationTree
@@ -26,6 +28,3 @@ var is_knocked_down : bool = false
 
 ## The [StateMachine] assigned to the [Fighter].
 @onready var state_machine: StateMachine = %StateMachine
-
-## Self-explanatory
-@export var max_hp : float = 100.0

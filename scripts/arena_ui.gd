@@ -20,6 +20,9 @@ extends Control
 @onready var player_ko_counter: HBoxContainer = $"Ko Counters/Player"
 @onready var enemy_ko_counter: HBoxContainer = $"Ko Counters/Enemy"
 
+func _ready() -> void:
+	state_label.visible = OS.is_debug_build()
+
 # Called when the node enters the scene tree for the first time.
 func connect_signals() -> void:
 	

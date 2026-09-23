@@ -122,15 +122,6 @@ var is_star_punch : bool = false
 
 var is_fully_knocked_out : bool = false
 
-@onready var animation_tree: AnimationTree = %AnimationTree
-
-## The animation state machine in the [member animation_tree]
-@onready var anim_state_machine: AnimationNodeStateMachinePlayback = animation_tree["parameters/playback"]
-
-## The [State] based [StateMachine] of the [Fighter].
-@onready var state_machine: StateMachine = %StateMachine
-
-
 func _ready() -> void:
 	if active_conditions_dictionary == null or active_conditions_dictionary == { }:
 		push_warning(get_parent().name, " Instant KD Component: No conditions Stored; enemy will not have any instant knockdown conditions.")
@@ -176,7 +167,7 @@ func check_for_instant_knockdown(damage_amount : float, punch_height : int) -> b
 	is_fully_knocked_out = false
 	
 	# Checks if the current state the enemy is currently in is one of the states in the active_conditions_dictionary.
-	if state_machine.current_state not in active_conditions_dictionary.keys() :
+	if owner.state_machine.current_state not in active_conditions_dictionary.keys() :
 		return false # Returns false if it's NOT one of the states.
 
 	# If the punch received did more than 15.0 hp worth of damage,
@@ -185,7 +176,7 @@ func check_for_instant_knockdown(damage_amount : float, punch_height : int) -> b
 		is_star_punch = true
 	
 	# Grabs the stored condition resource of the current state.
-	var stored_conditions : KDConditions = active_conditions_dictionary[state_machine.current_state] 
+	var stored_conditions : KDConditions = active_conditions_dictionary[owner.state_machine.current_state] 
 	
 	match stored_conditions.knockdown_condition:
 		KD_CONDITION_TYPE.STARS_USED:
@@ -231,11 +222,10 @@ func run_required_checks(stored_conditions : KDConditions, punch_height : int) -
 func select_outcome(stored_conditions : KDConditions) -> void:
 	match stored_conditions.resulting_outcome :
 		OUTCOME_ENUM.KNOCKDOWN:
-			print("Regular Knockdown")
 			return
 			
 		OUTCOME_ENUM.FULL_KNOCKOUT:
-			print("FULL KNOCKOUT")
+			print_rich("[color=cyan]FULL KNOCKOUT[/color]")
 			is_fully_knocked_out = true
 			return
 
@@ -281,7 +271,7 @@ func check_for_expected_animation(stored_conditions : KDConditions) -> bool:
 			
 			# If expected animation HAS been set, check to see if the animation
 			# that is currently being played matches expected one.
-			if anim_state_machine.get_current_node().contains(stored_conditions.expected_animation) == false :
+			if owner.anim_state_machine.get_current_node().contains(stored_conditions.expected_animation) == false :
 				
 				# If it DOES NOT match expected animation, return false.
 				return false

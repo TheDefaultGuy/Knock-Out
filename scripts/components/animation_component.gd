@@ -1,21 +1,6 @@
 @icon("res://assets/icons/MdiMovieOpenOutline.svg")
 
 class_name AnimationComponent extends Node
-#
-### Stores the hit animation. It can change depending on the state.
-#var current_hit_animation : String = "hit"
-#
-### Stores the block animation. It can change depending on the state.
-#var current_block_animation : String = "block"
-
-
-@onready var animation_tree: AnimationTree = %AnimationTree
-
-#
-### Resets [member current_hit_animation] and [member current_block_animation] as well as the [member current_anim_state_machine] back to the default ones.
-#func reset_current_animations() -> void:
-	#current_hit_animation = "hit"
-	#current_block_animation = "block"
 
 ## Sets the blend of the given animation using the given blend_vector.
 func set_animation_blend(animation : String, blend_vector : Vector2) -> void:
@@ -33,7 +18,6 @@ func play_animation(animation_name : String) -> void:
 	## If the animation's playback position is LESS THAN (<) PLAY_POS_THRESH, then the animation is considered to have been restarted or is back at the start.
 	const PLAY_POS_THRESH: float = 0.05
 	
-	print("Playing animation: ", animation_name)
 	#print("Animation Play Position: ", anim_state_machine.get_current_play_position())
 	
 	owner.anim_state_machine.stop() # Stops the current animation if there is one playing
@@ -53,12 +37,12 @@ func play_animation(animation_name : String) -> void:
 		
 			# Waits until the signal for an animation starting has been emitted.
 			# That way it only checks when it has to.
-			await animation_tree.animation_started 
+			await owner.animation_tree.animation_started 
 			
 			# Checks to see if the current animation's play back position is Zero.
 			# If it is Zero, then animation was successfully restarted.
 			if owner.anim_state_machine.get_current_play_position() < PLAY_POS_THRESH :
-				print("Successfully Restarted Animation: ", animation_name)
+				print_rich("[color=purple]Animation component:[/color] Successfully Restarted Animation: ", animation_name)
 				return
 	
 	# Does the following if the current animation is different than the given animation_name
@@ -72,10 +56,10 @@ func play_animation(animation_name : String) -> void:
 			
 			# Waits until the signal for an animation starting has been emitted.
 			# That way it only checks when it has to.
-			await animation_tree.animation_started 
+			await owner.animation_tree.animation_started 
 			
 			# If the current animation playing IS the desired one, then exit loop since work here is done.
 			if owner.anim_state_machine.get_current_node() == animation_name: 
-				print("Successfully Started Animation: ", animation_name)
+				print_rich("[color=purple]Animation component:[/color] Successfully Started Animation: ", animation_name)
 				return
 	return

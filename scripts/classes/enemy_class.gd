@@ -18,6 +18,9 @@ var is_stunned : bool = false
 @onready var instant_kd_component: InstantKDComponent = %InstantKDComponent
 @onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
 
+
+
+
 func _ready() -> void:
 	if defense_component == null:
 		printerr(self.name, " doesn't have a Defense Component assigned.")

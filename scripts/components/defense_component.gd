@@ -77,8 +77,6 @@ const PARRY_EFFECT = preload("uid://c2vbdtoq1noj0")
 ## It's split into 2 variables corresponding to the 2 different heights. That way, you have the option of awarding a star by hitting the face but not the body or vice versa.
 @export var lower_star_window : bool = false
 
-## The window of time in which being hit will trigger an instant KO check.
-@export var instant_ko_window: bool = false 
 #endregion
 
 #region Stored Variables
@@ -100,12 +98,6 @@ var blocking_array : Array[bool] = [lower_blocking_status, upper_blocking_status
 
 ## Array that stores both [member lower_star_window] and [member upper_star_window] variables for cleaner code.
 var star_window_array : Array[bool] = [lower_star_window, upper_star_window]
-
-
-@onready var health_component: HealthComponent = %HealthComponent
-@onready var animation_component: AnimationComponent = %AnimationComponent
-
-@onready var animation_tree: AnimationTree = %AnimationTree
 #endregion
 
 #func _init() -> void:
@@ -143,9 +135,9 @@ func check_defense(punch_height : int, punch_range : int, damage_amount : float,
 			Global.height.BOTH: # Checks to see if it's an attack that covers both heights.
 				
 				# If HealthComponent calculates the health and it returns as <= 0, then that means they're knocked down.
-				if health_component.handle_damage_and_knockdown(damage_amount, 1.0, punch_height, punch_direction) == false:
-					animation_component.set_animation_blend(current_hit_animation, Vector2i(punch_direction, punch_height))
-					animation_component.play_animation(current_hit_animation)
+				if owner.health_component.handle_damage_and_knockdown(damage_amount, 1.0, punch_height, punch_direction) == false:
+					owner.animation_component.set_animation_blend(current_hit_animation, Vector2i(punch_direction, punch_height))
+					owner.animation_component.play_animation(current_hit_animation)
 					
 				return true
 				
@@ -169,14 +161,14 @@ func check_blocking_status(blocking_status : bool, damage_amount : float, punch_
 			handle_player_blocking_and_parry(damage_amount, punch_height, punch_direction, punch_range)
 				
 			# Sets the blend of the block animation.
-			animation_component.set_animation_blend(current_block_animation, Vector2i(punch_direction, punch_height))
+			owner.animation_component.set_animation_blend(current_block_animation, Vector2i(punch_direction, punch_height))
 			
 			# Plays the corresponding block animation if it wasn't enough damage for a knockdown.
-			animation_component.play_animation(current_block_animation)
-			print("Blocked")
+			owner.animation_component.play_animation(current_block_animation)
+			print_rich("[color=gray][b]Defense Component:[/b][/color] Blocked")
 			
 			# This is done so that state change functions dont try and check for idle or something and checks on the actual block animation
-			await animation_tree.animation_started 
+			await owner.animation_tree.animation_started 
 			
 			FightManager.successful_block_signal.emit()
 			return false # Returns that the hit was NOT successful. Mainly as an answer to the attacking component.
@@ -218,7 +210,7 @@ func handle_player_blocking_and_parry(damage_amount : float, punch_height : int,
 func choose_hit_region(punch_height : int, damage_amount : float, punch_direction : int) -> bool:
 	
 	hit_registered_signal.emit() # Emits that a hit has been registered.
-	print("HIT REGISTERED")
+	print_rich("[color=gray][b]Defense Component:[/b][/color] Hit registered.")
 	
 	if owner is Enemy:
 		
@@ -234,14 +226,14 @@ func choose_hit_region(punch_height : int, damage_amount : float, punch_directio
 			# Punches dealing more than 15.0 are considered star punches for sake of simplicity.
 			owner.hit_by_star_punch_signal.emit() 
 	
-	if health_component.handle_damage_and_knockdown(damage_amount, multiplier_array[punch_height], punch_height, punch_direction) == true:
+	if owner.health_component.handle_damage_and_knockdown(damage_amount, multiplier_array[punch_height], punch_height, punch_direction) == true:
 		return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
 	
 	# Sets the blend of the current hit animation based on the punch height and the direction.
-	animation_component.set_animation_blend(current_hit_animation, Vector2i(punch_direction, punch_height))
+	owner.animation_component.set_animation_blend(current_hit_animation, Vector2i(punch_direction, punch_height))
 	
 	# Actually starts the hit animation.
-	animation_component.play_animation(current_hit_animation)
+	owner.animation_component.play_animation(current_hit_animation)
 	
 	return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
 

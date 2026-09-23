@@ -4,3 +4,4 @@
 
 [node name="FightManager" type="Node" unique_id=948866]
 script = ExtResource("1_8bktm")
+star_count = 27

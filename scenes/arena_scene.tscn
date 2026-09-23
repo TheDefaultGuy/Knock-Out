@@ -7,7 +7,6 @@
 [ext_resource type="Script" uid="uid://c8kyx1g3lvmgb" path="res://scripts/components/sfx_component.gd" id="4_8k0nb"]
 [ext_resource type="Texture2D" uid="uid://ujuvvpjfs7ty" path="res://assets/ring1.png" id="4_p4q4o"]
 [ext_resource type="PackedScene" uid="uid://bj8nea7mg1hsi" path="res://scenes/arena_ui.tscn" id="4_tqdu3"]
-[ext_resource type="Script" uid="uid://c7he3uglxhsv2" path="res://scripts/arena_ui.gd" id="5_5bpft"]
 [ext_resource type="Texture2D" uid="uid://dbrq43tue7gf2" path="res://assets/ring2.png" id="5_or0bq"]
 [ext_resource type="Texture2D" uid="uid://dgd8463fc3h8u" path="res://assets/ring3.png" id="6_3j23c"]
 [ext_resource type="Texture2D" uid="uid://daeyep1j18c81" path="res://assets/ring4.png" id="7_wiy1v"]
@@ -98,7 +97,6 @@ zoom = Vector2(3.12, 3.12)
 
 [node name="Arena UI" parent="Camera2D" unique_id=912051865 instance=ExtResource("4_tqdu3")]
 unique_name_in_owner = true
-script = ExtResource("5_5bpft")
 
 [node name="Background" type="AnimatedSprite2D" parent="." unique_id=564253712]
 texture_filter = 1

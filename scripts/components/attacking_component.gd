@@ -27,8 +27,11 @@ var enemy_flash_duration : float = 0.25
 var parry_attack_timer : Timer = null
 
 @onready var animation_tree: AnimationTree = %AnimationTree
-@onready var defense_component: DefenseComponent = %DefenseComponent
+
 @onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
+
+@onready var defense_component: DefenseComponent = %DefenseComponent
+
 
 func _ready() -> void:
 	create_parry_timer()
@@ -71,7 +74,7 @@ func punch(input_node : Node2D, punch_height : int, punch_range : int, attack_da
 		return false # Checks to see if the defense component has that function
 		
 	# If it was a star punch, change the attack damage to reflect the amount of star punches used.
-	if owner is Player and str(animation_tree["parameters/playback"].get_current_node()).contains("star") == true: 
+	if owner is Player and str(owner.anim_state_machine.get_current_node()).contains("star") == true: 
 		attack_damage = calculate_start_punch_damage(attack_damage)
 	
 	# Stores the response given by the defense component about whether or not the hit was succesful
@@ -103,7 +106,7 @@ func attack_flash() -> void:
 	push_warning("Player cannot do attack flash, only enemies.")
 
 func parry_damage_bonus() -> void:
-		parry_attack_timer.start()
+	parry_attack_timer.start()
 
 func create_parry_timer() -> void:
 	parry_attack_timer = Timer.new()
