@@ -24,6 +24,9 @@ class_name ItemHeal extends EnemyState
 ## The animation played when the player doesn't stop the heal on time.
 @export var successful_animation : String = "heal_successful"
 
+var has_started : bool = false
+
+
 func _ready() -> void:
 	# Adds these animations to the additional_animations_to_add Array so that they can be added to the animation tree
 	additional_animations_to_add = [
@@ -38,14 +41,16 @@ func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
 		return
 	if state_machine.current_state == self:
-		
-		check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
+		if has_started == true :
+			check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
 		return
-		
+
 func enter() -> void:
+	
+	has_started = false
 	super() # Runs the base EnemyState enter function and then runs everything below.
 	
-	anim_state_machine.travel(intro_animation)
+	owner.animation_component.play_animation(intro_animation)
 	
 	await animation_tree.animation_started
 	animation_tree.animation_finished.connect(check_animation)
@@ -53,6 +58,8 @@ func enter() -> void:
 	# Sets the hit animation and state machine in the defense component as the hit animation in the state machine.
 	# This is because the defense component is the one responsible for playing the hit animation
 	defense_component.current_hit_animation = failed_animation
+	
+	has_started = true
 
 func exit() -> void:
 	super() # Runs the base EnemyState exit function and then runs everything below.
@@ -60,7 +67,7 @@ func exit() -> void:
 	#FightManager.succesful_hit_signal.disconnect(change_to_failed_state)
 	interruption_status = false
 	animation_tree.animation_finished.disconnect(check_animation)
-	
+	has_started = false
 
 func override_conditions_and_state_parameters() -> void:
 	state_type = STATE_TYPE_ENUM.SIMPLE
@@ -88,7 +95,6 @@ func check_animation(animation_name : String) -> void:
 		intro_animation:
 			print("AWSWEIJHAOI")
 			anim_state_machine.travel(successful_animation)
-			interruption_status = false
 			await animation_tree.animation_started
 			return
 			

@@ -222,7 +222,7 @@ const node_position_origin := Vector2(-1000.0,-500.0)
 			#notify_property_list_changed()
 		
 ## The minimum amount of time (in seconds) the [Enemy] will wait before calling [method perform_action].
-@export_range(0.0, 6.0, 0.02, "suffix:s") var min_delay_time : float = 1.0 :
+@export_range(0.0, 6.0, 0.1, "suffix:s") var min_delay_time : float = 1.0 :
 	
 	# Makes sure the set value is more than or equal to the minimum delay time.
 	set(value):
@@ -231,7 +231,7 @@ const node_position_origin := Vector2(-1000.0,-500.0)
 			max_delay_time = value
 
 ## The maximum amount of time (in seconds) the [Enemy] will wait before calling [method perform_action].
-@export_range(0.0, 6.0, 0.02, "suffix:s") var max_delay_time : float = 3.0 :
+@export_range(0.0, 6.0, 0.1, "suffix:s") var max_delay_time : float = 3.0 :
 	
 	# Makes sure the set value is more than or equal to the minimum delay time.
 	set(value):

@@ -21,8 +21,6 @@ signal stunned_signal
 ## Signal emitted whenthe [Fighter] has registered a hit.
 signal hit_registered_signal
 
-const IMPACT_EFFECT = preload("uid://mbb7yyvjhw12")
-const PARRY_EFFECT = preload("uid://c2vbdtoq1noj0")
 
 #region Exported Variables
 @export_group("Defense Variables")
@@ -85,7 +83,6 @@ var current_hit_animation : String = "hit"
 
 ## Stores the block animation. It can change depending on the state.
 var current_block_animation : String = "block"
-
 
 ## The position where effects will spawn.
 var effect_position = [-10.0, -54.0]
@@ -198,7 +195,7 @@ func handle_player_blocking_and_parry(damage_amount : float, punch_height : int,
 		
 		# Sets the block animation as the fast block.
 		current_block_animation = "fast_block"
-		play_parry_effect(punch_height)
+		#play_parry_effect(punch_height)
 		
 	else: # If the block wasn't during the parry window, the use the regular block animation.
 		current_block_animation = "block"
@@ -216,7 +213,7 @@ func choose_hit_region(punch_height : int, damage_amount : float, punch_directio
 		
 		check_for_star_and_stun(punch_height) # Checks the star punch and stun windows
 		
-		play_impact_effect(punch_height)
+		#play_impact_effect(punch_height)
 		
 		# If the damage passes a certain amount, then play the final hit animation instead.
 		if damage_amount > 15.0 :
@@ -288,12 +285,15 @@ func reset_current_animations() -> void:
 
 #endregion
 
-func play_impact_effect(punch_height) -> void:
-	var impact_effect = IMPACT_EFFECT.instantiate()
-	impact_effect.position.y = effect_position[punch_height]
-	owner.add_child(impact_effect)
-	
-func play_parry_effect(punch_height) -> void:
-	var parry_effect = PARRY_EFFECT.instantiate()
-	parry_effect.position.y = effect_position[punch_height]
-	owner.add_child(parry_effect)
+#const IMPACT_EFFECT = preload("uid://mbb7yyvjhw12")
+#const PARRY_EFFECT = preload("uid://c2vbdtoq1noj0")
+#
+#func play_impact_effect(punch_height) -> void:
+	#var impact_effect = IMPACT_EFFECT.instantiate()
+	#impact_effect.position.y = effect_position[punch_height]
+	#owner.add_child(impact_effect)
+	#
+#func play_parry_effect(punch_height) -> void:
+	#var parry_effect = PARRY_EFFECT.instantiate()
+	#parry_effect.position.y = effect_position[punch_height]
+	#owner.add_child(parry_effect)

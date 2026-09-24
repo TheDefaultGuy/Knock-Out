@@ -401,7 +401,6 @@ script = ExtResource("53_40p5w")
 punch_type_flags = 1
 expected_animation = ""
 number_of_stars = 2
-resulting_outcome = 1
 
 [sub_resource type="Animation" id="Animation_s1ycm"]
 length = 0.001
@@ -576,70 +575,58 @@ tracks/13/keys = {
 tracks/14/type = "value"
 tracks/14/imported = false
 tracks/14/enabled = true
-tracks/14/path = NodePath("DefenseComponent:instant_ko_window")
+tracks/14/path = NodePath("AnimatedSprite2D:position")
 tracks/14/interp = 1
 tracks/14/loop_wrap = true
 tracks/14/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
+"update": 0,
+"values": [Vector2(0, 0)]
 }
 tracks/15/type = "value"
 tracks/15/imported = false
 tracks/15/enabled = true
-tracks/15/path = NodePath("AnimatedSprite2D:position")
+tracks/15/path = NodePath("DefenseComponent:lower_damage_multiplier")
 tracks/15/interp = 1
 tracks/15/loop_wrap = true
 tracks/15/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(0, 0)]
+"values": [1.0]
 }
 tracks/16/type = "value"
 tracks/16/imported = false
 tracks/16/enabled = true
-tracks/16/path = NodePath("DefenseComponent:lower_damage_multiplier")
+tracks/16/path = NodePath("AnimatedSprite2D:flip_h")
 tracks/16/interp = 1
 tracks/16/loop_wrap = true
 tracks/16/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [1.0]
+"update": 1,
+"values": [false]
 }
 tracks/17/type = "value"
 tracks/17/imported = false
 tracks/17/enabled = true
-tracks/17/path = NodePath("AnimatedSprite2D:flip_h")
+tracks/17/path = NodePath("AnimatedSprite2D:rotation")
 tracks/17/interp = 1
 tracks/17/loop_wrap = true
 tracks/17/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
+"update": 0,
+"values": [0.0]
 }
 tracks/18/type = "value"
 tracks/18/imported = false
 tracks/18/enabled = true
-tracks/18/path = NodePath("AnimatedSprite2D:rotation")
+tracks/18/path = NodePath("AnimatedSprite2D:offset")
 tracks/18/interp = 1
 tracks/18/loop_wrap = true
 tracks/18/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [0.0]
-}
-tracks/19/type = "value"
-tracks/19/imported = false
-tracks/19/enabled = true
-tracks/19/path = NodePath("AnimatedSprite2D:offset")
-tracks/19/interp = 1
-tracks/19/loop_wrap = true
-tracks/19/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
@@ -8649,14 +8636,13 @@ NodePath("../StateMachine/Required States/Stunned"): SubResource("Resource_40p5w
 }
 metadata/_custom_type_script = "uid://c15nwhylsnm6w"
 
-[node name="StateMachine" type="Node" parent="." unique_id=1256866169 node_paths=PackedStringArray("initial_state", "stun_state", "knocked_down_state", "spectating_state", "cutscene_state")]
+[node name="StateMachine" type="Node" parent="." unique_id=1256866169 node_paths=PackedStringArray("initial_state", "stun_state", "knocked_down_state", "spectating_state")]
 unique_name_in_owner = true
 script = ExtResource("15_l7qsa")
-initial_state = NodePath("TauntAndCounter")
+initial_state = NodePath("Randomized Attacks/CalmState")
 stun_state = NodePath("Required States/Stunned")
 knocked_down_state = NodePath("Required States/KnockedDown")
 spectating_state = NodePath("Required States/Spectating")
-cutscene_state = NodePath("Required States/CutSceneState")
 metadata/_custom_type_script = "uid://ch1gb3rys2tfm"
 
 [node name="Required States" type="Node" parent="StateMachine" unique_id=152498408]
@@ -8685,14 +8671,19 @@ metadata/_custom_type_script = "uid://bd3i8gnmviajw"
 
 [node name="Randomized Attacks" type="Node" parent="StateMachine" unique_id=236151705]
 
-[node name="CalmState" type="Node" parent="StateMachine/Randomized Attacks" unique_id=1646714070 node_paths=PackedStringArray("secondary_target_state", "tertiary_target_state")]
+[node name="CalmState" type="Node" parent="StateMachine/Randomized Attacks" unique_id=1646714070 node_paths=PackedStringArray("primary_target_state", "secondary_target_state", "tertiary_target_state")]
 script = ExtResource("44_wdmnt")
 secondary_condition = 5
 tertiary_condition = 1
+primary_target_state = NodePath("../../ItemHeal2")
 secondary_target_state = NodePath("../../ItemHeal2")
 tertiary_target_state = NodePath("../../TauntAndCounter")
+time_to_change_state = 1.0
 target_hp = 70.0
 moveset_type = 1
+moveset_array = Array[String](["jab_high", "jab_low"])
+min_delay_time = 0.6
+max_delay_time = 1.8
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
 [node name="Debug" type="Node" parent="StateMachine/Randomized Attacks" unique_id=1997623450]
@@ -8701,31 +8692,54 @@ primary_condition = 11
 moveset_type = 1
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
-[node name="Aggressive" type="Node" parent="StateMachine/Randomized Attacks" unique_id=550832782]
+[node name="Aggressive" type="Node" parent="StateMachine/Randomized Attacks" unique_id=550832782 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
 script = ExtResource("44_wdmnt")
 secondary_condition = 4
+primary_target_state = NodePath("../../Reactionary2")
+secondary_target_state = NodePath("../SkillCheck")
+moveset_dictionary = Dictionary[String, float]({
+"elbow": 40.0,
+"uppercut": 60.0
+})
+min_delay_time = 0.6
+max_delay_time = 1.0
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
-[node name="WeirdAttacks" type="Node" parent="StateMachine/Randomized Attacks" unique_id=2144043967]
+[node name="WeirdAttacks" type="Node" parent="StateMachine/Randomized Attacks" unique_id=2144043967 node_paths=PackedStringArray("primary_target_state")]
 script = ExtResource("44_wdmnt")
+primary_target_state = NodePath("../../Reactionary2")
+time_to_change_state = 15.0
 moveset_type = 1
+moveset_array = Array[String](["great_tiger_uppercut", "great_tiger_uppercut_2", "great_tiger_fakeout"])
+min_delay_time = 0.5
+max_delay_time = 1.1
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
 [node name="WeirdAttacks2" type="Node" parent="StateMachine/Randomized Attacks" unique_id=455264741]
 script = ExtResource("44_wdmnt")
+primary_condition = 11
 moveset_type = 1
+moveset_array = Array[String](["great_tiger_uppercut_2", "great_tiger_uppercut", "great_tiger_fakeout", "jab_high_combo"])
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
-[node name="SkillCheck" type="Node" parent="StateMachine/Randomized Attacks" unique_id=1728563805]
+[node name="SkillCheck" type="Node" parent="StateMachine/Randomized Attacks" unique_id=1728563805 node_paths=PackedStringArray("primary_target_state")]
 script = ExtResource("44_wdmnt")
+primary_target_state = NodePath("../WeirdAttacks2")
+time_to_change_state = 15.0
 moveset_type = 1
+moveset_array = Array[String](["uppercut", "elbow", "hook_right", "jab_high_combo"])
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
-[node name="HookedOnAFeeling" type="Node" parent="StateMachine/Randomized Attacks" unique_id=1266210396 node_paths=PackedStringArray("primary_target_state")]
+[node name="HookedOnAFeeling" type="Node" parent="StateMachine/Randomized Attacks" unique_id=1266210396 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
 script = ExtResource("44_wdmnt")
 secondary_condition = 2
 primary_target_state = NodePath("../../Reactionary2")
+secondary_target_state = NodePath("../WeirdAttacks")
+time_to_change_state = 15.0
 moveset_type = 1
+moveset_array = Array[String](["hook_left", "hook_right"])
+min_delay_time = 0.6
+max_delay_time = 1.6
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
 [node name="ItemHeal" type="Node" parent="StateMachine" unique_id=2059746833 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
@@ -8733,7 +8747,7 @@ script = ExtResource("58_v64oh")
 primary_condition = 9
 secondary_condition = 10
 primary_target_state = NodePath("../Randomized Attacks/Aggressive")
-secondary_target_state = NodePath("../Randomized Attacks/Aggressive")
+secondary_target_state = NodePath("../Mad")
 moveset_type = 3
 block_behavior = 3
 metadata/_custom_type_script = "uid://c73a2o5xnqs0k"
@@ -8756,17 +8770,23 @@ secondary_target_state = NodePath("../ItemHeal")
 time_to_change_state = 15.0
 target_hp = 50.0
 moveset_type = 1
-moveset_array = Array[String](["fakeout"])
+moveset_array = Array[String](["fakeout", "fakeout_uppercut"])
 block_behavior = 2
+min_delay_time = 0.8
+max_delay_time = 1.8
 metadata/_custom_type_script = "uid://bjtexblqp5cmp"
 
-[node name="Reactionary2" type="Node" parent="StateMachine" unique_id=137125735 node_paths=PackedStringArray("primary_target_state")]
+[node name="Reactionary2" type="Node" parent="StateMachine" unique_id=137125735 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
 script = ExtResource("59_poxia")
 secondary_condition = 3
 primary_target_state = NodePath("../Randomized Attacks/WeirdAttacks2")
+secondary_target_state = NodePath("../Randomized Attacks/SkillCheck")
+time_to_change_state = 15.0
 moveset_type = 1
-moveset_array = Array[String](["fakeout"])
+moveset_array = Array[String](["fakeout", "fakeout_uppercut", "uppercut"])
 block_behavior = 2
+min_delay_time = 0.6
+max_delay_time = 2.0
 metadata/_custom_type_script = "uid://bjtexblqp5cmp"
 
 [node name="LoopingCharge" type="Node" parent="StateMachine" unique_id=61317170 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
@@ -8775,7 +8795,7 @@ intro_animation = "restart_2"
 primary_condition = 3
 secondary_condition = 2
 primary_target_state = NodePath("../TauntAndCounter2")
-secondary_target_state = NodePath("../TauntAndCounter2")
+secondary_target_state = NodePath("../Reactionary2")
 moveset_type = 2
 block_behavior = 3
 metadata/_custom_type_script = "uid://be0a0n2xv87g7"
@@ -8790,17 +8810,21 @@ time_to_change_state = 15.0
 moveset_type = 2
 moveset_array = Array[String](["taunt"])
 block_behavior = 2
+max_delay_time = 2.0
 metadata/_custom_type_script = "uid://c4q24a656iry7"
 
-[node name="TauntAndCounter2" type="Node" parent="StateMachine" unique_id=2001566302 node_paths=PackedStringArray("primary_target_state")]
+[node name="TauntAndCounter2" type="Node" parent="StateMachine" unique_id=2001566302 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
 script = ExtResource("63_jgm8d")
 primary_condition = 4
 secondary_condition = 0
 primary_target_state = NodePath("../Randomized Attacks/WeirdAttacks2")
+secondary_target_state = NodePath("../Randomized Attacks/Aggressive")
 time_to_change_state = 14.0
 moveset_type = 2
 moveset_array = Array[String](["taunt"])
 block_behavior = 2
+min_delay_time = 0.5
+max_delay_time = 2.0
 metadata/_custom_type_script = "uid://c4q24a656iry7"
 
 [node name="PickRandomState" type="Node" parent="StateMachine" unique_id=1214821543]
@@ -8819,14 +8843,17 @@ secondary_condition = 3
 primary_target_state = NodePath("../Reactionary")
 secondary_target_state = NodePath("../Randomized Attacks/HookedOnAFeeling")
 moveset_type = 2
+moveset_array = Array[String](["flurry_intro", "fast_uppercut_left", "fast_uppercut_right", "fast_uppercut_left"])
 metadata/_custom_type_script = "uid://dt50cn0l8twro"
 
-[node name="Mad" type="Node" parent="StateMachine" unique_id=128763251 node_paths=PackedStringArray("primary_target_state")]
+[node name="Mad" type="Node" parent="StateMachine" unique_id=128763251 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
 script = ExtResource("64_jgm8d")
 primary_condition = 9
 secondary_condition = 3
 primary_target_state = NodePath("../Randomized Attacks/WeirdAttacks2")
+secondary_target_state = NodePath("../Randomized Attacks/Aggressive")
 moveset_type = 2
+moveset_array = Array[String](["fast_uppercut_left", "fast_uppercut_right", "fast_uppercut_left"])
 metadata/_custom_type_script = "uid://dt50cn0l8twro"
 
 [node name="Mad2" type="Node" parent="StateMachine" unique_id=973736486 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
@@ -8836,6 +8863,7 @@ secondary_condition = 3
 primary_target_state = NodePath("../Randomized Attacks/WeirdAttacks")
 secondary_target_state = NodePath("../Reactionary")
 moveset_type = 2
+moveset_array = Array[String](["fast_uppercut_left", "fast_uppercut_right", "fast_uppercut_left"])
 metadata/_custom_type_script = "uid://dt50cn0l8twro"
 
 [node name="RoundCountainer" type="Node" parent="StateMachine" unique_id=1084699241]
