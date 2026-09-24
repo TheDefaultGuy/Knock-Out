@@ -31,7 +31,7 @@ func enter() -> void:
 		state_array.append(secondary_target_state)
 	if tertiary_target_state != null:
 		state_array.append(tertiary_target_state)
-	if state_array != []:
+	if state_array.is_empty() == false:
 		transition_to_target(state_array.pick_random())
 		return
 	elif state_array.size() == 0:

@@ -79,15 +79,15 @@ func handle_damage_and_knockdown(damage_amount : float, multiplier : float, punc
 	if owner.health_component.deal_damage_and_check_for_knockdown(damage_amount, multiplier) == true: 
 		
 		# Sets the blend for where the enemy is going to land during their knockdown animation.
-		owner.animation_component.set_animation_blend("knockdown", Vector2i(punch_direction, punch_height))
+		owner.animation_component.set_animation_2d_blend("knockdown", Vector2i(punch_direction, punch_height))
 		
 		# Plays the actual Knockdown animation.
 		owner.animation_component.play_animation("knockdown")
 		
 		# If the fighter is the enemy, set the blend positions for the getup and back to the fight animations.
 		if owner is Enemy :
-			owner.animation_tree.set("parameters/get_up/blend_position", punch_direction)
-			owner.animation_tree.set("parameters/back_to_the_fight/blend_position", punch_direction)
+			owner.animation_component.set_animation_1d_blend("get_up", punch_direction)
+			owner.animation_component.set_animation_1d_blend("back_to_the_fight", punch_direction)
 		return true
 		
 	return false

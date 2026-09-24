@@ -23,7 +23,7 @@ func enter() -> void:
 	
 	animation_tree.animation_finished.connect(check_finished_animation)
 	
-	owner.animation_tree.set("parameters/back_to_the_fight/blend_position", -1)
+	owner.animation_component.set_animation_1d_blend("back_to_the_fight", -1)
 
 
 func exit() -> void:

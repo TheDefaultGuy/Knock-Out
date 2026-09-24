@@ -150,7 +150,8 @@ func create_timers() -> void:
 func enter() -> void: # Blank enter and exit functions that get overridden by each state's own custom enter and exit functions.
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
 	
-	animation_tree.set("parameters/idle/blend_position", 1)
+	owner.animation_component.set_animation_1d_blend("idle", 1)
+	
 	FightManager.enemy_knocked_down_signal.connect(transition_to_knocked_down)
 	FightManager.succesful_hit_signal.connect(increase_punch_count)
 	
@@ -176,7 +177,9 @@ func enter() -> void: # Blank enter and exit functions that get overridden by ea
 			stun_punch_length = clamp(stun_punch_length + 1, min_stun_length, max_stun_length)
 	
 func exit() -> void:
-	animation_tree.set("parameters/idle/blend_position", 0)
+	
+	owner.animation_component.set_animation_1d_blend("idle", 0)
+	
 	FightManager.enemy_knocked_down_signal.disconnect(transition_to_knocked_down)
 	FightManager.succesful_hit_signal.disconnect(increase_punch_count)
 	owner.hit_by_star_punch_signal.disconnect(set_stun_over)

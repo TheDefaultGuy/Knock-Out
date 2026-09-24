@@ -8617,7 +8617,6 @@ texture_filter = 1
 material = ExtResource("2_v64oh")
 sprite_frames = SubResource("SpriteFrames_m0jec")
 animation = &"idle"
-frame = 1
 
 [node name="DefenseComponent" type="Node" parent="." unique_id=2045134485]
 unique_name_in_owner = true

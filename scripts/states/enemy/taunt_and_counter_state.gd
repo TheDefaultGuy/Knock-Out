@@ -2,7 +2,6 @@
 @tool
 class_name TauntAndCounter extends EnemyState
 
-## This is a template state used by enemy boxers.
 ## In this state, the enemy will keep looping the same animation, but react to the player's attacks.
 ## This is used to recreate boxers like Don Flamenco, where they taunt and only attack when attacked at first.
 ## You can set conditions to transition to another state if desired.

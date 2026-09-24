@@ -168,8 +168,6 @@ const node_position_origin := Vector2(-1000.0,-500.0)
 @export var tertiary_target_state : State
 
 
-
-
 @export_category("*️⃣ State Changing Arguments")
 ### Basically, ignore/override the conditions of the current state and transition to this state, 
 ### regardless of the current state, whenever the conditions of this state are met.
@@ -286,22 +284,19 @@ var additional_animations_to_add : Array[String] = []
 @onready var animation_player: AnimationPlayer = %AnimationPlayer
 #endregion
 func _init() -> void:
-	#print(self.name, ": _init()")
 	override_conditions_and_state_parameters()
 	pass
 
 func _enter_tree() -> void:
-	#print(self.name, ": _enter_tree()")
 	override_conditions_and_state_parameters()
 	pass
 
 func _ready() -> void:
-
 	# Array that stores the moves/animations that need to be added as animation nodes to the animation tree.
 	var moves_arr : Array[String] = match_moveset_type()
 	
 	# Checks if there are any additional animations to add.
-	if additional_animations_to_add != []:
+	if additional_animations_to_add.is_empty() == false :
 		
 		# Adds the additional animations so that they're added to the animation tree.
 		moves_arr += additional_animations_to_add 
@@ -329,10 +324,11 @@ func _ready() -> void:
 	# Checks the type of state it is so that it can properly set up the animation nodes in the animation tree.
 	match state_type: 
 		STATE_TYPE_ENUM.SIMPLE:
-			if moves_arr != [] or null :
+			if moves_arr.is_empty() == false or moves_arr != null :
 				call_deferred("add_attack_animation_nodes", animation_tree.tree_root, moves_arr)
+				
 		STATE_TYPE_ENUM.CHAINED_ATTACKS:
-			if moves_arr != [] or null :
+			if moves_arr.is_empty() == false or moves_arr != null :
 				call_deferred("add_chained_attack_animation_nodes", animation_tree.tree_root, moves_arr)
 			
 	# Sets the check condition functions that the state will run during process function of that state.
@@ -352,7 +348,7 @@ func enter() -> void:
 	
 	
 	# Sets the idle blend to not stunned
-	animation_tree.set("parameters/idle/blend_position", 0)
+	animation_tree.set(str("parameters/idle/blend_position"),  0)
 	
 	# Connects the enemy knocked down, player knocked down and stun signals.
 	toggle_stunned_signal_connections() 
@@ -398,24 +394,21 @@ func exit() -> void:
 ## Checks to see if the user forgot to assign a state when they assigned a condition.
 func check_for_unassigned_variables() -> void:
 	if primary_target_state == null and primary_condition != STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
-		printerr(self.name, " : Primary Target State has not been assigned despite having a condition set.")
+		push_error(self.name, " : Primary Target State has not been assigned despite having a condition set.")
 	if secondary_target_state == null and secondary_condition != STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
 		push_warning(self.name, " : Secondary Target State has not been assigned despite having a condition set.")
 	if tertiary_target_state == null and tertiary_condition != STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
 		push_warning(self.name, " : Tertiary Target State has not been assigned despite having a condition set.")
-	if animation_tree == null:
-		printerr(self.name, " : Animation tree not found/is null.")
-
 	return
 
 ## Checks for errors and also returns an array with all of the moves.
 func match_moveset_type() -> Array:
-	if moveset_type == MOVESET_TYPE_ENUM.WEIGHTED_DICTIONARY and moveset_dictionary == {} and state_type == STATE_TYPE_ENUM.SIMPLE:
-		printerr(self.name, " : Moveset Dictionary does NOT contain any attacks.")
-	if moveset_type == MOVESET_TYPE_ENUM.PICK_RANDOM and moveset_array == [] and state_type == STATE_TYPE_ENUM.SIMPLE:
-		printerr(self.name, " : Moveset Array does NOT contain any attacks.")
-	if moveset_type == MOVESET_TYPE_ENUM.PREDETERMINED_ORDER and moveset_array == [] and state_type == STATE_TYPE_ENUM.SIMPLE:
-		printerr(self.name, " : Moveset Array does NOT contain any attacks.")
+	if moveset_type == MOVESET_TYPE_ENUM.WEIGHTED_DICTIONARY and moveset_dictionary.is_empty() == true :
+		push_error(self.name, " : Moveset Dictionary does NOT contain any attacks.")
+	if moveset_type == MOVESET_TYPE_ENUM.PICK_RANDOM and moveset_array.is_empty() == true:
+		push_error(self.name, " : Moveset Array does NOT contain any attacks.")
+	if moveset_type == MOVESET_TYPE_ENUM.PREDETERMINED_ORDER and moveset_array.is_empty() == true:
+		push_error(self.name, " : Moveset Array does NOT contain any attacks.")
 		
 	match moveset_type:
 		MOVESET_TYPE_ENUM.WEIGHTED_DICTIONARY:
@@ -456,7 +449,7 @@ func check_for_attack_and_append(attack : String) -> void:
 				moveset_array.append(attack)
 				return
 			_:
-				printerr(self.name, " append_attack() unnaccounted 4th option.")
+				printerr(self.name, " check_for_attack_and_append() unnaccounted 4th option.")
 				return 
 	return
 #endregion
@@ -474,7 +467,7 @@ func set_conditions_and_targets_dictionary() -> void:
 		}
 	return
 
-## Sets the list of check functions that will be checked by the state based on the conditions set for the state.
+## Sets the [member list_of_check_functions] that will be checked by the state based on the conditions set for the state.
 ##
 ## Basically, it'll run the function for checking the [member primary_condition] first, then the [member secondary_condition] and so on.
 ## This makes it so that if multiple conditions are met, the [member primary_condition] has priority over the [member secondary_condition]
@@ -521,10 +514,10 @@ func create_timer(timer_name : String, one_shot : bool, wait : float) -> Timer:
 ##
 ## This function is called right after performing an attack and after the [Player] or the [Enemy] blocks.
 func start_attack_delay_timer() -> void:
-	if attack_timer == null : # Checks if the attack timer even exists.
-		return
 	
-	#print("STARTED ATTACK TIMER")
+	 # Checks if the attack timer even exists.
+	if attack_timer == null :
+		return
 	
 	match attack_delay_type: # Matches the selected attack delay type
 		ATTACK_DELAY.FLOAT:
@@ -666,14 +659,6 @@ func check_for_knockdowns() -> bool:
 			return true
 	return false
 
-#func check_after_player_knocked_down():
-	#condition_match_change_interrupted_state(STATE_CHANGE_CONDITION.AFTER_PLAYER_KNOCKED_DOWN)
-	#transition_to_target(state_machine.spectating_state)
-	##return true
-	#
-#func check_after_enemy_knocked_down():
-	#condition_match_change_interrupted_state(STATE_CHANGE_CONDITION.AFTER_ENEMY_KNOCKED_DOWN)
-	#transition_to_target(state_machine.knocked_down_state)
 #endregion
 
 #region Condition Match Functions
@@ -771,14 +756,8 @@ func add_chained_attack_animation_nodes(root_node : AnimationRootNode, moveset :
 	var node_array : Array = ["hub_node"]
 	node_array += modified_moveset
 	
-
 	# Iterates through each of the attacks in the moveset dictionary to add their animations to the root state machine.
 	for i in range(reveresed_moveset.size()):
-		
-		## If there is already an Animation node with that animation name, skip it.
-		#if root_node.has_node(reveresed_moveset[i]):
-			#reveresed_moveset[i] += str("_",i)
-			#continue
 		
 		if reveresed_moveset[i] == "": # Catches empty strings
 			push_warning("add_chained_attack_animation_nodes(): Found an empty string.")
@@ -972,6 +951,10 @@ func perform_action() -> void:
 func play_attack_start_attack_timer(animation : String) -> void:
 	if attack_timer != null : # Checks if the attack timer exists.
 		attack_timer.stop()
+	
+	if animation == null :
+		printerr(self.name, " play_attack_start_attack_timer(): given animation returned null.")
+		return
 	
 	# Travels to the given animation on the animation tree.
 	anim_state_machine.travel(animation)

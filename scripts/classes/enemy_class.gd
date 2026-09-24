@@ -7,7 +7,6 @@ class_name Enemy extends Fighter
 ## checking between [Enemy] and [Player] easier and to
 ## avoid having unused variables in the [Player] class.
 
-
 @warning_ignore("unused_signal")
 ## Signal emitted when the enemy is confirmed to have been hit by a star punch.
 signal hit_by_star_punch_signal
@@ -17,9 +16,6 @@ var is_stunned : bool = false
 
 @onready var instant_kd_component: InstantKDComponent = %InstantKDComponent
 @onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
-
-
-
 
 func _ready() -> void:
 	if defense_component == null:

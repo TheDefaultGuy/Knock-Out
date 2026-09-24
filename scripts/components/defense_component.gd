@@ -136,7 +136,7 @@ func check_defense(punch_height : int, punch_range : int, damage_amount : float,
 				
 				# If HealthComponent calculates the health and it returns as <= 0, then that means they're knocked down.
 				if owner.health_component.handle_damage_and_knockdown(damage_amount, 1.0, punch_height, punch_direction) == false:
-					owner.animation_component.set_animation_blend(current_hit_animation, Vector2i(punch_direction, punch_height))
+					owner.animation_component.set_animation_2d_blend(current_hit_animation, Vector2i(punch_direction, punch_height))
 					owner.animation_component.play_animation(current_hit_animation)
 					
 				return true
@@ -161,7 +161,7 @@ func check_blocking_status(blocking_status : bool, damage_amount : float, punch_
 			handle_player_blocking_and_parry(damage_amount, punch_height, punch_direction, punch_range)
 				
 			# Sets the blend of the block animation.
-			owner.animation_component.set_animation_blend(current_block_animation, Vector2i(punch_direction, punch_height))
+			owner.animation_component.set_animation_2d_blend(current_block_animation, Vector2i(punch_direction, punch_height))
 			
 			# Plays the corresponding block animation if it wasn't enough damage for a knockdown.
 			owner.animation_component.play_animation(current_block_animation)
@@ -230,7 +230,7 @@ func choose_hit_region(punch_height : int, damage_amount : float, punch_directio
 		return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
 	
 	# Sets the blend of the current hit animation based on the punch height and the direction.
-	owner.animation_component.set_animation_blend(current_hit_animation, Vector2i(punch_direction, punch_height))
+	owner.animation_component.set_animation_2d_blend(current_hit_animation, Vector2i(punch_direction, punch_height))
 	
 	# Actually starts the hit animation.
 	owner.animation_component.play_animation(current_hit_animation)

@@ -3,8 +3,13 @@
 class_name AnimationComponent extends Node
 
 ## Sets the blend of the given animation using the given blend_vector.
-func set_animation_blend(animation : String, blend_vector : Vector2) -> void:
+func set_animation_2d_blend(animation : String, blend_vector : Vector2) -> void:
 	owner.animation_tree.set(str("parameters/", animation,"/blend_position"),  blend_vector)
+	return
+	
+## Sets the blend of the given animation using the given blend_value.
+func set_animation_1d_blend(animation : String, blend_value : int) -> void:
+	owner.animation_tree.set(str("parameters/", animation,"/blend_position"),  blend_value)
 	return
 
 ## Function dedicated to playing a given animation and making sure that it gets played and not be interrupted.

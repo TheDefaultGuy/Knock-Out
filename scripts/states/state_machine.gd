@@ -60,7 +60,7 @@ func _ready() -> void:
 				
 				child.transition_state.connect(on_transition)
 			else:
-				if child.get_children() != []:
+				if child.get_children().is_empty() == false:
 					for node in child.get_children():
 						if node is State or EnemyState:
 							states[node] = node # basically checks all of the states and adds them to the states dictionary

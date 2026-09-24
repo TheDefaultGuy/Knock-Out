@@ -13,6 +13,7 @@ class_name TiredState extends State
 func enter() -> void:
 	print_rich("[color=yellow]Player Entered State: [/color]", self.name)
 	
+	
 	animation_tree.set("parameters/neutral/blend_position", 1)
 	
 	input_component.defense_input_signal.connect(perform_defense)
