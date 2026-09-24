@@ -37,14 +37,12 @@ func _ready() -> void:
 
 func enter() -> void:
 	
-	anim_state_machine.travel(intro_animation)
-	await animation_tree.animation_started
+	owner.animation_component.play_animation(intro_animation)
+	
 	animation_tree.animation_finished.connect(check_animation)
 	
 	super()
-	
-	
-	
+
 
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game

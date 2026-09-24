@@ -39,7 +39,6 @@ func start_the_match() -> void:
 	round_timer.paused = false
 	
 func start_ko_count() -> void:
-	print("star tko count: ", FightManager.is_fight_over )
 	if FightManager.is_fight_over == false:
 		print("Fight Logic Component: Starting KO count...")
 		ko_timer.start(10.0)

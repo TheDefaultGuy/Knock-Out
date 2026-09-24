@@ -232,6 +232,13 @@ _limits = [1.0, 3.0, 0.0, 1.0]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1e-05, 3), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 3
 
+[sub_resource type="Curve" id="Curve_holxr"]
+_limits = [1.0, 3.0, 0.0, 7.0]
+_data = [Vector2(0, 1), 0.0, 0.04114618, 0, 0, Vector2(7, 3), 0.42639792, 0.0, 0, 0]
+point_count = 2
+metadata/_snap_enabled = true
+metadata/_snap_count = 4
+
 [sub_resource type="Animation" id="Animation_smehm"]
 length = 0.001
 tracks/0/type = "value"
@@ -3245,6 +3252,7 @@ metadata/_custom_type_script = "uid://dvx70pthua1yt"
 [node name="KnockedDown" type="Node" parent="StateMachine" unique_id=275347256]
 process_mode = 1
 script = ExtResource("19_4r5pv")
+get_up_difficulty_curve = SubResource("Curve_holxr")
 get_up_step_value = 8.0
 metadata/_custom_type_script = "uid://dbtcttyq4b1k6"
 

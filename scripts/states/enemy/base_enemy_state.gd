@@ -976,8 +976,6 @@ func play_attack_start_attack_timer(animation : String) -> void:
 	# Travels to the given animation on the animation tree.
 	anim_state_machine.travel(animation)
 	
-	#print("PERFORMING ATTACK: ", animation)
-
 	# Waits for the attack animation to finish before restarting the attack delay timer.
 	await animation_tree.animation_finished
 	

@@ -15,7 +15,7 @@ class_name TauntAndCounter extends EnemyState
 @export var taunt_animation : String = "taunt"
 
 func _process(_delta: float) -> void:
-	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
+	if Engine.is_editor_hint(): # Doesn't run the check round time function when in the editor; only when in-game
 		return
 	if state_machine.current_state == self:
 		check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
@@ -23,8 +23,6 @@ func _process(_delta: float) -> void:
 func override_conditions_and_state_parameters() -> void:
 	state_type = STATE_TYPE_ENUM.SIMPLE
 	attack_timer_required = true
-	
-	#check_for_attack_and_append(counter_attack)
 	
 	moveset_type = MOVESET_TYPE_ENUM.PREDETERMINED_ORDER
 	moveset_array = [taunt_animation]

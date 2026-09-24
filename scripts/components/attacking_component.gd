@@ -74,7 +74,7 @@ func punch(input_node : Node2D, punch_height : int, punch_range : int, attack_da
 		return false # Checks to see if the defense component has that function
 		
 	# If it was a star punch, change the attack damage to reflect the amount of star punches used.
-	if owner is Player and str(owner.anim_state_machine.get_current_node()).contains("star") == true: 
+	if owner is Player and owner.anim_state_machine.get_current_node().contains("star") == true: 
 		attack_damage = calculate_start_punch_damage(attack_damage)
 	
 	# Stores the response given by the defense component about whether or not the hit was succesful
@@ -82,20 +82,30 @@ func punch(input_node : Node2D, punch_height : int, punch_range : int, attack_da
 	
 	match defense_response: 
 		true: # Hit landed/was successful
-			if str(animation_tree["parameters/playback"].get_current_node()).contains("star") == true: # Checks if it was a star punch animation.
+			if owner.anim_state_machine.get_current_node().contains("star") == true: # Checks if it was a star punch animation.
 				FightManager.star_punches_landed += 1  # If it was a star punch and the hit was true, then increase the star punch landed variable
+			
+			if owner is Player: # Checks to see if the attacker is the player.
 				
-			FightManager.stars_used = 0
-			FightManager.succesful_hit_signal.emit() # emits the signal if the defense component responds that the attack landed
+				# Resets the number of stars used back to zero
+				FightManager.stars_used = 0
+			
+			FightManager.succesful_hit_signal.emit() 
 			return defense_response
 		
 		false: # Punch missed or was blocked.
-			if owner is Player: # Checks to see if the attacker is the player. If the player missed an attack, lower their stamina.
+			if owner is Player: # Checks to see if the attacker is the player.
+				
+				# If the player missed an attack, lower their stamina.
 				FightManager.lower_stamina()
+				
+				# Resets the number of stars used back to zero
 				FightManager.stars_used = 0
+				
 			return defense_response
-		_: 
-			return false
+			
+		_: # Fallback
+			return false 
 
 func attack_flash() -> void:
 	if owner is Enemy:

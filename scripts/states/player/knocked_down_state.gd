@@ -6,6 +6,9 @@ class_name PlayerKnockedDown extends State
 ## The player can't attack, dodge, block or dodge.
 ## They can only attempt to get up by pressing attack buttons.
 
+## Curve used to determine the [member get_up_decay_rate] by using the [member FightManager.player_ko_count].
+## The more the [Player] has been knocked down, the harder it is to recover.
+@export var get_up_difficulty_curve : Curve
 
 ## Value from 0.0 to the [param get_up_threshold] that determines how far the player is to recovering from a knockout and getting up.
 @export var get_up_progress : float = 0.0
@@ -16,12 +19,14 @@ class_name PlayerKnockedDown extends State
 
 ## How many units per second does the [param get_up_progress] decrease by.
 ## Basically, how hard it is to get up.
-@export var get_up_decay_rate : float = 50.0
+@export var base_decay_rate : float = 50.0
 
 ## The target value the player has to reach to recover from being knocked down.
 @export var get_up_threshold : float = 100.0
 
 @onready var input_component: InputComponent = %InputComponent
+
+var get_up_decay_rate : float = 50.0
 
 func _process(delta: float) -> void:
 	if state_machine.current_state != self :
@@ -61,7 +66,8 @@ func enter() -> void:
 	input_component.attack_input_signal.connect(perform_attack)
 	
 	FightManager.resume_fighting_signal.connect(transition_to_neutral)
-
+	
+	get_up_decay_rate = base_decay_rate * get_up_difficulty_curve.sample(float(FightManager.player_ko_count))
 
 func exit() -> void:
 	get_up_progress = 0.0

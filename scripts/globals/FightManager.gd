@@ -83,7 +83,7 @@ signal go_to_results_screen_signal
 		update_ui_signal.emit()
 
 ## The Player's stamina. Drains if they're hit, block, or miss an attack.
-@export var stamina : int = 10 :
+@export var stamina : int = 1 :
 	# Clamps the value and emits the signal to update the UI everytime the value is set.
 	set(value):
 		stamina = clampi(value, 0 , max_player_stamina)

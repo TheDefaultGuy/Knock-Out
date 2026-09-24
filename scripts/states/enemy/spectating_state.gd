@@ -39,7 +39,7 @@ func back_to_the_fight() -> void:
 func check_finished_animation(animation : String) -> void:
 	
 	animation = remove_library_preffix(animation)
-	#print("ANIMATION: ", animation)
+	
 	match animation:
 		outro_animation:
 			FightManager.go_to_results_screen_signal.emit()

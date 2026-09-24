@@ -52,11 +52,7 @@ func start_get_up_timer() -> void:
 	get_up_timer.start(randf_range(min_getup_time, max_getup_time))
 
 func check_finished_animation(animation : String) -> void:
-	
-	#animation = remove_library_preffix(animation)
-	print("ANIMATION: ", animation)
-	
-	
+		
 	if animation.contains("knockdown") == true :
 		start_get_up_timer()
 		return
