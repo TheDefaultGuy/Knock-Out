@@ -48,9 +48,9 @@ tracks/0/keys = {
 "values": [""]
 }
 
-[sub_resource type="Animation" id="Animation_8k0nb"]
-resource_name = "ko_count"
-length = 11.0
+[sub_resource type="Animation" id="Animation_4wfwo"]
+resource_name = "TKO"
+length = 2.0
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -58,21 +58,54 @@ tracks/0/path = NodePath("Camera2D/Arena UI/KO:text")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10.5),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0, 2),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": ["
-
-", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", ""]
+"values": ["TKO", ""]
 }
 tracks/1/type = "method"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath(".")
+tracks/1/path = NodePath("FightLogicComponent")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(10),
+"times": PackedFloat32Array(2, 11.766666),
+"transitions": PackedFloat32Array(1, 1),
+"values": [{
+"args": [],
+"method": &"end_fight"
+}, {
+"args": [],
+"method": &"end_fight"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_8k0nb"]
+resource_name = "ko_count"
+length = 11.766666
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Camera2D/Arena UI/KO:text")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 11.766666),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": ["
+
+", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "KO", ""]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("FightLogicComponent")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(11.766666),
 "transitions": PackedFloat32Array(1),
 "values": [{
 "args": [],
@@ -83,10 +116,12 @@ tracks/1/keys = {
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_bt4xr"]
 _data = {
 &"RESET": SubResource("Animation_v87wf"),
+&"TKO": SubResource("Animation_4wfwo"),
 &"ko_count": SubResource("Animation_8k0nb")
 }
 
 [node name="Arena" type="Node2D" unique_id=860723905]
+process_mode = 1
 script = ExtResource("1_v87wf")
 player_scene = ExtResource("3_bt4xr")
 enemy_scene = ExtResource("3_3j23c")
@@ -122,6 +157,7 @@ libraries/ = SubResource("AnimationLibrary_bt4xr")
 
 [node name="SoundEffectsComponent" type="Node" parent="." unique_id=1369961966]
 unique_name_in_owner = true
+process_mode = 3
 script = ExtResource("4_8k0nb")
 metadata/_custom_type_script = "uid://c8kyx1g3lvmgb"
 

@@ -50,6 +50,8 @@ func _ready() -> void:
 	
 	FightManager.go_to_results_screen_signal.connect(go_to_results_screen)
 	
+	FightManager.is_fight_over = false
+	
 	
 	if match_settings == null:
 		printerr(self.name, ": Match Settings Component has not been assigned.")

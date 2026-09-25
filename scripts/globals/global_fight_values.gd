@@ -15,16 +15,16 @@ class_name VariableDebugTool extends Resource
 			FightManager.stamina = stamina
 
 ## Number of times the player has been knocked down in the current round.
-@export var player_ko_count : int = 0 :
+@export var player_kd_count : int = 0 :
 	set(value):
 		if override_values == true :
-			FightManager.player_ko_count = player_ko_count
+			FightManager.player_kd_count = player_kd_count
 
 ## Number of times the player has been knocked down in the current round.
-@export var enemy_ko_count : int = 0 :
+@export var enemy_kd_count : int = 0 :
 	set(value):
 		if override_values == true :
-			FightManager.enemy_ko_count = enemy_ko_count
+			FightManager.enemy_kd_count = enemy_kd_count
 
 ## Which round of the fight it currently is. 0 = 1st round, 1 = 2nd round , 2 = 3rd round.
 var round_idx : int = 0 

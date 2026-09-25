@@ -37,17 +37,15 @@ func play_get_up_animation() -> void:
 	anim_state_machine.travel("get_up")
 
 func start_get_up_timer() -> void:
-	if FightManager.is_fight_over == true:
-		print("Not getting up.")
-		FightManager.fight_is_over_signal.emit()
-		return
-		
+	
 	FightManager.start_ko_count_signal.emit()
 	
-	if owner.instant_kd_component.is_fully_knocked_out == true:
+	if FightManager.enemy_kd_count >= FightManager.MAX_KD_COUNT or owner.instant_kd_component.is_fully_knocked_out == true:
 		print("Not getting up.")
+		#FightManager.fight_is_over_signal.emit()
 		return
 		
+	
 	print("STARTING GETUP TIMER")
 	get_up_timer.start(randf_range(min_getup_time, max_getup_time))
 

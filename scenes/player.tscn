@@ -3195,6 +3195,7 @@ _data = {
 }
 
 [node name="Player" type="Node2D" unique_id=737191135]
+process_mode = 1
 z_index = 2
 material = SubResource("ShaderMaterial_poxia")
 script = ExtResource("1_t4otl")

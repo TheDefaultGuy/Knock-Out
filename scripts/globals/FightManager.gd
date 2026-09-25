@@ -40,6 +40,10 @@ signal successful_block_signal
 ## Signal emitted when it's time to resume/start fighting.
 @warning_ignore("unused_signal")
 signal resume_fighting_signal 
+
+## Signal emitted when its a TKO.
+@warning_ignore("unused_signal")
+signal tko_signal
 #
 ### Signal emitted when it's time to start the fight.
 #@warning_ignore("unused_signal")
@@ -74,16 +78,24 @@ signal player_dodged_signal(direction)
 signal go_to_results_screen_signal
 #endregion
 
+## The maximum amount of Knockdowns allowable.
+const MAX_KD_COUNT : int = 3
+
+## The maximum amount of stars the player can have.
+const MAX_STAR_AMOUNT : int = 3
+
+const MAX_NUMBER_OF_ROUNDS : int = 3
+
 #region Exported Variables
 ## The number of stars the [Player] currently has.
 @export var star_count : int = 2 :
 	# Clamps the value and emits the signal to update the UI everytime the value is set.
 	set(value):
-		star_count = clampi(value, 0 , 3) 
+		star_count = clampi(value, 0 , MAX_STAR_AMOUNT) 
 		update_ui_signal.emit()
 
 ## The Player's stamina. Drains if they're hit, block, or miss an attack.
-@export var stamina : int = 1 :
+@export var stamina : int = 10 :
 	# Clamps the value and emits the signal to update the UI everytime the value is set.
 	set(value):
 		stamina = clampi(value, 0 , max_player_stamina)
@@ -95,32 +107,49 @@ signal go_to_results_screen_signal
 ## The maximum [Player] [member stamina].
 @export var max_player_stamina : int = 10
 
-@export_category("KO Counts")
+@export_category("KD Counts")
 ## Number of times the [Player] has been knocked down in the current round.
-@export var player_ko_count : int = 0 : 
+@export var player_kd_count : int = 2 : 
 	# Clamps the value and emits the signal to update the UI everytime the value is set.
 	set(value):
-		player_ko_count = clampi(value, 0 , 3)
-		print("Playery KD Count: ", player_ko_count)
-		if player_ko_count == 3: # Checks for TKO; 3 knockouts
-			print_rich("[b][u]\nFightManager: TKO Player[/u][/b]")
+		print("Player KD Count: ", player_kd_count)
+		
+		player_kd_count = clampi(value, 0 , MAX_KD_COUNT)
+		if player_kd_count == MAX_KD_COUNT: # Checks for TKO; 3 knockouts
+			
+			# Sets the winner as the enemy
 			Global.winner = Global.WinnerEnum.ENEMY
+			
+			# Sets the fight as over.
 			is_fight_over = true
 			
+			print_rich("[b][u]\nFightManager: TKO Player[/u][/b]")
 
 ## Number of times the [Enemy] has been knocked down in the current round.
-@export var enemy_ko_count : int = 0 :
+@export var enemy_kd_count : int = 0 :
 	# Clamps the value and emits the signal to update the UI everytime the value is set.
 	set(value):
-		enemy_ko_count = clampi(value, 0 , 3)
-		print("Enemy KD Count: ", enemy_ko_count)
-		if enemy_ko_count == 3: # Checks for TKO; 3 knockouts
-			print_rich("[b][u]\nFightManager: TKO enemy[/u][/b]")
+		
+		print("Enemy KD Count: ", enemy_kd_count)
+		
+		enemy_kd_count = clampi(value, 0 , MAX_KD_COUNT)
+		
+		if enemy_kd_count == MAX_KD_COUNT: # Checks for TKO; 3 knockouts
+			
+			# Sets the winner as the player
 			Global.winner = Global.WinnerEnum.PLAYER
+			
+			# Sets the fight as over.
 			is_fight_over = true
+			
+			print_rich("[b][u]\nFightManager: TKO enemy[/u][/b]")
 
-## Which round of the fight it currently is. 0 = 1st round, 1 = 2nd round , 2 = 3rd round.
-@export var round_idx : int = 0 
+## Which round of the fight it currently is. 1 = 1st round, 2 = 2nd round , 3 = 3rd round.
+@export var round_idx : int = 2 :
+	set(value):
+		round_idx = clampi(value, 1, MAX_NUMBER_OF_ROUNDS)
+
+
 #endregion
 
 #region Stored variables
@@ -135,7 +164,7 @@ var enemy_ready_status : bool = true
 ## Keeps track of whether the fight is over.
 var is_fight_over : bool = false
 
-## The current round time in seconds.
+## Stores the current round time in seconds.
 var round_time : float = 0.0
 
 ## The number of stars the [Player] used in their star punch.
@@ -148,27 +177,27 @@ var star_punches_landed : int = 0
 #endregion
 
 func _ready() -> void:
-	player_knocked_down_signal.connect(increase_player_ko_count)
-	enemy_knocked_down_signal.connect(increase_enemy_ko_count)
+	player_knocked_down_signal.connect(increase_player_kd_count)
+	enemy_knocked_down_signal.connect(increase_enemy_kd_count)
 	fighter_ready_signal.connect(start_the_fight)
 	stars_used = 0
 	star_punches_landed = 0
 	
 
-## Increases [member enemy_ko_count] by 1.
-func increase_enemy_ko_count() -> void:
-	enemy_ko_count += 1
+## Increases [member enemy_kd_count] by 1.
+func increase_enemy_kd_count() -> void:
+	enemy_kd_count += 1
 	return
 
-## Increases [member player_ko_count] by 1.
-func increase_player_ko_count() -> void:
-	player_ko_count += 1
+## Increases [member player_kd_count] by 1.
+func increase_player_kd_count() -> void:
+	player_kd_count += 1
 	return
 
-## Sets both [member enemy_ko_count] and [member player_ko_count] back to Zero.
+## Sets both [member enemy_kd_count] and [member player_kd_count] back to Zero.
 func reset_ko_count() -> void:
-	enemy_ko_count = 0
-	player_ko_count = 0
+	enemy_kd_count = 0
+	player_kd_count = 0
 	return
 
 ## Adds a star to the player's [member star_count] and emits [signal star_awarded_signal].

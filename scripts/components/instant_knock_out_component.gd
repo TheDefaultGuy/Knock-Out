@@ -190,7 +190,7 @@ func check_for_instant_knockdown(damage_amount : float, punch_height : int) -> b
 				return run_required_checks(stored_conditions, punch_height)
 				
 		KDConditionTypeEnum.KNOCKDOWNS_BEFORE_ROUND_TIME:
-			if FightManager.enemy_ko_count >= stored_conditions.knockdowns_required and FightManager.round_time <= stored_conditions.expected_round_time :
+			if FightManager.enemy_kd_count >= stored_conditions.knockdowns_required and FightManager.round_time <= stored_conditions.expected_round_time :
 				return run_required_checks(stored_conditions, punch_height)
 				
 		KDConditionTypeEnum.NEVER_BEEN_HIT:

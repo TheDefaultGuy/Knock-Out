@@ -18,7 +18,8 @@ const KO_BGM = preload("uid://cwd0ahjeaqarg")
 	"block": preload("uid://iy6ipv2pkmm8"),
 	"knockdown": preload("uid://bmdkkm11kix7e"),
 	"parry": preload("uid://d2j7ay5j7gx3p"),
-	
+	"bell": preload("uid://b0b6pqv2u0uw2"),
+	"crowd": preload("uid://b21x6cyk3rtuq"),
 }
 
 var background_music : AudioStreamPlayer = null
@@ -44,6 +45,9 @@ func _ready() -> void:
 	FightManager.player_knocked_down_signal.connect(change_BGM.bind(KO_BGM))
 	FightManager.fighter_got_up_signal.connect(change_BGM.bind(MATCH_BGM))
 	
+	FightManager.fight_is_over_signal.connect(play_sound_effect.bind("bell"))
+	FightManager.fight_is_over_signal.connect(play_sound_effect.bind("crowd"))
+
 func play_sound_effect(sound_effect : String):
 	
 	var sfx : AudioStream = sfx_library[sound_effect]

@@ -22,6 +22,17 @@ enum StateTypeEnum{
 	CHAINED_ATTACKS,
 }
 
+## How the transition for the state will work.
+enum TransitionTypeEnum{
+	
+	## Once the conditions are met, it'll transition to the next state that corresponds to that condition.
+	## Meaning, it only checks its condition when the [Enemy] is in that state.
+	TRANSITION_AWAY_FROM_STATE,
+	
+	## Once the conditions are met, it'll transition to the state itself, regardless of what the current state is.
+	TRANSITION_TO_STATE,
+}
+
 ## Enum that stores all of the possible state change conditions.
 enum StateChangeConditionEnum{
 	## The [Enemy] will change to the target state AFTER the specified [member time_to_change_state] has elapsed.
@@ -284,6 +295,7 @@ var additional_animations_to_add : Array[String] = []
 @onready var animation_player: AnimationPlayer = %AnimationPlayer
 
 #endregion
+
 func _init() -> void:
 	override_conditions_and_state_parameters()
 	#check_for_unassigned_variables()
@@ -333,7 +345,7 @@ func _ready() -> void:
 				Callable(AnimationNodeManager, "add_chained_attack_animation_nodes").call_deferred(animation_tree.tree_root, moves_arr, animation_player, self)
 			
 	# Sets the check condition functions that the state will run during process function of that state.
-	set_condition_check_functions_based_on_conditions() 
+	list_of_check_functions = StateChangeCheckManager.set_condition_check_functions_based_on_conditions(conditions_and_targets_dict, self) 
 
 #func _process(_delta: float) -> void:
 	#if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
@@ -454,8 +466,6 @@ func check_for_attack_and_append(attack : String) -> void:
 	return
 #endregion
 
-#region Set Condition Stuff Functions
-
 ## Sets [member conditions_and_targets_dict].
 ##
 ## Setting it as a dictionary makes scalability much easier and code much cleaner.
@@ -467,45 +477,6 @@ func set_conditions_and_targets_dictionary() -> void:
 		}
 	return
 
-## Sets the [member list_of_check_functions] that will be checked by the state based on the conditions set for the state.
-##
-## Basically, it'll run the function for checking the [member primary_condition] first, then the [member secondary_condition] and so on.
-## This makes it so that if multiple conditions are met, the [member primary_condition] has priority over the [member secondary_condition]
-## since it gets checked first. This also has the benefit of only running the functions that are absolutely required.
-func set_condition_check_functions_based_on_conditions() -> void:
-	# Knockdowns have way more priority than all of the other checks,
-	# thus, check_for_knockdowns is required by default and is the very first check that is called.
-	list_of_check_functions = [check_for_knockdowns] 
-	
-	# Checks each condition (primary, secondary, tertiary...), 
-	# and then appends the function that checks for that specific condition to the list_of_check_functions array.
-	for condition in conditions_and_targets_dict.keys():
-		match condition:
-			StateChangeConditionEnum.AFTER_PLAYER_TIRED:
-				list_of_check_functions.append(check_player_tired)
-				
-			StateChangeConditionEnum.AFTER_PLAYER_NOT_TIRED:
-				list_of_check_functions.append(check_player_not_tired)
-				
-			StateChangeConditionEnum.AT_ROUND_TIME:
-				list_of_check_functions.append(check_round_time)
-				
-			StateChangeConditionEnum.AFTER_TIME_PASSED:
-				list_of_check_functions.append(check_time_has_passed)
-				
-			StateChangeConditionEnum.AFTER_HEALTH_DROPS_BELOW:
-				list_of_check_functions.append(check_enemy_health)
-				
-			StateChangeConditionEnum.AFTER_COMPLETION, StateChangeConditionEnum.STATE_INTERRUPTED:
-				list_of_check_functions.append(check_state_completion)
-				
-			#StateChangeConditionEnum:
-				#list_of_check_functions.append()
-			#StateChangeConditionEnum:
-				#list_of_check_functions.append()
-				
-	return
-#endregion
 
 #region Timer Related Functions
 func start_attack_delay_timer() -> void:
@@ -572,90 +543,16 @@ func toggle_state_change_timer() -> void:
 ## Goes through all of the functions in the [member list_of_check_functions] and calls each one.
 ## Also checks if any of the conditions are true and stops checking any condition that is lower priority.
 func check_all_assigned_conditions() -> void:
-	#print("check_all_assigned_conditions")
+	#print(list_of_check_functions)
 	
 	# Runs each of the check functions in the order of priority.
 	# Only runs the functions that check for the conditions the state has set.
 	for check_function in list_of_check_functions: 
 	
 	# If the check function is returning true, then don't run any other check function after it.
-		if check_function.call() == true: 
+		if check_function.call(self) == true: 
 			return
-			
-## Checks to see if the current round time matches [member target_round_time] to change state.
-func check_round_time() -> bool:
-	if FightManager.round_time >= target_round_time:
-		prints(FightManager.round_time, target_round_time)
-		condition_match_direct_transition(StateChangeConditionEnum.AT_ROUND_TIME)
-		return true
-	return false
 
-## Checks to see if the enemy's HP has dropped below the [member target_hp]
-func check_enemy_health() -> bool:
-	if health_component.hp <= target_hp:
-		condition_match_direct_transition(StateChangeConditionEnum.AFTER_HEALTH_DROPS_BELOW)
-		return true
-	return false
-
-## Checks to see if the [member state_change_timer] has ran out so that the enemy can change state.
-func check_time_has_passed() -> bool:
-	#print("timepased")
-	if state_change_timer == null:
-		if StateChangeConditionEnum.AFTER_TIME_PASSED in conditions_and_targets_dict.keys() : # Checks if not having a state change timer is intended behavior.
-			printerr(self.name, " has no State Change timer but is calling the check_time_has_passed() function")
-		return false
-	if state_change_timer.time_left == 0.0 :
-		condition_match_direct_transition(StateChangeConditionEnum.AFTER_TIME_PASSED)
-		return true
-	return false
-
-## Checks to see if the [Enemy] is set to change condition after stun.
-func check_state_after_stun() -> void:
-	condition_match_change_interrupted_state(StateChangeConditionEnum.AFTER_STUN)
-	transition_to_stunned()
-	return
-
-## Checks the [Player] [member FightManager.Stamina] and then transitions to target state once it's zero.
-func check_player_tired() -> bool:
-	if FightManager.stamina <= 0 :
-		condition_match_direct_transition(StateChangeConditionEnum.AFTER_PLAYER_TIRED)
-		return true
-	return false
-
-## Checks the [Player] [member FightManager.Stamina] and then transitions to target state once it's NOT zero.
-func check_player_not_tired() -> bool: 
-	if FightManager.stamina > 0 :
-		condition_match_direct_transition(StateChangeConditionEnum.AFTER_PLAYER_NOT_TIRED)
-		return true
-	return false
-
-## Checks if the state has completed or been interrupted and then changes accordingly.
-func check_state_completion() -> bool:
-	if anim_state_machine.get_current_node() in ["End", "idle"] :
-		if interruption_status == true :
-			condition_match_direct_transition(StateChangeConditionEnum.STATE_INTERRUPTED)
-			return true
-			
-		elif interruption_status == false :
-			condition_match_direct_transition(StateChangeConditionEnum.AFTER_COMPLETION)
-			return true
-	return false
-
-## Checks if the [Enemy] or the [Player] have been knocked down and then changes to the state of the matching condition.
-func check_for_knockdowns() -> bool:
-	match true:
-		Global.enemy_node.is_knocked_down:
-			condition_match_change_interrupted_state(StateChangeConditionEnum.AFTER_ENEMY_KNOCKED_DOWN)
-			transition_to_target(state_machine.knocked_down_state)
-			return true
-			
-		Global.player_node.is_knocked_down:
-			condition_match_change_interrupted_state(StateChangeConditionEnum.AFTER_PLAYER_KNOCKED_DOWN)
-			transition_to_target(state_machine.spectating_state)
-			return true
-	return false
-
-#endregion
 
 #region Condition Match Functions
 ## If the condition is met, then directly go to the target state whenever possible. 
@@ -759,10 +656,10 @@ func set_and_check_interrupted_state(target_state) -> void:
 	
 ## Toggles the signals for going to [StunState].
 func toggle_stunned_signal_connections() -> void:
-	if defense_component.stunned_signal.is_connected(check_state_after_stun) == true:
-		defense_component.stunned_signal.disconnect(check_state_after_stun)
+	if defense_component.stunned_signal.is_connected(StateChangeCheckManager.check_state_after_stun) == true:
+		defense_component.stunned_signal.disconnect(StateChangeCheckManager.check_state_after_stun)
 	else:
-		defense_component.stunned_signal.connect(check_state_after_stun)
+		defense_component.stunned_signal.connect(StateChangeCheckManager.check_state_after_stun.bind(self))
 #endregion
 
 #region Attacking related functions
@@ -882,7 +779,6 @@ func _validate_property(property : Dictionary) -> void:
 	if property.name == "target_damage_taken" and StateChangeConditionEnum.AFTER_TAKEN_AMOUNT_OF_DAMAGE not in conditions:
 		property.usage = PROPERTY_USAGE_NONE
 	
-	#Global.exported_properties_changed_signal.emit()
 	return
 
 ## Overrides the default conditions and parameters for the state depending on the nature of the state.

@@ -14,6 +14,13 @@ class_name RandomizedMoves extends EnemyState
 ## Then, tweak the exported variables to set it up how you'd like.
 ## DO NOT change anything in the actual .gd file, since it'll mess up compatibility.
 
+#@export var condictionary : Dictionary[State, StateChangeConditions]
+#
+#@export var condictionaryNodepath : Dictionary[NodePath, StateChangeConditions]
+#
+#
+#@export var conditionsss : StateChangeConditions
+
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
 		return

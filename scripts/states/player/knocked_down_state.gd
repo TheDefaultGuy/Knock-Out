@@ -6,7 +6,7 @@ class_name PlayerKnockedDown extends State
 ## The player can't attack, dodge, block or dodge.
 ## They can only attempt to get up by pressing attack buttons.
 
-## Curve used to determine the [member get_up_decay_rate] by using the [member FightManager.player_ko_count].
+## Curve used to determine the [member get_up_decay_rate] by using the [member FightManager.player_kd_count].
 ## The more the [Player] has been knocked down, the harder it is to recover.
 @export var get_up_difficulty_curve : Curve
 
@@ -36,13 +36,13 @@ func _process(delta: float) -> void:
 	if owner.is_knocked_down == false :
 		return
 	
-	if FightManager.is_fight_over == false :
+	# Lowers the getup progress by the decay rate every frame using delta.
+	get_up_progress = clampf(get_up_progress - get_up_decay_rate * delta, 0.0 , 110.0)
+	
+	# Sets the blend of the get up animation to be equal to the get_up_progress
+	animation_tree.set("parameters/get_up_blend/blend_position", get_up_progress)
 		
-		# Lowers the getup progress by the decay rate every frame using delta.
-		get_up_progress = clampf(get_up_progress - get_up_decay_rate * delta, 0.0 , 110.0)
-		
-		# Sets the blend of the get up animation to be equal to the get_up_progress
-		animation_tree.set("parameters/get_up_blend/blend_position", get_up_progress)
+	if FightManager.is_fight_over == false:
 		
 		# When the get up progress reaches 100 or the get_up_threshold, the player succesfully gets back up.
 		if get_up_progress >= get_up_threshold: 
@@ -73,7 +73,7 @@ func enter() -> void:
 	FightManager.resume_fighting_signal.connect(transition_to_neutral)
 	
 	# Sets the used decay rate by multiplying the base decay rate by the difficulty curve
-	get_up_decay_rate = base_decay_rate * get_up_difficulty_curve.sample(float(FightManager.player_ko_count))
+	get_up_decay_rate = base_decay_rate * get_up_difficulty_curve.sample(float(FightManager.player_kd_count))
 
 func exit() -> void:
 	get_up_progress = 0.0
@@ -90,6 +90,6 @@ func check_finished_animation(animation : String) -> void:
 
 ## When an attack input is Given by the [InputComponent], increase the [member get_up_progress].
 func perform_attack(_height : int, _direction : int, _action_name : String):
-	if FightManager.is_fight_over == false:
+	if FightManager.is_fight_over == false and FightManager.player_kd_count < FightManager.MAX_KD_COUNT:
 		get_up_progress += get_up_step_value
 		

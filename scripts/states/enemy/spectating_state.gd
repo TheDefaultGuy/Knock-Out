@@ -24,7 +24,8 @@ func enter() -> void:
 	animation_tree.animation_finished.connect(check_finished_animation)
 	
 	owner.animation_component.set_animation_1d_blend("back_to_the_fight", -1)
-
+	
+	FightManager.fight_is_over_signal.connect(play_outro_animation)
 
 func exit() -> void:
 	FightManager.fighter_got_up_signal.disconnect(back_to_the_fight)
@@ -47,9 +48,9 @@ func check_finished_animation(animation : String) -> void:
 			return
 		
 		move_to_spectate_animation:
-			if FightManager.is_fight_over == true:
-				anim_state_machine.travel(outro_animation)
-				return
+			#if FightManager.is_fight_over == true:
+				#anim_state_machine.travel(outro_animation)
+				#return
 			
 			print("Emitting fighter_can_start_getup_signal")
 			FightManager.fighter_can_start_getup_signal.emit()
@@ -65,3 +66,7 @@ func check_finished_animation(animation : String) -> void:
 			if anim_state_machine.get_current_node() == "idle":
 				anim_state_machine.travel(move_to_spectate_animation)
 				return
+
+
+func play_outro_animation() -> void:
+		owner.animation_component.play_animation(outro_animation)

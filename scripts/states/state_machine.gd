@@ -51,29 +51,85 @@ var states_dictionary : Dictionary = {}
 func _ready() -> void:
 	AnimationNodeManager.delete_attack_animation_nodes(animation_tree.tree_root, self)
 	#print(get_children())
+	
+	# Iterates through all of the children of the State Machine
 	for child in get_children():
-		#prints(child, child is State or child is EnemyState)
-		if child is Node :
-			if child is State or child is EnemyState :
-
-				states_dictionary[child] = child # basically checks all of the states and adds them to the states dictionary
+		
+		# Checks if the child is a RoundStateContainer
+		if child is RoundStateContainer:
+			
+			if child.round_index == FightManager.round_idx:
 				
-				child.transition_state.connect(on_transition)
-			else:
-				if child.get_children().is_empty() == false:
-					for node in child.get_children():
-						if node is State or EnemyState:
-							states_dictionary[node] = node # basically checks all of the states and adds them to the states dictionary
-							
-							node.transition_state.connect(on_transition)
+				# Just to make things more readable.
+				var round_container : RoundStateContainer = child
+				
+				add_states_to_states_dictionary(round_container)
+				#for node in round_container.get_children():
+					#
+					#
+					#if node is State or node is EnemyState :
+						#
+						## If it is a State or an Enemy State, add to the states dictionary.
+						#states_dictionary[node] = node 
+						#
+						## Connects the signal to the state's function
+						#node.transition_state.connect(on_transition)
+						#
+						#continue
+					#
+					## If the node WAS NOT a State or an Enemy State.
+					## Check if it has children
+					#if node.get_children().is_empty() == false:
+						#
+						#add_states_to_states_dictionary(node)
+		#prints(child, child is State or child is EnemyState)
+		#if child is Node :
+			#if child is State or child is EnemyState :
+#
+				#states_dictionary[child] = child # basically checks all of the states and adds them to the states dictionary
+				#
+				#child.transition_state.connect(on_transition)
+			#else:
+				#if child.get_children().is_empty() == false:
+					#for node in child.get_children():
+						#if node is State or EnemyState:
+							#states_dictionary[node] = node # basically checks all of the states and adds them to the states dictionary
+							#
+							#node.transition_state.connect(on_transition)
 						
 	if initial_state != null and initial_state is State : # Checks to see if it has an initial state, if so, enter it.
 		initial_state.enter()
 		current_state = initial_state
-	#print("States: ", states)
+	print("States: ", states_dictionary)
 	
 	check_for_unnassigned_states()
 	return
+
+func add_states_to_states_dictionary(node : Node) -> void:
+	
+	# Iterates through all of the children of the input node.
+	for state in node.get_children():
+		
+		# Checks if the node is a State or an Enemy State
+		if state is State or state is EnemyState and state.get_script() is Node == false:
+			
+			# If it is a State or an Enemy State, add to the states dictionary.
+			states_dictionary[state] = state 
+			
+			# Connects the signal to the state's function
+			state.transition_state.connect(on_transition)
+			
+			# Loops back to start.
+			continue
+			
+		# If the node WAS NOT a State or an Enemy State.
+		# Check if it has children
+		if state is not State or state is not EnemyState:
+		
+			if state.get_children().is_empty() == false:
+				
+				# Calls itself to then add the states inside of the node.
+				add_states_to_states_dictionary(state)
 
 func on_transition(state, new_state_name):
 	if  state != current_state:
