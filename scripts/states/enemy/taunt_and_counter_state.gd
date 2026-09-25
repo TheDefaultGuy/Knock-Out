@@ -20,16 +20,16 @@ func _process(_delta: float) -> void:
 		check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
 
 func override_conditions_and_state_parameters() -> void:
-	state_type = STATE_TYPE_ENUM.SIMPLE
+	state_type = StateTypeEnum.SIMPLE
 	attack_timer_required = true
 	
-	moveset_type = MOVESET_TYPE_ENUM.PREDETERMINED_ORDER
+	moveset_type = MovesetTypeEnum.PREDETERMINED_ORDER
 	moveset_array = [taunt_animation]
-	block_behavior = BLOCK_BEHAVIOR_ENUM.COUNTER_ATTACK
+	block_behavior = BlockBehaviorEnum.COUNTER_ATTACK
 	
 	# Given the nature of the state, it's REQUIRED to have the condition to change after player is tired.
 	# This is to avoid the enemy doing nothing for the rest of the round after the player gets tired.
-	primary_condition = STATE_CHANGE_CONDITION.AFTER_PLAYER_TIRED
+	primary_condition = StateChangeConditionEnum.AFTER_PLAYER_TIRED
 
 func enter() -> void:
 	super()

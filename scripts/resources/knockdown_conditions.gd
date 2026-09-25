@@ -4,14 +4,14 @@ class_name KDConditions extends Resource
 	
 
 ## What condition type to use for granting an instant Knockdown.
-@export var knockdown_condition := InstantKDComponent.KD_CONDITION_TYPE.STARS_USED :
+@export var knockdown_condition := InstantKDComponent.KDConditionTypeEnum.STARS_USED :
 	set(value):
 		if knockdown_condition != value :
 			knockdown_condition = value
 			
 			# Makes sure the punch type required is a Star punch if the condition is Stars used
-			if knockdown_condition == InstantKDComponent.KD_CONDITION_TYPE.STARS_USED : 
-				punch_type_flags |= InstantKDComponent.PUNCH_TYPE_ENUM.STAR_PUNCH
+			if knockdown_condition == InstantKDComponent.KDConditionTypeEnum.STARS_USED : 
+				punch_type_flags |= InstantKDComponent.PunchTypeEnum.STAR_PUNCH
 			notify_property_list_changed()
 
 ## Sets the property of the punch that the player needs to land for instant knockdown.
@@ -27,8 +27,8 @@ class_name KDConditions extends Resource
 			punch_type_flags = value
 			
 			# Makes sure the punch type required is a Star punch if the condition is Stars used
-			if knockdown_condition == InstantKDComponent.KD_CONDITION_TYPE.STARS_USED :
-				punch_type_flags |= InstantKDComponent.PUNCH_TYPE_ENUM.STAR_PUNCH
+			if knockdown_condition == InstantKDComponent.KDConditionTypeEnum.STARS_USED :
+				punch_type_flags |= InstantKDComponent.PunchTypeEnum.STAR_PUNCH
 			notify_property_list_changed()
 
 ## The animation that has to be playing for the instant KD will occur.
@@ -47,15 +47,15 @@ class_name KDConditions extends Resource
 @export_range(10.0, 180.0, 1.0, "suffix:s") var expected_round_time : float
 
 ## The outcome/what the [Enemy] will do if all of the conditions are met and the instant knockdown is awarded.
-@export var resulting_outcome := InstantKDComponent.OUTCOME_ENUM.KNOCKDOWN
+@export var resulting_outcome := InstantKDComponent.OutcomeEnum.KNOCKDOWN
 
 	## Handles showing and hiding applicable exported variables
 func _validate_property(property: Dictionary) -> void: 
-	if property.name == "number_of_stars" and knockdown_condition != InstantKDComponent.KD_CONDITION_TYPE.STARS_USED:
+	if property.name == "number_of_stars" and knockdown_condition != InstantKDComponent.KDConditionTypeEnum.STARS_USED:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "expected_round_time" and knockdown_condition != InstantKDComponent.KD_CONDITION_TYPE.KNOCKDOWNS_BEFORE_ROUND_TIME:
+	if property.name == "expected_round_time" and knockdown_condition != InstantKDComponent.KDConditionTypeEnum.KNOCKDOWNS_BEFORE_ROUND_TIME:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "knockdowns_required" and knockdown_condition != InstantKDComponent.KD_CONDITION_TYPE.KNOCKDOWNS_BEFORE_ROUND_TIME:
+	if property.name == "knockdowns_required" and knockdown_condition != InstantKDComponent.KDConditionTypeEnum.KNOCKDOWNS_BEFORE_ROUND_TIME:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "star_punches_received" and knockdown_condition != InstantKDComponent.KD_CONDITION_TYPE.STAR_PUNCHES_RECEIVED:
+	if property.name == "star_punches_received" and knockdown_condition != InstantKDComponent.KDConditionTypeEnum.STAR_PUNCHES_RECEIVED:
 		property.usage = PROPERTY_USAGE_NONE

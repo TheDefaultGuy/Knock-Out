@@ -65,7 +65,7 @@ func perform_defense(move : int, action_name : String) -> void:
 		# Emits the signal
 		FightManager.player_dodged_signal.emit(move)
 		
-		if move == Global.range.NEUTRAL: # Checks if it was a duck instead of a Left or Right Dodge
+		if move == Global.RangeEnum.NEUTRAL: # Checks if it was a duck instead of a Left or Right Dodge
 			
 			# Emits the signal for the duck sound effect.
 			FightManager.play_sfx_signal.emit("duck") 

@@ -6,7 +6,7 @@ class_name Player extends Fighter
 @onready var input_component: InputComponent = %InputComponent
 
 
-func _ready() -> void:
+func _init() -> void:
 	if defense_component == null:
 		printerr(self.name, " doesn't have a Defense Component assigned.")
 	if attacking_component == null:

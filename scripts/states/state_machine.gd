@@ -43,7 +43,7 @@ var root_state_machine : AnimationNodeStateMachine = null
 var interrupted_state: State 
 
 ## The list of states inside the [StateMachine] / children of the [StateMachine].
-var states : Dictionary = {}
+var states_dictionary : Dictionary = {}
 
 @onready var animation_tree: AnimationTree = %AnimationTree
 #@onready var anim_state_machine : AnimationNodeStateMachinePlayback = animation_tree["parameters/playback"]
@@ -56,14 +56,14 @@ func _ready() -> void:
 		if child is Node :
 			if child is State or child is EnemyState :
 
-				states[child] = child # basically checks all of the states and adds them to the states dictionary
+				states_dictionary[child] = child # basically checks all of the states and adds them to the states dictionary
 				
 				child.transition_state.connect(on_transition)
 			else:
 				if child.get_children().is_empty() == false:
 					for node in child.get_children():
 						if node is State or EnemyState:
-							states[node] = node # basically checks all of the states and adds them to the states dictionary
+							states_dictionary[node] = node # basically checks all of the states and adds them to the states dictionary
 							
 							node.transition_state.connect(on_transition)
 						
@@ -80,7 +80,7 @@ func on_transition(state, new_state_name):
 		return # If the state that is calling this function is NOT the current state, ignore it.
 		
 	# Grabs the new state from the states dictionary
-	var new_state = states.get(new_state_name) # .to_lower makes the name lowercase to avoid capitalization problems.
+	var new_state = states_dictionary.get(new_state_name) # .to_lower makes the name lowercase to avoid capitalization problems.
 	if !new_state: # checks to see if that new state even exists.
 		return
 		

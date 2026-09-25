@@ -15,13 +15,13 @@ var state_array : Array[State] = []
 
 func override_conditions_and_state_parameters() -> void:
 	
-	moveset_type = MOVESET_TYPE_ENUM.NOT_APPLICABLE
+	moveset_type = MovesetTypeEnum.NOT_APPLICABLE
 	attack_timer_required = false
-	primary_condition = STATE_CHANGE_CONDITION.AFTER_COMPLETION
-	secondary_condition = STATE_CHANGE_CONDITION.AFTER_COMPLETION
-	tertiary_condition = STATE_CHANGE_CONDITION.AFTER_COMPLETION
+	primary_condition = StateChangeConditionEnum.AFTER_COMPLETION
+	secondary_condition = StateChangeConditionEnum.AFTER_COMPLETION
+	tertiary_condition = StateChangeConditionEnum.AFTER_COMPLETION
 	
-	block_behavior = BLOCK_BEHAVIOR_ENUM.NOT_APPLICABLE
+	block_behavior = BlockBehaviorEnum.NOT_APPLICABLE
 	
 func enter() -> void:
 	state_array = []

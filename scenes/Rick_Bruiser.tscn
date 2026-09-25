@@ -8682,6 +8682,7 @@ texture_filter = 1
 material = ExtResource("2_u5lb0")
 sprite_frames = SubResource("SpriteFrames_m0jec")
 animation = &"idle"
+frame = 1
 
 [node name="DefenseComponent" type="Node" parent="." unique_id=2045134485]
 unique_name_in_owner = true
@@ -8706,7 +8707,6 @@ metadata/_custom_type_script = "uid://ctgr0jt66jjuu"
 unique_name_in_owner = true
 script = ExtResource("51_mvukc")
 number_of_stars = 2
-resulting_outcome = null
 metadata/_custom_type_script = "uid://c15nwhylsnm6w"
 
 [node name="StateMachine" type="Node" parent="." unique_id=1256866169 node_paths=PackedStringArray("initial_state", "stun_state", "knocked_down_state", "spectating_state", "cutscene_state")]
@@ -8755,11 +8755,10 @@ moveset_type = 1
 moveset_array = Array[String](["jab_high_2", "jab_high"])
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
-[node name="Aggressive" type="Node" parent="StateMachine" unique_id=550832782 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
+[node name="Aggressive" type="Node" parent="StateMachine" unique_id=550832782 node_paths=PackedStringArray("primary_target_state")]
 script = ExtResource("57_cegiy")
 secondary_condition = 2
 primary_target_state = NodePath("../HookedOnAFeeling")
-secondary_target_state = NodePath("../FlurryAttack")
 time_to_change_state = 18.0
 moveset_dictionary = Dictionary[String, float]({
 "elbow": 20.0,
@@ -8768,11 +8767,10 @@ moveset_dictionary = Dictionary[String, float]({
 })
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
-[node name="Aggressive2" type="Node" parent="StateMachine" unique_id=1676473771 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
+[node name="Aggressive2" type="Node" parent="StateMachine" unique_id=1676473771 node_paths=PackedStringArray("primary_target_state")]
 script = ExtResource("57_cegiy")
 secondary_condition = 2
 primary_target_state = NodePath("../Aggressive")
-secondary_target_state = NodePath("../FlurryAttack")
 time_to_change_state = 19.0
 moveset_dictionary = Dictionary[String, float]({
 "elbow": 20.0,
@@ -8829,7 +8827,7 @@ primary_target_state = NodePath("../Aggressive")
 secondary_target_state = NodePath("../Aggressive2")
 time_to_change_state = 12.0
 moveset_type = 2
-moveset_array = Array[String](["taunt"])
+moveset_array = Array[String](["taunt", "counter_uppercut"])
 block_behavior = 2
 metadata/_custom_type_script = "uid://c4q24a656iry7"
 

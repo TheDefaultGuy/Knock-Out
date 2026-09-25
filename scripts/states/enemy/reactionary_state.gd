@@ -54,25 +54,25 @@ func exit() -> void:
 func play_punish_animation(dodge_direction : int) -> void:
 	if anim_state_machine.get_current_node() == str(fakeout_animation) :
 		match dodge_direction :
-			Global.range.LEFT:
+			Global.RangeEnum.LEFT:
 				anim_state_machine.travel(left_dodge_punish)
 				return
 				
-			Global.range.RIGHT:
+			Global.RangeEnum.RIGHT:
 				anim_state_machine.travel(right_dodge_punish)
 				return
 				
-			Global.range.NEUTRAL:
+			Global.RangeEnum.NEUTRAL:
 				anim_state_machine.travel(duck_punish)
 				return
 
 func override_conditions_and_state_parameters() -> void:
-	state_type = STATE_TYPE_ENUM.SIMPLE
+	state_type = StateTypeEnum.SIMPLE
 	attack_timer_required  = true
 	
-	moveset_type = MOVESET_TYPE_ENUM.PICK_RANDOM
+	moveset_type = MovesetTypeEnum.PICK_RANDOM
 	
-	block_behavior = BLOCK_BEHAVIOR_ENUM.COUNTER_ATTACK
+	block_behavior = BlockBehaviorEnum.COUNTER_ATTACK
 	
 
 ## Sets the required conditions as Read Only so that they can't be changed.

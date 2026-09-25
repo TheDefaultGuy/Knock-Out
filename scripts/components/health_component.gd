@@ -11,13 +11,22 @@ signal health_changed_signal
 ## Signal emitted when the [Fighter] has taken damage.
 signal damage_taken_signal(amount)
 
-@export var max_hp : float = 100.0
+@export var max_hp : float = 100.0 :
+	set(value):
+		max_hp = value
+		# Makes sure max HP isn't negative.
+		max_hp = maxf(0.0, max_hp) 
 
 ## The [Fighter]'s health.
 @export var hp : float = 100.0 :
 	set(value):
-		hp = clampf(value, 0.0, max_hp) # Automatically clamps the HP
+		# Automatically clamps the HP to be between 0 and max hp
+		hp = clampf(value, 0.0, max_hp)
 		health_changed_signal.emit()
+
+func _init() -> void:
+	assert(hp > 0.0, str(owner.name, " HP is negative."))
+	assert(hp > 0.0, str(owner.name, " HP is negative."))
 
 func _ready() -> void:
 	max_hp = hp
@@ -36,7 +45,8 @@ func reset_hp() -> void:
 
 ## Heals the fighter by a given amount.
 func heal(amount : float) -> void:
-	hp += abs(amount) # Absolute value to avoid negative values that would take away HP.
+	# Absolute value to avoid negative values that would take away HP.
+	hp += abs(amount)
 	return
 
 ## Function responsible for decreasing HP and checking to see if HP falls below zero, which would be a Knockdown.
@@ -44,7 +54,8 @@ func deal_damage_and_check_for_knockdown(damage_amount : float, damage_multiplie
 	# If Health Component calculates the health and it returns as <= 0, then that means they're knocked down.
 	if take_damage(damage_amount * damage_multiplier) <= 0.0 : 
 		
-		if owner is Player: # Checks to see whether the parent is the enemy or the player and then sends the global signal accordingly.
+		# Checks to see whether the parent is the enemy or the player and then sends the global signal accordingly.
+		if owner is Player: 
 			FightManager.player_knocked_down_signal.emit()
 			print_rich('[color=green]Health Component:[/color] Player Knocked Down!')
 			
@@ -54,6 +65,7 @@ func deal_damage_and_check_for_knockdown(damage_amount : float, damage_multiplie
 			
 		owner.is_knocked_down = true
 		return true
+		
 	return false
 
 ## Helper function. Deals damage and returns whether or not the attack resulted in a Knockdown.

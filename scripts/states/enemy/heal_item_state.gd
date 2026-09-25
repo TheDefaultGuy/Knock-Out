@@ -70,19 +70,19 @@ func exit() -> void:
 	has_started = false
 
 func override_conditions_and_state_parameters() -> void:
-	state_type = STATE_TYPE_ENUM.SIMPLE
+	state_type = StateTypeEnum.SIMPLE
 	
-	moveset_type = MOVESET_TYPE_ENUM.NOT_APPLICABLE
+	moveset_type = MovesetTypeEnum.NOT_APPLICABLE
 	
 	moveset_array = []
 	
 	attack_timer_required = false
 	
-	block_behavior = BLOCK_BEHAVIOR_ENUM.NOT_APPLICABLE
+	block_behavior = BlockBehaviorEnum.NOT_APPLICABLE
 	
 	# Given the nature of this state, these 2 conditions MUST ALWAYS be enabled and have corresponding target states.
-	primary_condition = STATE_CHANGE_CONDITION.AFTER_COMPLETION
-	secondary_condition = STATE_CHANGE_CONDITION.STATE_INTERRUPTED
+	primary_condition = StateChangeConditionEnum.AFTER_COMPLETION
+	secondary_condition = StateChangeConditionEnum.STATE_INTERRUPTED
 	
 	if secondary_target_state == null and primary_target_state != null:
 		secondary_target_state = primary_target_state

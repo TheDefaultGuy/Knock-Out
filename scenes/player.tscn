@@ -3219,6 +3219,7 @@ script = ExtResource("5_ur7pv")
 [node name="DefenseComponent" type="Node" parent="." unique_id=928591856]
 unique_name_in_owner = true
 script = ExtResource("7_fjrip")
+dodge_position = 0
 
 [node name="AttackingComponent" type="Node" parent="." unique_id=1684799148]
 unique_name_in_owner = true

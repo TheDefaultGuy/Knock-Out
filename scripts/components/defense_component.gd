@@ -30,7 +30,7 @@ signal hit_registered_signal
 ## 0 = Neutral; no dodge
 ##-1 = Dodging Left
 ## 1 = Dodging Right
-@export var dodge_position : int = Global.range.NEUTRAL
+@export var dodge_position : int = Global.RangeEnum.NEUTRAL
 
 ## Used to multiply damage at specific moments as a way to make weakspots or counter attack options.
 ##
@@ -129,7 +129,7 @@ func check_defense(punch_height : int, punch_range : int, damage_amount : float,
 		
 	else:
 		match punch_height:
-			Global.height.BOTH: # Checks to see if it's an attack that covers both heights.
+			Global.HeightEnum.BOTH: # Checks to see if it's an attack that covers both heights.
 				
 				# If HealthComponent calculates the health and it returns as <= 0, then that means they're knocked down.
 				if owner.health_component.handle_damage_and_knockdown(damage_amount, 1.0, punch_height, punch_direction) == false:
@@ -181,8 +181,8 @@ func handle_player_blocking_and_parry(damage_amount : float, punch_height : int,
 		return
 		
 	# Basically, if you're blocking, but the punch isn't straight ahead, you still get hit.
-	if dodge_position == Global.range.NEUTRAL:
-		if punch_range != Global.range.NEUTRAL:
+	if dodge_position == Global.RangeEnum.NEUTRAL:
+		if punch_range != Global.RangeEnum.NEUTRAL:
 			return choose_hit_region(punch_height, damage_amount, punch_direction)
 	
 	# If the parry timer hasn't reached 0, then it's considered a successful parry.
@@ -255,13 +255,13 @@ func check_for_star_and_stun(punch_height : int) -> bool:
 ## Helper function that makes the vulnurability checking simpler.
 func is_invulnerable(punch_height: int) -> bool:
 	match punch_height:
-		Global.height.HIGH:
+		Global.HeightEnum.HIGH:
 			return upper_invulnerability
 			
-		Global.height.LOW:
+		Global.HeightEnum.LOW:
 			return lower_invulnerability
 			
-		Global.height.BOTH:
+		Global.HeightEnum.BOTH:
 			return lower_invulnerability and upper_invulnerability
 			
 		_: 
@@ -270,9 +270,9 @@ func is_invulnerable(punch_height: int) -> bool:
 ## Helper function that makes the dodge checking simpler.
 func is_punch_dodged(punch_range: int) -> bool:
 	# Checks if the punch is down the middle and if the defender is not in the middle or neutral dodge position.
-	var dodged_neutral = (punch_range == Global.range.NEUTRAL and dodge_position != Global.range.NEUTRAL)
-	var dodged_right = (punch_range <= Global.range.NEUTRAL and dodge_position >= Global.range.RIGHT)
-	var dodged_left = (punch_range >= Global.range.NEUTRAL and dodge_position <= Global.range.LEFT)
+	var dodged_neutral = (punch_range == Global.RangeEnum.NEUTRAL and dodge_position != Global.RangeEnum.NEUTRAL)
+	var dodged_right = (punch_range <= Global.RangeEnum.NEUTRAL and dodge_position >= Global.RangeEnum.RIGHT)
+	var dodged_left = (punch_range >= Global.RangeEnum.NEUTRAL and dodge_position <= Global.RangeEnum.LEFT)
 
 	# Returns true if any of them are true.
 	return dodged_neutral or dodged_right or dodged_left

@@ -3,7 +3,7 @@ class_name StateChangeConditions extends Resource
 
 #region Enumerations
 ## What kind of state this is and whether it's a simple state or a state that uses a nested state machine.
-enum STATE_TYPE_ENUM{
+enum StateTypeEnum{
 	
 	## Means that this state doesn't requite any fancy nested state machines.
 	## Usually means a state that does simple things like throw out attacks, block, get hit, get stunned, etc... 
@@ -14,7 +14,7 @@ enum STATE_TYPE_ENUM{
 }
 
 ## Enum that stores all of the possible state change conditions.
-enum STATE_CHANGE_CONDITION{
+enum StateChangeConditionEnum{
 	## The [Enemy] will change to the target state AFTER the specified [member time_to_change_state] has elapsed.
 	## Different to At Round Time since this can happen at different points in the round.
 	AFTER_TIME_PASSED,
@@ -62,7 +62,7 @@ enum STATE_CHANGE_CONDITION{
 }
 
 ## The behavior for the attack delay, or the time between each attack.
-enum ATTACK_DELAY{
+enum AttackDelayTypeEnum{
 	## Will choose a float value BETWEEN the [member min_delay_time] and [member max_delay_time].
 	FLOAT,
 	
@@ -71,7 +71,7 @@ enum ATTACK_DELAY{
 }
 
 ## How the moves in this state will be selected.
-enum MOVESET_TYPE_ENUM{
+enum MovesetTypeEnum{
 	
 	## Randomly choose an animation from the weighted [member moveset_dictionary].
 	WEIGHTED_DICTIONARY,
@@ -89,7 +89,7 @@ enum MOVESET_TYPE_ENUM{
 }
 
 ## What to do when either the [Player] or the [Enemy] blocks an attack.
-enum BLOCK_BEHAVIOR_ENUM{
+enum BlockBehaviorEnum{
 	
 	## When a block occurs, it momentarily pauses the [member attack_delay_timer] and then resumes after the block animation has finished.
 	PAUSE_TIMER,
@@ -124,7 +124,7 @@ const node_position_origin := Vector2(-1000.0,-500.0)
 ##
 ## If the condition is met, it will transition to the [member primary_target_state]
 ## If it's not, it will check the [member secondary_condition]
-@export var primary_condition := STATE_CHANGE_CONDITION.AFTER_TIME_PASSED : 
+@export var primary_condition := StateChangeConditionEnum.AFTER_TIME_PASSED : 
 	set(value):
 		if primary_condition != value :
 			primary_condition = value
@@ -134,7 +134,7 @@ const node_position_origin := Vector2(-1000.0,-500.0)
 ##
 ## If the condition is met, it will transition to the [member secondary_target_state]
 ## If it's not, it will check the [member tertiary_condition]
-@export var secondary_condition := STATE_CHANGE_CONDITION.DO_NOT_CHANGE :
+@export var secondary_condition := StateChangeConditionEnum.DO_NOT_CHANGE :
 	set(value):
 		if secondary_condition != value :
 			secondary_condition = value
@@ -143,7 +143,7 @@ const node_position_origin := Vector2(-1000.0,-500.0)
 ## The tertiary condition for changing state and the second one being checked.
 ##
 ## If the condition is met, it will transition to the [member tertiary_target_state].
-@export var tertiary_condition := STATE_CHANGE_CONDITION.DO_NOT_CHANGE :
+@export var tertiary_condition := StateChangeConditionEnum.DO_NOT_CHANGE :
 	set(value): 
 		if tertiary_condition != value :
 			tertiary_condition = value
@@ -205,26 +205,26 @@ func _validate_property(property : Dictionary) -> void:
 	set_conditions_and_targets_dictionary()
 	var conditions : Array = conditions_and_targets_dict.keys() # Grabs all of the conditions and puts them in an array for easier checking.
 
-	if property.name == "target_round_time" and STATE_CHANGE_CONDITION.AT_ROUND_TIME not in conditions:
+	if property.name == "target_round_time" and StateChangeConditionEnum.AT_ROUND_TIME not in conditions:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "time_to_change_state" and STATE_CHANGE_CONDITION.AFTER_TIME_PASSED not in conditions:
+	if property.name == "time_to_change_state" and StateChangeConditionEnum.AFTER_TIME_PASSED not in conditions:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "state_change_timer" and STATE_CHANGE_CONDITION.AFTER_TIME_PASSED not in conditions:
+	if property.name == "state_change_timer" and StateChangeConditionEnum.AFTER_TIME_PASSED not in conditions:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "target_hp" and STATE_CHANGE_CONDITION.AFTER_HEALTH_DROPS_BELOW not in conditions:
+	if property.name == "target_hp" and StateChangeConditionEnum.AFTER_HEALTH_DROPS_BELOW not in conditions:
 		property.usage = PROPERTY_USAGE_NONE
-	#if property.name == "attack_delay_array" and attack_delay_type == ATTACK_DELAY.FLOAT:
+	#if property.name == "attack_delay_array" and attack_delay_type == AttackDelayTypeEnum.FLOAT:
 		#property.usage = PROPERTY_USAGE_NONE
-	#if property.name == "max_delay_time" and attack_delay_type == ATTACK_DELAY.PREDETERMINED:
+	#if property.name == "max_delay_time" and attack_delay_type == AttackDelayTypeEnum.PREDETERMINED:
 		#property.usage = PROPERTY_USAGE_NONE
-	#if property.name == "min_delay_time" and attack_delay_type == ATTACK_DELAY.PREDETERMINED:
+	#if property.name == "min_delay_time" and attack_delay_type == AttackDelayTypeEnum.PREDETERMINED:
 		#property.usage = PROPERTY_USAGE_NONE
 		
-	if property.name == "primary_target_state" and primary_condition == STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
+	if property.name == "primary_target_state" and primary_condition == StateChangeConditionEnum.DO_NOT_CHANGE:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "secondary_target_state" and secondary_condition == STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
+	if property.name == "secondary_target_state" and secondary_condition == StateChangeConditionEnum.DO_NOT_CHANGE:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "tertiary_target_state" and tertiary_condition == STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
+	if property.name == "tertiary_target_state" and tertiary_condition == StateChangeConditionEnum.DO_NOT_CHANGE:
 		property.usage = PROPERTY_USAGE_NONE
 		
 		
@@ -236,15 +236,15 @@ func _validate_property(property : Dictionary) -> void:
 		#property.usage = PROPERTY_USAGE_NONE
 	#if property.name == "attack_delay_array" and attack_timer_required == false:
 		#property.usage = PROPERTY_USAGE_NONE
-	#if property.name == "moveset_dictionary" and moveset_type != MOVESET_TYPE_ENUM.WEIGHTED_DICTIONARY:
+	#if property.name == "moveset_dictionary" and moveset_type != MovesetTypeEnum.WEIGHTED_DICTIONARY:
 		#property.usage = PROPERTY_USAGE_NONE
-	#if property.name == "moveset_array" and moveset_type not in [MOVESET_TYPE_ENUM.PICK_RANDOM, MOVESET_TYPE_ENUM.PREDETERMINED_ORDER]:
+	#if property.name == "moveset_array" and moveset_type not in [MovesetTypeEnum.PICK_RANDOM, MovesetTypeEnum.PREDETERMINED_ORDER]:
 		#property.usage = PROPERTY_USAGE_NONE
-	if property.name == "secondary_condition" and primary_condition == STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
+	if property.name == "secondary_condition" and primary_condition == StateChangeConditionEnum.DO_NOT_CHANGE:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "tertiary_condition" and secondary_condition == STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
+	if property.name == "tertiary_condition" and secondary_condition == StateChangeConditionEnum.DO_NOT_CHANGE:
 		property.usage = PROPERTY_USAGE_NONE
-	#if property.name == "counter_attack" and block_behavior != BLOCK_BEHAVIOR_ENUM.COUNTER_ATTACK:
+	#if property.name == "counter_attack" and block_behavior != BlockBehaviorEnum.COUNTER_ATTACK:
 		#property.usage = PROPERTY_USAGE_NONE
-	if property.name == "target_damage_taken" and STATE_CHANGE_CONDITION.AFTER_TAKEN_AMOUNT_OF_DAMAGE not in conditions:
+	if property.name == "target_damage_taken" and StateChangeConditionEnum.AFTER_TAKEN_AMOUNT_OF_DAMAGE not in conditions:
 		property.usage = PROPERTY_USAGE_NONE

@@ -19,7 +19,7 @@ class_name StunState extends State
 
 #region Exported Variables and function that handles which variables to show.
 ## How stun will work/behave for the fighter.
-enum BEHAVIOR_TYPE{
+enum StunBehaviorTypeEnum{
 	
 	## Stun will last a given amount of time.
 	## After time is up, they will automatically switch state.
@@ -42,7 +42,7 @@ const DIZZY_EFFECT = preload("uid://1gxun2up65jb")
 @export_category("💫 Stun Behavior")
 
 ## How the enemy will behave during stun.
-@export var stun_behavior := BEHAVIOR_TYPE.FIXED_TIME_DURATION: 
+@export var stun_behavior := StunBehaviorTypeEnum.FIXED_TIME_DURATION: 
 	set(value):
 		stun_behavior = value
 		notify_property_list_changed()
@@ -106,11 +106,11 @@ var damage_taken_so_far : float = 0.0
 
 ## Handles showing and hiding applicable exported variables
 func _validate_property(property: Dictionary) -> void: 
-	if property.name == "fixed_stun_length" and stun_behavior != BEHAVIOR_TYPE.FIXED_NUMBER_OF_PUNCHES:
+	if property.name == "fixed_stun_length" and stun_behavior != StunBehaviorTypeEnum.FIXED_NUMBER_OF_PUNCHES:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "max_stun_length" and stun_behavior != BEHAVIOR_TYPE.INCREASING_NUMBER_OF_PUNCHES:
+	if property.name == "max_stun_length" and stun_behavior != StunBehaviorTypeEnum.INCREASING_NUMBER_OF_PUNCHES:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "min_stun_length" and stun_behavior != BEHAVIOR_TYPE.INCREASING_NUMBER_OF_PUNCHES:
+	if property.name == "min_stun_length" and stun_behavior != StunBehaviorTypeEnum.INCREASING_NUMBER_OF_PUNCHES:
 		property.usage = PROPERTY_USAGE_NONE
 #endregion
 		
@@ -119,9 +119,9 @@ func _ready() -> void:
 	create_timers()
 	# Sets the stun punch length based on the desired behavior.
 	match stun_behavior:
-		BEHAVIOR_TYPE.FIXED_NUMBER_OF_PUNCHES:
+		StunBehaviorTypeEnum.FIXED_NUMBER_OF_PUNCHES:
 			stun_punch_length = fixed_stun_length
-		BEHAVIOR_TYPE.INCREASING_NUMBER_OF_PUNCHES:
+		StunBehaviorTypeEnum.INCREASING_NUMBER_OF_PUNCHES:
 			stun_punch_length = clamp(min_stun_length - 1, 0, max_stun_length)# minus 1 because the enter functions adds 1.
 	dizzy = DIZZY_EFFECT.instantiate()
 	add_child(dizzy)
@@ -168,11 +168,11 @@ func enter() -> void: # Blank enter and exit functions that get overridden by ea
 	target_state = state_machine.interrupted_state
 	
 	match stun_behavior:
-		BEHAVIOR_TYPE.FIXED_TIME_DURATION:
+		StunBehaviorTypeEnum.FIXED_TIME_DURATION:
 			stun_timer.start(stun_duration)
 			
 			# Increases the length of the stun in terms of pucnhes eeverytime the enemy enters stun state.
-		BEHAVIOR_TYPE.INCREASING_NUMBER_OF_PUNCHES:
+		StunBehaviorTypeEnum.INCREASING_NUMBER_OF_PUNCHES:
 			stun_timer.start(stun_duration)
 			stun_punch_length = clamp(stun_punch_length + 1, min_stun_length, max_stun_length)
 	
@@ -201,7 +201,7 @@ func set_stun_over() -> void:
 
 ## Increases the punch count by one everytime the player lands a punch during stun.
 func increase_punch_count() -> void:
-	if stun_behavior == BEHAVIOR_TYPE.FIXED_NUMBER_OF_PUNCHES or stun_behavior == BEHAVIOR_TYPE.INCREASING_NUMBER_OF_PUNCHES :
+	if stun_behavior == StunBehaviorTypeEnum.FIXED_NUMBER_OF_PUNCHES or stun_behavior == StunBehaviorTypeEnum.INCREASING_NUMBER_OF_PUNCHES :
 		stun_timer.start(stun_duration) # Restarts the stun duration timer.
 		
 		punch_count = punch_count + 1

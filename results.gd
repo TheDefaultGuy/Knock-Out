@@ -5,10 +5,10 @@ const CHARACTER_SELECTION_MENU = preload("uid://bvyokq5qbudmq")
 # Called when the node enters the scene tree for the first time.
 func _enter_tree() -> void:
 	match Global.winner:
-		Global.WINNER.PLAYER:
+		Global.WinnerEnum.PLAYER:
 			%Label.text = "You won!"
 			
-		Global.WINNER.ENEMY:
+		Global.WinnerEnum.ENEMY:
 			%Label.text = "You Lost :("
 
 

@@ -70,10 +70,10 @@ func _process(_delta: float) -> void:
 	owner.animation_tree.set("parameters/neutral/idle/blend_position", blend_vector)
 	
 	if Input.is_action_pressed("left"):
-		owner.animation_tree.set("parameters/dodge/dodge_left/dodge_blend_left/blend_position", Global.range.LEFT)
+		owner.animation_tree.set("parameters/dodge/dodge_left/dodge_blend_left/blend_position", Global.RangeEnum.LEFT)
 	
 	elif Input.is_action_pressed("right"):
-		owner.animation_tree.set("parameters/dodge/dodge_right/dodge_blend_right/blend_position", Global.range.RIGHT)
+		owner.animation_tree.set("parameters/dodge/dodge_right/dodge_blend_right/blend_position", Global.RangeEnum.RIGHT)
 		
 	elif Input.is_action_pressed("down"):
 		owner.animation_tree.set("parameters/dodge/duck/duck_blend/blend_position", -1)
@@ -129,25 +129,25 @@ func _input(_event: InputEvent) -> void:
 func perform_action(action_name : String):
 	match action_name:
 		"left_low_punch":
-			attack_input_signal.emit(Global.height.LOW, Global.range.LEFT, "left_low_punch")
+			attack_input_signal.emit(Global.HeightEnum.LOW, Global.RangeEnum.LEFT, "left_low_punch")
 		"right_low_punch":
-			attack_input_signal.emit(Global.height.LOW, Global.range.RIGHT, "right_low_punch")
+			attack_input_signal.emit(Global.HeightEnum.LOW, Global.RangeEnum.RIGHT, "right_low_punch")
 		"left_high_punch":
-			attack_input_signal.emit(Global.height.HIGH, Global.range.LEFT, "left_high_punch")
+			attack_input_signal.emit(Global.HeightEnum.HIGH, Global.RangeEnum.LEFT, "left_high_punch")
 		"right_high_punch":
-			attack_input_signal.emit(Global.height.HIGH, Global.range.RIGHT, "right_high_punch")
+			attack_input_signal.emit(Global.HeightEnum.HIGH, Global.RangeEnum.RIGHT, "right_high_punch")
 		"up":
-			defense_input_signal.emit(Global.range.NEUTRAL, "up")
+			defense_input_signal.emit(Global.RangeEnum.NEUTRAL, "up")
 		"down": # Ducking to avoid high attacks
-			defense_input_signal.emit(Global.range.NEUTRAL, "down")
+			defense_input_signal.emit(Global.RangeEnum.NEUTRAL, "down")
 		"left":
-			defense_input_signal.emit(Global.range.LEFT, "left")
+			defense_input_signal.emit(Global.RangeEnum.LEFT, "left")
 		"right":
-			defense_input_signal.emit(Global.range.RIGHT, "right")
+			defense_input_signal.emit(Global.RangeEnum.RIGHT, "right")
 		"star_punch_lower":
-			attack_input_signal.emit(Global.height.LOW, Global.range.NEUTRAL, "star_punch_lower")
+			attack_input_signal.emit(Global.HeightEnum.LOW, Global.RangeEnum.NEUTRAL, "star_punch_lower")
 		"star_punch_upper":
-			attack_input_signal.emit(Global.height.HIGH, Global.range.NEUTRAL, "star_punch_upper")
+			attack_input_signal.emit(Global.HeightEnum.HIGH, Global.RangeEnum.NEUTRAL, "star_punch_upper")
 		_:
 			printerr("Input Component: Unnaccounted action.")
 	return

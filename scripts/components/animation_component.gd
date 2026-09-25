@@ -2,6 +2,12 @@
 
 class_name AnimationComponent extends Node
 
+## The threshold value for checking the current animation's playback position. Used mainly for readability.
+## If the animation's playback position is GREATER THAN (>) PLAY_POS_THRESH, then the animation is considered to be currently playing.
+## If the animation's playback position is LESS THAN (<) PLAY_POS_THRESH, then the animation is considered to have been restarted or is back at the start.
+const PLAY_POS_THRESH: float = 0.05
+
+
 ## Sets the blend of the given animation using the given blend_vector.
 func set_animation_2d_blend(animation : String, blend_vector : Vector2) -> void:
 	owner.animation_tree.set(str("parameters/", animation,"/blend_position"),  blend_vector)
@@ -18,10 +24,6 @@ func set_animation_1d_blend(animation : String, blend_value : int) -> void:
 ## and receiving damage, but playing the dodge animation instead of the hit animation.
 func play_animation(animation_name : String) -> void:
 	
-	## The threshold value for checking the current animation's playback position. Used mainly for readability.
-	## If the animation's playback position is GREATER THAN (>) PLAY_POS_THRESH, then the animation is considered to be currently playing.
-	## If the animation's playback position is LESS THAN (<) PLAY_POS_THRESH, then the animation is considered to have been restarted or is back at the start.
-	const PLAY_POS_THRESH: float = 0.05
 	
 	#print("Animation Play Position: ", anim_state_machine.get_current_play_position())
 	

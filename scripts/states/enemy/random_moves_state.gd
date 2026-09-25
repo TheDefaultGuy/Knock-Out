@@ -23,5 +23,5 @@ func _process(_delta: float) -> void:
 		check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
 
 func override_conditions_and_state_parameters() -> void:
-	state_type = STATE_TYPE_ENUM.SIMPLE
+	state_type = StateTypeEnum.SIMPLE
 	attack_timer_required = true

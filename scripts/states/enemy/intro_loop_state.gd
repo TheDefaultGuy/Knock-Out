@@ -68,18 +68,18 @@ func check_animation(animation_name : String) -> void:
 			
 
 func override_conditions_and_state_parameters() -> void:
-	state_type = STATE_TYPE_ENUM.SIMPLE
+	state_type = StateTypeEnum.SIMPLE
 	attack_timer_required  = true
 	
-	block_behavior = BLOCK_BEHAVIOR_ENUM.NOT_APPLICABLE
+	block_behavior = BlockBehaviorEnum.NOT_APPLICABLE
 	
-	moveset_type = MOVESET_TYPE_ENUM.PREDETERMINED_ORDER
+	moveset_type = MovesetTypeEnum.PREDETERMINED_ORDER
 	
 	moveset_array = [attack_animation]
 	
 	# Given the nature of this state, these 2 conditions MUST ALWAYS be set and have a target state to transition to.
-	primary_condition = STATE_CHANGE_CONDITION.AFTER_PLAYER_KNOCKED_DOWN
-	secondary_condition = STATE_CHANGE_CONDITION.AFTER_ENEMY_KNOCKED_DOWN
+	primary_condition = StateChangeConditionEnum.AFTER_PLAYER_KNOCKED_DOWN
+	secondary_condition = StateChangeConditionEnum.AFTER_ENEMY_KNOCKED_DOWN
 	
 	if primary_target_state == null and secondary_target_state != null:
 		primary_target_state = secondary_target_state

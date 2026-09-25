@@ -104,7 +104,7 @@ signal go_to_results_screen_signal
 		print("Playery KD Count: ", player_ko_count)
 		if player_ko_count == 3: # Checks for TKO; 3 knockouts
 			print_rich("[b][u]\nFightManager: TKO Player[/u][/b]")
-			Global.winner = Global.WINNER.ENEMY
+			Global.winner = Global.WinnerEnum.ENEMY
 			is_fight_over = true
 			
 
@@ -116,7 +116,7 @@ signal go_to_results_screen_signal
 		print("Enemy KD Count: ", enemy_ko_count)
 		if enemy_ko_count == 3: # Checks for TKO; 3 knockouts
 			print_rich("[b][u]\nFightManager: TKO enemy[/u][/b]")
-			Global.winner = Global.WINNER.PLAYER
+			Global.winner = Global.WinnerEnum.PLAYER
 			is_fight_over = true
 
 ## Which round of the fight it currently is. 0 = 1st round, 1 = 2nd round , 2 = 3rd round.

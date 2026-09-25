@@ -31,12 +31,17 @@ var get_up_decay_rate : float = 50.0
 func _process(delta: float) -> void:
 	if state_machine.current_state != self :
 		return
-	
-	if owner.is_knocked_down == false : # Dont run if the player is no longer knocked down.
+		
+	 # Dont run if the fighter is no longer knocked down.
+	if owner.is_knocked_down == false :
 		return
 	
 	if FightManager.is_fight_over == false :
+		
+		# Lowers the getup progress by the decay rate every frame using delta.
 		get_up_progress = clampf(get_up_progress - get_up_decay_rate * delta, 0.0 , 110.0)
+		
+		# Sets the blend of the get up animation to be equal to the get_up_progress
 		animation_tree.set("parameters/get_up_blend/blend_position", get_up_progress)
 		
 		# When the get up progress reaches 100 or the get_up_threshold, the player succesfully gets back up.
@@ -54,7 +59,7 @@ func enter() -> void:
 	
 	animation_tree.set("parameters/conditions/gotup", false)
 	
-	get_up_progress = 0.0 # Resets getup progress to zero when entering
+	get_up_progress = 0.0 # Resets getup progress to zero when entering this state
 	
 	# Waits until the enemy emits the signal so that the player can start getting up.
 	await FightManager.fighter_can_start_getup_signal 
@@ -67,6 +72,7 @@ func enter() -> void:
 	
 	FightManager.resume_fighting_signal.connect(transition_to_neutral)
 	
+	# Sets the used decay rate by multiplying the base decay rate by the difficulty curve
 	get_up_decay_rate = base_decay_rate * get_up_difficulty_curve.sample(float(FightManager.player_ko_count))
 
 func exit() -> void:

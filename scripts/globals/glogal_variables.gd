@@ -1,11 +1,11 @@
 extends Node
 ## Holds constants and nodes that are used by almost all components.
 ##
-## [DefenseComponent] and [AttackingComponent] use [enum height] and [enum range] for having a consistent and readable way
-## to determine the height of attacks, the range they conver, the direction of the attack, the dodge position, etc...
+## [DefenseComponent] and [AttackingComponent] use [enum HeightEnum] and [enum RangeEnum] for having a consistent and readable way
+## to determine the height of attacks, the range they cover, the direction of the attack, the dodge position, etc...
 
 ## The possible heights for attacks.
-enum height{
+enum HeightEnum {
 	
 	## For lower body or gut punches.
 	LOW = 0,
@@ -18,7 +18,7 @@ enum height{
 	}
 
 ## The range (X - axis) for attack range, dodge direction, or punch direction.
-enum range{
+enum RangeEnum {
 	
 	## Left, from the players point of reference
 	LEFT = -1,
@@ -30,7 +30,7 @@ enum range{
 	RIGHT = 1,
 	}
 
-enum WINNER {
+enum WinnerEnum {
 	PLAYER,
 	ENEMY,
 }
@@ -44,6 +44,3 @@ var enemy_node : Node2D = null
 
 ## Stores the winner of the match as a [Node2D]
 var winner : int = 0 
-	#set(value):
-		#winner = value
-		#print("Winner Set: ", winner)

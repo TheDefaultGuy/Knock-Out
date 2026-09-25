@@ -11,7 +11,7 @@ class_name CutSceneState extends State
 
 func _ready() -> void:
 	if next_state == null:
-		printerr(owner.name, " CutScene State: next state not set")
+		push_error(owner.name, " CutScene State: next state not set")
 
 func enter() -> void:
 	print_rich("[color=yellow]",owner.name," Entered State: [/color]", self.name)
@@ -31,8 +31,3 @@ func exit() -> void:
 func play_intro() -> void:
 	anim_state_machine.travel("intro")
 	
-func perform_attack(_height : int, _direction : int, _action_name : String, _special_move : bool) -> void:
-	return
-	
-func perform_defense(_move : int, _action_name : String) -> void:
-	return

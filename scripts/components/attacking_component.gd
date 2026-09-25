@@ -41,8 +41,7 @@ func _process(_delta: float) -> void:
 	if parry_attack_timer.is_stopped() == false and owner is Player:
 		attack_multiplier = parry_damage_curve.sample(1 - (parry_attack_timer.time_left / parry_attack_timer.wait_time))
 
-## Function that called by the attack animations
-##
+## Function that is called by the attack animations.
 ## It calls functions in the opposing fighter's [DefenseComponent], giving it the attacks variables as input.
 ## Which the attack covers, the dodge range, how much damage it does, etc...
 ## The defense compomnent then checks if the attack is successful and returns the result to the [AttackingComponent].
@@ -64,6 +63,7 @@ func send_attack_call(punch_height : int, punch_range : int, attack_damage : flo
 			printerr("Attacking Component: ", owner.name, " is neither the player or the assigned enemy in global.")
 			return 
 
+## The function that directly communicates with the [DefenseComponent].
 func punch(input_node : Node2D, punch_height : int, punch_range : int, attack_damage : float, punch_direction : int) -> bool:
 	if input_node.defense_component == null: # Checks to see if the enemy has a defense component.
 		printerr("Attacking Component: Target node has no defense component.")
@@ -107,14 +107,22 @@ func punch(input_node : Node2D, punch_height : int, punch_range : int, attack_da
 		_: # Fallback
 			return false 
 
+## Function called by the attack animations that does the flash effect right before an attack.
 func attack_flash() -> void:
 	if owner is Enemy:
+		# Makes the shader visible.
 		animated_sprite_2d.material.set_shader_parameter("Visible", true)
+		
+		# Waits a moment.
 		await get_tree().create_timer(enemy_flash_duration).timeout
+		
+		# Makes the shader no lnger visible.
 		animated_sprite_2d.material.set_shader_parameter("Visible", false)
 		return
 	push_warning("Player cannot do attack flash, only enemies.")
 
+## Starts the [member parry_attack_timer] so that the player
+## can have the damage bonus after parrying.
 func parry_damage_bonus() -> void:
 	parry_attack_timer.start()
 

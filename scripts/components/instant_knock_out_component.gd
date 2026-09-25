@@ -10,7 +10,7 @@ class_name InstantKDComponent extends Node
 
 #region Enumerations
 ## Sets the condition for the [Player] to get an instant knockdown.
-enum KD_CONDITION_TYPE{
+enum KDConditionTypeEnum{
 	
 	## Will grant a KD if the [Player] lands a punch that is at least worth the given [member number_of_stars].
 	STARS_USED,
@@ -27,20 +27,20 @@ enum KD_CONDITION_TYPE{
 
 ## The type of punch the [Player] has to land to achieve and instant KD.
 ## Used by [member punch_type_flags].
-enum PUNCH_TYPE_ENUM {
+enum PunchTypeEnum {
 	
-	## The [Player] has to land a star punch; it can be in any [enum Global.height] region
+	## The [Player] has to land a star punch; it can be in any [enum Global.HeightEnum] region
 	STAR_PUNCH = 1,
 	
-	## The [Player] can land any punch, including star punches, as long as it's in the LOWER [enum Global.height] region
+	## The [Player] can land any punch, including star punches, as long as it's in the LOWER [enum Global.HeightEnum] region
 	LOW_PUNCH = 2,
 	
-	## The [Player] can land any punch, including star punches, as long as it's in the UPPER [enum Global.height] region
+	## The [Player] can land any punch, including star punches, as long as it's in the UPPER [enum Global.HeightEnum] region
 	HIGH_PUNCH = 4,
 }
 
 ## The type of punch the [Player] has to land to achieve and instant KD.
-enum OUTCOME_ENUM {
+enum OutcomeEnum {
 	
 	## The [Enemy] will only be knocked down, meaning they'll get back up.
 	KNOCKDOWN,
@@ -58,14 +58,14 @@ enum OUTCOME_ENUM {
 @export var expected_state : State
 
 ## What condition type to use for granting an instant Knockdown.
-@export var knockdown_condition := KD_CONDITION_TYPE.STARS_USED:
+@export var knockdown_condition := KDConditionTypeEnum.STARS_USED:
 	set(value):
 		if knockdown_condition != value :
 			knockdown_condition = value
 			
 			# Makes sure the punch type required is a Star punch if the condition is Stars used
-			if knockdown_condition == KD_CONDITION_TYPE.STARS_USED :
-				punch_type_flags |= PUNCH_TYPE_ENUM.STAR_PUNCH
+			if knockdown_condition == KDConditionTypeEnum.STARS_USED :
+				punch_type_flags |= PunchTypeEnum.STAR_PUNCH
 			notify_property_list_changed()
 
 ## Sets the property of the punch that the player needs to land for instant knockdown.
@@ -81,8 +81,8 @@ enum OUTCOME_ENUM {
 			punch_type_flags = value
 			
 			# Makes sure the punch type required is a Star punch if the condition is Stars used
-			if knockdown_condition == KD_CONDITION_TYPE.STARS_USED :
-				punch_type_flags |= PUNCH_TYPE_ENUM.STAR_PUNCH
+			if knockdown_condition == KDConditionTypeEnum.STARS_USED :
+				punch_type_flags |= PunchTypeEnum.STAR_PUNCH
 			notify_property_list_changed()
 
 
@@ -104,7 +104,7 @@ enum OUTCOME_ENUM {
 @export_range(10.0, 180.0, 1.0, "suffix:s") var expected_round_time : float
 
 ## The outcome/what the [Enemy] will do if all of the conditions are met and the instant knockdown is awarded.
-@export var resulting_outcome := OUTCOME_ENUM.KNOCKDOWN
+@export var resulting_outcome := OutcomeEnum.KNOCKDOWN
 
 ## Button that automatically adds the conditions and variables set above it to the [member active_conditions_dictionary]
 @export_tool_button("Add Condition to List", "Add") var add_cond = add_condition_to_dictionary
@@ -120,6 +120,8 @@ enum OUTCOME_ENUM {
 ## Variable that stores if the punch received was a star punch or not
 var is_star_punch : bool = false
 
+## Stores if the [Fighter] is fully knocked out after the instant knockdown.
+## It's set here but checked by [EnemyKnockedDown]
 var is_fully_knocked_out : bool = false
 
 func _ready() -> void:
@@ -135,13 +137,13 @@ func add_condition_to_dictionary() -> void:
 	
 	# Only sets the variables that are actually used.
 	match knockdown_condition : 
-		KD_CONDITION_TYPE.STARS_USED:
+		KDConditionTypeEnum.STARS_USED:
 			new_resource.number_of_stars = number_of_stars
 			
-		KD_CONDITION_TYPE.STAR_PUNCHES_RECEIVED:
+		KDConditionTypeEnum.STAR_PUNCHES_RECEIVED:
 			new_resource.star_punches_received = star_punches_received
 				
-		KD_CONDITION_TYPE.KNOCKDOWNS_BEFORE_ROUND_TIME:
+		KDConditionTypeEnum.KNOCKDOWNS_BEFORE_ROUND_TIME:
 			new_resource.knockdowns_required = knockdowns_required
 			new_resource.expected_round_time = expected_round_time
 	
@@ -179,19 +181,19 @@ func check_for_instant_knockdown(damage_amount : float, punch_height : int) -> b
 	var stored_conditions : KDConditions = active_conditions_dictionary[owner.state_machine.current_state] 
 	
 	match stored_conditions.knockdown_condition:
-		KD_CONDITION_TYPE.STARS_USED:
+		KDConditionTypeEnum.STARS_USED:
 			if FightManager.stars_used >= stored_conditions.number_of_stars:
 				return run_required_checks(stored_conditions, punch_height)
 				
-		KD_CONDITION_TYPE.STAR_PUNCHES_RECEIVED:
+		KDConditionTypeEnum.STAR_PUNCHES_RECEIVED:
 			if FightManager.star_punches_landed >= stored_conditions.star_punches_received:
 				return run_required_checks(stored_conditions, punch_height)
 				
-		KD_CONDITION_TYPE.KNOCKDOWNS_BEFORE_ROUND_TIME:
+		KDConditionTypeEnum.KNOCKDOWNS_BEFORE_ROUND_TIME:
 			if FightManager.enemy_ko_count >= stored_conditions.knockdowns_required and FightManager.round_time <= stored_conditions.expected_round_time :
 				return run_required_checks(stored_conditions, punch_height)
 				
-		KD_CONDITION_TYPE.NEVER_BEEN_HIT:
+		KDConditionTypeEnum.NEVER_BEEN_HIT:
 			if Global.player_node.health_component.hp == Global.player_node.health_component.max_hp :
 				return run_required_checks(stored_conditions, punch_height)
 			
@@ -221,20 +223,22 @@ func run_required_checks(stored_conditions : KDConditions, punch_height : int) -
 ## Selects the outcome of the Instant Knockdown depending on the condition.
 func select_outcome(stored_conditions : KDConditions) -> void:
 	match stored_conditions.resulting_outcome :
-		OUTCOME_ENUM.KNOCKDOWN:
+		OutcomeEnum.KNOCKDOWN:
+			# Sets the variable to false since the enemy will just be knocked down
+			is_fully_knocked_out = false
 			return
 			
-		OUTCOME_ENUM.FULL_KNOCKOUT:
+		OutcomeEnum.FULL_KNOCKOUT:
 			print_rich("[color=cyan]FULL KNOCKOUT[/color]")
+			# Sets the variable to true so that the enemy can't get back up
 			is_fully_knocked_out = true
 			return
-
 
 ## Checks the [member KDConditions.punch_type_flags] and compares them to the given data of the player's landed punch.
 func check_for_punch_type(stored_conditions : KDConditions, punch_height : int) -> bool:
 	
 	# Checks if the required punch has the "Star Punch" flag and if the punch received was a star punch.
-	if stored_conditions.punch_type_flags & PUNCH_TYPE_ENUM.STAR_PUNCH and is_star_punch == false:
+	if stored_conditions.punch_type_flags & PunchTypeEnum.STAR_PUNCH and is_star_punch == false:
 		
 		# If the required punch HAS to be a star punch, but the received punch was not,
 		# then the condition wasn't meant and it returns false.
@@ -242,19 +246,19 @@ func check_for_punch_type(stored_conditions : KDConditions, punch_height : int) 
 	
 	# IF both of the "High Punch" and "Low Punch" flags are set the identically, meaning that either both are true or both are false,
 	# Then it means that the punch can be from any height range.
-	if stored_conditions.punch_type_flags & PUNCH_TYPE_ENUM.HIGH_PUNCH == stored_conditions.punch_type_flags & PUNCH_TYPE_ENUM.LOW_PUNCH :
+	if stored_conditions.punch_type_flags & PunchTypeEnum.HIGH_PUNCH == stored_conditions.punch_type_flags & PunchTypeEnum.LOW_PUNCH :
 		
 		return true
 	
 	# Checks if the required punch has the "High Punch" flag and if the punch received was a high punch.
-	if stored_conditions.punch_type_flags & PUNCH_TYPE_ENUM.HIGH_PUNCH and punch_height != Global.height.HIGH :
+	if stored_conditions.punch_type_flags & PunchTypeEnum.HIGH_PUNCH and punch_height != Global.HeightEnum.HIGH :
 		
 		# If the required punch HAS to be a High punch, but the received punch was not,
 		# then the condition wasn't meant and it returns false.
 		return false
 	
 	# Checks if the required punch has the "Low Punch" flag and if the punch received was a low punch.
-	if stored_conditions.punch_type_flags & PUNCH_TYPE_ENUM.LOW_PUNCH and punch_height != Global.height.LOW :
+	if stored_conditions.punch_type_flags & PunchTypeEnum.LOW_PUNCH and punch_height != Global.HeightEnum.LOW :
 		
 		# If the required punch HAS to be a Low punch, but the received punch was not,
 		# then the condition wasn't meant and it returns false.
@@ -262,13 +266,15 @@ func check_for_punch_type(stored_conditions : KDConditions, punch_height : int) 
 	
 	return false # Fallback just in case.
 
+## Checks if the expected animation is given/not empty.
+## If it's empty, it's skips checking if it matches the current animation.
+## If it's not empty and an animation is given, then it DOES check if it matches the current animation.
 func check_for_expected_animation(stored_conditions : KDConditions) -> bool:
 		
 		# Checks if no expected animation has been set.
 		# If there is no expected animation set, then default to returning true by skipping the check below.
 		if stored_conditions.expected_animation.is_empty() == false : 
-			
-			
+		
 			# If expected animation HAS been set, check to see if the animation
 			# that is currently being played matches expected one.
 			if owner.anim_state_machine.get_current_node().contains(stored_conditions.expected_animation) == false :
@@ -276,17 +282,16 @@ func check_for_expected_animation(stored_conditions : KDConditions) -> bool:
 				# If it DOES NOT match expected animation, return false.
 				return false
 			
-		print_rich("[color=cyan]Instant KD component:[/color] KD condition met: ", KD_CONDITION_TYPE.find_key(stored_conditions.knockdown_condition))
+		print_rich("[color=cyan]Instant KD component:[/color] KD condition met: ", KDConditionTypeEnum.find_key(stored_conditions.knockdown_condition))
 		return true
-
 
 ## Handles showing and hiding applicable exported variables
 func _validate_property(property: Dictionary) -> void: 
-	if property.name == "number_of_stars" and knockdown_condition != KD_CONDITION_TYPE.STARS_USED:
+	if property.name == "number_of_stars" and knockdown_condition != KDConditionTypeEnum.STARS_USED:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "expected_round_time" and knockdown_condition != KD_CONDITION_TYPE.KNOCKDOWNS_BEFORE_ROUND_TIME:
+	if property.name == "expected_round_time" and knockdown_condition != KDConditionTypeEnum.KNOCKDOWNS_BEFORE_ROUND_TIME:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "knockdowns_required" and knockdown_condition != KD_CONDITION_TYPE.KNOCKDOWNS_BEFORE_ROUND_TIME:
+	if property.name == "knockdowns_required" and knockdown_condition != KDConditionTypeEnum.KNOCKDOWNS_BEFORE_ROUND_TIME:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "star_punches_received" and knockdown_condition != KD_CONDITION_TYPE.STAR_PUNCHES_RECEIVED:
+	if property.name == "star_punches_received" and knockdown_condition != KDConditionTypeEnum.STAR_PUNCHES_RECEIVED:
 		property.usage = PROPERTY_USAGE_NONE

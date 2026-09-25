@@ -8,13 +8,13 @@ var is_knocked_down : bool = false
 ## The [DefenseComponent] assigned to the [Fighter].
 @onready var defense_component: DefenseComponent = %DefenseComponent
 
-## The [HealthComponent] assigned to the [Fighter]/
+## The [HealthComponent] assigned to the [Fighter].
 @onready var health_component: HealthComponent = %HealthComponent
 
-## The [AttackingComponent] assigned to the [Fighter]
+## The [AttackingComponent] assigned to the [Fighter].
 @onready var attacking_component: AttackingComponent = %AttackingComponent
 
-## The [AnimationComponent] assigned to the [Fighter]
+## The [AnimationComponent] assigned to the [Fighter].
 @onready var animation_component: AnimationComponent = %AnimationComponent
 
 ## The [AnimationTree] assigned to the [Fighter].

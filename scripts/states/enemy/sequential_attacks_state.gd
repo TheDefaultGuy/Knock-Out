@@ -82,15 +82,15 @@ func increase_count(_animation) -> void:
 		anim_state_machine.travel(modified_moveset[attack_count])
 
 func override_conditions_and_state_parameters() -> void:
-	state_type = STATE_TYPE_ENUM.CHAINED_ATTACKS
+	state_type = StateTypeEnum.CHAINED_ATTACKS
 	attack_timer_required = false
 		
-	moveset_type = MOVESET_TYPE_ENUM.PREDETERMINED_ORDER
+	moveset_type = MovesetTypeEnum.PREDETERMINED_ORDER
 	
 	# Overrides the state change condition so that this state can function properly.
-	primary_condition = STATE_CHANGE_CONDITION.AFTER_COMPLETION
-	secondary_condition = STATE_CHANGE_CONDITION.AFTER_PLAYER_KNOCKED_DOWN
-	moveset_type = MOVESET_TYPE_ENUM.PREDETERMINED_ORDER
+	primary_condition = StateChangeConditionEnum.AFTER_COMPLETION
+	secondary_condition = StateChangeConditionEnum.AFTER_PLAYER_KNOCKED_DOWN
+	moveset_type = MovesetTypeEnum.PREDETERMINED_ORDER
 
 func _validate_property(property: Dictionary) -> void: 
 	attack_timer_required = false

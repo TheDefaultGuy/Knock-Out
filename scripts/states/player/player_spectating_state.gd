@@ -11,11 +11,10 @@ func enter() -> void:
 	FightManager.fighter_got_up_signal.connect(back_to_fight)
 	FightManager.resume_fighting_signal.connect(transition_to_neutral)
 	
-
 	animation_tree.animation_finished.connect(check_finished_animation)
 	
 	FightManager.fight_is_over_signal.connect(play_win_animation)
-	
+
 func exit() -> void:
 	animation_tree.set("parameters/conditions/spectating", false)
 	
@@ -32,7 +31,9 @@ func back_to_fight() -> void:
 
 func check_finished_animation(animation : String) -> void:
 	match animation:
-		"back_to_the_fight":
+		# When the "back_to_the_fight" animation is finished,
+		# the player is ready to continue the fight.
+		"back_to_the_fight": 
 			FightManager.player_ready_status = true
 			print("PLAYER READY")
 			FightManager.fighter_ready_signal.emit()

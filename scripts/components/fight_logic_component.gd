@@ -53,10 +53,10 @@ func end_fight() -> void:
 	
 	match true:
 		Global.player_node.is_knocked_down:
-			Global.winner = Global.WINNER.ENEMY
+			Global.winner = Global.WinnerEnum.ENEMY
 			
 		Global.enemy_node.is_knocked_down:
-			Global.winner = Global.WINNER.PLAYER
+			Global.winner = Global.WinnerEnum.PLAYER
 	
 	FightManager.is_fight_over = true
 	FightManager.fight_is_over_signal.emit()

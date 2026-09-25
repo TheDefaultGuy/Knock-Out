@@ -12,7 +12,7 @@ class_name EnemyState extends State
 
 #region Enumerations
 ## What kind of state this is and whether it's a simple state or a state that uses a nested state machine.
-enum STATE_TYPE_ENUM{
+enum StateTypeEnum{
 	
 	## Means that this state doesn't requite any fancy nested state machines.
 	## Usually means a state that does simple things like throw out attacks, block, get hit, get stunned, etc... 
@@ -23,7 +23,7 @@ enum STATE_TYPE_ENUM{
 }
 
 ## Enum that stores all of the possible state change conditions.
-enum STATE_CHANGE_CONDITION{
+enum StateChangeConditionEnum{
 	## The [Enemy] will change to the target state AFTER the specified [member time_to_change_state] has elapsed.
 	## Different to At Round Time since this can happen at different points in the round.
 	AFTER_TIME_PASSED,
@@ -71,7 +71,7 @@ enum STATE_CHANGE_CONDITION{
 }
 
 ## The behavior for the attack delay, or the time between each attack.
-enum ATTACK_DELAY{
+enum AttackDelayTypeEnum{
 	## Will choose a float value BETWEEN the [member min_delay_time] and [member max_delay_time].
 	FLOAT,
 	
@@ -80,7 +80,7 @@ enum ATTACK_DELAY{
 }
 
 ## How the moves in this state will be selected.
-enum MOVESET_TYPE_ENUM{
+enum MovesetTypeEnum{
 	
 	## Randomly choose an animation from the weighted [member moveset_dictionary].
 	WEIGHTED_DICTIONARY,
@@ -98,7 +98,7 @@ enum MOVESET_TYPE_ENUM{
 }
 
 ## What to do when either the [Player] or the [Enemy] blocks an attack.
-enum BLOCK_BEHAVIOR_ENUM{
+enum BlockBehaviorEnum{
 	
 	## When a block occurs, it momentarily pauses the [member attack_delay_timer] and then resumes after the block animation has finished.
 	PAUSE_TIMER,
@@ -116,10 +116,10 @@ enum BLOCK_BEHAVIOR_ENUM{
 
 #region Constants
 ## Offset added to each animation node's position so that they dont all overlap.
-const node_positional_offset := Vector2(175.0, 0.0)
+const NODE_POSITIONAL_OFFSET := Vector2(175.0, 0.0)
 
 ## The point in the animation tree where the nodes will be added.
-const node_position_origin := Vector2(-1000.0,-500.0) 
+const NODE_POSITION_ORIGIN := Vector2(-1000.0,-500.0) 
 #endregion
 
 #region Exported Variables
@@ -132,7 +132,7 @@ const node_position_origin := Vector2(-1000.0,-500.0)
 ##
 ## If the condition is met, it will transition to the [member primary_target_state]
 ## If it's not, it will check the [member secondary_condition]
-@export var primary_condition := STATE_CHANGE_CONDITION.AFTER_TIME_PASSED : 
+@export var primary_condition := StateChangeConditionEnum.AFTER_TIME_PASSED : 
 	set(value):
 		if primary_condition != value :
 			primary_condition = value
@@ -142,7 +142,7 @@ const node_position_origin := Vector2(-1000.0,-500.0)
 ##
 ## If the condition is met, it will transition to the [member secondary_target_state]
 ## If it's not, it will check the [member tertiary_condition]
-@export var secondary_condition := STATE_CHANGE_CONDITION.DO_NOT_CHANGE :
+@export var secondary_condition := StateChangeConditionEnum.DO_NOT_CHANGE :
 	set(value):
 		if secondary_condition != value :
 			secondary_condition = value
@@ -151,7 +151,7 @@ const node_position_origin := Vector2(-1000.0,-500.0)
 ## The tertiary condition for changing state and the second one being checked.
 ##
 ## If the condition is met, it will transition to the [member tertiary_target_state].
-@export var tertiary_condition := STATE_CHANGE_CONDITION.DO_NOT_CHANGE :
+@export var tertiary_condition := StateChangeConditionEnum.DO_NOT_CHANGE :
 	set(value): 
 		if tertiary_condition != value :
 			tertiary_condition = value
@@ -188,7 +188,7 @@ const node_position_origin := Vector2(-1000.0,-500.0)
 @export_category("🎬 Animations & Moveset")
 
 ## What type of moveset is available in this state.
-@export var moveset_type := MOVESET_TYPE_ENUM.WEIGHTED_DICTIONARY :
+@export var moveset_type := MovesetTypeEnum.WEIGHTED_DICTIONARY :
 	set(value):
 		if moveset_type != value :
 			moveset_type = value
@@ -204,7 +204,7 @@ const node_position_origin := Vector2(-1000.0,-500.0)
 @export_category("⏱ Attack Delays")
 
 ## What to do when an attack is blocked by either the [Player] or the [Enemy] when in this state.
-@export var block_behavior := BLOCK_BEHAVIOR_ENUM.PAUSE_TIMER :
+@export var block_behavior := BlockBehaviorEnum.PAUSE_TIMER :
 	set(value):
 		if block_behavior != value :
 			block_behavior = value
@@ -215,7 +215,7 @@ const node_position_origin := Vector2(-1000.0,-500.0)
 @export var counter_attack : String = "counter_uppercut"
 
 ## How the delay between each attack is handled.
-@export var attack_delay_type := ATTACK_DELAY.FLOAT : 
+@export var attack_delay_type := AttackDelayTypeEnum.FLOAT : 
 	set(value):
 		if attack_delay_type != value :
 			attack_delay_type = value
@@ -257,7 +257,7 @@ var conditions_and_targets_dict: Dictionary[int, State] = { }
 
 ## Stores the state type.
 ## This can be overwritten by inherited states.
-var state_type := STATE_TYPE_ENUM.SIMPLE
+var state_type := StateTypeEnum.SIMPLE
 
 ## Whether the state requires an attack timer.
 ## This can be overwritten by inherited states.
@@ -285,6 +285,7 @@ var additional_animations_to_add : Array[String] = []
 #endregion
 func _init() -> void:
 	override_conditions_and_state_parameters()
+	check_for_unassigned_variables()
 	pass
 
 func _enter_tree() -> void:
@@ -302,14 +303,14 @@ func _ready() -> void:
 		moves_arr += additional_animations_to_add 
 	
 	# Adds the counter_attack animation to the list of moves if the block behavior is counter attack.
-	if block_behavior == BLOCK_BEHAVIOR_ENUM.COUNTER_ATTACK : 
+	if block_behavior == BlockBehaviorEnum.COUNTER_ATTACK : 
 		moves_arr.append(counter_attack)
 	
 	#print(self.name, list_of_check_functions)
 	
 	set_conditions_and_targets_dictionary()
 	
-	if STATE_CHANGE_CONDITION.AFTER_TIME_PASSED in conditions_and_targets_dict.keys():
+	if StateChangeConditionEnum.AFTER_TIME_PASSED in conditions_and_targets_dict.keys():
 		state_change_timer = create_timer("Wait Timer", true, time_to_change_state)
 		add_child(state_change_timer)
 		
@@ -320,14 +321,13 @@ func _ready() -> void:
 		
 	check_for_unassigned_variables() # Self-explanatory.
 	
-	
 	# Checks the type of state it is so that it can properly set up the animation nodes in the animation tree.
 	match state_type: 
-		STATE_TYPE_ENUM.SIMPLE:
+		StateTypeEnum.SIMPLE:
 			if moves_arr.is_empty() == false or moves_arr != null :
 				call_deferred("add_attack_animation_nodes", animation_tree.tree_root, moves_arr)
 				
-		STATE_TYPE_ENUM.CHAINED_ATTACKS:
+		StateTypeEnum.CHAINED_ATTACKS:
 			if moves_arr.is_empty() == false or moves_arr != null :
 				call_deferred("add_chained_attack_animation_nodes", animation_tree.tree_root, moves_arr)
 			
@@ -345,7 +345,6 @@ func _ready() -> void:
 #region Enter and Exit functions
 func enter() -> void:
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
-	
 	
 	# Sets the idle blend to not stunned
 	animation_tree.set(str("parameters/idle/blend_position"),  0)
@@ -368,7 +367,7 @@ func enter() -> void:
 		# Starts the attack delay timer so that the enemy can start attacking.
 		start_attack_delay_timer()
 	
-	# Toggles the state change timer.
+	# Starts the state change timer.
 	# If it stopped or wasn't started, then it starts it.
 	# If it was already started, the it toggles pause.
 	toggle_state_change_timer()
@@ -379,7 +378,7 @@ func exit() -> void:
 		attack_timer.stop() # Full on stops the attack timer since it's leaving the state.
 		attack_timer.timeout.disconnect(perform_action)
 	
-	toggle_state_change_timer()
+	toggle_state_change_timer() # Stops the state change timer.
 	
 	toggle_stunned_signal_connections() # Disconnects the stun signal.
 	
@@ -393,34 +392,34 @@ func exit() -> void:
 #region Check For Stuff Functions
 ## Checks to see if the user forgot to assign a state when they assigned a condition.
 func check_for_unassigned_variables() -> void:
-	if primary_target_state == null and primary_condition != STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
+	if primary_target_state == null and primary_condition != StateChangeConditionEnum.DO_NOT_CHANGE:
 		push_error(self.name, " : Primary Target State has not been assigned despite having a condition set.")
-	if secondary_target_state == null and secondary_condition != STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
+	if secondary_target_state == null and secondary_condition != StateChangeConditionEnum.DO_NOT_CHANGE:
 		push_warning(self.name, " : Secondary Target State has not been assigned despite having a condition set.")
-	if tertiary_target_state == null and tertiary_condition != STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
+	if tertiary_target_state == null and tertiary_condition != StateChangeConditionEnum.DO_NOT_CHANGE:
 		push_warning(self.name, " : Tertiary Target State has not been assigned despite having a condition set.")
 	return
 
 ## Checks for errors and also returns an array with all of the moves.
 func match_moveset_type() -> Array:
-	if moveset_type == MOVESET_TYPE_ENUM.WEIGHTED_DICTIONARY and moveset_dictionary.is_empty() == true :
+	if moveset_type == MovesetTypeEnum.WEIGHTED_DICTIONARY and moveset_dictionary.is_empty() == true :
 		push_error(self.name, " : Moveset Dictionary does NOT contain any attacks.")
-	if moveset_type == MOVESET_TYPE_ENUM.PICK_RANDOM and moveset_array.is_empty() == true:
+	if moveset_type == MovesetTypeEnum.PICK_RANDOM and moveset_array.is_empty() == true:
 		push_error(self.name, " : Moveset Array does NOT contain any attacks.")
-	if moveset_type == MOVESET_TYPE_ENUM.PREDETERMINED_ORDER and moveset_array.is_empty() == true:
+	if moveset_type == MovesetTypeEnum.PREDETERMINED_ORDER and moveset_array.is_empty() == true:
 		push_error(self.name, " : Moveset Array does NOT contain any attacks.")
 		
 	match moveset_type:
-		MOVESET_TYPE_ENUM.WEIGHTED_DICTIONARY:
+		MovesetTypeEnum.WEIGHTED_DICTIONARY:
 			return moveset_dictionary.keys()
 			
-		MOVESET_TYPE_ENUM.PICK_RANDOM:
+		MovesetTypeEnum.PICK_RANDOM:
 			return moveset_array
 			
-		MOVESET_TYPE_ENUM.PREDETERMINED_ORDER:
+		MovesetTypeEnum.PREDETERMINED_ORDER:
 			return moveset_array
 			
-		MOVESET_TYPE_ENUM.NOT_APPLICABLE:
+		MovesetTypeEnum.NOT_APPLICABLE:
 			var empty : Array[String] = [] # Since the concept of a moveset doesn't apply, return empty array
 			return empty
 			
@@ -437,15 +436,15 @@ func check_for_attack_and_append(attack : String) -> void:
 		#push_warning(self.name, " did NOT have a required animation in its moveset, which is required for this state. The fakeout animation has been added.")
 		
 		match moveset_type:
-			MOVESET_TYPE_ENUM.WEIGHTED_DICTIONARY:
+			MovesetTypeEnum.WEIGHTED_DICTIONARY:
 				moveset_dictionary[attack] = 20.0
 				return
 				
-			MOVESET_TYPE_ENUM.PICK_RANDOM:
+			MovesetTypeEnum.PICK_RANDOM:
 				moveset_array.append(attack)
 				return 
 				
-			MOVESET_TYPE_ENUM.PREDETERMINED_ORDER:
+			MovesetTypeEnum.PREDETERMINED_ORDER:
 				moveset_array.append(attack)
 				return
 			_:
@@ -481,21 +480,27 @@ func set_condition_check_functions_based_on_conditions() -> void:
 	# and then appends the function that checks for that specific condition to the list_of_check_functions array.
 	for condition in conditions_and_targets_dict.keys():
 		match condition:
-			STATE_CHANGE_CONDITION.AFTER_PLAYER_TIRED:
+			StateChangeConditionEnum.AFTER_PLAYER_TIRED:
 				list_of_check_functions.append(check_player_tired)
-			STATE_CHANGE_CONDITION.AFTER_PLAYER_NOT_TIRED:
+				
+			StateChangeConditionEnum.AFTER_PLAYER_NOT_TIRED:
 				list_of_check_functions.append(check_player_not_tired)
-			STATE_CHANGE_CONDITION.AT_ROUND_TIME:
+				
+			StateChangeConditionEnum.AT_ROUND_TIME:
 				list_of_check_functions.append(check_round_time)
-			STATE_CHANGE_CONDITION.AFTER_TIME_PASSED:
+				
+			StateChangeConditionEnum.AFTER_TIME_PASSED:
 				list_of_check_functions.append(check_time_has_passed)
-			STATE_CHANGE_CONDITION.AFTER_HEALTH_DROPS_BELOW:
+				
+			StateChangeConditionEnum.AFTER_HEALTH_DROPS_BELOW:
 				list_of_check_functions.append(check_enemy_health)
-			STATE_CHANGE_CONDITION.AFTER_COMPLETION, STATE_CHANGE_CONDITION.STATE_INTERRUPTED:
+				
+			StateChangeConditionEnum.AFTER_COMPLETION, StateChangeConditionEnum.STATE_INTERRUPTED:
 				list_of_check_functions.append(check_state_completion)
-			#STATE_CHANGE_CONDITION:
+				
+			#StateChangeConditionEnum:
 				#list_of_check_functions.append()
-			#STATE_CHANGE_CONDITION:
+			#StateChangeConditionEnum:
 				#list_of_check_functions.append()
 				
 	return
@@ -504,10 +509,20 @@ func set_condition_check_functions_based_on_conditions() -> void:
 #region Timer Related Functions
 ## Function that helps create a custom [Timer]. Since it returns a [Timer], it should be used to assign a timer to a variable.
 func create_timer(timer_name : String, one_shot : bool, wait : float) -> Timer:
+	
+	# Creates a new timer node
 	var created_timer = Timer.new()
+	
+	# Names the timer so that it can be readable in the remote tab.
 	created_timer.name = str(timer_name)
+	
+	# Sets the one shot parameter
 	created_timer.one_shot = one_shot
+	
+	# Sets the wait time of the timer
 	created_timer.wait_time = wait
+	
+	# Returns the final timer.
 	return created_timer
 
 ## Starts the [member attack_delay_timer] using a random time value.
@@ -520,11 +535,11 @@ func start_attack_delay_timer() -> void:
 		return
 	
 	match attack_delay_type: # Matches the selected attack delay type
-		ATTACK_DELAY.FLOAT:
+		AttackDelayTypeEnum.FLOAT:
 			attack_timer.start(randf_range(min_delay_time, max_delay_time)) # Sets the time as a random float value between the minimum and maximum values.
 			return
 			
-		ATTACK_DELAY.PREDETERMINED:
+		AttackDelayTypeEnum.PREDETERMINED:
 			attack_timer.start(attack_delay_array.pick_random()) # Randomly chooses one of the values in the attack delay array.
 			return
 			
@@ -535,24 +550,24 @@ func start_attack_delay_timer() -> void:
 ## Handle attack delay times after a block.
 func handle_block() -> void:
 	match block_behavior:
-		BLOCK_BEHAVIOR_ENUM.RESET_TIMER:  # Restarts the attack timer on Block.
+		BlockBehaviorEnum.RESET_TIMER:  # Restarts the attack timer on Block.
 			await animation_tree.animation_finished
 			start_attack_delay_timer()
 			return
 			
-		BLOCK_BEHAVIOR_ENUM.PAUSE_TIMER: # Briefly pauses the attack timer on Block.
+		BlockBehaviorEnum.PAUSE_TIMER: # Briefly pauses the attack timer on Block.
 			if attack_timer != null : # Checks if the attack timer even exists.
 				attack_timer.paused = true # Pauses the timer briefly while the block animation plays
 				await animation_tree.animation_finished
 				attack_timer.paused = false
 			return
 		
-		BLOCK_BEHAVIOR_ENUM.COUNTER_ATTACK:
+		BlockBehaviorEnum.COUNTER_ATTACK:
 			await animation_tree.animation_finished
 			play_attack_start_attack_timer(counter_attack)
 			return
 		
-		BLOCK_BEHAVIOR_ENUM.NOT_APPLICABLE: # If it's not applicable, do nothing.
+		BlockBehaviorEnum.NOT_APPLICABLE: # If it's not applicable, do nothing.
 			return
 
 ## Toggles on and off the [member state_change_timer] when entering and exiting the state.
@@ -590,14 +605,14 @@ func check_all_assigned_conditions() -> void:
 func check_round_time() -> bool:
 	if FightManager.round_time >= target_round_time:
 		prints(FightManager.round_time, target_round_time)
-		condition_match_direct_transition(STATE_CHANGE_CONDITION.AT_ROUND_TIME)
+		condition_match_direct_transition(StateChangeConditionEnum.AT_ROUND_TIME)
 		return true
 	return false
 
 ## Checks to see if the enemy's HP has dropped below the [member target_hp]
 func check_enemy_health() -> bool:
 	if health_component.hp <= target_hp:
-		condition_match_direct_transition(STATE_CHANGE_CONDITION.AFTER_HEALTH_DROPS_BELOW)
+		condition_match_direct_transition(StateChangeConditionEnum.AFTER_HEALTH_DROPS_BELOW)
 		return true
 	return false
 
@@ -605,31 +620,31 @@ func check_enemy_health() -> bool:
 func check_time_has_passed() -> bool:
 	#print("timepased")
 	if state_change_timer == null:
-		if STATE_CHANGE_CONDITION.AFTER_TIME_PASSED in conditions_and_targets_dict.keys() : # Checks if not having a state change timer is intended behavior.
+		if StateChangeConditionEnum.AFTER_TIME_PASSED in conditions_and_targets_dict.keys() : # Checks if not having a state change timer is intended behavior.
 			printerr(self.name, " has no State Change timer but is calling the check_time_has_passed() function")
 		return false
 	if state_change_timer.time_left == 0.0 :
-		condition_match_direct_transition(STATE_CHANGE_CONDITION.AFTER_TIME_PASSED)
+		condition_match_direct_transition(StateChangeConditionEnum.AFTER_TIME_PASSED)
 		return true
 	return false
 
 ## Checks to see if the [Enemy] is set to change condition after stun.
 func check_state_after_stun() -> void:
-	condition_match_change_interrupted_state(STATE_CHANGE_CONDITION.AFTER_STUN)
+	condition_match_change_interrupted_state(StateChangeConditionEnum.AFTER_STUN)
 	transition_to_stunned()
 	return
 
 ## Checks the [Player] [member FightManager.Stamina] and then transitions to target state once it's zero.
 func check_player_tired() -> bool:
 	if FightManager.stamina <= 0 :
-		condition_match_direct_transition(STATE_CHANGE_CONDITION.AFTER_PLAYER_TIRED)
+		condition_match_direct_transition(StateChangeConditionEnum.AFTER_PLAYER_TIRED)
 		return true
 	return false
 
 ## Checks the [Player] [member FightManager.Stamina] and then transitions to target state once it's NOT zero.
 func check_player_not_tired() -> bool: 
 	if FightManager.stamina > 0 :
-		condition_match_direct_transition(STATE_CHANGE_CONDITION.AFTER_PLAYER_NOT_TIRED)
+		condition_match_direct_transition(StateChangeConditionEnum.AFTER_PLAYER_NOT_TIRED)
 		return true
 	return false
 
@@ -637,11 +652,11 @@ func check_player_not_tired() -> bool:
 func check_state_completion() -> bool:
 	if anim_state_machine.get_current_node() in ["End", "idle"] :
 		if interruption_status == true :
-			condition_match_direct_transition(STATE_CHANGE_CONDITION.STATE_INTERRUPTED)
+			condition_match_direct_transition(StateChangeConditionEnum.STATE_INTERRUPTED)
 			return true
 			
 		elif interruption_status == false :
-			condition_match_direct_transition(STATE_CHANGE_CONDITION.AFTER_COMPLETION)
+			condition_match_direct_transition(StateChangeConditionEnum.AFTER_COMPLETION)
 			return true
 	return false
 
@@ -649,12 +664,12 @@ func check_state_completion() -> bool:
 func check_for_knockdowns() -> bool:
 	match true:
 		Global.enemy_node.is_knocked_down:
-			condition_match_change_interrupted_state(STATE_CHANGE_CONDITION.AFTER_ENEMY_KNOCKED_DOWN)
+			condition_match_change_interrupted_state(StateChangeConditionEnum.AFTER_ENEMY_KNOCKED_DOWN)
 			transition_to_target(state_machine.knocked_down_state)
 			return true
 			
 		Global.player_node.is_knocked_down:
-			condition_match_change_interrupted_state(STATE_CHANGE_CONDITION.AFTER_PLAYER_KNOCKED_DOWN)
+			condition_match_change_interrupted_state(StateChangeConditionEnum.AFTER_PLAYER_KNOCKED_DOWN)
 			transition_to_target(state_machine.spectating_state)
 			return true
 	return false
@@ -667,7 +682,7 @@ func condition_match_direct_transition(condition : int) -> void:
 	# Iterates through the conditions_and_targets_dict instead of matching since its much easier to scale amount of possible conditions and target states.
 	for key in conditions_and_targets_dict.keys() : 
 		if key == condition :
-			print("Condition Met: ", STATE_CHANGE_CONDITION.find_key(condition))
+			print("Condition Met: ", StateChangeConditionEnum.find_key(condition))
 			#print("Target state: ", conditions_and_targets_dict[key].name)
 			
 			set_and_check_interrupted_state(conditions_and_targets_dict[key]) # Sets interrupted state as a fallback.
@@ -683,7 +698,7 @@ func condition_match_change_interrupted_state(condition : int) -> void:
 	# Iterates through the conditions_and_targets_dict instead of matching since its much easier to scale amount of possible conditions and target states.
 	for key in conditions_and_targets_dict.keys(): 
 		if key == condition:
-			#print("Condition Met: ", STATE_CHANGE_CONDITION.find_key(condition))
+			#print("Condition Met: ", StateChangeConditionEnum.find_key(condition))
 			
 			set_and_check_interrupted_state(conditions_and_targets_dict[key])
 			
@@ -698,7 +713,7 @@ func condition_match_change_interrupted_state(condition : int) -> void:
 ## State machine as an argument instead of the root state machine.
 func add_attack_animation_nodes(root_node : AnimationRootNode, moveset : Array[String]) -> void:
 	
-	var new_origin = node_position_origin + (self.get_index() * node_positional_offset)
+	var new_origin = NODE_POSITION_ORIGIN + (self.get_index() * NODE_POSITIONAL_OFFSET)
 	
 	if root_node.has_node("hub_node") == false:
 		printerr(self.name, ': ROOT state machine does NOT have a "hub_node" to attach the attacks to.')
@@ -736,7 +751,7 @@ func add_attack_animation_nodes(root_node : AnimationRootNode, moveset : Array[S
 ## State machine as an argument instead of the root state machine.
 func add_chained_attack_animation_nodes(root_node : AnimationRootNode, moveset : Array[String]) -> void:
 	
-	var new_origin = node_position_origin + (self.get_index() * node_positional_offset)
+	var new_origin = NODE_POSITION_ORIGIN + (self.get_index() * NODE_POSITIONAL_OFFSET)
 	
 	if root_node.has_node("hub_node") == false:
 		printerr(self.name, ': ROOT state machine does NOT have a "hub_node" to attach the attacks to.')
@@ -930,15 +945,15 @@ func toggle_stunned_signal_connections() -> void:
 ## Performs an action/animation/attack after the [member attack_delay_timer] has finished.
 func perform_action() -> void:
 	match moveset_type:
-		MOVESET_TYPE_ENUM.WEIGHTED_DICTIONARY:
+		MovesetTypeEnum.WEIGHTED_DICTIONARY:
 			play_attack_start_attack_timer(get_weighted_choice(moveset_dictionary))
 			return
 			
-		MOVESET_TYPE_ENUM.PICK_RANDOM:
+		MovesetTypeEnum.PICK_RANDOM:
 			play_attack_start_attack_timer(moveset_array.pick_random())
 			return
 			
-		MOVESET_TYPE_ENUM.PREDETERMINED_ORDER:
+		MovesetTypeEnum.PREDETERMINED_ORDER:
 			moveset_index = (moveset_index + 1) % moveset_array.size() # Wraps back to 0 if it reaches the end.
 			play_attack_start_attack_timer(moveset_array[moveset_index])
 			return
@@ -999,26 +1014,26 @@ func _validate_property(property : Dictionary) -> void:
 	set_conditions_and_targets_dictionary()
 	var conditions : Array = conditions_and_targets_dict.keys() # Grabs all of the conditions and puts them in an array for easier checking.
 
-	if property.name == "target_round_time" and STATE_CHANGE_CONDITION.AT_ROUND_TIME not in conditions:
+	if property.name == "target_round_time" and StateChangeConditionEnum.AT_ROUND_TIME not in conditions:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "time_to_change_state" and STATE_CHANGE_CONDITION.AFTER_TIME_PASSED not in conditions:
+	if property.name == "time_to_change_state" and StateChangeConditionEnum.AFTER_TIME_PASSED not in conditions:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "state_change_timer" and STATE_CHANGE_CONDITION.AFTER_TIME_PASSED not in conditions:
+	if property.name == "state_change_timer" and StateChangeConditionEnum.AFTER_TIME_PASSED not in conditions:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "target_hp" and STATE_CHANGE_CONDITION.AFTER_HEALTH_DROPS_BELOW not in conditions:
+	if property.name == "target_hp" and StateChangeConditionEnum.AFTER_HEALTH_DROPS_BELOW not in conditions:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "attack_delay_array" and attack_delay_type == ATTACK_DELAY.FLOAT:
+	if property.name == "attack_delay_array" and attack_delay_type == AttackDelayTypeEnum.FLOAT:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "max_delay_time" and attack_delay_type == ATTACK_DELAY.PREDETERMINED:
+	if property.name == "max_delay_time" and attack_delay_type == AttackDelayTypeEnum.PREDETERMINED:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "min_delay_time" and attack_delay_type == ATTACK_DELAY.PREDETERMINED:
+	if property.name == "min_delay_time" and attack_delay_type == AttackDelayTypeEnum.PREDETERMINED:
 		property.usage = PROPERTY_USAGE_NONE
 		
-	if property.name == "primary_target_state" and primary_condition == STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
+	if property.name == "primary_target_state" and primary_condition == StateChangeConditionEnum.DO_NOT_CHANGE:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "secondary_target_state" and secondary_condition == STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
+	if property.name == "secondary_target_state" and secondary_condition == StateChangeConditionEnum.DO_NOT_CHANGE:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "tertiary_target_state" and tertiary_condition == STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
+	if property.name == "tertiary_target_state" and tertiary_condition == StateChangeConditionEnum.DO_NOT_CHANGE:
 		property.usage = PROPERTY_USAGE_NONE
 		
 		
@@ -1030,17 +1045,17 @@ func _validate_property(property : Dictionary) -> void:
 		property.usage = PROPERTY_USAGE_NONE
 	if property.name == "attack_delay_array" and attack_timer_required == false:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "moveset_dictionary" and moveset_type != MOVESET_TYPE_ENUM.WEIGHTED_DICTIONARY:
+	if property.name == "moveset_dictionary" and moveset_type != MovesetTypeEnum.WEIGHTED_DICTIONARY:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "moveset_array" and moveset_type not in [MOVESET_TYPE_ENUM.PICK_RANDOM, MOVESET_TYPE_ENUM.PREDETERMINED_ORDER]:
+	if property.name == "moveset_array" and moveset_type not in [MovesetTypeEnum.PICK_RANDOM, MovesetTypeEnum.PREDETERMINED_ORDER]:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "secondary_condition" and primary_condition == STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
+	if property.name == "secondary_condition" and primary_condition == StateChangeConditionEnum.DO_NOT_CHANGE:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "tertiary_condition" and secondary_condition == STATE_CHANGE_CONDITION.DO_NOT_CHANGE:
+	if property.name == "tertiary_condition" and secondary_condition == StateChangeConditionEnum.DO_NOT_CHANGE:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "counter_attack" and block_behavior != BLOCK_BEHAVIOR_ENUM.COUNTER_ATTACK:
+	if property.name == "counter_attack" and block_behavior != BlockBehaviorEnum.COUNTER_ATTACK:
 		property.usage = PROPERTY_USAGE_NONE
-	if property.name == "target_damage_taken" and STATE_CHANGE_CONDITION.AFTER_TAKEN_AMOUNT_OF_DAMAGE not in conditions:
+	if property.name == "target_damage_taken" and StateChangeConditionEnum.AFTER_TAKEN_AMOUNT_OF_DAMAGE not in conditions:
 		property.usage = PROPERTY_USAGE_NONE
 	
 	#Global.exported_properties_changed_signal.emit()
