@@ -40,16 +40,12 @@ var allow_inputs : bool = false
 
 func _ready() -> void:
 	# Creates a new input buffer Timer on ready
-	input_buffer_timer = Timer.new()
-	input_buffer_timer.one_shot = true
-	input_buffer_timer.wait_time = buffer_time
+	input_buffer_timer = TimerCreator.create_timer("InputBufferTimer", true, buffer_time, false)
 	input_buffer_timer.timeout.connect(_on_input_buffer_timer_timeout)
 	add_child(input_buffer_timer)
 	
 	# Creates the parry timer
-	parry_timer = Timer.new()
-	parry_timer.one_shot = true
-	parry_timer.wait_time = parry_window
+	parry_timer = TimerCreator.create_timer("ParryTimer", true, parry_window, false)
 	add_child(parry_timer)
 	
 	FightManager.final_stun_hit_signal.connect(final_stun_hit)

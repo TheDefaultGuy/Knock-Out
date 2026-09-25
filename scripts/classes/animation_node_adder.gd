@@ -1,4 +1,6 @@
-class_name AnimationNodeAdder extends Node
+class_name AnimationNodeManager extends Node
+## Class that has static functions that are in charge of adding the attack animations to the animation tree.
+
 
 #region Constants
 ## Offset added to each animation node's position so that they dont all overlap.
@@ -7,17 +9,18 @@ const NODE_POSITIONAL_OFFSET := Vector2(175.0, 0.0)
 ## The point in the animation tree where the nodes will be added.
 const NODE_POSITION_ORIGIN := Vector2(-1000.0,-500.0) 
 #endregion
+
 #region Add Attack Animation Nodes Functions
 
 ## Automatically adds all of the attack names as nodes in the animation tree.
 ## Theoretically allows attack animations to be in nested nodes by giving it the nested
 ## State machine as an argument instead of the root state machine.
-func add_attack_animation_nodes(root_node : AnimationRootNode, moveset : Array[String], animation_player : AnimationPlayer) -> void:
+static func add_attack_animation_nodes(root_node : AnimationRootNode, moveset : Array[String], animation_player : AnimationPlayer, calling_state : State) -> void:
 	
-	var new_origin = NODE_POSITION_ORIGIN + (self.get_index() * NODE_POSITIONAL_OFFSET)
+	var new_origin = NODE_POSITION_ORIGIN + (calling_state.get_index() * NODE_POSITIONAL_OFFSET)
 	
 	if root_node.has_node("hub_node") == false:
-		printerr(self.name, ': ROOT state machine does NOT have a "hub_node" to attach the attacks to.')
+		printerr(calling_state.name, ': ROOT state machine does NOT have a "hub_node" to attach the attacks to.')
 		return
 		
 	array_remove_empty_entries(moveset) # Removes any empty entries to avoid any problems.
@@ -27,7 +30,7 @@ func add_attack_animation_nodes(root_node : AnimationRootNode, moveset : Array[S
 		
 		# If there is already an Animation node with that animation name, skip it.
 		if root_node.has_node(str(attack)): 
-			print("Already has the following animation: ", attack)
+			#print("Already has the following animation: ", attack)
 			continue
 		if attack == "": # Catches empty strings
 			continue
@@ -50,12 +53,12 @@ func add_attack_animation_nodes(root_node : AnimationRootNode, moveset : Array[S
 ## Automatically adds all of the attack names as nodes in the animation tree.
 ## Theoretically allows attack animations to be in nested nodes by giving it the nested
 ## State machine as an argument instead of the root state machine.
-func add_chained_attack_animation_nodes(root_node : AnimationRootNode, moveset : Array[String], animation_player : AnimationPlayer) -> void:
+static func add_chained_attack_animation_nodes(root_node : AnimationRootNode, moveset : Array[String], animation_player : AnimationPlayer, calling_state : State) -> void:
 	
-	var new_origin = NODE_POSITION_ORIGIN + (self.get_index() * NODE_POSITIONAL_OFFSET)
+	var new_origin = NODE_POSITION_ORIGIN + (calling_state.get_index() * NODE_POSITIONAL_OFFSET)
 	
 	if root_node.has_node("hub_node") == false:
-		printerr(self.name, ': ROOT state machine does NOT have a "hub_node" to attach the attacks to.')
+		printerr(calling_state.name, ': ROOT state machine does NOT have a "hub_node" to attach the attacks to.')
 		return
 	
 	array_remove_empty_entries(moveset) # Removes any empty entries to avoid any problems.
@@ -66,7 +69,7 @@ func add_chained_attack_animation_nodes(root_node : AnimationRootNode, moveset :
 	var reveresed_moveset = moveset.duplicate()
 	reveresed_moveset.reverse()
 	
-	var modified_moveset : Array = format_moveset_for_unique_names(reveresed_moveset)
+	var modified_moveset : Array = format_moveset_for_unique_names(reveresed_moveset, calling_state)
 	
 	# Adds the "hub_node" so that it can be connected to it.
 	var node_array : Array = ["hub_node"]
@@ -98,11 +101,11 @@ func add_chained_attack_animation_nodes(root_node : AnimationRootNode, moveset :
 			root_node.call_deferred("add_transition", str(modified_moveset[i]) , "hub_node", create_node_transition(AnimationNodeStateMachineTransition.ADVANCE_MODE_DISABLED))
 	return
 
-func format_moveset_for_unique_names(array : Array) -> Array:
+static func format_moveset_for_unique_names(array : Array, calling_state : State) -> Array:
 	var modified_arr : Array = []
 	
 	for i in range(array.size()): # Formats the names so that they're all unique.
-		modified_arr.append(str(abs(i - array.size()), "_", get_index(), "_") + str(array[i]))
+		modified_arr.append(str(abs(i - array.size()), "_", calling_state.get_index(), "_") + str(array[i]))
 	return modified_arr
 
 ## Short little function that removes any duplicate entries in an Array.
@@ -114,7 +117,7 @@ static func array_remove_duplicates(array: Array) -> Array:
 	return output
 
 ## Short little function that removes any empty entries in an Array.
-func array_remove_empty_entries(array: Array) -> Array:
+static func array_remove_empty_entries(array: Array) -> Array:
 	var output : Array = []
 	for element in array:
 		if element != "" or element != null:
@@ -163,3 +166,43 @@ static func match_animation_library(attack : String, animation_player : Animatio
 	printerr("Given attack animation name is not in any animation library: ", attack)
 	return attack
 #endregion
+
+
+## Deletes all of the animation nodes.
+static func delete_attack_animation_nodes(root_animation_state_machine : AnimationRootNode, calling_object : Object) -> void:
+	
+	# Only run the function with the Enemy class
+	if calling_object.owner is Enemy == false: 
+		return
+		
+	var nodes_to_delete_in_root : Array = get_nodes_for_deletion(root_animation_state_machine, calling_object)
+	
+	for node in nodes_to_delete_in_root: 
+		root_animation_state_machine.remove_node(node)
+		
+
+
+## Grabs all of the nodes that connect TO the "hub_node" inside of the given Animation Node State Machine
+## Then it removes their transitions and returns all of the nodes as an array.
+## The nodes themselves get deleted later since some nodes can be NESTED state machines
+## and have to go through their own checks.
+static func get_nodes_for_deletion(state_machine_node : AnimationNodeStateMachine, calling_object : Object) -> Array:
+	
+	# Only run the function with the Enemy class
+	if calling_object.owner is Enemy == false:
+		return []
+	
+	var transitions_to_remove : Array = []
+	var nodes_to_remove : Array = []
+	
+	for i in range(state_machine_node.get_transition_count()):
+		var from_node : StringName = state_machine_node.get_transition_from(i)
+		var to_node : StringName = state_machine_node.get_transition_to(i)
+		
+		if to_node == "hub_node":
+			transitions_to_remove.append({"from": str(from_node), "to": str(to_node)})
+			
+	for trans in transitions_to_remove:
+		state_machine_node.remove_transition(trans["from"], trans["to"])
+		nodes_to_remove.append(trans["from"])
+	return nodes_to_remove

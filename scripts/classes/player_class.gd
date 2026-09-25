@@ -6,14 +6,14 @@ class_name Player extends Fighter
 @onready var input_component: InputComponent = %InputComponent
 
 
-func _init() -> void:
-	if defense_component == null:
+func _ready() -> void:
+	if defense_component == null and self.get_script() != Fighter:
 		printerr(self.name, " doesn't have a Defense Component assigned.")
-	if attacking_component == null:
+	if attacking_component == null and self.get_script() != Fighter:
 		printerr(self.name, " doesn't have an Attacking Component assigned.")
-	if health_component == null:
+	if health_component == null and self.get_script() != Fighter:
 		printerr(self.name, " doesn't have a Health Component assigned.")
-	if animation_tree == null:
+	if animation_tree == null and self.get_script() != Fighter:
 		printerr(self.name, " doesn't have an Animation Tree assigned.")
 	else:
 		animation_tree.process_priority = -1 # Sets the process priority of the Animation tree lower so that it RUNS BEFORE other nodes in the tree. 

@@ -4029,7 +4029,7 @@ tracks/10/keys = {
 
 [sub_resource type="Animation" id="Animation_ssxbu"]
 resource_name = "jab_low"
-length = 1.1333333
+length = 1.5666667
 tracks/0/type = "method"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -8608,7 +8608,6 @@ animation = &"idle"
 [node name="DefenseComponent" type="Node" parent="." unique_id=2045134485]
 unique_name_in_owner = true
 script = ExtResource("12_qdshv")
-dodge_position = 0
 metadata/_custom_type_script = "uid://dq3iqh3osri6o"
 
 [node name="HealthComponent" type="Node" parent="." unique_id=178305711]
@@ -8679,10 +8678,11 @@ tertiary_condition = 1
 primary_target_state = NodePath("../../ItemHeal2")
 secondary_target_state = NodePath("../../ItemHeal2")
 tertiary_target_state = NodePath("../../TauntAndCounter")
-time_to_change_state = 1.0
+target_round_time = 75.0
+time_to_change_state = 90.0
 target_hp = 70.0
 moveset_type = 1
-moveset_array = Array[String](["jab_high", "jab_low"])
+moveset_array = Array[String](["jab_low", "jab_high"])
 min_delay_time = 0.6
 max_delay_time = 1.8
 metadata/_custom_type_script = "uid://dy765alksxcdx"
@@ -8830,9 +8830,7 @@ metadata/_custom_type_script = "uid://c4q24a656iry7"
 
 [node name="PickRandomState" type="Node" parent="StateMachine" unique_id=1214821543]
 script = ExtResource("61_f4x83")
-primary_condition = 9
-secondary_condition = 9
-tertiary_condition = 9
+primary_condition = 11
 moveset_type = 3
 block_behavior = 3
 metadata/_custom_type_script = "uid://bsaimsql061lj"

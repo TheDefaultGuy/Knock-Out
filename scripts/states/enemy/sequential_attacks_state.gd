@@ -47,7 +47,7 @@ func enter() -> void:
 	var reversed_moveset = moveset_array.duplicate()
 	reversed_moveset.reverse()
 	
-	modified_moveset = format_moveset_for_unique_names(reversed_moveset)
+	modified_moveset = AnimationNodeManager.format_moveset_for_unique_names(reversed_moveset, self)
 	modified_moveset.reverse()
 	
 	# Travels to the first attack/animation

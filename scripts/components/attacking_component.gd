@@ -90,6 +90,7 @@ func punch(input_node : Node2D, punch_height : int, punch_range : int, attack_da
 				# Resets the number of stars used back to zero
 				FightManager.stars_used = 0
 			
+			
 			FightManager.succesful_hit_signal.emit() 
 			return defense_response
 		

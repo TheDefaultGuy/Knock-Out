@@ -97,9 +97,6 @@ var blocking_array : Array[bool] = [lower_blocking_status, upper_blocking_status
 var star_window_array : Array[bool] = [lower_star_window, upper_star_window]
 #endregion
 
-#func _init() -> void:
-	#self.process_priority = -2
-
 func _ready() -> void:
 	if owner is Enemy: # Enemies can't get hurt when they block.
 		blocking_damage_multiplier = 0
@@ -129,14 +126,9 @@ func check_defense(punch_height : int, punch_range : int, damage_amount : float,
 		
 	else:
 		match punch_height:
-			Global.HeightEnum.BOTH: # Checks to see if it's an attack that covers both heights.
-				
-				# If HealthComponent calculates the health and it returns as <= 0, then that means they're knocked down.
-				if owner.health_component.handle_damage_and_knockdown(damage_amount, 1.0, punch_height, punch_direction) == false:
-					owner.animation_component.set_animation_2d_blend(current_hit_animation, Vector2i(punch_direction, punch_height))
-					owner.animation_component.play_animation(current_hit_animation)
-					
-				return true
+			# Checks to see if it's an attack that covers both heights.
+			Global.HeightEnum.BOTH: 
+				return choose_hit_region(punch_height, damage_amount, punch_direction)
 				
 			_: 
 				return await check_blocking_status(blocking_array[punch_height], damage_amount, punch_height, punch_direction, punch_range)
@@ -206,6 +198,8 @@ func handle_player_blocking_and_parry(damage_amount : float, punch_height : int,
 ## Chooses which region the attack landed and does calls all of the pertinent functions.
 func choose_hit_region(punch_height : int, damage_amount : float, punch_direction : int) -> bool:
 	
+	punch_height = clampi(punch_height, 0, 1) # Clamps it to either 1 or 0 cause 2 is a possible input.
+	
 	hit_registered_signal.emit() # Emits that a hit has been registered.
 	print_rich("[color=gray][b]Defense Component:[/b][/color] Hit registered.")
 	
@@ -223,6 +217,7 @@ func choose_hit_region(punch_height : int, damage_amount : float, punch_directio
 			# Punches dealing more than 15.0 are considered star punches for sake of simplicity.
 			owner.hit_by_star_punch_signal.emit() 
 	
+	
 	if owner.health_component.handle_damage_and_knockdown(damage_amount, multiplier_array[punch_height], punch_height, punch_direction) == true:
 		return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
 	
@@ -232,7 +227,26 @@ func choose_hit_region(punch_height : int, damage_amount : float, punch_directio
 	# Actually starts the hit animation.
 	owner.animation_component.play_animation(current_hit_animation)
 	
+	shorten_enemy_attack_animation()
+	
 	return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
+## Shortens the [Enemy] attack animation if the player was hit 
+## this is to prevent the player being able to hit the enemy after getting hit due to long animations.
+func shorten_enemy_attack_animation() -> void:
+	if owner is Player:
+		
+		# Waits until the player's hit animation is finished.
+		await owner.animation_tree.animation_finished
+		
+		# Sets the next animation to play
+		Global.enemy_node.anim_state_machine.travel("hub_node")
+		
+		# Travels to the next animation that was set above.
+		Global.enemy_node.anim_state_machine.next()
+		
+		# Restarts the attack delay timer, otherwise it'll never attack again.
+		Global.enemy_node.state_machine.current_state.start_attack_delay_timer()
+
 
 ## Checks to see if the attack can be rewarded a star and if the [Enemy] enters [StunState]. 
 ##

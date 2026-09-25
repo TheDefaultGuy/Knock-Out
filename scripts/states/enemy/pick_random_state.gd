@@ -17,9 +17,9 @@ func override_conditions_and_state_parameters() -> void:
 	
 	moveset_type = MovesetTypeEnum.NOT_APPLICABLE
 	attack_timer_required = false
-	primary_condition = StateChangeConditionEnum.AFTER_COMPLETION
-	secondary_condition = StateChangeConditionEnum.AFTER_COMPLETION
-	tertiary_condition = StateChangeConditionEnum.AFTER_COMPLETION
+	primary_condition = StateChangeConditionEnum.DO_NOT_CHANGE
+	secondary_condition = StateChangeConditionEnum.DO_NOT_CHANGE
+	tertiary_condition = StateChangeConditionEnum.DO_NOT_CHANGE
 	
 	block_behavior = BlockBehaviorEnum.NOT_APPLICABLE
 	
@@ -45,13 +45,7 @@ func enter() -> void:
 	
 ## Sets the required conditions as Read Only so that they can't be changed.
 func _validate_property(property : Dictionary) -> void:
-	if property.name == "primary_target_state" :
-		property.usage |= PROPERTY_USAGE_DEFAULT
-	if property.name == "secondary_target_state" :
-		property.usage |= PROPERTY_USAGE_DEFAULT
-	if property.name == "tertiary_target_state" :
-		property.usage |= PROPERTY_USAGE_DEFAULT
-		
+
 	if property.name == "primary_condition" :
 		property.usage |= PROPERTY_USAGE_READ_ONLY
 	if property.name == "secondary_condition" :
@@ -64,3 +58,9 @@ func _validate_property(property : Dictionary) -> void:
 	if property.name == "moveset_type" :
 		property.usage |= PROPERTY_USAGE_READ_ONLY
 	super(property) # Calls the base EnemyState function right after.
+	if property.name == "primary_target_state" :
+		property.usage = PROPERTY_USAGE_DEFAULT
+	if property.name == "secondary_target_state" :
+		property.usage = PROPERTY_USAGE_DEFAULT
+	if property.name == "tertiary_target_state" :
+		property.usage = PROPERTY_USAGE_DEFAULT

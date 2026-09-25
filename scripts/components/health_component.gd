@@ -2,8 +2,8 @@
 class_name HealthComponent extends Node
 ## The component that handles Health Points and any calculations related to it.
 ## 
-## Mainly called upon by the defense component.
-## Has the responsability of chacking if the fighter is knocked-down or not.
+## Mainly called upon by the [DefenseComponent].
+## Has the responsability of chacking if the [Fighter] is knocked-down or not.
 
 ## Signal emitted when the health value has changed.
 signal health_changed_signal
@@ -24,9 +24,9 @@ signal damage_taken_signal(amount)
 		hp = clampf(value, 0.0, max_hp)
 		health_changed_signal.emit()
 
-func _init() -> void:
-	assert(hp > 0.0, str(owner.name, " HP is negative."))
-	assert(hp > 0.0, str(owner.name, " HP is negative."))
+#func _init() -> void:
+	#assert(hp > 0.0, str(owner.name, " HP is negative."))
+	#assert(hp > 0.0, str(owner.name, " HP is negative."))
 
 func _ready() -> void:
 	max_hp = hp

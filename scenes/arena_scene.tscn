@@ -128,6 +128,7 @@ metadata/_custom_type_script = "uid://c8kyx1g3lvmgb"
 [node name="ParticleEffectComponent" type="Node" parent="." unique_id=1861586519]
 unique_name_in_owner = true
 script = ExtResource("4_4wfwo")
+show_particles = false
 metadata/_custom_type_script = "uid://lks1t1wg7nna"
 
 [node name="FightLogicComponent" type="Node" parent="." unique_id=32840368]

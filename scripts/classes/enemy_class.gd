@@ -17,14 +17,14 @@ var is_stunned : bool = false
 @onready var instant_kd_component: InstantKDComponent = %InstantKDComponent
 @onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
 
-func _init() -> void:
-	if defense_component == null:
+func _ready() -> void:
+	if defense_component == null and self.get_script() != Fighter:
 		printerr(self.name, " doesn't have a Defense Component assigned.")
-	if attacking_component == null:
-		printerr(self.name, " doesn't have an Attacking Component assigned.")
-	if health_component == null:
+	if attacking_component == null and self.get_script() != Fighter:
+		printerr(self, " doesn't have an Attacking Component assigned.")
+	if health_component == null and self.get_script() != Fighter:
 		printerr(self.name, " doesn't have a Health Component assigned.")
-	if animation_tree == null:
+	if animation_tree == null and self.get_script() != Fighter:
 		printerr(self.name, " doesn't have an Animation Tree assigned.")
-	if instant_kd_component == null:
+	if instant_kd_component == null and self.get_script() != Fighter:
 		push_warning(self.name, " doesn't have an Instant KO Component assigned")

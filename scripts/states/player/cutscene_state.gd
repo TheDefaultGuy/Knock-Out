@@ -10,7 +10,7 @@ class_name CutSceneState extends State
 @export var next_state : State
 
 func _ready() -> void:
-	if next_state == null:
+	if next_state == null and state_machine.initial_state == self:
 		push_error(owner.name, " CutScene State: next state not set")
 
 func enter() -> void:

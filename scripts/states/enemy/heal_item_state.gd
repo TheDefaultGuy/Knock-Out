@@ -93,7 +93,6 @@ func check_animation(animation_name : String) -> void:
 	print(intro_animation)
 	match remove_library_preffix(animation_name):
 		intro_animation:
-			print("AWSWEIJHAOI")
 			anim_state_machine.travel(successful_animation)
 			await animation_tree.animation_started
 			return

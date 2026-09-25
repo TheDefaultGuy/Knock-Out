@@ -282,10 +282,11 @@ var damage_taken_so_far : float = 0.0
 var additional_animations_to_add : Array[String] = []
 
 @onready var animation_player: AnimationPlayer = %AnimationPlayer
+
 #endregion
 func _init() -> void:
 	override_conditions_and_state_parameters()
-	check_for_unassigned_variables()
+	#check_for_unassigned_variables()
 	pass
 
 func _enter_tree() -> void:
@@ -311,12 +312,12 @@ func _ready() -> void:
 	set_conditions_and_targets_dictionary()
 	
 	if StateChangeConditionEnum.AFTER_TIME_PASSED in conditions_and_targets_dict.keys():
-		state_change_timer = create_timer("Wait Timer", true, time_to_change_state)
+		state_change_timer = TimerCreator.create_timer("Wait Timer", true, time_to_change_state, false)
 		add_child(state_change_timer)
 		
 	# Creates and adds the attack timer as a child and connects it if it's required for the state.
 	if attack_timer_required == true: 
-		attack_timer = create_timer("Attack Delay Timer", true, max_delay_time)
+		attack_timer = TimerCreator.create_timer("Attack Delay Timer", true, max_delay_time, false)
 		add_child(attack_timer)
 		
 	check_for_unassigned_variables() # Self-explanatory.
@@ -325,11 +326,11 @@ func _ready() -> void:
 	match state_type: 
 		StateTypeEnum.SIMPLE:
 			if moves_arr.is_empty() == false or moves_arr != null :
-				call_deferred("add_attack_animation_nodes", animation_tree.tree_root, moves_arr)
+				Callable(AnimationNodeManager, "add_attack_animation_nodes").call_deferred(animation_tree.tree_root, moves_arr, animation_player, self)
 				
 		StateTypeEnum.CHAINED_ATTACKS:
 			if moves_arr.is_empty() == false or moves_arr != null :
-				call_deferred("add_chained_attack_animation_nodes", animation_tree.tree_root, moves_arr)
+				Callable(AnimationNodeManager, "add_chained_attack_animation_nodes").call_deferred(animation_tree.tree_root, moves_arr, animation_player, self)
 			
 	# Sets the check condition functions that the state will run during process function of that state.
 	set_condition_check_functions_based_on_conditions() 
@@ -392,21 +393,21 @@ func exit() -> void:
 #region Check For Stuff Functions
 ## Checks to see if the user forgot to assign a state when they assigned a condition.
 func check_for_unassigned_variables() -> void:
-	if primary_target_state == null and primary_condition != StateChangeConditionEnum.DO_NOT_CHANGE:
+	if primary_target_state == null and primary_condition != StateChangeConditionEnum.DO_NOT_CHANGE and self.get_script() != EnemyState:
 		push_error(self.name, " : Primary Target State has not been assigned despite having a condition set.")
-	if secondary_target_state == null and secondary_condition != StateChangeConditionEnum.DO_NOT_CHANGE:
+	if secondary_target_state == null and secondary_condition != StateChangeConditionEnum.DO_NOT_CHANGE and self.get_script() != EnemyState:
 		push_warning(self.name, " : Secondary Target State has not been assigned despite having a condition set.")
-	if tertiary_target_state == null and tertiary_condition != StateChangeConditionEnum.DO_NOT_CHANGE:
+	if tertiary_target_state == null and tertiary_condition != StateChangeConditionEnum.DO_NOT_CHANGE and self.get_script() != EnemyState:
 		push_warning(self.name, " : Tertiary Target State has not been assigned despite having a condition set.")
 	return
 
 ## Checks for errors and also returns an array with all of the moves.
 func match_moveset_type() -> Array:
-	if moveset_type == MovesetTypeEnum.WEIGHTED_DICTIONARY and moveset_dictionary.is_empty() == true :
+	if moveset_type == MovesetTypeEnum.WEIGHTED_DICTIONARY and moveset_dictionary.is_empty() == true and self.get_script() != EnemyState :
 		push_error(self.name, " : Moveset Dictionary does NOT contain any attacks.")
-	if moveset_type == MovesetTypeEnum.PICK_RANDOM and moveset_array.is_empty() == true:
+	if moveset_type == MovesetTypeEnum.PICK_RANDOM and moveset_array.is_empty() == true and self.get_script() != EnemyState:
 		push_error(self.name, " : Moveset Array does NOT contain any attacks.")
-	if moveset_type == MovesetTypeEnum.PREDETERMINED_ORDER and moveset_array.is_empty() == true:
+	if moveset_type == MovesetTypeEnum.PREDETERMINED_ORDER and moveset_array.is_empty() == true and self.get_script() != EnemyState:
 		push_error(self.name, " : Moveset Array does NOT contain any attacks.")
 		
 	match moveset_type:
@@ -507,27 +508,6 @@ func set_condition_check_functions_based_on_conditions() -> void:
 #endregion
 
 #region Timer Related Functions
-## Function that helps create a custom [Timer]. Since it returns a [Timer], it should be used to assign a timer to a variable.
-func create_timer(timer_name : String, one_shot : bool, wait : float) -> Timer:
-	
-	# Creates a new timer node
-	var created_timer = Timer.new()
-	
-	# Names the timer so that it can be readable in the remote tab.
-	created_timer.name = str(timer_name)
-	
-	# Sets the one shot parameter
-	created_timer.one_shot = one_shot
-	
-	# Sets the wait time of the timer
-	created_timer.wait_time = wait
-	
-	# Returns the final timer.
-	return created_timer
-
-## Starts the [member attack_delay_timer] using a random time value.
-##
-## This function is called right after performing an attack and after the [Player] or the [Enemy] blocks.
 func start_attack_delay_timer() -> void:
 	
 	 # Checks if the attack timer even exists.
@@ -582,6 +562,7 @@ func toggle_state_change_timer() -> void:
 	if state_change_timer.time_left > 0.0 :
 		state_change_timer.paused = !state_change_timer.paused
 		return
+		
 	elif state_change_timer.time_left == 0.0 :
 		state_change_timer.wait_time = time_to_change_state
 		return
@@ -704,163 +685,6 @@ func condition_match_change_interrupted_state(condition : int) -> void:
 			
 			return # Very important return since multiple conditions can be met.
 
-#endregion
-
-#region Add Attack Animation Nodes Functions
-
-## Automatically adds all of the attack names as nodes in the animation tree.
-## Theoretically allows attack animations to be in nested nodes by giving it the nested
-## State machine as an argument instead of the root state machine.
-func add_attack_animation_nodes(root_node : AnimationRootNode, moveset : Array[String]) -> void:
-	
-	var new_origin = NODE_POSITION_ORIGIN + (self.get_index() * NODE_POSITIONAL_OFFSET)
-	
-	if root_node.has_node("hub_node") == false:
-		printerr(self.name, ': ROOT state machine does NOT have a "hub_node" to attach the attacks to.')
-		return
-		
-	array_remove_empty_entries(moveset) # Removes any empty entries to avoid any problems.
-	
-	# Iterates through each of the attacks in the moveset dictionary to add their animations to the root state machine.
-	for attack in moveset:
-		
-		# If there is already an Animation node with that animation name, skip it.
-		if root_node.has_node(str(attack)): 
-			print("Already has the following animation: ", attack)
-			continue
-		if attack == "": # Catches empty strings
-			continue
-		
-		# Creates a new AnimationNodeAnimation that'll be added to the Root State Machine
-		var node_animation : AnimationNodeAnimation = AnimationNodeAnimation.new()
-		
-		# Sets the Node's animation as the attack animation given.
-		node_animation.animation = match_animation_library(attack)
-		
-		# Adds the state machine as a node in the Root state machine in the animation tree.
-		root_node.add_node(str(attack), node_animation, new_origin) 
-		
-		new_origin += Vector2(0.0, -60.0) # Offsets each node's position so that they dont all overlap in the animation tree.
-		
-		# Connects the animation to the "hub_node", where all attack animations connect to.
-		root_node.call_deferred("add_transition", str(attack), "hub_node", create_node_transition(AnimationNodeStateMachineTransition.ADVANCE_MODE_AUTO))
-	return
-
-## Automatically adds all of the attack names as nodes in the animation tree.
-## Theoretically allows attack animations to be in nested nodes by giving it the nested
-## State machine as an argument instead of the root state machine.
-func add_chained_attack_animation_nodes(root_node : AnimationRootNode, moveset : Array[String]) -> void:
-	
-	var new_origin = NODE_POSITION_ORIGIN + (self.get_index() * NODE_POSITIONAL_OFFSET)
-	
-	if root_node.has_node("hub_node") == false:
-		printerr(self.name, ': ROOT state machine does NOT have a "hub_node" to attach the attacks to.')
-		return
-	
-	array_remove_empty_entries(moveset) # Removes any empty entries to avoid any problems.
-	
-	# Makes a copy of the moveset array and then reverses it so that the attacks get added from last to first.
-	# This is because it'll play the first move in the array, which has to be the last one added so that
-	# It automatically goes to the next one.
-	var reveresed_moveset = moveset.duplicate()
-	reveresed_moveset.reverse()
-	
-	var modified_moveset : Array = format_moveset_for_unique_names(reveresed_moveset)
-	
-	# Adds the "hub_node" so that it can be connected to it.
-	var node_array : Array = ["hub_node"]
-	node_array += modified_moveset
-	
-	# Iterates through each of the attacks in the moveset dictionary to add their animations to the root state machine.
-	for i in range(reveresed_moveset.size()):
-		
-		if reveresed_moveset[i] == "": # Catches empty strings
-			push_warning("add_chained_attack_animation_nodes(): Found an empty string.")
-			continue
-		
-		# Creates a new AnimationNodeAnimation that'll be added to the Root State Machine
-		var node_animation : AnimationNodeAnimation = AnimationNodeAnimation.new()
-		
-		# Sets the Node's animation as the attack animation given.
-		node_animation.animation = match_animation_library(reveresed_moveset[i])
-		
-		
-		# Adds the state machine as a node in the Root state machine in the animation tree.
-		root_node.add_node(str(modified_moveset[i]), node_animation, new_origin) 
-		
-		new_origin += Vector2(0.0, -80.0) # Offsets each node's position so that they dont all overlap in the animation tree.
-		if i == 0:
-			# Connects the animation to the "hub_node", where all attack animations connect to.
-			root_node.call_deferred("add_transition", str(modified_moveset[i]), str(node_array[i]), create_node_transition(AnimationNodeStateMachineTransition.ADVANCE_MODE_AUTO))
-		else:
-			# Adds "Disabled" transitions so that thee nodes can still be easily deleted by the existing function.
-			root_node.call_deferred("add_transition", str(modified_moveset[i]) , "hub_node", create_node_transition(AnimationNodeStateMachineTransition.ADVANCE_MODE_DISABLED))
-	return
-
-func format_moveset_for_unique_names(array : Array) -> Array:
-	var modified_arr : Array = []
-	
-	for i in range(array.size()): # Formats the names so that they're all unique.
-		modified_arr.append(str(abs(i - array.size()), "_", get_index(), "_") + str(array[i]))
-	return modified_arr
-
-## Short little function that removes any duplicate entries in an Array.
-func array_remove_duplicates(array: Array) -> Array:
-	var output : Array = []
-	for element in array: # Loops through the array
-		if not element in output: # Checks if the item isn't in the output Array.
-			output.append(element) # Adds the item to the output Array
-	return output
-
-## Short little function that removes any empty entries in an Array.
-func array_remove_empty_entries(array: Array) -> Array:
-	var output : Array = []
-	for element in array:
-		if element != "" or element != null:
-			output.append(element)
-			continue
-	return output
-
-
-## Creates and returns an Animation Node State Machine Transition.
-func create_node_transition(mode) -> AnimationNodeStateMachineTransition:
-	# Creates the transition that will connect the newly created node to the "hub_node"
-	var connection : AnimationNodeStateMachineTransition = AnimationNodeStateMachineTransition.new()
-	
-	# Sets the transition to happen at the end of the animation.
-	connection.switch_mode = AnimationNodeStateMachineTransition.SWITCH_MODE_AT_END 
-	
-	# Sets the transition to happen automatically.
-	connection.advance_mode = mode
-	return connection
-
-## Formats the string of the given attack animation so that it includes the preffix of the animation Library it belongs to.
-func match_animation_library(attack : String) -> String:
-	if attack == "" or attack == null: # Checks for empty strings and null values.
-		printerr(self.name, ' empty or null attack animation string match_animation_library() function.')
-		return ""
-	
-	for library in animation_player.get_animation_library_list(): # Grabs all of the animation libraries
-		
-		# Grabs the list of animations from each given animation library so that the libraries can be checked one by one.
-		var animation_list = animation_player.get_animation_library(library).get_animation_list()
-		
-		for animation in animation_list: # Iterates through all of the animation in the library/list.
-			
-			if animation == attack: # Checks if the animation matches the attack.
-				
-				if library == "": # If it's the global library, the return the name of the animation without the forward slash "/"
-					return str(animation)
-					
-				# Returns the name of the animation alongside the preffix of the animation library it belongs to.
-				return str(library,"/",animation)
-				
-			continue # Go back to the start of the loop if the given attack name doesn't match the current animation name.
-		
-		continue # Go back to the start of the loop if the given attack name isn't in the current Library.
-		
-	printerr(self.name, " given attack animation name is not in any animation library: ", attack)
-	return attack
 #endregion
 
 #region Transition related functions

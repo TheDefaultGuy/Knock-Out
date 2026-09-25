@@ -64,22 +64,12 @@ func end_fight() -> void:
 func _on_round_timer_timeout() -> void:
 	print("Fight Logic Component: ROUND OVER; TIMES UP")
 
-
-
-
 ## Creates the timers with code so that  you don't have to make a round timer node and then manually assign it.
 func create_timers() -> void:
-	round_timer = Timer.new()
-	round_timer.one_shot = true
-	round_timer.wait_time = owner.match_settings.round_length
-	round_timer.autostart = true
-	round_timer.name = "Round Timer"
+	round_timer = TimerCreator.create_timer("Round Timer", true, owner.match_settings.round_length, true)
 	add_child.call_deferred(round_timer)
 	round_timer.timeout.connect(_on_round_timer_timeout)
 	
-	ko_timer = Timer.new()
-	ko_timer.one_shot = true
-	ko_timer.wait_time = 10.0
-	ko_timer.name = "KO Count Timer"
+	ko_timer = TimerCreator.create_timer("KO Count Timer", true, 10.0, false)
 	add_child.call_deferred(ko_timer)
 	ko_timer.timeout.connect(end_fight)

@@ -116,13 +116,17 @@ func _validate_property(property: Dictionary) -> void:
 		
 #region Ready, Enter, Exit, and Process functions.
 func _ready() -> void:
-	create_timers()
+	
+	stun_timer = TimerCreator.create_timer("Stunned Timer", true, 0.0, false)
+	add_child.call_deferred(stun_timer)
+	
 	# Sets the stun punch length based on the desired behavior.
 	match stun_behavior:
 		StunBehaviorTypeEnum.FIXED_NUMBER_OF_PUNCHES:
 			stun_punch_length = fixed_stun_length
 		StunBehaviorTypeEnum.INCREASING_NUMBER_OF_PUNCHES:
-			stun_punch_length = clamp(min_stun_length - 1, 0, max_stun_length)# minus 1 because the enter functions adds 1.
+			reset_stun_length()
+	
 	dizzy = DIZZY_EFFECT.instantiate()
 	add_child(dizzy)
 	dizzy.position = Vector2(0.0, -84.0)
@@ -130,7 +134,7 @@ func _ready() -> void:
 	dizzy.emitting = true
 	dizzy.visible = false
 	
-	
+
 ## Constantly checks the conditions to change state.
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
@@ -138,14 +142,6 @@ func _process(_delta: float) -> void:
 	if state_machine.current_state == self:
 		check_enemy_health_condition()
 		check_if_stun_over()
-
-## Creates the timers with code so that you don't have to make timer node and then manually assign it.
-func create_timers() -> void:
-	stun_timer = Timer.new()
-	stun_timer.name = "Stunned Timer"
-	stun_timer.autostart = false
-	stun_timer.one_shot = true
-	add_child.call_deferred(stun_timer)
 
 func enter() -> void: # Blank enter and exit functions that get overridden by each state's own custom enter and exit functions.
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
@@ -230,8 +226,11 @@ func transition_to_target() -> void:
 	if anim_state_machine.get_current_node() == "idle": # Checks to see if the enemy is idle so that it doesn't interrupt a hit, block, or any other animation.
 		transition(target_state)
 
+## Resets the [member stun_punch_length] to the [member min_stun_length]
 func reset_stun_length() -> void:
-	pass
+	# Minus 1 because the enter functions adds 1 to the stun length
+	stun_punch_length = clamp(min_stun_length - 1, 0, max_stun_length)
+	
 
 ## Checks the enemy's own HP and transitions to heal state once it reaches it.
 func check_enemy_health_condition() -> void:

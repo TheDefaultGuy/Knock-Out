@@ -18,7 +18,7 @@ func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
 		return
 	if state_machine.current_state == self:
-		#print(self.name)
+		#print(attack_timer.time_left)
 		#print(list_of_check_functions)
 		check_all_assigned_conditions() # Runs all of the check condition functions that apply to this state.
 
