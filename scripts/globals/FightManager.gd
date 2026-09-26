@@ -180,6 +180,9 @@ func _ready() -> void:
 		star_count = 0
 		reset_ko_count()
 		set_stamina()
+		
+	elif OS.is_debug_build() == true:
+		star_count = 3
 
 ## Increases [member enemy_kd_count] by 1.
 func increase_enemy_kd_count() -> void:

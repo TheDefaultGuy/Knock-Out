@@ -9,6 +9,8 @@ const CHARACTER_SELECTION_MENU = preload("uid://bvyokq5qbudmq")
 var round_timer: Timer = null
 var ko_timer: Timer  = null
 
+var can_start_checking : bool = false
+
 @onready var animation_player: AnimationPlayer = %AnimationPlayer
 
 func _ready() -> void:
@@ -20,7 +22,7 @@ func _ready() -> void:
 	
 	call_deferred("create_timers")
 	
-	await get_tree().create_timer(0.4).timeout
+	#await get_tree().create_timer(0.4).timeout
 	
 	time_is_over_signal.connect(_on_round_timer_timeout)
 	
@@ -30,7 +32,7 @@ func _ready() -> void:
 	
 	#owner.arena_ui.time_left_label.text = str("0'00",str(000))
 	
-	start_the_match()
+	#start_the_match()
 
 func _process(_delta: float) -> void:
 	
@@ -48,12 +50,15 @@ func _process(_delta: float) -> void:
 	owner.arena_ui.time_left_label.text = str( "%d'%02d\"%03d" % [minutes, seconds, milliseconds])
 	#prints(round_timer.wait_time, round_timer.time_left)
 	#prints(FightManager.round_time, owner.arena_ui.time_left_label.text)
-	
+	#print(FightManager.is_fight_over)
+	#print(round_timer.is_stopped())
+	#print(round_timer.time_left)
 	#print("Timer Paused?: ", round_timer.paused)
 	#print("Timer Stopped?: ", round_timer.is_stopped())
 	# This is done because the timer label can stop at a number like: 2'59"997
-	if round_timer.time_left <= 0.0009 and round_timer.is_stopped() == false and FightManager.is_fight_over == false:
-		time_is_over_signal.emit()
+	if can_start_checking == true and round_timer.is_stopped() == true:
+		if FightManager.is_fight_over == false:
+			time_is_over_signal.emit()
 	
 	#if ko_timer.is_stopped() == false:
 		#print("KO Timer: ",ko_timer.time_left)
@@ -64,11 +69,12 @@ func toggle_round_timer() -> void:
 	if round_timer.is_stopped() == true:
 		round_timer.start()
 		round_timer.paused = false
+		can_start_checking = true
 		return
 	round_timer.paused = !round_timer.paused
 	
 func start_the_match() -> void:
-	round_timer.paused = false
+	round_timer.paused = true
 	
 func start_ko_count() -> void:
 	

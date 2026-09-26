@@ -2713,7 +2713,7 @@ tracks/6/use_blend = true
 
 [sub_resource type="Animation" id="Animation_ly517"]
 resource_name = "great_tiger_fakeout"
-length = 0.9
+length = 1.1
 tracks/0/type = "method"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -2899,7 +2899,7 @@ tracks/14/path = NodePath("DefenseComponent:upper_star_window")
 tracks/14/interp = 1
 tracks/14/loop_wrap = true
 tracks/14/keys = {
-"times": PackedFloat32Array(0, 0.43333334, 0.9),
+"times": PackedFloat32Array(0, 0.43333334, 1.1),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 1,
 "values": [false, true, false]
@@ -2911,7 +2911,7 @@ tracks/15/path = NodePath("DefenseComponent:lower_star_window")
 tracks/15/interp = 1
 tracks/15/loop_wrap = true
 tracks/15/keys = {
-"times": PackedFloat32Array(0, 0.43333334, 0.9),
+"times": PackedFloat32Array(0, 0.43333334, 1.1),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 1,
 "values": [false, true, false]
@@ -2980,7 +2980,7 @@ tracks/4/path = NodePath("DefenseComponent:stun_window")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"times": PackedFloat32Array(0, 0.9094403),
+"times": PackedFloat32Array(0, 1.3),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [false, true]
@@ -3059,7 +3059,7 @@ tracks/9/path = NodePath("DefenseComponent:upper_invulnerability")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
-"times": PackedFloat32Array(0, 1.3999999),
+"times": PackedFloat32Array(0, 1.5),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [true, false]
@@ -3071,10 +3071,10 @@ tracks/10/path = NodePath("DefenseComponent:lower_invulnerability")
 tracks/10/interp = 1
 tracks/10/loop_wrap = true
 tracks/10/keys = {
-"times": PackedFloat32Array(0, 1.3999999),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0, 0.6333333, 1.2917061, 1.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 1,
-"values": [true, false]
+"values": [true, false, true, false]
 }
 tracks/11/type = "value"
 tracks/11/imported = false
@@ -3087,6 +3087,18 @@ tracks/11/keys = {
 "transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 1,
 "values": [true, false, true, false]
+}
+tracks/12/type = "value"
+tracks/12/imported = false
+tracks/12/enabled = true
+tracks/12/path = NodePath("DefenseComponent:lower_star_window")
+tracks/12/interp = 1
+tracks/12/loop_wrap = true
+tracks/12/keys = {
+"times": PackedFloat32Array(0.6333333, 1.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
 }
 
 [sub_resource type="Animation" id="Animation_2t24a"]
@@ -3280,7 +3292,7 @@ tracks/0/keys = {
 "args": [],
 "method": &"attack_flash"
 }, {
-"args": [0, -1, 20.0, -1],
+"args": [0, -1, 15.0, -1],
 "method": &"send_attack_call"
 }]
 }
@@ -3423,7 +3435,7 @@ tracks/0/keys = {
 "args": [],
 "method": &"attack_flash"
 }, {
-"args": [0, 1, 20.0, 1],
+"args": [0, 1, 15.0, 1],
 "method": &"send_attack_call"
 }]
 }
@@ -3934,10 +3946,10 @@ tracks/5/path = NodePath("DefenseComponent:upper_blocking_status")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
-"times": PackedFloat32Array(0, 1.1),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 1,
-"values": [true, false]
+"values": [false]
 }
 tracks/6/type = "value"
 tracks/6/imported = false
@@ -4009,6 +4021,18 @@ tracks/10/keys = {
 "transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 1,
 "values": [Vector2(0, 3), Vector2(0, 0), Vector2(0, 3), Vector2(0, 0)]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("DefenseComponent:upper_star_window")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(0, 0.56666666),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
 }
 
 [sub_resource type="Animation" id="Animation_ssxbu"]
@@ -8827,13 +8851,12 @@ texture_filter = 1
 material = ExtResource("2_v64oh")
 sprite_frames = SubResource("SpriteFrames_m0jec")
 animation = &"idle"
-frame = 1
 
 [node name="DefenseComponent" type="Node" parent="." unique_id=2045134485]
 unique_name_in_owner = true
 script = ExtResource("12_qdshv")
-upper_blocking_status = true
-lower_blocking_status = true
+upper_invulnerability = true
+lower_invulnerability = true
 metadata/_custom_type_script = "uid://dq3iqh3osri6o"
 
 [node name="HealthComponent" type="Node" parent="." unique_id=178305711]
@@ -8910,8 +8933,9 @@ tertiary_condition = 1
 primary_target_state = NodePath("../Aggressive2")
 secondary_target_state = NodePath("../../ItemHeal2")
 tertiary_target_state = NodePath("../../TauntAndCounter")
-time_to_change_state = 18.0
-target_hp = 70.0
+target_round_time = 23.0
+time_to_change_state = 16.0
+target_hp = 45.0
 moveset_type = 1
 moveset_array = Array[String](["jab_low", "jab_high"])
 min_delay_time = 0.6
@@ -8922,6 +8946,9 @@ metadata/_custom_type_script = "uid://dy765alksxcdx"
 script = ExtResource("44_wdmnt")
 primary_condition = 11
 moveset_type = 1
+moveset_array = Array[String](["jab_high_combo"])
+min_delay_time = 0.3
+max_delay_time = 0.7
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
 [node name="Aggressive" type="Node" parent="StateMachine/Round 1/Randomized Attacks" unique_id=550832782 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
@@ -8929,7 +8956,7 @@ script = ExtResource("44_wdmnt")
 secondary_condition = 4
 primary_target_state = NodePath("../../Reactionary2")
 secondary_target_state = NodePath("../SkillCheck")
-time_to_change_state = 10.0
+time_to_change_state = 15.0
 moveset_dictionary = Dictionary[String, float]({
 "elbow": 40.0,
 "uppercut": 60.0
@@ -8943,7 +8970,7 @@ script = ExtResource("44_wdmnt")
 secondary_condition = 4
 primary_target_state = NodePath("../../TauntAndCounter")
 secondary_target_state = NodePath("../../FlurryAttack")
-time_to_change_state = 10.0
+time_to_change_state = 15.0
 moveset_dictionary = Dictionary[String, float]({
 "elbow": 40.0,
 "uppercut": 60.0
@@ -8955,11 +8982,11 @@ metadata/_custom_type_script = "uid://dy765alksxcdx"
 [node name="WeirdAttacks" type="Node" parent="StateMachine/Round 1/Randomized Attacks" unique_id=2144043967 node_paths=PackedStringArray("primary_target_state")]
 script = ExtResource("44_wdmnt")
 primary_target_state = NodePath("../../Reactionary2")
-time_to_change_state = 15.0
+time_to_change_state = 18.0
 moveset_type = 1
 moveset_array = Array[String](["great_tiger_uppercut", "great_tiger_uppercut_2", "great_tiger_fakeout"])
-min_delay_time = 0.5
-max_delay_time = 1.1
+min_delay_time = 0.4
+max_delay_time = 1.2
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
 [node name="WeirdAttacks2" type="Node" parent="StateMachine/Round 1/Randomized Attacks" unique_id=455264741]
@@ -8982,7 +9009,7 @@ script = ExtResource("44_wdmnt")
 secondary_condition = 2
 primary_target_state = NodePath("../../Reactionary2")
 secondary_target_state = NodePath("../WeirdAttacks")
-time_to_change_state = 15.0
+time_to_change_state = 10.0
 moveset_type = 1
 moveset_array = Array[String](["hook_left", "hook_right"])
 min_delay_time = 0.6
@@ -9068,7 +9095,7 @@ primary_condition = 4
 secondary_condition = 0
 primary_target_state = NodePath("../Randomized Attacks/WeirdAttacks2")
 secondary_target_state = NodePath("../Randomized Attacks/WeirdAttacks")
-time_to_change_state = 14.0
+time_to_change_state = 15.0
 moveset_type = 2
 moveset_array = Array[String](["taunt"])
 block_behavior = 2
@@ -9107,7 +9134,7 @@ metadata/_custom_type_script = "uid://dt50cn0l8twro"
 script = ExtResource("64_jgm8d")
 primary_condition = 9
 secondary_condition = 3
-primary_target_state = NodePath("../Randomized Attacks/WeirdAttacks")
+primary_target_state = NodePath("../Randomized Attacks/HookedOnAFeeling")
 secondary_target_state = NodePath("../Reactionary")
 moveset_type = 2
 moveset_array = Array[String](["fast_uppercut_left", "fast_uppercut_right", "fast_uppercut_left"])

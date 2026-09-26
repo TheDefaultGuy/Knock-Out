@@ -8943,7 +8943,7 @@ metadata/_custom_type_script = "uid://ch1gb3rys2tfm"
 [node name="Stunned" type="Node" parent="StateMachine/Required States" unique_id=642401764]
 script = ExtResource("53_7ka3d")
 stun_behavior = 2
-stun_duration = 1.25
+stun_duration = 1.4
 max_stun_length = 8
 metadata/_custom_type_script = "uid://d2mk31geekmgb"
 
@@ -8954,7 +8954,6 @@ metadata/_custom_type_script = "uid://lrug82hg7rrf"
 [node name="KnockedDown" type="Node" parent="StateMachine/Required States" unique_id=1631047957]
 script = ExtResource("55_b37o5")
 min_getup_time = 1.5
-max_getup_time = 6.0
 metadata/_custom_type_script = "uid://bxdm4cxh3jw0n"
 
 [node name="CutSceneState" type="Node" parent="StateMachine/Required States" unique_id=334701676 node_paths=PackedStringArray("next_state")]

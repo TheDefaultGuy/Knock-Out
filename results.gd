@@ -16,4 +16,4 @@ func _enter_tree() -> void:
 
 func _on_button_2_pressed() -> void:
 	print("Pressed button")
-	SceneChanger.change_scene(CHARACTER_SELECTION_MENU, self)
+	SceneChanger.change_scene(load("uid://bvyokq5qbudmq"), self)

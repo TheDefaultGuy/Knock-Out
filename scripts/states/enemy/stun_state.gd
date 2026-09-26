@@ -52,7 +52,7 @@ const DIZZY_EFFECT = preload("uid://1gxun2up65jb")
 ## FIXED_TIME_DURATION: How long stun lasts for in seconds before automatically changing to next state
 ## regardless of how many punches the player has landed.
 ## FIXED_NUMBER_OF_PUNCHES and INCREASING_NUMBER_OF_PUNCHES: How long does the player have to NOT punch for the enemy to recover automatically.
-@export_range(0.5, 3.0, 0.2, "suffix:s") var stun_duration : float = 1.2
+@export_range(0.6, 2.0, 0.2, "suffix:s") var stun_duration : float = 1.2
 
 ## The minimum amount of punches that stun will last for.
 @export_custom(PROPERTY_HINT_NONE, "suffix:punches") var min_stun_length : int = 3 :

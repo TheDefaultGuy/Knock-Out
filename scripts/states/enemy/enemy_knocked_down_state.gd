@@ -115,11 +115,15 @@ func exit() -> void:
 
 ## Plays the get up animation to leave state.
 func play_get_up_animation() -> void:
+	
+	await get_tree().create_timer(0.4).timeout
 	anim_state_machine.travel("get_up")
 
 
 func play_failed_get_up_animation() -> void:
 	print("\nPlaying Failed Get Up Animation...")
+	
+	await get_tree().create_timer(0.4).timeout
 	anim_state_machine.start("get_up_failed", true)
 	FightManager.pause_ko_count_signal.emit()
 	get_up_timer.paused = true
@@ -134,12 +138,15 @@ func start_get_up_timer() -> void:
 	# Then rounds it to the nearest whole number.
 	get_up_wait_time = roundf(randf_range(min_getup_time, max_getup_time))
 	
-	
-	if FightManager.enemy_kd_count >= FightManager.MAX_KD_COUNT or owner.instant_kd_component.is_fully_knocked_out == true:
+	if owner.instant_kd_component.is_fully_knocked_out == true:
+		get_up_wait_time = 9.0
+		
+	if FightManager.enemy_kd_count == FightManager.MAX_KD_COUNT:
 		print("Not getting up.")
 		get_up_timer.timeout.disconnect(play_get_up_animation)
-		get_up_wait_time = 9.0
-	
+		return
+		
+		
 	
 	print("STARTING GETUP TIMER")
 	

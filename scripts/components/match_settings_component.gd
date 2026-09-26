@@ -12,3 +12,8 @@ class_name MatchSettings extends Node
 
 @export var player_invincible : bool = false
 @export var enemy_invincible : bool = false
+
+
+func _ready() -> void:
+	if OS.is_debug_build() == false:
+		round_length = 180.0

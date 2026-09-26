@@ -235,17 +235,20 @@ func choose_hit_region(punch_height : int, damage_amount : float, punch_directio
 func shorten_enemy_attack_animation() -> void:
 	if owner is Player:
 		
+		# Waits until the player's hit animation is finished.
+		await owner.animation_tree.animation_finished
+		
 		# Don't run if the enemy is not in an EnemyState state.
-		if Global.enemy_node.state_machine.current_state is not State:
+		if Global.enemy_node.state_machine.current_state is not EnemyState:
 			return
 			
 		# Don't run the function if the enemy's current state is not a simple one.
 		if Global.enemy_node.state_machine.current_state.state_type != EnemyState.StateTypeEnum.SIMPLE:
 			return
-		
-		# Waits until the player's hit animation is finished.
-		await owner.animation_tree.animation_finished
-		
+			
+		# Don't run the function if the enemy's current state is not a simple one.
+		if owner.state_machine.current_state is PlayerKnockedDown:
+			return
 		# Sets the next animation to play
 		Global.enemy_node.anim_state_machine.travel("hub_node")
 		

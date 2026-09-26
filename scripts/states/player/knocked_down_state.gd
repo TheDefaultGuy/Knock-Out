@@ -28,7 +28,10 @@ class_name PlayerKnockedDown extends State
 
 var get_up_decay_rate : float = 50.0
 
+@onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
+
 func _process(delta: float) -> void:
+	
 	if state_machine.current_state != self :
 		return
 		
@@ -87,6 +90,9 @@ func check_finished_animation(animation : String) -> void:
 		FightManager.player_ready_status = true
 		print("PLAYER READY")
 		FightManager.fighter_ready_signal.emit()
+		
+	else:
+		animated_sprite_2d.material.set_shader_parameter("Visible", false)
 
 ## When an attack input is Given by the [InputComponent], increase the [member get_up_progress].
 func perform_attack(_height : int, _direction : int, _action_name : String):

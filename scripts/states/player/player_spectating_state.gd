@@ -25,6 +25,8 @@ func exit() -> void:
 	animation_tree.animation_finished.disconnect(check_finished_animation)
 
 func back_to_fight() -> void:
+	
+	await get_tree().create_timer(0.4).timeout
 	animation_tree.set("parameters/conditions/spectating", false)
 	anim_state_machine.travel("back_to_the_fight")
 	
