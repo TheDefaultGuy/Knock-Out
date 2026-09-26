@@ -81,7 +81,7 @@ const MAX_NUMBER_OF_ROUNDS : int = 3
 
 #region Exported Variables
 ## The number of stars the [Player] currently has.
-@export var star_count : int = 2 :
+@export var star_count : int = 0 :
 	# Clamps the value and emits the signal to update the UI everytime the value is set.
 	set(value):
 		star_count = clampi(value, 0 , MAX_STAR_AMOUNT) 
@@ -102,7 +102,7 @@ const MAX_NUMBER_OF_ROUNDS : int = 3
 
 @export_category("KD Counts")
 ## Number of times the [Player] has been knocked down in the current round.
-@export var player_kd_count : int = 2 : 
+@export var player_kd_count : int = 0 : 
 	# Clamps the value and emits the signal to update the UI everytime the value is set.
 	set(value):
 		print("Player KD Count: ", player_kd_count)
@@ -176,6 +176,10 @@ func _ready() -> void:
 	stars_used = 0
 	star_punches_landed = 0
 	
+	if OS.is_debug_build() == false:
+		star_count = 0
+		reset_ko_count()
+		set_stamina()
 
 ## Increases [member enemy_kd_count] by 1.
 func increase_enemy_kd_count() -> void:

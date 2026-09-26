@@ -179,10 +179,12 @@ func reset_blend_positions() -> void:
 ## This is so that players don't throw another punch that won't land and waste stamina.
 func final_stun_hit() -> void:
 	
-	allow_inputs = false # Disables inputs
+	# Disables inputs
+	allow_inputs = false 
 	
-	# Waits momentarily
-	await get_tree().create_timer(final_stun_hit_attack_cooldown).timeout
+	# Waits until the enemy finishes the hit animation.
+	await Global.enemy_node.animation_tree.animation_finished
 	
-	allow_inputs = true # Re-enables inputs after time is up/
+	# Re-enables inputs after the enemy finishes the hit animation.
+	allow_inputs = true 
 	return

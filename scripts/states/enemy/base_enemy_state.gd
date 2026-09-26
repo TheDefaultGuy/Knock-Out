@@ -597,9 +597,7 @@ func transition_to_target(target_state : State) -> void:
 	#print("IS target_state SPECTATING: ", target_state is EnemySpectating)
 
 	# Checks to see if the enemy is already in a "safe animation" so that it doesn't interrupt a hit, block, or any other animation.
-	if anim_state_machine.get_current_node() in ["idle", "idle_guard", "End"]:
-		
-		
+	if anim_state_machine.get_current_node() == "idle":
 		transition(target_state)
 		return
 	
@@ -635,6 +633,7 @@ func transition_to_target(target_state : State) -> void:
 			
 		if anim_state_machine.get_current_node() not in ["knockdown", "get_up", "move_to_spectate", "spectating"] :
 			anim_state_machine.travel("hub_node") # Travels to the "hub_node" to go to the next state.
+			anim_state_machine.next()
 			transition(target_state)
 			return
 	return

@@ -38,6 +38,8 @@ func _process(_delta: float) -> void:
 func enter() -> void:
 	super() # Runs the base EnemyState enter function and then runs everything below.
 	
+	interruption_status = false
+	
 	started_attacking = false
 	animation_tree.animation_finished.connect(increase_count)
 	animation_tree.animation_started.connect(set_attacking)

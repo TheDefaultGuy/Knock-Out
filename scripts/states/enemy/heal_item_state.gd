@@ -94,19 +94,19 @@ func check_animation(animation_name : String) -> void:
 	match remove_library_preffix(animation_name):
 		intro_animation:
 			anim_state_machine.travel(successful_animation)
-			await animation_tree.animation_started
+			#await animation_tree.animation_started
 			return
 			
 		failed_animation: 
 			interruption_status = true
 			#anim_state_machine.start("hub_node")
-			await animation_tree.animation_started
+			#await animation_tree.animation_started
 			return
 			
 		successful_animation: 
 			interruption_status = false
 			#anim_state_machine.start("hub_node")
-			await animation_tree.animation_started
+			#await animation_tree.animation_started
 			return
 
 ## Sets the required conditions as Read Only so that they can't be changed.

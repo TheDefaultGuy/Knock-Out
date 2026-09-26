@@ -55,6 +55,8 @@ func play_sound_effect(sound_effect : String):
 	var sfx_player : AudioStreamPlayer = AudioStreamPlayer.new()
 	sfx_player.stream = sfx
 	sfx_player.bus = "SFX"
+	
+	sfx_player.process_mode = Node.PROCESS_MODE_ALWAYS
 	get_tree().root.add_child(sfx_player)
 	sfx_player.play()
 	await sfx_player.finished

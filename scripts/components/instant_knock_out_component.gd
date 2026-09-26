@@ -127,6 +127,7 @@ var is_fully_knocked_out : bool = false
 func _ready() -> void:
 	if active_conditions_dictionary == null or active_conditions_dictionary == { }:
 		push_warning(get_parent().name, " Instant KD Component: No conditions Stored; enemy will not have any instant knockdown conditions.")
+		is_fully_knocked_out = false
 
 ## Grabs the currently set variables and conditions and stores them as a [InstantKDComponent.KDConditions] Resource inside of the [member active_conditions_dictionary]
 ## Function is called via a button in the inspector.

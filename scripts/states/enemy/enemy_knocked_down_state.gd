@@ -37,8 +37,6 @@ const CHANCE_INCREASE_INCREMENT : float = 5.0
 ## The chance the enemy will do a failed get up animation during each second of the [member get_up_timer]
 @export_range(0.0, 30.0, 5.0, "suffix:%") var chance_for_failed_attempt : float = 15.0
 
-@export var min_time_between_attempts : float = 1.0
-
 ## The timer used to count the get up time.
 var get_up_timer : Timer = null
 
@@ -63,7 +61,7 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Only Runs the function in-game and not the editor
 		return
-	if state_machine.current_state == self:
+	if state_machine.current_state == self and get_up_timer.is_stopped() == false:
 		#print("get_up_timer.time_left: ",ceilf(get_up_timer.time_left))
 		#print("stored_time_left: ", stored_time_left)
 		if ceilf(get_up_timer.time_left) < stored_time_left:
@@ -99,7 +97,7 @@ func enter() -> void:
 	
 	FightManager.resume_fighting_signal.connect(transition_to_previous_state)
 	animation_tree.animation_finished.connect(check_finished_animation)
-	
+	animation_tree.animation_started.connect(check_started_animation)
 	get_up_timer.timeout.connect(play_get_up_animation)
 	
 	stored_time_left = 0.0
@@ -110,6 +108,8 @@ func exit() -> void:
 	FightManager.resume_fighting_signal.disconnect(transition_to_previous_state)
 	get_up_timer.stop()
 	animation_tree.animation_finished.disconnect(check_finished_animation)
+	animation_tree.animation_started.disconnect(check_started_animation)
+	
 	if get_up_timer.timeout.is_connected(play_get_up_animation) == true:
 		get_up_timer.timeout.disconnect(play_get_up_animation)
 
@@ -132,7 +132,7 @@ func start_get_up_timer() -> void:
 	
 	# Grabs a random number between min_getup_time and max_getup_time
 	# Then rounds it to the nearest whole number.
-	get_up_wait_time = 1.0 #roundf(randf_range(min_getup_time, max_getup_time))
+	get_up_wait_time = roundf(randf_range(min_getup_time, max_getup_time))
 	
 	
 	if FightManager.enemy_kd_count >= FightManager.MAX_KD_COUNT or owner.instant_kd_component.is_fully_knocked_out == true:
@@ -147,20 +147,24 @@ func start_get_up_timer() -> void:
 	
 	# Starts the get up timer.
 	get_up_timer.start(get_up_wait_time)
-
+	
+func check_started_animation(animation : String) -> void:
+	if animation.contains("get_up") == true and animation.contains("failed") == false:
+		health_component.reset_hp()
+		return
 
 func check_finished_animation(animation : String) -> void:
 	
-	#print(animation)
+	print(animation)
 	#print(animation.contains("get_up") == true and animation.contains("failed") == true)
 	
 	if animation.contains("knockdown") == true:
 		start_get_up_timer()
 		return
 		
-	elif animation.contains("get_up") == true and animation.contains("failed") == false:
-		health_component.reset_hp()
-		return
+	#elif animation.contains("get_up") == true and animation.contains("failed") == false:
+		#health_component.reset_hp()
+		#return
 		
 	elif animation.contains("return_to_fight") == true:
 		FightManager.enemy_ready_status = true

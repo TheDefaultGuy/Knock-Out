@@ -724,20 +724,6 @@ tracks/4/keys = {
 "update": 1,
 "values": [true]
 }
-tracks/5/type = "method"
-tracks/5/imported = false
-tracks/5/enabled = true
-tracks/5/path = NodePath(".")
-tracks/5/interp = 1
-tracks/5/loop_wrap = true
-tracks/5/keys = {
-"times": PackedFloat32Array(0.8),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [],
-"method": &"ready_to_fight"
-}]
-}
 
 [sub_resource type="Animation" id="Animation_giy8y"]
 resource_name = "intro_start"
@@ -3234,7 +3220,7 @@ metadata/_custom_type_script = "uid://ctgr0jt66jjuu"
 [node name="StateMachine" type="Node" parent="." unique_id=343069231 node_paths=PackedStringArray("initial_state", "knocked_down_state", "spectating_state", "tired_state", "cutscene_state", "neutral_state")]
 unique_name_in_owner = true
 script = ExtResource("15_oprun")
-initial_state = NodePath("Neutral")
+initial_state = NodePath("CutSceneState")
 knocked_down_state = NodePath("KnockedDown")
 spectating_state = NodePath("Spectating")
 tired_state = NodePath("TiredState")

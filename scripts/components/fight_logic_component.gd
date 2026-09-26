@@ -3,6 +3,9 @@ class_name FightLogicComponent extends Node
 
 signal time_is_over_signal
 
+const RESULTS_SCREEN = preload("uid://b4unduv261ia0")
+const CHARACTER_SELECTION_MENU = preload("uid://bvyokq5qbudmq")
+
 var round_timer: Timer = null
 var ko_timer: Timer  = null
 
@@ -24,6 +27,9 @@ func _ready() -> void:
 	FightManager.pause_ko_count_signal.connect(pause_ko_count)
 	
 	#FightManager.start_intro_animation_signal.emit()
+	
+	#owner.arena_ui.time_left_label.text = str("0'00",str(000))
+	
 	start_the_match()
 
 func _process(_delta: float) -> void:
@@ -32,6 +38,9 @@ func _process(_delta: float) -> void:
 	
 	
 	FightManager.round_time = snappedf((round_timer.wait_time - round_timer.time_left), 0.001)
+	
+	#print(FightManager.round_time)
+	
 	@warning_ignore("integer_division")
 	var minutes: int = int(FightManager.round_time) / 60
 	var seconds: int = int(fmod(FightManager.round_time, 60))
@@ -40,8 +49,10 @@ func _process(_delta: float) -> void:
 	#prints(round_timer.wait_time, round_timer.time_left)
 	#prints(FightManager.round_time, owner.arena_ui.time_left_label.text)
 	
+	#print("Timer Paused?: ", round_timer.paused)
+	#print("Timer Stopped?: ", round_timer.is_stopped())
 	# This is done because the timer label can stop at a number like: 2'59"997
-	if round_timer.time_left <= 0.0009:
+	if round_timer.time_left <= 0.0009 and round_timer.is_stopped() == false and FightManager.is_fight_over == false:
 		time_is_over_signal.emit()
 	
 	#if ko_timer.is_stopped() == false:
@@ -49,6 +60,11 @@ func _process(_delta: float) -> void:
 		#print("KO Text: ",owner.arena_ui.ko.text)
 
 func toggle_round_timer() -> void:
+	print("Fight Logic Component: Toggling round timer...")
+	if round_timer.is_stopped() == true:
+		round_timer.start()
+		round_timer.paused = false
+		return
 	round_timer.paused = !round_timer.paused
 	
 func start_the_match() -> void:
@@ -79,6 +95,7 @@ func pause_ko_count() -> void:
 
 func stop_ko_count() -> void:
 	#ko_timer.stop()
+	await get_tree().create_timer(0.5).timeout
 	animation_player.play("RESET")
 	
 func end_fight() -> void:
@@ -95,7 +112,6 @@ func end_fight() -> void:
 			Global.winner = Global.WinnerEnum.PLAYER
 	print("Winner: ", Global.winner)
 	
-
 	FightManager.fight_is_over_signal.emit()
 
 func set_that_fight_is_over() -> void:
@@ -104,12 +120,17 @@ func set_that_fight_is_over() -> void:
 
 func _on_round_timer_timeout() -> void:
 	FightManager.fight_is_over_signal.emit()
+	FightManager.is_fight_over = true
 	get_tree().paused = true
 	print("Fight Logic Component: ROUND OVER; TIMES UP")
+	SceneChanger.change_scene(RESULTS_SCREEN, self)
+	#get_tree().paused = false
+	
+	
 
 ## Creates the timers with code so that  you don't have to make a round timer node and then manually assign it.
 func create_timers() -> void:
-	round_timer = TimerCreator.create_timer("Round Timer", true, owner.match_settings.round_length, true)
+	round_timer = TimerCreator.create_timer("Round Timer", true, owner.match_settings.round_length, false)
 	add_child.call_deferred(round_timer)
 	#round_timer.timeout.connect(_on_round_timer_timeout)
 	

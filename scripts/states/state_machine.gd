@@ -70,7 +70,7 @@ func _ready() -> void:
 	if initial_state != null and initial_state is State : # Checks to see if it has an initial state, if so, enter it.
 		initial_state.enter()
 		current_state = initial_state
-	print("States: ", owner.name, states_dictionary)
+	#print("States: ", owner.name, states_dictionary)
 	
 	check_for_unnassigned_states()
 	return
@@ -87,8 +87,9 @@ func add_states_to_states_dictionary(node : Node) -> void:
 			# If it is a State or an Enemy State, add to the states dictionary.
 			states_dictionary[state] = state 
 			
-			# Connects the signal to the state's function
-			state.transition_state.connect(on_transition)
+			if state.transition_state.is_connected(on_transition) == false:
+				# Connects the signal to the state's function
+				state.transition_state.connect(on_transition)
 			
 			# Loops back to start.
 			continue

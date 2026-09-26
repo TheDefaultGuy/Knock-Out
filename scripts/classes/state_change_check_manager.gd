@@ -40,8 +40,8 @@ static func set_condition_check_functions_based_on_conditions(conditions_and_tar
 ## Checks to see if the current round time matches [member target_round_time] to change state.
 static func check_round_time(calling_state : State) -> bool:
 	if FightManager.round_time >= calling_state.target_round_time:
-		prints(FightManager.round_time, calling_state.target_round_time)
-		calling_state.calling_state.condition_match_direct_transition(EnemyState.StateChangeConditionEnum.AT_ROUND_TIME)
+		#prints(FightManager.round_time, calling_state.target_round_time)
+		calling_state.condition_match_direct_transition(EnemyState.StateChangeConditionEnum.AT_ROUND_TIME)
 		return true
 	return false
 
@@ -79,19 +79,19 @@ static func check_player_tired(calling_state : State) -> bool:
 
 ## Checks the [Player] [member FightManager.Stamina] and then transitions to target state once it's NOT zero.
 static func check_player_not_tired(calling_state : State) -> bool: 
-	if FightManager.stamina > 0 :
+	if FightManager.stamina > 0:
 		calling_state.condition_match_direct_transition(EnemyState.StateChangeConditionEnum.AFTER_PLAYER_NOT_TIRED)
 		return true
 	return false
 
 ## Checks if the state has completed or been interrupted and then changes accordingly.
 static func check_state_completion(calling_state : State) -> bool:
-	if calling_state.anim_state_machine.get_current_node() in ["End", "idle"] :
-		if calling_state.interruption_status == true :
+	if calling_state.anim_state_machine.get_current_node() == "idle":
+		if calling_state.interruption_status == true:
 			calling_state.condition_match_direct_transition(EnemyState.StateChangeConditionEnum.STATE_INTERRUPTED)
 			return true
 			
-		elif calling_state.interruption_status == false :
+		elif calling_state.interruption_status == false:
 			calling_state.condition_match_direct_transition(EnemyState.StateChangeConditionEnum.AFTER_COMPLETION)
 			return true
 	return false

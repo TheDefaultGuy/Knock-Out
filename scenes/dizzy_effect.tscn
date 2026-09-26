@@ -9,6 +9,7 @@ texture_filter = 1
 scale = Vector2(1, 0.8)
 amount = 2
 texture = ExtResource("1_ecgsl")
+preprocess = 0.5
 local_coords = true
 emission_shape = 4
 emission_points = PackedVector2Array(16, 0)

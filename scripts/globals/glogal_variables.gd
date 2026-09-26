@@ -33,6 +33,7 @@ enum RangeEnum {
 enum WinnerEnum {
 	PLAYER,
 	ENEMY,
+	NOBODY,
 }
 
 
@@ -43,4 +44,4 @@ var player_node : Node2D = null
 var enemy_node : Node2D = null
 
 ## Stores the winner of the match as a [Node2D]
-var winner : int = 0 
+var winner : int = 2 

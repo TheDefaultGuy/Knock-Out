@@ -10,8 +10,19 @@
 [ext_resource type="Texture2D" uid="uid://dbrq43tue7gf2" path="res://assets/ring2.png" id="5_or0bq"]
 [ext_resource type="Texture2D" uid="uid://dgd8463fc3h8u" path="res://assets/ring3.png" id="6_3j23c"]
 [ext_resource type="Texture2D" uid="uid://daeyep1j18c81" path="res://assets/ring4.png" id="7_wiy1v"]
+[ext_resource type="AudioStream" uid="uid://bg0m1owvdyeht" path="res://assets/sound/sfx/Knockout.mp3" id="9_c5qw3"]
+[ext_resource type="AudioStream" uid="uid://cm7ocmleho4q0" path="res://assets/sound/sfx/1.mp3" id="10_ildxb"]
+[ext_resource type="AudioStream" uid="uid://bkv4nfj2s8mj5" path="res://assets/sound/sfx/2.mp3" id="11_0xaaf"]
 [ext_resource type="Script" uid="uid://cguhik1wigmds" path="res://scripts/components/fight_logic_component.gd" id="12_4wfwo"]
+[ext_resource type="AudioStream" uid="uid://dsiki4fn1ph4p" path="res://assets/sound/sfx/3.mp3" id="12_a4syh"]
+[ext_resource type="AudioStream" uid="uid://cdmlcjdhfc2fr" path="res://assets/sound/sfx/4.mp3" id="13_flbdl"]
 [ext_resource type="Script" uid="uid://kmaq2e83r45t" path="res://scripts/components/match_settings_component.gd" id="13_tqdu3"]
+[ext_resource type="AudioStream" uid="uid://0823h21ihcwn" path="res://assets/sound/sfx/5.mp3" id="14_73lm7"]
+[ext_resource type="AudioStream" uid="uid://b6wnmg2n1cgwp" path="res://assets/sound/sfx/6.mp3" id="15_l0wts"]
+[ext_resource type="AudioStream" uid="uid://bn4n1bwxi0h50" path="res://assets/sound/sfx/7.mp3" id="16_v8uoy"]
+[ext_resource type="AudioStream" uid="uid://oyw1te4e3r5e" path="res://assets/sound/sfx/8.mp3" id="17_nt2f4"]
+[ext_resource type="AudioStream" uid="uid://uomcp0tl8s87" path="res://assets/sound/sfx/9.mp3" id="18_ehbke"]
+[ext_resource type="AudioStream" uid="uid://401bxxyjqk01" path="res://assets/sound/sfx/10.wav" id="19_ebs2b"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_m0jec"]
 animations = [{
@@ -80,6 +91,21 @@ tracks/1/keys = {
 "method": &"end_fight"
 }]
 }
+tracks/2/type = "audio"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("AnimationPlayer/AudioStreamPlayer")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"clips": [{
+"end_offset": 0.0,
+"start_offset": 0.090701506,
+"stream": ExtResource("9_c5qw3")
+}],
+"times": PackedFloat32Array(0)
+}
+tracks/2/use_blend = true
 
 [sub_resource type="Animation" id="Animation_8k0nb"]
 resource_name = "ko_count"
@@ -112,6 +138,61 @@ tracks/1/keys = {
 "method": &"end_fight"
 }]
 }
+tracks/2/type = "audio"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("AnimationPlayer/AudioStreamPlayer")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"clips": [{
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("10_ildxb")
+}, {
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("11_0xaaf")
+}, {
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("12_a4syh")
+}, {
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("13_flbdl")
+}, {
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("14_73lm7")
+}, {
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("15_l0wts")
+}, {
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("16_v8uoy")
+}, {
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("17_nt2f4")
+}, {
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("18_ehbke")
+}, {
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("19_ebs2b")
+}, {
+"end_offset": 0.0,
+"start_offset": 0.0,
+"stream": ExtResource("9_c5qw3")
+}],
+"times": PackedFloat32Array(0.8333333, 1.9666667, 2.9666667, 3.9333334, 4.9666667, 5.8333335, 6.8333335, 7.9, 8.9, 10, 10.866667)
+}
+tracks/2/use_blend = true
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_bt4xr"]
 _data = {
@@ -121,7 +202,7 @@ _data = {
 }
 
 [node name="Arena" type="Node2D" unique_id=860723905]
-process_mode = 1
+process_mode = 3
 script = ExtResource("1_v87wf")
 player_scene = ExtResource("3_bt4xr")
 enemy_scene = ExtResource("3_3j23c")
@@ -155,6 +236,8 @@ color = Color(0, 0, 0, 1)
 unique_name_in_owner = true
 libraries/ = SubResource("AnimationLibrary_bt4xr")
 
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="AnimationPlayer" unique_id=1646207804]
+
 [node name="SoundEffectsComponent" type="Node" parent="." unique_id=1369961966]
 unique_name_in_owner = true
 process_mode = 3
@@ -164,11 +247,11 @@ metadata/_custom_type_script = "uid://c8kyx1g3lvmgb"
 [node name="ParticleEffectComponent" type="Node" parent="." unique_id=1861586519]
 unique_name_in_owner = true
 script = ExtResource("4_4wfwo")
-show_particles = false
 metadata/_custom_type_script = "uid://lks1t1wg7nna"
 
 [node name="FightLogicComponent" type="Node" parent="." unique_id=32840368]
 unique_name_in_owner = true
+process_mode = 3
 script = ExtResource("12_4wfwo")
 metadata/_custom_type_script = "uid://cguhik1wigmds"
 

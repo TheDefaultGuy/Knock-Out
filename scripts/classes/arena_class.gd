@@ -13,7 +13,7 @@ class_name Arena extends Node2D
 @export var enemy_scene : PackedScene = null
 
 const RESULTS_SCREEN = preload("uid://b4unduv261ia0")
-
+const CHARACTER_SELECTION_MENU = preload("uid://bvyokq5qbudmq")
 
 ## Stores the [Player] node/scene.
 var player_node = null
@@ -48,7 +48,7 @@ func _ready() -> void:
 	FightManager.enemy_knocked_down_signal.connect(slow_down_effect)
 	FightManager.player_knocked_down_signal.connect(slow_down_effect)
 	
-	FightManager.go_to_results_screen_signal.connect(go_to_results_screen)
+	FightManager.go_to_results_screen_signal.connect(SceneChanger.change_scene.bind(RESULTS_SCREEN, self))
 	
 	FightManager.is_fight_over = false
 	
@@ -60,12 +60,12 @@ func _ready() -> void:
 	
 	arena_ui.connect_signals()
 
+func _exit_tree() -> void:
+	FightManager.enemy_knocked_down_signal.disconnect(slow_down_effect)
+	FightManager.player_knocked_down_signal.disconnect(slow_down_effect)
+	FightManager.go_to_results_screen_signal.disconnect(SceneChanger.change_scene.bind(RESULTS_SCREEN, self))
+
 func slow_down_effect() -> void:
 	Engine.time_scale = target_time_scale
 	await get_tree().create_timer(secs * target_time_scale).timeout
 	Engine.time_scale = 1.0
-
-func go_to_results_screen() -> void:
-	var results : Control = RESULTS_SCREEN.instantiate()
-	get_tree().change_scene_to_node(results)
-	self.queue_free()

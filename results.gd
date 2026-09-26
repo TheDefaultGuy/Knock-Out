@@ -10,9 +10,10 @@ func _enter_tree() -> void:
 			
 		Global.WinnerEnum.ENEMY:
 			%Label.text = "You Lost :("
-
+		
+		_:
+			%Label.text = "Ran out of time"
 
 func _on_button_2_pressed() -> void:
-	var menu : Control = CHARACTER_SELECTION_MENU.instantiate()
-	get_tree().change_scene_to_node(menu)
-	self.queue_free()
+	print("Pressed button")
+	SceneChanger.change_scene(CHARACTER_SELECTION_MENU, self)
