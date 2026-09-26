@@ -99,6 +99,7 @@ func handle_damage_and_knockdown(damage_amount : float, multiplier : float, punc
 		# If the fighter is the enemy, set the blend positions for the getup and back to the fight animations.
 		if owner is Enemy :
 			owner.animation_component.set_animation_1d_blend("get_up", punch_direction)
+			owner.animation_component.set_animation_1d_blend("get_up_failed", punch_direction)
 			owner.animation_component.set_animation_1d_blend("back_to_the_fight", punch_direction)
 		return true
 		

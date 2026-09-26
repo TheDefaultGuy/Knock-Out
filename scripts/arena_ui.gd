@@ -16,6 +16,7 @@ extends Control
 @onready var time_left_label: Label = $TimeLeftLabel
 @onready var state_label: Label = $StateLabel
 
+@onready var ko: Label = $KO
 
 @onready var player_ko_counter: HBoxContainer = $"Ko Counters/Player"
 @onready var enemy_ko_counter: HBoxContainer = $"Ko Counters/Enemy"

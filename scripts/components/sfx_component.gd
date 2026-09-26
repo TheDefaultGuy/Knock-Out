@@ -46,7 +46,7 @@ func _ready() -> void:
 	FightManager.fighter_got_up_signal.connect(change_BGM.bind(MATCH_BGM))
 	
 	FightManager.fight_is_over_signal.connect(play_sound_effect.bind("bell"))
-	FightManager.fight_is_over_signal.connect(play_sound_effect.bind("crowd"))
+	#FightManager.fight_is_over_signal.connect(play_sound_effect.bind("crowd"))
 
 func play_sound_effect(sound_effect : String):
 	

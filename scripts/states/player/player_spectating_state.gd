@@ -44,5 +44,7 @@ func check_finished_animation(animation : String) -> void:
 
 
 func play_win_animation() -> void:
+	print("PLAYER: ", FightManager.is_fight_over)
+	
 	if FightManager.is_fight_over == true:
 		anim_state_machine.travel("outro")

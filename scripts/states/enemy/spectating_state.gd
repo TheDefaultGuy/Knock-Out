@@ -33,6 +33,8 @@ func exit() -> void:
 	FightManager.resume_fighting_signal.disconnect(transition_to_previous_state)
 	
 	animation_tree.animation_finished.disconnect(check_finished_animation)
+	
+	FightManager.fight_is_over_signal.disconnect(play_outro_animation)
 
 func back_to_the_fight() -> void:
 	anim_state_machine.travel("from_spectate")

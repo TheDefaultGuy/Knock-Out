@@ -21,7 +21,7 @@ func _ready() -> void:
 	
 	time_is_over_signal.connect(_on_round_timer_timeout)
 	
-	#FightManager.tko_signal.connect(start_ko_count)
+	FightManager.pause_ko_count_signal.connect(pause_ko_count)
 	
 	#FightManager.start_intro_animation_signal.emit()
 	start_the_match()
@@ -44,8 +44,9 @@ func _process(_delta: float) -> void:
 	if round_timer.time_left <= 0.0009:
 		time_is_over_signal.emit()
 	
-	#if FightManager.is_fight_over == true:
-		#stop_ko_count()
+	#if ko_timer.is_stopped() == false:
+		#print("KO Timer: ",ko_timer.time_left)
+		#print("KO Text: ",owner.arena_ui.ko.text)
 
 func toggle_round_timer() -> void:
 	round_timer.paused = !round_timer.paused
@@ -54,24 +55,37 @@ func start_the_match() -> void:
 	round_timer.paused = false
 	
 func start_ko_count() -> void:
-	print(FightManager.is_fight_over)
 	
 	if FightManager.is_fight_over == false:
 		print("Fight Logic Component: Starting KO count...")
-		ko_timer.start(10.0)
+		#ko_timer.start(10.0)
 		animation_player.play("ko_count")
 		
 	if FightManager.is_fight_over == true:
 		animation_player.play("TKO")
 
+func pause_ko_count() -> void:
+	
+	#print("KO Count is Animation PLaying?: ", animation_player.is_playing())
+	#print("Timer Paused?: ", ko_timer.paused)
+	
+	if animation_player.is_playing() == true:
+		animation_player.pause()
+	
+	elif animation_player.is_playing() == false:
+		animation_player.play()
+	
+	#ko_timer.paused = !ko_timer.paused
+
 func stop_ko_count() -> void:
-	ko_timer.stop()
+	#ko_timer.stop()
 	animation_player.play("RESET")
 	
 func end_fight() -> void:
 	print("Fight Logic Component: FIGHTER COULDNT GET UP")
-	
 	stop_ko_count()
+	
+	FightManager.is_fight_over = true
 	
 	match true:
 		Global.player_node.is_knocked_down:
@@ -79,8 +93,9 @@ func end_fight() -> void:
 			
 		Global.enemy_node.is_knocked_down:
 			Global.winner = Global.WinnerEnum.PLAYER
+	print("Winner: ", Global.winner)
 	
-	set_that_fight_is_over()
+
 	FightManager.fight_is_over_signal.emit()
 
 func set_that_fight_is_over() -> void:
@@ -98,6 +113,6 @@ func create_timers() -> void:
 	add_child.call_deferred(round_timer)
 	#round_timer.timeout.connect(_on_round_timer_timeout)
 	
-	ko_timer = TimerCreator.create_timer("KO Count Timer", true, 10.0, false)
-	add_child.call_deferred(ko_timer)
-	ko_timer.timeout.connect(set_that_fight_is_over)
+	#ko_timer = TimerCreator.create_timer("KO Count Timer", true, 10.0, false)
+	#add_child.call_deferred(ko_timer)
+	#ko_timer.timeout.connect(set_that_fight_is_over)

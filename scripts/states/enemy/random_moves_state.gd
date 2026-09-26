@@ -22,7 +22,7 @@ class_name RandomizedMoves extends EnemyState
 #@export var conditionsss : StateChangeConditions
 
 func _process(_delta: float) -> void:
-	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
+	if Engine.is_editor_hint(): # Only Runs the function in-game and not the editor
 		return
 	if state_machine.current_state == self:
 		#print(attack_timer.time_left)

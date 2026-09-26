@@ -41,18 +41,11 @@ signal successful_block_signal
 @warning_ignore("unused_signal")
 signal resume_fighting_signal 
 
-## Signal emitted when its a TKO.
+## Signal emitted to pause the KO Count.
+## Only used by [Enemy] during [EnemyKnockedDown] along with [FightLogicComponent]
 @warning_ignore("unused_signal")
-signal tko_signal
-#
-### Signal emitted when it's time to start the fight.
-#@warning_ignore("unused_signal")
-#signal start_the_fight_signal 
-#
-### Signal emitted to let the [Enemy] know when to start their intro animation at the start of the fight.
-#@warning_ignore("unused_signal")
-#signal start_intro_animation_signal
-#
+signal pause_ko_count_signal
+
 ## Signal emitted when a [Fighter] is ready to start fighting. Emitted by both [Player] and [Enemy] once they finish their getting up animations.
 signal fighter_ready_signal 
 
@@ -145,7 +138,7 @@ const MAX_NUMBER_OF_ROUNDS : int = 3
 			print_rich("[b][u]\nFightManager: TKO enemy[/u][/b]")
 
 ## Which round of the fight it currently is. 1 = 1st round, 2 = 2nd round , 3 = 3rd round.
-@export var round_idx : int = 2 :
+@export var round_idx : int = 1 :
 	set(value):
 		round_idx = clampi(value, 1, MAX_NUMBER_OF_ROUNDS)
 

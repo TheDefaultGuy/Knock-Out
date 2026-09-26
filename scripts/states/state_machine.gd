@@ -64,47 +64,18 @@ func _ready() -> void:
 				var round_container : RoundStateContainer = child
 				
 				add_states_to_states_dictionary(round_container)
-				#for node in round_container.get_children():
-					#
-					#
-					#if node is State or node is EnemyState :
-						#
-						## If it is a State or an Enemy State, add to the states dictionary.
-						#states_dictionary[node] = node 
-						#
-						## Connects the signal to the state's function
-						#node.transition_state.connect(on_transition)
-						#
-						#continue
-					#
-					## If the node WAS NOT a State or an Enemy State.
-					## Check if it has children
-					#if node.get_children().is_empty() == false:
-						#
-						#add_states_to_states_dictionary(node)
-		#prints(child, child is State or child is EnemyState)
-		#if child is Node :
-			#if child is State or child is EnemyState :
-#
-				#states_dictionary[child] = child # basically checks all of the states and adds them to the states dictionary
-				#
-				#child.transition_state.connect(on_transition)
-			#else:
-				#if child.get_children().is_empty() == false:
-					#for node in child.get_children():
-						#if node is State or EnemyState:
-							#states_dictionary[node] = node # basically checks all of the states and adds them to the states dictionary
-							#
-							#node.transition_state.connect(on_transition)
-						
+		else:
+			add_states_to_states_dictionary(self)
+				
 	if initial_state != null and initial_state is State : # Checks to see if it has an initial state, if so, enter it.
 		initial_state.enter()
 		current_state = initial_state
-	print("States: ", states_dictionary)
+	print("States: ", owner.name, states_dictionary)
 	
 	check_for_unnassigned_states()
 	return
 
+## Grabs all of the children inside of the given node and adds them to the [member states_dictionary] if they are either a [State] or an [EnemyState]
 func add_states_to_states_dictionary(node : Node) -> void:
 	
 	# Iterates through all of the children of the input node.
