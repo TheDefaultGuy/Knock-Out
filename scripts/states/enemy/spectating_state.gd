@@ -23,7 +23,7 @@ func enter() -> void:
 	
 	animation_tree.animation_finished.connect(check_finished_animation)
 	
-	owner.animation_component.set_animation_1d_blend("back_to_the_fight", -1)
+	AnimationManager.set_animation_1d_blend("back_to_the_fight", -1, self)
 	
 	FightManager.fight_is_over_signal.connect(play_outro_animation)
 
@@ -71,4 +71,4 @@ func check_finished_animation(animation : String) -> void:
 
 
 func play_outro_animation() -> void:
-		owner.animation_component.play_animation(outro_animation)
+		AnimationManager.force_play_animation(outro_animation, self)

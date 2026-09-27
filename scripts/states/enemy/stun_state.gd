@@ -117,8 +117,7 @@ func _validate_property(property: Dictionary) -> void:
 #region Ready, Enter, Exit, and Process functions.
 func _ready() -> void:
 	
-	stun_timer = TimerCreator.create_timer("Stunned Timer", true, 0.0, false)
-	add_child.call_deferred(stun_timer)
+	stun_timer = TimerCreator.create_timer_and_add_as_child("Stunned Timer", true, 0.0, false, self)
 	
 	# Sets the stun punch length based on the desired behavior.
 	match stun_behavior:
@@ -146,7 +145,7 @@ func _process(_delta: float) -> void:
 func enter() -> void: # Blank enter and exit functions that get overridden by each state's own custom enter and exit functions.
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
 	
-	owner.animation_component.set_animation_1d_blend("idle", 1)
+	AnimationManager.set_animation_1d_blend("idle", 1, self)
 	
 	FightManager.enemy_knocked_down_signal.connect(transition_to_knocked_down)
 	FightManager.succesful_hit_signal.connect(increase_punch_count)
@@ -174,7 +173,7 @@ func enter() -> void: # Blank enter and exit functions that get overridden by ea
 	
 func exit() -> void:
 	
-	owner.animation_component.set_animation_1d_blend("idle", 0)
+	AnimationManager.set_animation_1d_blend("idle", 0, self)
 	
 	FightManager.enemy_knocked_down_signal.disconnect(transition_to_knocked_down)
 	FightManager.succesful_hit_signal.disconnect(increase_punch_count)

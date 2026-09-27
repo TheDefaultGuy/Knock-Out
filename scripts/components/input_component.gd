@@ -17,7 +17,6 @@ signal defense_input_signal(move)
 ## The amount of time in seconds a block has to be
 ## within an incoming attack for the balck to be considered a parry.
 @export var parry_window : float = 0.1
-@export var final_stun_hit_attack_cooldown : float = 0.6
 
 ## The timer used to set the duration of how long it stores the unhandled inputs
 var input_buffer_timer: Timer = null
@@ -40,13 +39,11 @@ var allow_inputs : bool = false
 
 func _ready() -> void:
 	# Creates a new input buffer Timer on ready
-	input_buffer_timer = TimerCreator.create_timer("InputBufferTimer", true, buffer_time, false)
+	input_buffer_timer = TimerCreator.create_timer_and_add_as_child("InputBufferTimer", true, buffer_time, false, self)
 	input_buffer_timer.timeout.connect(_on_input_buffer_timer_timeout)
-	add_child(input_buffer_timer)
 	
 	# Creates the parry timer
-	parry_timer = TimerCreator.create_timer("ParryTimer", true, parry_window, false)
-	add_child(parry_timer)
+	parry_timer = TimerCreator.create_timer_and_add_as_child("ParryTimer", true, parry_window, false, self)
 	
 	FightManager.final_stun_hit_signal.connect(final_stun_hit)
 

@@ -1,8 +1,6 @@
 @icon("res://assets/icons/MdiDice.svg")
 @tool
 class_name PickRandomState extends EnemyState
-
-
 ## Pseudo-state where it randomly choose one of the three states.
 ##
 ## This isn't a real state where the enemy attacks.
@@ -22,7 +20,7 @@ func override_conditions_and_state_parameters() -> void:
 	tertiary_condition = StateChangeConditionEnum.DO_NOT_CHANGE
 	
 	block_behavior = BlockBehaviorEnum.NOT_APPLICABLE
-	
+
 func enter() -> void:
 	state_array = []
 	if primary_target_state != null:
@@ -42,7 +40,7 @@ func enter() -> void:
 		printerr(self.name, " only one target state set. There needs to be at least 2 target states for this State to function properly as intended.")
 		transition_to_target(state_array[0])
 		return
-	
+
 ## Sets the required conditions as Read Only so that they can't be changed.
 func _validate_property(property : Dictionary) -> void:
 

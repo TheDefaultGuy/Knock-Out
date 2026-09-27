@@ -42,7 +42,6 @@
 [ext_resource type="Texture2D" uid="uid://cneoqpa6utbdc" path="res://assets/snes/player_modified/sprite-4-1.png" id="31_4gjji"]
 [ext_resource type="AnimationNodeStateMachine" uid="uid://dqq7v4rop1vgc" path="res://animation/player/player_animation_tree_state_machine.tres" id="32_t4otl"]
 [ext_resource type="Texture2D" uid="uid://b87c63fn35h6g" path="res://assets/snes/player_modified/sprite-4-2.png" id="32_u2ulf"]
-[ext_resource type="Script" uid="uid://ctgr0jt66jjuu" path="res://scripts/components/animation_component.gd" id="37_holxr"]
 [ext_resource type="AudioStream" uid="uid://dk4m0ir8p5ns2" path="res://assets/sound/sfx/39.wav" id="38_j2b1d"]
 [ext_resource type="Script" uid="uid://bd3i8gnmviajw" path="res://scripts/states/player/cutscene_state.gd" id="38_t4otl"]
 [ext_resource type="AudioStream" uid="uid://cj2whkvaqwy33" path="res://assets/sound/sfx/uppercut.wav" id="43_6e8lb"]
@@ -3198,6 +3197,8 @@ autoplay = "guard_down"
 [node name="InputComponent" type="Node" parent="." unique_id=1718721963]
 unique_name_in_owner = true
 script = ExtResource("3_qlg0r")
+buffer_time = null
+parry_window = null
 
 [node name="HealthComponent" type="Node" parent="." unique_id=302789234]
 unique_name_in_owner = true
@@ -3211,11 +3212,6 @@ script = ExtResource("7_fjrip")
 unique_name_in_owner = true
 script = ExtResource("8_ur7pv")
 parry_damage_curve = SubResource("Curve_t4otl")
-
-[node name="AnimationComponent" type="Node" parent="." unique_id=1141104234]
-unique_name_in_owner = true
-script = ExtResource("37_holxr")
-metadata/_custom_type_script = "uid://ctgr0jt66jjuu"
 
 [node name="StateMachine" type="Node" parent="." unique_id=343069231 node_paths=PackedStringArray("initial_state", "knocked_down_state", "spectating_state", "tired_state", "cutscene_state", "neutral_state")]
 unique_name_in_owner = true

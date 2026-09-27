@@ -29,8 +29,9 @@ func _ready() -> void:
 	background_music = AudioStreamPlayer.new()
 	background_music.stream = MATCH_BGM
 	background_music.autoplay = true
-	add_child(background_music)
+	get_tree().root.add_child(background_music)
 	background_music.play()
+	
 	FightManager.succesful_hit_signal.connect(play_sound_effect.bind("punch_hit"))
 	FightManager.star_awarded_signal.connect(play_sound_effect.bind("star_awarded"))
 	FightManager.successful_block_signal.connect(play_sound_effect.bind("block"))
@@ -49,18 +50,7 @@ func _ready() -> void:
 	#FightManager.fight_is_over_signal.connect(play_sound_effect.bind("crowd"))
 
 func play_sound_effect(sound_effect : String):
-	
-	var sfx : AudioStream = sfx_library[sound_effect]
-	
-	var sfx_player : AudioStreamPlayer = AudioStreamPlayer.new()
-	sfx_player.stream = sfx
-	sfx_player.bus = "SFX"
-	
-	sfx_player.process_mode = Node.PROCESS_MODE_ALWAYS
-	get_tree().root.add_child(sfx_player)
-	sfx_player.play()
-	await sfx_player.finished
-	sfx_player.queue_free()
+	SFXPlayer.play_sound_effect(sfx_library[sound_effect], self)
 
 func change_BGM(new_bgm):
 	if background_music.stream != new_bgm:

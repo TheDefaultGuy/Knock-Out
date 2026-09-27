@@ -1,6 +1,10 @@
 @icon("res://assets/icons/RiBoxingFill.svg")
-## The base class for all boxers/fighters, including the player.
 class_name Player extends Fighter
+## The class that is the actual playable player character.
+##
+## It extends from [Fighter] and is its own class to make
+## checking between [Enemy] and [Player] easier and to
+## avoid having unused variables in the [Player] class.
 
 
 @onready var input_component: InputComponent = %InputComponent

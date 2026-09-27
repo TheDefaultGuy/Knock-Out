@@ -1,10 +1,9 @@
 @icon("res://assets/icons/MdiSwordCross.svg")
 
 class_name AttackingComponent extends Node
-
 ## This component is responsible for performing the attacks.
 ##
-## It's used by the attack animations in the Move Set Animation Player and iteracts with the [DefenseComponent].
+## It's used by the attack animations in the Move Set Animation Player and interacts with the [DefenseComponent].
 ## Basically, they talk with each other. The attack component gives the [DefenseComponent] all of the data of the attack.
 ## The range it covers, the height it covers, the amount of damage and the punch direction.
 ## The defense then checks against the defense variables it has and returns whether or not the attack landed.
@@ -34,7 +33,7 @@ var parry_attack_timer : Timer = null
 
 
 func _ready() -> void:
-	create_parry_timer()
+	parry_attack_timer = TimerCreator.create_timer_and_add_as_child("Parry Attack Timer", true, parry_bonus_duration, false, self)
 	defense_component.player_parried_signal.connect(parry_damage_bonus)
 
 func _process(_delta: float) -> void:
@@ -126,13 +125,6 @@ func attack_flash() -> void:
 ## can have the damage bonus after parrying.
 func parry_damage_bonus() -> void:
 	parry_attack_timer.start()
-
-func create_parry_timer() -> void:
-	parry_attack_timer = Timer.new()
-	parry_attack_timer.name = "Attack Delay Timer"
-	parry_attack_timer.wait_time = parry_bonus_duration
-	parry_attack_timer.one_shot = true
-	add_child(parry_attack_timer)
 
 ## This is the equation used for calculating star punch damage in relation to the amount of stars used.
 ##

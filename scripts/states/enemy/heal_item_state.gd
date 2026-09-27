@@ -50,7 +50,7 @@ func enter() -> void:
 	has_started = false
 	super() # Runs the base EnemyState enter function and then runs everything below.
 	
-	owner.animation_component.play_animation(intro_animation)
+	AnimationManager.force_play_animation(intro_animation, self)
 	
 	await animation_tree.animation_started
 	animation_tree.animation_finished.connect(check_animation)

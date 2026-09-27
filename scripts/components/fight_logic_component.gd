@@ -1,5 +1,8 @@
 @icon("res://assets/icons/IconParkSolidBranchTwo.svg")
 class_name FightLogicComponent extends Node
+## Handles the logic of the fight itself.
+##
+## Handles the winner, the round time, the KO count, determining when the fight is over, etc...
 
 signal time_is_over_signal
 
@@ -123,7 +126,6 @@ func end_fight() -> void:
 func set_that_fight_is_over() -> void:
 	FightManager.is_fight_over = true
 
-
 func _on_round_timer_timeout() -> void:
 	FightManager.fight_is_over_signal.emit()
 	FightManager.is_fight_over = true
@@ -136,10 +138,8 @@ func _on_round_timer_timeout() -> void:
 
 ## Creates the timers with code so that  you don't have to make a round timer node and then manually assign it.
 func create_timers() -> void:
-	round_timer = TimerCreator.create_timer("Round Timer", true, owner.match_settings.round_length, false)
-	add_child.call_deferred(round_timer)
+	round_timer = TimerCreator.create_timer_and_add_as_child("Round Timer", true, owner.match_settings.round_length, false, self)
 	#round_timer.timeout.connect(_on_round_timer_timeout)
 	
-	#ko_timer = TimerCreator.create_timer("KO Count Timer", true, 10.0, false)
-	#add_child.call_deferred(ko_timer)
+	#ko_timer = TimerCreator.create_timer_and_add_as_child("KO Count Timer", true, 10.0, false)
 	#ko_timer.timeout.connect(set_that_fight_is_over)

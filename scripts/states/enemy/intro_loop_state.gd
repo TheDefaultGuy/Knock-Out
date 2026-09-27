@@ -37,7 +37,7 @@ func _ready() -> void:
 
 func enter() -> void:
 	
-	owner.animation_component.play_animation(intro_animation)
+	AnimationManager.force_play_animation(intro_animation, self)
 	
 	animation_tree.animation_finished.connect(check_animation)
 	

@@ -1,7 +1,6 @@
 @icon("res://assets/icons/BoxiconsShieldHalf.svg")
 
 class_name DefenseComponent extends Node
-
 ## This component is in charge of setting the status of defense of the [Player] / [Enemy].
 ##
 ## It is a required component for the [Fighter] class, which includes the [Player] and all [Enemy] boxers.
@@ -149,10 +148,10 @@ func check_blocking_status(blocking_status : bool, damage_amount : float, punch_
 			handle_player_blocking_and_parry(damage_amount, punch_height, punch_direction, punch_range)
 				
 			# Sets the blend of the block animation.
-			owner.animation_component.set_animation_2d_blend(current_block_animation, Vector2i(punch_direction, punch_height))
+			AnimationManager.set_animation_2d_blend(current_block_animation, Vector2i(punch_direction, punch_height), self)
 			
 			# Plays the corresponding block animation if it wasn't enough damage for a knockdown.
-			owner.animation_component.play_animation(current_block_animation)
+			AnimationManager.force_play_animation(current_block_animation, self)
 			print_rich("[color=gray][b]Defense Component:[/b][/color] Blocked")
 			
 			# This is done so that state change functions dont try and check for idle or something and checks on the actual block animation
@@ -221,14 +220,15 @@ func choose_hit_region(punch_height : int, damage_amount : float, punch_directio
 		return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
 	
 	# Sets the blend of the current hit animation based on the punch height and the direction.
-	owner.animation_component.set_animation_2d_blend(current_hit_animation, Vector2i(punch_direction, punch_height))
+	AnimationManager.set_animation_2d_blend(current_hit_animation, Vector2i(punch_direction, punch_height), self)
 	
 	# Actually starts the hit animation.
-	owner.animation_component.play_animation(current_hit_animation)
+	AnimationManager.force_play_animation(current_hit_animation, self)
 	
 	shorten_enemy_attack_animation()
 	
 	return true # Returns that the hit WAS successful. Mainly as an answer to the attacking component.
+
 ## Shortens the [Enemy] attack animation if the player was hit 
 ## this is to prevent the player being able to hit the enemy after getting hit due to long animations.
 func shorten_enemy_attack_animation() -> void:
@@ -248,11 +248,13 @@ func shorten_enemy_attack_animation() -> void:
 		# Don't run the function if the enemy's current state is not a simple one.
 		if owner.state_machine.current_state is PlayerKnockedDown:
 			return
-		# Sets the next animation to play
-		Global.enemy_node.anim_state_machine.travel("hub_node")
-		
-		# Travels to the next animation that was set above.
-		Global.enemy_node.anim_state_machine.next()
+			
+		AnimationManager.skip_current_animation_and_play_new_one("hub_node", Global.enemy_node)
+		## Sets the next animation to play
+		#Global.enemy_node.anim_state_machine.travel("hub_node")
+		#
+		## Travels to the next animation that was set above.
+		#Global.enemy_node.anim_state_machine.next()
 		
 		# Restarts the attack delay timer, otherwise it'll never attack again.
 		Global.enemy_node.state_machine.current_state.start_attack_delay_timer()

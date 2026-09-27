@@ -59,7 +59,6 @@
 [ext_resource type="Script" uid="uid://d2mk31geekmgb" path="res://scripts/states/enemy/stun_state.gd" id="53_7ka3d"]
 [ext_resource type="Script" uid="uid://lrug82hg7rrf" path="res://scripts/states/enemy/spectating_state.gd" id="54_vnm3l"]
 [ext_resource type="Script" uid="uid://bxdm4cxh3jw0n" path="res://scripts/states/enemy/enemy_knocked_down_state.gd" id="55_b37o5"]
-[ext_resource type="Script" uid="uid://ctgr0jt66jjuu" path="res://scripts/components/animation_component.gd" id="55_u5lb0"]
 [ext_resource type="Script" uid="uid://bd3i8gnmviajw" path="res://scripts/states/player/cutscene_state.gd" id="56_eju5b"]
 [ext_resource type="Script" uid="uid://dy765alksxcdx" path="res://scripts/states/enemy/random_moves_state.gd" id="57_cegiy"]
 [ext_resource type="Script" uid="uid://c4q24a656iry7" path="res://scripts/states/enemy/taunt_and_counter_state.gd" id="61_uj4fd"]
@@ -8916,11 +8915,6 @@ script = ExtResource("49_fd000")
 unique_name_in_owner = true
 script = ExtResource("50_rfikt")
 metadata/_custom_type_script = "uid://by7b3lklkcynb"
-
-[node name="AnimationComponent" type="Node" parent="." unique_id=1847269036]
-unique_name_in_owner = true
-script = ExtResource("55_u5lb0")
-metadata/_custom_type_script = "uid://ctgr0jt66jjuu"
 
 [node name="InstantKDComponent" type="Node" parent="." unique_id=81177286]
 unique_name_in_owner = true

@@ -1,8 +1,10 @@
 @icon("res://assets/icons/RiBoxingFill.svg")
-## The base class for all boxers/fighters, including the [Player] and [Enemy].
-class_name Fighter extends Node2D
 
-### Whether the [Fighter] is currently knocked down.
+@abstract class_name Fighter extends Node2D
+## The base class for all boxers/fighters, including the [Player] and [Enemy].
+
+
+## Whether the [Fighter] is currently knocked down.
 var is_knocked_down : bool = false
 
 ## The [DefenseComponent] assigned to the [Fighter].
@@ -13,9 +15,6 @@ var is_knocked_down : bool = false
 
 ## The [AttackingComponent] assigned to the [Fighter].
 @onready var attacking_component: AttackingComponent = %AttackingComponent
-
-## The [AnimationComponent] assigned to the [Fighter].
-@onready var animation_component: AnimationComponent = %AnimationComponent
 
 ## The [AnimationTree] assigned to the [Fighter].
 @onready var animation_tree: AnimationTree = %AnimationTree

@@ -85,7 +85,7 @@ func perform_attack(height : int, direction : int, action_name : String) -> void
 	if anim_state_machine.get_current_node() == "neutral":
 		
 		# Checks if the attack is actually a star punch.
-		if action_name in ["star_punch_upper", "star_punch_lower", "star_punch"]:
+		if action_name.contains("star") == true:
 			
 			if FightManager.star_count > 0: # Checks to see if the player has stars to perform a star punch.
 				FightManager.use_stars() # If the player has stars, use them.
@@ -103,7 +103,6 @@ func perform_attack(height : int, direction : int, action_name : String) -> void
 			
 			# Sets the blend for the attack animation based on the punch's direction and height.
 			animation_tree.set("parameters/attack/blend_position", Vector2i(direction, height))
-			
 			
 			# Plays the actual attack animation
 			anim_state_machine.travel("attack")

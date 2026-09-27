@@ -11,7 +11,7 @@ class_name PlayerKnockedDown extends State
 @export var get_up_difficulty_curve : Curve
 
 ## Value from 0.0 to the [param get_up_threshold] that determines how far the player is to recovering from a knockout and getting up.
-@export var get_up_progress : float = 0.0
+@export_storage var get_up_progress : float = 0.0
 
 ## How much does each button press increase the [param get_up_progress]
 ## Basically, how large is each step to get up.
@@ -24,9 +24,9 @@ class_name PlayerKnockedDown extends State
 ## The target value the player has to reach to recover from being knocked down.
 @export var get_up_threshold : float = 100.0
 
-@onready var input_component: InputComponent = %InputComponent
-
 var get_up_decay_rate : float = 50.0
+
+@onready var input_component: InputComponent = %InputComponent
 
 @onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
 
@@ -44,7 +44,7 @@ func _process(delta: float) -> void:
 	
 	# Sets the blend of the get up animation to be equal to the get_up_progress
 	animation_tree.set("parameters/get_up_blend/blend_position", get_up_progress)
-		
+	
 	if FightManager.is_fight_over == false:
 		
 		# When the get up progress reaches 100 or the get_up_threshold, the player succesfully gets back up.

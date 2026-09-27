@@ -1,4 +1,6 @@
-class_name State extends Node
+@abstract class_name State extends Node
+## Base State class used by [StateMachine].
+
 
 @warning_ignore("unused_signal")
 ## Signal called by the states when they want to transition out.

@@ -54,8 +54,8 @@ var check_count : int = 0
 #ar roll_value : float = 0.0
 
 func _ready() -> void:
-	get_up_timer = TimerCreator.create_timer("Get Up Timer", true, 1.0, false)
-	add_child(get_up_timer)
+	get_up_timer = TimerCreator.create_timer_and_add_as_child("Get Up Timer", true, 1.0, false, self)
+	
 	
 
 func _process(_delta: float) -> void:

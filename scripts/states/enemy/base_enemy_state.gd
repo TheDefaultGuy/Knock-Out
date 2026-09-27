@@ -1,7 +1,7 @@
 @tool
 @icon("res://assets/icons/LucideSkull.svg")
 
-class_name EnemyState extends State
+@abstract class_name EnemyState extends State
 
 ## The base [State] used by all attacking [Enemy] states.
 ## 
@@ -324,13 +324,13 @@ func _ready() -> void:
 	set_conditions_and_targets_dictionary()
 	
 	if StateChangeConditionEnum.AFTER_TIME_PASSED in conditions_and_targets_dict.keys():
-		state_change_timer = TimerCreator.create_timer("Wait Timer", true, time_to_change_state, false)
-		add_child(state_change_timer)
+		state_change_timer = TimerCreator.create_timer_and_add_as_child("Wait Timer", true, time_to_change_state, false, self)
+		#add_child(state_change_timer)
 		
 	# Creates and adds the attack timer as a child and connects it if it's required for the state.
 	if attack_timer_required == true: 
-		attack_timer = TimerCreator.create_timer("Attack Delay Timer", true, max_delay_time, false)
-		add_child(attack_timer)
+		attack_timer = TimerCreator.create_timer_and_add_as_child("Attack Delay Timer", true, max_delay_time, false, self)
+		#add_child(attack_timer)
 		
 	check_for_unassigned_variables() # Self-explanatory.
 	
