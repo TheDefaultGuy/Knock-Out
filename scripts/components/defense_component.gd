@@ -23,57 +23,56 @@ signal hit_registered_signal
 
 
 #region Exported Variables
-@export_group("Defense Variables")
 
 ## Which position the [Fighter] is currently in and is used for determining dodges.
 ##
 ## 0 = Neutral; no dodge
 ##-1 = Dodging Left
 ## 1 = Dodging Right
-@export var dodge_position : int = Global.RangeEnum.NEUTRAL
+@export_storage var dodge_position : int = Global.RangeEnum.NEUTRAL
 
 ## Used to multiply damage at specific moments as a way to make weakspots or counter attack options.
 ##
 ## Used by enemies so that the player can be rewarded with well timed counter punches or exploiting weakspots.
 ## This and all "Defense Variables" should only be accessed and manipulated by animations within the move set animation
-@export var upper_damage_multiplier : float = 1.0 
+@export_storage var upper_damage_multiplier : float = 1.0 
 
 ## Used to multiply damage at specific moments as a way to make weakspots or counter attack options.
 ##
 ## Used by enemies so that the player can be rewarded with well timed counter punches or exploiting weakspots.
 ## This and all "Defense Variables" should only be accessed and manipulated by animations within the move set animation
-@export var lower_damage_multiplier : float = 1.0
+@export_storage var lower_damage_multiplier : float = 1.0
 
 ## Used to divide damage done by attacks when blocked.
 ## Used only by the [Player], as enemies can't get hurt if they block.
-@export var blocking_damage_multiplier : float = 0.1 
+@export_storage var blocking_damage_multiplier : float = 0.1 
 
 ## Whether the upper part of the fighter is blocked.
 ## High attacks will be considered as if they landed, by the attacker, but blocked by the defender.
-@export var upper_blocking_status : bool = false
+@export_storage var upper_blocking_status : bool = false
 
 ## Whether the lower part of the fighter is blocked. 
 ## Low attacks will be considered as if they landed, by the attacker, but blocked by the defender.
-@export var lower_blocking_status : bool = false
+@export_storage var lower_blocking_status : bool = false
 
 ## Whether the fighter is invulnerable or not in the upper section.
 ## Used for if they're ducking, dodging with their head, moved away, etc...
-@export var upper_invulnerability : bool = false 
+@export_storage var upper_invulnerability : bool = false 
 
 ## Whether the fighter is invulnerable or not in the lower section.
 ## Used for if they're ducking, dodging with their head, moved away, etc...
-@export var lower_invulnerability : bool = false
+@export_storage var lower_invulnerability : bool = false
 
 ## The window of time in which attacking stuns the enemy. Never used by the player.
-@export var stun_window : bool = false 
+@export_storage var stun_window : bool = false 
 
 ## The window of time in which attacking grants a star for star punches.
 ## It's split into 2 variables corresponding to the 2 different heights. That way, you have the option of awarding a star by hitting the face but not the body or vice versa.
-@export var upper_star_window : bool = false 
+@export_storage var upper_star_window : bool = false 
 
 ## The window of time in which attacking grants a star for star punches.
 ## It's split into 2 variables corresponding to the 2 different heights. That way, you have the option of awarding a star by hitting the face but not the body or vice versa.
-@export var lower_star_window : bool = false
+@export_storage var lower_star_window : bool = false
 
 #endregion
 
