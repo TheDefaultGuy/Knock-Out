@@ -1,9 +1,12 @@
 @icon("res://assets/icons/MaterialSymbolsSoundDetectionLoudSound.svg")
+
+class_name SoundEffectsComponent extends Node
+
 ## This is the component that handles playing the general sound effects.
 ##
 ## This is used to play sound effects that are not exclusive to fighters and attacks.
 ## For example, it should be used for sound effects like: succesful hits, dodges, blocks, gaining a star, being stunned, etc...
-class_name SoundEffectsComponent extends Node
+
 
 const MATCH_BGM = preload("uid://bxvahixjtads2")
 const KO_BGM = preload("uid://cwd0ahjeaqarg")
@@ -20,6 +23,7 @@ const KO_BGM = preload("uid://cwd0ahjeaqarg")
 	"parry": preload("uid://d2j7ay5j7gx3p"),
 	"bell": preload("uid://b0b6pqv2u0uw2"),
 	"crowd": preload("uid://b21x6cyk3rtuq"),
+	"fight": preload("uid://de1mdt7i82cr4"),
 }
 
 var background_music : AudioStreamPlayer = null
@@ -29,8 +33,10 @@ func _ready() -> void:
 	background_music = AudioStreamPlayer.new()
 	background_music.stream = MATCH_BGM
 	background_music.autoplay = true
-	get_tree().root.add_child(background_music)
+	add_child(background_music)
 	background_music.play()
+	
+	FightManager.resume_fighting_signal.connect(play_sound_effect.bind("fight"))
 	
 	FightManager.succesful_hit_signal.connect(play_sound_effect.bind("punch_hit"))
 	FightManager.star_awarded_signal.connect(play_sound_effect.bind("star_awarded"))

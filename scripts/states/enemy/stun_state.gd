@@ -1,6 +1,5 @@
-@icon("res://assets/icons/EmojioneMonotoneDizzy.svg")
 @tool
-
+@icon("res://assets/icons/EmojioneMonotoneDizzy.svg")
 class_name StunState extends State
 
 ## This is the state in which the enemy is stunned and can't fight back.

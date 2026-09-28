@@ -1,7 +1,0 @@
-[gd_scene format=3 uid="uid://cixfidpop7p0s"]
-
-[ext_resource type="Script" uid="uid://gxuvijllc8s4" path="res://scripts/globals/FightManager.gd" id="1_8bktm"]
-
-[node name="FightManager" type="Node" unique_id=948866]
-script = ExtResource("1_8bktm")
-star_count = 27

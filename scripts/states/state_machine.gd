@@ -1,5 +1,5 @@
-@icon("res://assets/icons/MdiStateMachine.svg")
 @tool
+@icon("res://assets/icons/MdiStateMachine.svg")
 class_name StateMachine extends Node
 
 ## The node In-charge of transitioning and storing the [Player] and [Enemy] states.
@@ -33,10 +33,8 @@ class_name StateMachine extends Node
 
 #@export_tool_button("Delete Attack Animation Nodes") var dlt_bttn = delete_attack_animation_nodes
 
-## The current [State] that active and running.
+## Stores the current [State] that active and running.
 var current_state : State
-
-var root_state_machine : AnimationNodeStateMachine = null
 
 ## Used to store a [State] that the [Enemy] was currently at before it got interrupted
 ## be it by being stunned, knocked down, etc...

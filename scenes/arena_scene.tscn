@@ -1,12 +1,13 @@
 [gd_scene format=3 uid="uid://b2o12w57mpc12"]
 
 [ext_resource type="Script" uid="uid://btamot0npdjvw" path="res://scripts/classes/arena_class.gd" id="1_v87wf"]
-[ext_resource type="PackedScene" uid="uid://7858o2inqkak" path="res://scenes/nick_bruiser.tscn" id="3_3j23c"]
 [ext_resource type="PackedScene" uid="uid://bh3wovdy0myrr" path="res://scenes/player.tscn" id="3_bt4xr"]
+[ext_resource type="PackedScene" uid="uid://c4mjuykvitlyo" path="res://scenes/Rick_Bruiser.tscn" id="3_c5qw3"]
 [ext_resource type="Script" uid="uid://lks1t1wg7nna" path="res://scripts/components/particle_effect_component.gd" id="4_4wfwo"]
 [ext_resource type="Script" uid="uid://c8kyx1g3lvmgb" path="res://scripts/components/sfx_component.gd" id="4_8k0nb"]
 [ext_resource type="Texture2D" uid="uid://ujuvvpjfs7ty" path="res://assets/ring1.png" id="4_p4q4o"]
 [ext_resource type="PackedScene" uid="uid://bj8nea7mg1hsi" path="res://scenes/arena_ui.tscn" id="4_tqdu3"]
+[ext_resource type="PackedScene" uid="uid://dng45yj4dgker" path="res://addons/AnyObjectInspector/any_object_inspector.tscn" id="5_ildxb"]
 [ext_resource type="Texture2D" uid="uid://dbrq43tue7gf2" path="res://assets/ring2.png" id="5_or0bq"]
 [ext_resource type="Texture2D" uid="uid://dgd8463fc3h8u" path="res://assets/ring3.png" id="6_3j23c"]
 [ext_resource type="Texture2D" uid="uid://daeyep1j18c81" path="res://assets/ring4.png" id="7_wiy1v"]
@@ -23,6 +24,11 @@
 [ext_resource type="AudioStream" uid="uid://oyw1te4e3r5e" path="res://assets/sound/sfx/8.mp3" id="17_nt2f4"]
 [ext_resource type="AudioStream" uid="uid://uomcp0tl8s87" path="res://assets/sound/sfx/9.mp3" id="18_ehbke"]
 [ext_resource type="AudioStream" uid="uid://401bxxyjqk01" path="res://assets/sound/sfx/10.wav" id="19_ebs2b"]
+
+[sub_resource type="Curve" id="Curve_ildxb"]
+_limits = [0.0, 1.0, 0.0, 0.1]
+_data = [Vector2(0, 1), 0.0, -312.6155, 0, 0, Vector2(0.01, 0.02), -0.53362566, -0.53362566, 0, 0, Vector2(0.014, 0.02), 0.0, 0.0, 0, 0, Vector2(0.07520548, 1), 30.416649, 0.0, 0, 0]
+point_count = 4
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_m0jec"]
 animations = [{
@@ -205,7 +211,8 @@ _data = {
 process_mode = 3
 script = ExtResource("1_v87wf")
 player_scene = ExtResource("3_bt4xr")
-enemy_scene = ExtResource("3_3j23c")
+enemy_scene = ExtResource("3_c5qw3")
+slow_motion_curve = SubResource("Curve_ildxb")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=664736061]
 position = Vector2(0, -18)
@@ -213,6 +220,11 @@ zoom = Vector2(3.12, 3.12)
 
 [node name="Arena UI" parent="Camera2D" unique_id=912051865 instance=ExtResource("4_tqdu3")]
 unique_name_in_owner = true
+
+[node name="AnyObjectInspector" parent="Camera2D" unique_id=1416009507 instance=ExtResource("5_ildxb")]
+process_mode = 3
+offset_top = -32.0
+offset_bottom = 32.0
 
 [node name="Background" type="AnimatedSprite2D" parent="." unique_id=564253712]
 texture_filter = 1
@@ -222,15 +234,23 @@ sprite_frames = SubResource("SpriteFrames_m0jec")
 autoplay = "default"
 frame_progress = 0.30562395
 
-[node name="ColorRect" type="ColorRect" parent="." unique_id=1580573806]
+[node name="ColorRect" type="ColorRect" parent="Background" unique_id=1580573806]
 z_index = -1
-offset_left = -216.0
-offset_top = -190.0
-offset_right = 209.0
-offset_bottom = 102.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -473.54663
+offset_top = -256.04
+offset_right = 41.54663
+offset_bottom = 80.04001
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 color = Color(0, 0, 0, 1)
+metadata/_edit_lock_ = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=805291020]
 unique_name_in_owner = true

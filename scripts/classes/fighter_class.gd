@@ -4,6 +4,9 @@
 ## The base class for all boxers/fighters, including the [Player] and [Enemy].
 
 
+@export var fighter_info : FighterInfo
+
+
 ## Whether the [Fighter] is currently knocked down.
 var is_knocked_down : bool = false
 
@@ -22,8 +25,6 @@ var is_knocked_down : bool = false
 ## The animation state machine inside of the [member animation_tree].
 ## It's where all of the Animations of the [Fighter] are.
 @onready var anim_state_machine: AnimationNodeStateMachinePlayback = animation_tree["parameters/playback"]
-
-@export var fighter_info : FighterInfo
 
 ## The [StateMachine] assigned to the [Fighter].
 @onready var state_machine: StateMachine = %StateMachine

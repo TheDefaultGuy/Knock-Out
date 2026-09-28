@@ -1,5 +1,5 @@
-@icon("res://assets/icons/TablerEyeExclamation.svg")
 @tool
+@icon("res://assets/icons/TablerEyeExclamation.svg")
 class_name Reactionary extends EnemyState
 
 ## In this state, the enemy will react to the player's actions.
@@ -14,8 +14,13 @@ class_name Reactionary extends EnemyState
 ## The fakeout animation that will play in this state.
 @export var fakeout_animation: String = "fakeout"
 
+## The punish attack the [Enemy] will perform if the [Player] tries to dodge left during the [member fakeout_animation].
 @export var left_dodge_punish: String = "punish_left"
+
+## The punish attack the [Enemy] will perform if the [Player] tries to dodge right during the [member fakeout_animation].
 @export var right_dodge_punish: String = "punish_right"
+
+## The punish attack the [Enemy] will perform if the [Player] tries to duck during the [member fakeout_animation].
 @export var duck_punish: String = "punish_duck"
 
 func _ready() -> void:
@@ -48,7 +53,7 @@ func enter() -> void:
 func exit() -> void:
 	
 	super()  # Runs the base EnemyState exit function and then runs everything below.
-
+	
 	FightManager.player_dodged_signal.disconnect(play_punish_animation)
 
 func play_punish_animation(dodge_direction : int) -> void:
@@ -73,11 +78,10 @@ func override_conditions_and_state_parameters() -> void:
 	moveset_type = MovesetTypeEnum.PICK_RANDOM
 	
 	block_behavior = BlockBehaviorEnum.COUNTER_ATTACK
-	
 
 ## Sets the required conditions as Read Only so that they can't be changed.
 func _validate_property(property : Dictionary) -> void:
 	if property.name == "block_behavior" :
 		property.usage |= PROPERTY_USAGE_READ_ONLY
-
+	
 	super(property) # Calls the base EnemyState function right after.

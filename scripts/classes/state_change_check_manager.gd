@@ -23,6 +23,9 @@ static func set_condition_check_functions_based_on_conditions(conditions_and_tar
 			EnemyState.StateChangeConditionEnum.AFTER_PLAYER_NOT_TIRED:
 				array_of_check_functions.append(check_player_not_tired)
 				
+			EnemyState.StateChangeConditionEnum.AFTER_TAKEN_AMOUNT_OF_DAMAGE:
+				array_of_check_functions.append(check_damage_taken)
+				
 			EnemyState.StateChangeConditionEnum.AT_ROUND_TIME:
 				array_of_check_functions.append(check_round_time)
 				
@@ -35,9 +38,13 @@ static func set_condition_check_functions_based_on_conditions(conditions_and_tar
 			EnemyState.StateChangeConditionEnum.AFTER_COMPLETION, EnemyState.StateChangeConditionEnum.STATE_INTERRUPTED:
 				array_of_check_functions.append(check_state_completion)
 				
+			#EnemyState.StateChangeConditionEnum.AFTER_STAR_PUNCH_LANDED:
+				#array_of_check_functions.append(check_time_has_passed)
+				
 	return array_of_check_functions
+#owner.hit_by_star_punch_signal.emit() 
 
-## Checks to see if the current round time matches [member target_round_time] to change state.
+## Checks to see if the current round time matches [member EnemyState.target_round_time] to change state.
 static func check_round_time(calling_state : State) -> bool:
 	if FightManager.round_time >= calling_state.target_round_time:
 		#prints(FightManager.round_time, calling_state.target_round_time)
@@ -45,14 +52,21 @@ static func check_round_time(calling_state : State) -> bool:
 		return true
 	return false
 
-## Checks to see if the enemy's HP has dropped below the [member target_hp]
+## Checks to see if the enemy's HP has dropped below the [member EnemyState.target_hp]
 static func check_enemy_health(calling_state : State) -> bool:
 	if calling_state.health_component.hp <= calling_state.target_hp:
 		calling_state.condition_match_direct_transition(EnemyState.StateChangeConditionEnum.AFTER_HEALTH_DROPS_BELOW)
 		return true
 	return false
 
-## Checks to see if the [member state_change_timer] has ran out so that the enemy can change state.
+## Checks to see if the [member EnemyState.damage_taken_so_far] is more than the [member EnemyState.target_damage_taken]
+static func check_damage_taken(calling_state : State) -> bool:
+	if calling_state.damage_taken_so_far >= calling_state.target_damage_taken:
+		calling_state.condition_match_direct_transition(EnemyState.StateChangeConditionEnum.AFTER_TAKEN_AMOUNT_OF_DAMAGE)
+		return true
+	return false
+
+## Checks to see if the [member EnemyState.state_change_timer] has ran out so that the enemy can change state.
 static func check_time_has_passed(calling_state : State) -> bool:
 	#print("timepased")
 	if calling_state.state_change_timer == null:
@@ -69,6 +83,7 @@ static func check_state_after_stun(calling_state : State) -> void:
 	calling_state.condition_match_change_interrupted_state(EnemyState.StateChangeConditionEnum.AFTER_STUN)
 	calling_state.transition_to_stunned()
 	return
+
 
 ## Checks the [Player] [member FightManager.Stamina] and then transitions to target state once it's zero.
 static func check_player_tired(calling_state : State) -> bool:

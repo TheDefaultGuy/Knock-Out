@@ -1,6 +1,5 @@
-@icon("res://assets/icons/IntroLoop.svg")
 @tool
-
+@icon("res://assets/icons/IntroLoop.svg")
 class_name LoopingCharge extends EnemyState
 
 ## In this state, the enemy will first perform an intro animation,
@@ -52,7 +51,7 @@ func _process(_delta: float) -> void:
 
 func check_animation(animation_name : String) -> void:
 
-	match remove_library_preffix(animation_name):
+	match ArrayStringFormatter.remove_animation_library_preffix(animation_name):
 		intro_animation:
 			anim_state_machine.travel(idle_loop_animation)
 			return

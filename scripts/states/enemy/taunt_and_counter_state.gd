@@ -1,5 +1,5 @@
-@icon("res://assets/icons/AtIconsComedyMask.svg")
 @tool
+@icon("res://assets/icons/AtIconsComedyMask.svg")
 class_name TauntAndCounter extends EnemyState
 
 ## In this state, the enemy will keep looping the same animation, but react to the player's attacks.
@@ -11,6 +11,7 @@ class_name TauntAndCounter extends EnemyState
 ## Then, tweak the exported variables to set it up how you'd like.
 ## DO NOT change anything in the actual .gd file, since it'll mess up compatibility.
 
+## The taunting animation the [Enemy] will randomly perform to bait the [Player].
 @export var taunt_animation : String = "taunt"
 
 func _process(_delta: float) -> void:

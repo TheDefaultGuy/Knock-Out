@@ -1,3 +1,2 @@
 # Knock-Out!
-This is a system written in Godot for maing custom fighters in a Punch-Out!!-like game.
-
+This is a system written in Godot for making custom fighters in a Punch-Out!!-like game.

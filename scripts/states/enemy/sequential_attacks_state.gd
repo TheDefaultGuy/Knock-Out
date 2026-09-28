@@ -1,5 +1,5 @@
-@icon("res://assets/icons/MaterialSymbolsDeliveryTruckSpeedRounded.svg")
 @tool
+@icon("res://assets/icons/MaterialSymbolsDeliveryTruckSpeedRounded.svg")
 class_name SequentialAttacks extends EnemyState
 
 ## A state in which the [Enemy] will perform a sequence of attacks or animations.
@@ -86,7 +86,7 @@ func increase_count(_animation) -> void:
 func override_conditions_and_state_parameters() -> void:
 	state_type = StateTypeEnum.CHAINED_ATTACKS
 	attack_timer_required = false
-		
+	
 	moveset_type = MovesetTypeEnum.PREDETERMINED_ORDER
 	
 	# Overrides the state change condition so that this state can function properly.

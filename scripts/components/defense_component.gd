@@ -7,7 +7,6 @@ class_name DefenseComponent extends Node
 ## It interacts with the opposing Fighter's [AttackingComponent], as it gets called by it.
 ## It mainly checks if an attack lands given the fighter's blocking, dodging, state, etc...
 
-
 ## Signal emitted when the [Player] successully performs a parry.
 signal player_parried_signal
 
@@ -19,7 +18,6 @@ signal stunned_signal
 
 ## Signal emitted whenthe [Fighter] has registered a hit.
 signal hit_registered_signal
-
 
 #region Exported Variables
 
@@ -95,6 +93,9 @@ var blocking_array : Array[bool] = [lower_blocking_status, upper_blocking_status
 var star_window_array : Array[bool] = [lower_star_window, upper_star_window]
 #endregion
 
+@onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
+
+
 func _ready() -> void:
 	if owner is Enemy: # Enemies can't get hurt when they block.
 		blocking_damage_multiplier = 0
@@ -159,7 +160,7 @@ func check_blocking_status(blocking_status : bool, damage_amount : float, punch_
 			
 			FightManager.successful_block_signal.emit()
 			return false # Returns that the hit was NOT successful. Mainly as an answer to the attacking component.
-
+	
 	return false  # Returns that the hit was NOT successful. Mainly as an answer to the attacking component.
 
 #region Helper/short functions
@@ -202,6 +203,9 @@ func choose_hit_region(punch_height : int, damage_amount : float, punch_directio
 	print_rich("[color=gray][b]Defense Component:[/b][/color] Hit registered.")
 	
 	if owner is Enemy:
+	
+		# Turns off the attack flash shader in case it's on.
+		animated_sprite_2d.material.set_shader_parameter("Visible", false)
 		
 		check_for_star_and_stun(punch_height) # Checks the star punch and stun windows
 		
@@ -214,6 +218,7 @@ func choose_hit_region(punch_height : int, damage_amount : float, punch_directio
 			
 			# Punches dealing more than 15.0 are considered star punches for sake of simplicity.
 			owner.hit_by_star_punch_signal.emit() 
+	
 	
 	
 	if owner.health_component.handle_damage_and_knockdown(damage_amount, multiplier_array[punch_height], punch_height, punch_direction) == true:
@@ -248,13 +253,9 @@ func shorten_enemy_attack_animation() -> void:
 		# Don't run the function if the enemy's current state is not a simple one.
 		if owner.state_machine.current_state is PlayerKnockedDown:
 			return
-			
+		
+		# Shortens the attack animation by skipping it.
 		AnimationManager.skip_current_animation_and_play_new_one("hub_node", Global.enemy_node)
-		## Sets the next animation to play
-		#Global.enemy_node.anim_state_machine.travel("hub_node")
-		#
-		## Travels to the next animation that was set above.
-		#Global.enemy_node.anim_state_machine.next()
 		
 		# Restarts the attack delay timer, otherwise it'll never attack again.
 		Global.enemy_node.state_machine.current_state.start_attack_delay_timer()

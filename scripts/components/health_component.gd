@@ -1,5 +1,6 @@
 @icon("res://assets/icons/GriddyIconsHealthCrossFilled.svg")
 class_name HealthComponent extends Node
+
 ## The component that handles Health Points and any calculations related to it.
 ## 
 ## Mainly called upon by the [DefenseComponent].
@@ -23,10 +24,6 @@ signal damage_taken_signal(amount)
 		# Automatically clamps the HP to be between 0 and max hp
 		hp = clampf(value, 0.0, max_hp)
 		health_changed_signal.emit()
-
-#func _init() -> void:
-	#assert(hp > 0.0, str(owner.name, " HP is negative."))
-	#assert(hp > 0.0, str(owner.name, " HP is negative."))
 
 func _ready() -> void:
 	max_hp = hp

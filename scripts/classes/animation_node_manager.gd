@@ -23,7 +23,7 @@ static func add_attack_animation_nodes(root_node : AnimationRootNode, moveset : 
 		printerr(calling_state.name, ': ROOT state machine does NOT have a "hub_node" to attach the attacks to.')
 		return
 		
-	array_remove_empty_entries(moveset) # Removes any empty entries to avoid any problems.
+	ArrayStringFormatter.array_remove_empty_entries(moveset) # Removes any empty entries to avoid any problems.
 	
 	# Iterates through each of the attacks in the moveset dictionary to add their animations to the root state machine.
 	for attack in moveset:
@@ -61,7 +61,7 @@ static func add_chained_attack_animation_nodes(root_node : AnimationRootNode, mo
 		printerr(calling_state.name, ': ROOT state machine does NOT have a "hub_node" to attach the attacks to.')
 		return
 	
-	array_remove_empty_entries(moveset) # Removes any empty entries to avoid any problems.
+	ArrayStringFormatter.array_remove_empty_entries(moveset) # Removes any empty entries to avoid any problems.
 	
 	# Makes a copy of the moveset array and then reverses it so that the attacks get added from last to first.
 	# This is because it'll play the first move in the array, which has to be the last one added so that
@@ -107,23 +107,6 @@ static func format_moveset_for_unique_names(array : Array, calling_state : State
 	for i in range(array.size()): # Formats the names so that they're all unique.
 		modified_arr.append(str(abs(i - array.size()), "_", calling_state.get_index(), "_") + str(array[i]))
 	return modified_arr
-
-## Short little function that removes any duplicate entries in an Array.
-static func array_remove_duplicates(array: Array) -> Array:
-	var output : Array = []
-	for element in array: # Loops through the array
-		if not element in output: # Checks if the item isn't in the output Array.
-			output.append(element) # Adds the item to the output Array
-	return output
-
-## Short little function that removes any empty entries in an Array.
-static func array_remove_empty_entries(array: Array) -> Array:
-	var output : Array = []
-	for element in array:
-		if element != "" or element != null:
-			output.append(element)
-			continue
-	return output
 
 
 ## Creates and returns an Animation Node State Machine Transition.

@@ -1,5 +1,5 @@
-@icon("res://assets/icons/MdiDice.svg")
 @tool
+@icon("res://assets/icons/MdiDice.svg")
 class_name PickRandomState extends EnemyState
 ## Pseudo-state where it randomly choose one of the three states.
 ##

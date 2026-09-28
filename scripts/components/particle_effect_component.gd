@@ -10,7 +10,7 @@ func _ready() -> void:
 	if show_particles == true:
 		#FightManager.succesful_hit_signal.connect(new_effect.bind(IMPACT_EFFECT))
 		FightManager.star_awarded_signal.connect(new_effect.bind(STAR_GAINED_EFFECT))
-	
+
 func new_effect(effect_scene : PackedScene) -> void:
 	var effect = effect_scene.instantiate()
 	if effect.texture is AnimatedTexture:

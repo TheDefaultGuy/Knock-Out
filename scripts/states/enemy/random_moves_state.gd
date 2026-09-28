@@ -1,5 +1,5 @@
-@icon("res://assets/icons/WhhRandom.svg")
 @tool
+@icon("res://assets/icons/WhhRandom.svg")
 class_name RandomizedMoves extends EnemyState
 
 ## A state in which the [Enemy] will randomly choose an attack from a given list of attacks.
@@ -14,12 +14,14 @@ class_name RandomizedMoves extends EnemyState
 ## Then, tweak the exported variables to set it up how you'd like.
 ## DO NOT change anything in the actual .gd file, since it'll mess up compatibility.
 
-#@export var condictionary : Dictionary[State, StateChangeConditions]
+
+#@export var condictionary : Dictionary[EnemyState.StateChangeConditionEnum, StateChangeConditions]
+#@export var condarray : Array[StateChangeConditions] 
 #
 #@export var condictionaryNodepath : Dictionary[NodePath, StateChangeConditions]
 #
 #
-#@export var conditionsss : StateChangeConditions
+
 
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Only Runs the function in-game and not the editor

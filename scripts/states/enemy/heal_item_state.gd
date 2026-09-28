@@ -1,6 +1,5 @@
-@icon("res://assets/icons/PinheadPillBottleWithGreekCross.svg")
 @tool
-
+@icon("res://assets/icons/PinheadPillBottleWithGreekCross.svg")
 class_name ItemHeal extends EnemyState
 
 ## A state in which the enemy will attempt to heal with an item,
@@ -24,6 +23,7 @@ class_name ItemHeal extends EnemyState
 ## The animation played when the player doesn't stop the heal on time.
 @export var successful_animation : String = "heal_successful"
 
+## Stores if the [member intro_animation] or rather, any animation has started playing during this state.
 var has_started : bool = false
 
 
@@ -64,7 +64,6 @@ func enter() -> void:
 func exit() -> void:
 	super() # Runs the base EnemyState exit function and then runs everything below.
 	
-	#FightManager.succesful_hit_signal.disconnect(change_to_failed_state)
 	interruption_status = false
 	animation_tree.animation_finished.disconnect(check_animation)
 	has_started = false
@@ -89,9 +88,9 @@ func override_conditions_and_state_parameters() -> void:
 		printerr(self.name, " does NOT have secondary target state set, but has used the primary target state as a fallback.")
 
 func check_animation(animation_name : String) -> void:
-	print(animation_name)
-	print(intro_animation)
-	match remove_library_preffix(animation_name):
+	#print(animation_name)
+	#print(intro_animation)
+	match ArrayStringFormatter.remove_animation_library_preffix(animation_name):
 		intro_animation:
 			anim_state_machine.travel(successful_animation)
 			#await animation_tree.animation_started

@@ -1,7 +1,7 @@
 @tool
 @icon("res://assets/icons/LucideSkull.svg")
 
-@abstract class_name EnemyState extends State
+@abstract class_name TestEnemyState extends State
 
 ## The base [State] used by all attacking [Enemy] states.
 ## 

@@ -22,13 +22,11 @@ signal transition_state(current_state, target_state)
 
 ## The Function that will run as soon as the state machine enters the state.
 ## Can be overwritten by extended state, but still be reliably called by the state machine.
-func enter() -> void:
-	pass
+@abstract func enter() -> void
 	
 ## The Function that will run right before the state machine exits the state.
 ## Can be overwritten by extended state, but still be reliably called by the state machine.
-func exit() -> void:
-	pass
+@abstract func exit() -> void
 
 #region Transition functions
 func transition(target_state) -> void:
@@ -61,12 +59,3 @@ func transition_to_tired() -> void:
 func transition_to_neutral() -> void:
 	transition_state.emit(self, state_machine.neutral_state)
 #endregion
-
-## Removes the library name/preffix from the incoming animation so that it can be compared against the ones listed above.
-func remove_library_preffix(animation : String) -> String:
-	
-	# Counts the number of slashes "/" in the string.
-	var number_of_preffixes = animation.count("/", 0, 0) 
-	
-	# Returns the whole string after the given number of slashes "/"
-	return animation.get_slice("/",number_of_preffixes)

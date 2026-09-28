@@ -1,5 +1,5 @@
-@icon("res://assets/icons/MdiAlarmBell.svg")
 @tool
+@icon("res://assets/icons/MdiAlarmBell.svg")
 class_name InstantKDComponent extends Node
 
 ## This is the component in charge of storing and checking the conditions for instant knockdown tricks for [Enemy] fighters.

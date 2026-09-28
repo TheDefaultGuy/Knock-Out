@@ -1,14 +1,20 @@
 @icon("res://assets/icons/BoxiconsBinocularFilled.svg")
 
 class_name EnemySpectating extends State
-
 ## It's the state entered when the [Player] is knocked down and the [Enemy] is watching them.
 ##
 ## It is a required state for all [Enemy].
 
+## The animation the [Enemy] will play once the [Player] enters [PlayerKnockedDown]
 @export var move_to_spectate_animation : String = "move_to_spectate"
+
+## The animation the [Enemy] will play when winning the match.
 @export var outro_animation : String = "outro"
+
+## The animation the [Enemy] will play once the [Player] recovers from [PlayerKnockedDown]
 @export var return_animation : String = "back_to_the_fight"
+
+## The animation the [Enemy] will loop while the [Player] attempts to get up during [PlayerKnockedDown]
 @export var spectating_animation : String = "spectating"
 
 func enter() -> void:
@@ -41,7 +47,7 @@ func back_to_the_fight() -> void:
 
 func check_finished_animation(animation : String) -> void:
 	
-	animation = remove_library_preffix(animation)
+	animation = ArrayStringFormatter.remove_animation_library_preffix(animation)
 	
 	match animation:
 		outro_animation:
@@ -50,11 +56,7 @@ func check_finished_animation(animation : String) -> void:
 			return
 		
 		move_to_spectate_animation:
-			#if FightManager.is_fight_over == true:
-				#anim_state_machine.travel(outro_animation)
-				#return
-			
-			print("Emitting fighter_can_start_getup_signal")
+			print("Emitting fighter_can_start_getup_signal...")
 			FightManager.fighter_can_start_getup_signal.emit()
 			return
 			

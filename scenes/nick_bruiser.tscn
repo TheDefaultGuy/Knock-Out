@@ -8850,7 +8850,6 @@ texture_filter = 1
 material = ExtResource("2_v64oh")
 sprite_frames = SubResource("SpriteFrames_m0jec")
 animation = &"idle"
-frame = 1
 
 [node name="DefenseComponent" type="Node" parent="." unique_id=2045134485]
 unique_name_in_owner = true
@@ -8932,7 +8931,7 @@ secondary_target_state = NodePath("../../ItemHeal2")
 tertiary_target_state = NodePath("../../TauntAndCounter")
 target_round_time = 23.0
 time_to_change_state = 16.0
-target_hp = 45.0
+target_damage_taken = 45.0
 moveset_type = 1
 moveset_array = Array[String](["jab_low", "jab_high"])
 min_delay_time = 0.6
@@ -8953,7 +8952,7 @@ script = ExtResource("44_wdmnt")
 secondary_condition = 4
 primary_target_state = NodePath("../../Reactionary2")
 secondary_target_state = NodePath("../SkillCheck")
-time_to_change_state = 15.0
+time_to_change_state = 10.0
 moveset_dictionary = Dictionary[String, float]({
 "elbow": 40.0,
 "uppercut": 60.0
@@ -8967,7 +8966,7 @@ script = ExtResource("44_wdmnt")
 secondary_condition = 4
 primary_target_state = NodePath("../../TauntAndCounter")
 secondary_target_state = NodePath("../../FlurryAttack")
-time_to_change_state = 15.0
+time_to_change_state = 10.0
 moveset_dictionary = Dictionary[String, float]({
 "elbow": 40.0,
 "uppercut": 60.0
@@ -8996,7 +8995,7 @@ metadata/_custom_type_script = "uid://dy765alksxcdx"
 [node name="SkillCheck" type="Node" parent="StateMachine/Round 1/Randomized Attacks" unique_id=1728563805 node_paths=PackedStringArray("primary_target_state")]
 script = ExtResource("44_wdmnt")
 primary_target_state = NodePath("../WeirdAttacks2")
-time_to_change_state = 15.0
+time_to_change_state = 8.0
 moveset_type = 1
 moveset_array = Array[String](["uppercut", "elbow", "hook_right", "jab_high_combo"])
 metadata/_custom_type_script = "uid://dy765alksxcdx"
@@ -9038,8 +9037,7 @@ script = ExtResource("59_poxia")
 secondary_condition = 5
 primary_target_state = NodePath("../Randomized Attacks/WeirdAttacks")
 secondary_target_state = NodePath("../ItemHeal")
-time_to_change_state = 15.0
-target_hp = 50.0
+time_to_change_state = 10.0
 moveset_type = 1
 moveset_array = Array[String](["fakeout", "fakeout_uppercut"])
 block_behavior = 2
@@ -9079,9 +9077,9 @@ primary_condition = 4
 secondary_condition = 0
 primary_target_state = NodePath("../LoopingCharge")
 secondary_target_state = NodePath("../FlurryAttack")
-time_to_change_state = 15.0
+time_to_change_state = 8.0
 moveset_type = 2
-moveset_array = Array[String](["taunt"])
+moveset_array = Array[String](["taunt", "counter_uppercut"])
 block_behavior = 2
 max_delay_time = 2.0
 metadata/_custom_type_script = "uid://c4q24a656iry7"
@@ -9092,9 +9090,9 @@ primary_condition = 4
 secondary_condition = 0
 primary_target_state = NodePath("../Randomized Attacks/WeirdAttacks2")
 secondary_target_state = NodePath("../Randomized Attacks/WeirdAttacks")
-time_to_change_state = 15.0
+time_to_change_state = 6.0
 moveset_type = 2
-moveset_array = Array[String](["taunt"])
+moveset_array = Array[String](["taunt", "counter_uppercut"])
 block_behavior = 2
 min_delay_time = 0.5
 max_delay_time = 2.0
