@@ -226,11 +226,6 @@ animations = [{
 "speed": 1.0
 }]
 
-[sub_resource type="Curve" id="Curve_t4otl"]
-_limits = [1.0, 3.0, 0.0, 1.0]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1e-05, 3), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
-point_count = 3
-
 [sub_resource type="Curve" id="Curve_holxr"]
 _limits = [1.0, 3.0, 0.0, 7.0]
 _data = [Vector2(0, 1), 0.0, 0.04114618, 0, 0, Vector2(7, 3), 0.42639792, 0.0, 0, 0]
@@ -3194,24 +3189,25 @@ sprite_frames = SubResource("SpriteFrames_fdrta")
 animation = &"guard_down"
 autoplay = "guard_down"
 
-[node name="InputComponent" type="Node" parent="." unique_id=1718721963]
+[node name="InputComponent" type="Node" parent="." unique_id=489829923]
 unique_name_in_owner = true
 script = ExtResource("3_qlg0r")
-buffer_time = null
-parry_window = null
+metadata/_custom_type_script = "uid://c20tqslkyvip3"
 
-[node name="HealthComponent" type="Node" parent="." unique_id=302789234]
-unique_name_in_owner = true
-script = ExtResource("5_ur7pv")
-
-[node name="DefenseComponent" type="Node" parent="." unique_id=928591856]
+[node name="DefenseComponent" type="Node" parent="." unique_id=1058310838]
 unique_name_in_owner = true
 script = ExtResource("7_fjrip")
+metadata/_custom_type_script = "uid://dq3iqh3osri6o"
 
-[node name="AttackingComponent" type="Node" parent="." unique_id=1684799148]
+[node name="HealthComponent" type="Node" parent="." unique_id=204997311]
+unique_name_in_owner = true
+script = ExtResource("5_ur7pv")
+metadata/_custom_type_script = "uid://g56svn272vdm"
+
+[node name="AttackingComponent" type="Node" parent="." unique_id=1435903188]
 unique_name_in_owner = true
 script = ExtResource("8_ur7pv")
-parry_damage_curve = SubResource("Curve_t4otl")
+metadata/_custom_type_script = "uid://by7b3lklkcynb"
 
 [node name="StateMachine" type="Node" parent="." unique_id=343069231 node_paths=PackedStringArray("initial_state", "knocked_down_state", "spectating_state", "tired_state", "cutscene_state", "neutral_state")]
 unique_name_in_owner = true

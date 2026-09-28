@@ -6,9 +6,7 @@ class_name Player extends Fighter
 ## checking between [Enemy] and [Player] easier and to
 ## avoid having unused variables in the [Player] class.
 
-
 @onready var input_component: InputComponent = %InputComponent
-
 
 func _ready() -> void:
 	if defense_component == null and self.get_script() != Fighter:

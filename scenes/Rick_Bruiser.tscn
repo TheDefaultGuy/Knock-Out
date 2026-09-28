@@ -8901,15 +8901,17 @@ texture_filter = 1
 material = ExtResource("2_u5lb0")
 sprite_frames = SubResource("SpriteFrames_m0jec")
 animation = &"idle"
+frame = 1
 
 [node name="DefenseComponent" type="Node" parent="." unique_id=2045134485]
 unique_name_in_owner = true
 script = ExtResource("48_u8pgp")
 metadata/_custom_type_script = "uid://dq3iqh3osri6o"
 
-[node name="HealthComponent" type="Node" parent="." unique_id=178305711]
+[node name="HealthComponent" type="Node" parent="." unique_id=1872768002]
 unique_name_in_owner = true
 script = ExtResource("49_fd000")
+metadata/_custom_type_script = "uid://g56svn272vdm"
 
 [node name="AttackingComponent" type="Node" parent="." unique_id=46393510]
 unique_name_in_owner = true
