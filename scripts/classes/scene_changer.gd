@@ -1,4 +1,4 @@
-@abstract class_name SceneChanger extends Node
+@abstract class_name SceneChanger extends RefCounted
 ## Class that helps out with scene transitions.
 
 const ARENA_SCENE = preload("uid://b2o12w57mpc12")

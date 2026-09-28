@@ -1,4 +1,4 @@
-@abstract class_name SFXPlayer extends Node
+@abstract class_name SFXPlayer extends RefCounted
 
 static func play_sound_effect(sound_effect : AudioStream, calling_node : Node):
 	

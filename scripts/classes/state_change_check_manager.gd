@@ -1,6 +1,6 @@
 @icon("res://assets/icons/MaterialSymbolsFactCheck.svg")
 
-@abstract class_name StateChangeCheckManager extends Node
+@abstract class_name StateChangeCheckManager extends RefCounted
 ## Stores the functions called by [EnemyState] that check if the conditions for changing states have been met.
 
 

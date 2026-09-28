@@ -1,4 +1,4 @@
-@abstract class_name AnimationNodeManager extends Node
+@abstract class_name AnimationNodeManager extends RefCounted
 ## Class that has static functions that are in charge of adding the attack animations to the animation tree.
 
 

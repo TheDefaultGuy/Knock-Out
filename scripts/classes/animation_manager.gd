@@ -1,6 +1,6 @@
 @icon("res://assets/icons/MdiMovieOpenOutline.svg")
 
-@abstract class_name AnimationManager extends Node
+@abstract class_name AnimationManager extends RefCounted
 ## Abstract class that hold functions that handle complex animation functions.
 
 ## Sets the blend of the given animation using the given blend_vector.

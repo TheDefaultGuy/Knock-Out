@@ -1,4 +1,4 @@
-@abstract class_name TimerCreator extends Node
+@abstract class_name TimerCreator extends RefCounted
 ## Creates a [Timer] with the given parameters, adds it as a child and then returns the finished timer.
 
 ## Function that helps create a custom [Timer]. Since it returns a [Timer], it should be used to assign a timer to a variable.
