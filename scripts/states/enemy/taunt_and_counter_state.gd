@@ -12,7 +12,15 @@ class_name TauntAndCounter extends EnemyState
 ## DO NOT change anything in the actual .gd file, since it'll mess up compatibility.
 
 ## The taunting animation the [Enemy] will randomly perform to bait the [Player].
-@export var taunt_animation : String = "taunt"
+@export var taunt_animation : String = "taunt":
+	set(value):
+		taunt_animation = value
+		if taunt_animation.is_empty() == true:
+			printerr(self.name, ": The given Taunt Animation is empty. Having no animation will cause this state to fail and not function correctly.")
+			return
+		if AnimationNodeManager.match_animation_library(taunt_animation, animation_player).is_empty() == true:
+			printerr(self.name, ": The given Taunt Animation is not an animation present in the Animation Player's Library. Having no animation will cause this state to fail and not function correctly.")
+			return
 
 func _process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesn't run the check round time function when in the editor; only when in-game

@@ -12,16 +12,16 @@ class_name LoopingCharge extends EnemyState
 ## DO NOT change anything in the actual .gd file, since it'll mess up compatibility.
 
 ## The animation that plays when entering the state for the first time.
-@export var intro_animation : String = "loop_intro"
+@export_placeholder("Don't include the library") var intro_animation : String = "loop_intro"
 
 ## The idle animation that loops until the [member attack_animation] is played.
-@export var idle_loop_animation : String = "idle_loop"
+@export_placeholder("Don't include the library") var idle_loop_animation : String = "idle_loop"
 
 ## The animation played after [member attack_animation], where the enemy goes back to [member idle_loop_animation]
-@export var restart_animation : String = "restart"
+@export_placeholder("Don't include the library") var restart_animation : String = "restart"
 
 ## The actual attacking animation that the [Player] can counter punch to Knockdown the [Enemy].
-@export var attack_animation : String = "attack"
+@export_placeholder("Don't include the library") var attack_animation : String = "attack"
 
 func _ready() -> void:
 	check_for_attack_and_append(attack_animation)
@@ -74,6 +74,8 @@ func override_conditions_and_state_parameters() -> void:
 	
 	moveset_type = MovesetTypeEnum.PREDETERMINED_ORDER
 	
+	override_idle_animation = false
+	
 	moveset_array = [attack_animation]
 	
 	# Given the nature of this state, these 2 conditions MUST ALWAYS be set and have a target state to transition to.
@@ -104,3 +106,8 @@ func _validate_property(property : Dictionary) -> void:
 	if property.name == "moveset_array" :
 		property.usage = PROPERTY_USAGE_NONE
 	super(property) # Calls the base EnemyState function right after.
+	
+	if property.name == "custom_idle_animation":
+		property.usage = PROPERTY_USAGE_NONE
+	if property.name == "override_idle_animation":
+		property.usage |= PROPERTY_USAGE_READ_ONLY

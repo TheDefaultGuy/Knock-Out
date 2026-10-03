@@ -14,9 +14,20 @@ class_name RandomizedMoves extends EnemyState
 ## Then, tweak the exported variables to set it up how you'd like.
 ## DO NOT change anything in the actual .gd file, since it'll mess up compatibility.
 
-
-#@export var condictionary : Dictionary[EnemyState.StateChangeConditionEnum, StateChangeConditions]
-#@export var condarray : Array[StateChangeConditions] 
+## The state the [Enemy] will transition to after the [member primary_condition] is met.
+#@export var test_target_state : EnemyState:
+	#set(value):
+		#test_target_state = value
+		#
+		#print("Target State Set")
+#
+#@export var test_conditon : StateChangeConditions:
+	#set(value):
+		#test_conditon = value
+		#print("Condition Set")
+#
+#@export var condictionary : Dictionary[EnemyState, StateChangeConditions]
+##@export var condarray : Array[StateChangeConditions] 
 #
 #@export var condictionaryNodepath : Dictionary[NodePath, StateChangeConditions]
 #

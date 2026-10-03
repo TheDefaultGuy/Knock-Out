@@ -39,7 +39,14 @@ static func add_attack_animation_nodes(root_node : AnimationRootNode, moveset : 
 		var node_animation : AnimationNodeAnimation = AnimationNodeAnimation.new()
 		
 		# Sets the Node's animation as the attack animation given.
-		node_animation.animation = match_animation_library(attack, animation_player)
+		var given_animation = match_animation_library(attack, animation_player)
+		
+		# Catches empty animations returned by match_animation_library.
+		# It returns empty strings if the animation is NOT in the animation library.
+		if given_animation.is_empty() == true:
+			continue
+		
+		node_animation.animation = given_animation
 		
 		# Adds the state machine as a node in the Root state machine in the animation tree.
 		root_node.add_node(str(attack), node_animation, new_origin) 
@@ -86,7 +93,14 @@ static func add_chained_attack_animation_nodes(root_node : AnimationRootNode, mo
 		var node_animation : AnimationNodeAnimation = AnimationNodeAnimation.new()
 		
 		# Sets the Node's animation as the attack animation given.
-		node_animation.animation = match_animation_library(reveresed_moveset[i], animation_player)
+		var given_animation = match_animation_library(reveresed_moveset[i], animation_player)
+		
+		# Catches empty animations returned by match_animation_library.
+		# It returns empty strings if the animation is NOT in the animation library.
+		if given_animation.is_empty() == true:
+			continue
+		
+		node_animation.animation = given_animation
 		
 		
 		# Adds the state machine as a node in the Root state machine in the animation tree.
@@ -145,9 +159,10 @@ static func match_animation_library(attack : String, animation_player : Animatio
 			continue # Go back to the start of the loop if the given attack name doesn't match the current animation name.
 		
 		continue # Go back to the start of the loop if the given attack name isn't in the current Library.
-		
-	printerr("Given attack animation name is not in any animation library: ", attack)
-	return attack
+	
+	if Engine.is_editor_hint() == false:
+		printerr("Given attack animation name is not in any animation library: ", attack)
+	return ""
 #endregion
 
 
@@ -162,7 +177,7 @@ static func delete_attack_animation_nodes(root_animation_state_machine : Animati
 	
 	for node in nodes_to_delete_in_root: 
 		root_animation_state_machine.remove_node(node)
-		
+
 
 
 ## Grabs all of the nodes that connect TO the "hub_node" inside of the given Animation Node State Machine

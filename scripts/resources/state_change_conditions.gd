@@ -12,9 +12,9 @@ class_name StateChangeConditions extends Resource
 ##
 ## If the condition is met, it will transition to the [member primary_target_state]
 ## If it's not, it will check the [member secondary_condition]
-var state_change_condition := EnemyState.StateChangeConditionEnum.AFTER_TIME_PASSED : 
+@export var state_change_condition := EnemyState.StateChangeConditionEnum.AFTER_TIME_PASSED : 
 	set(value):
-		if state_change_condition != value :
+		if state_change_condition != value:
 			state_change_condition = value
 			notify_property_list_changed()
 

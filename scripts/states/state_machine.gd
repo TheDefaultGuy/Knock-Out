@@ -2,9 +2,9 @@
 @icon("res://assets/icons/MdiStateMachine.svg")
 class_name StateMachine extends Node
 
-## The node In-charge of transitioning and storing the [Player] and [Enemy] states.
+## The node In-charge of transitioning and storing the [Player] and [Enemy] [State]s.
 ##
-## Only nodes that inherit from [State] or [EnemyState] can be accessed by or added as a child of the [StateMachine]
+## Only nodes that inherit from [State] or [EnemyState] can be accessed by and added as a child of the [StateMachine].
 
 @export_category("⚠️ Initial State ⚠️")
 
@@ -47,6 +47,11 @@ var states_dictionary : Dictionary = {}
 #@onready var anim_state_machine : AnimationNodeStateMachinePlayback = animation_tree["parameters/playback"]
 
 func _ready() -> void:
+	
+	# Doesnt runin the editor; only when in-game.
+	if Engine.is_editor_hint(): 
+		return
+	
 	AnimationNodeManager.delete_attack_animation_nodes(animation_tree.tree_root, self)
 	#print(get_children())
 	

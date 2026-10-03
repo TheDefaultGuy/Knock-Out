@@ -137,7 +137,7 @@ enum BlockBehaviorEnum{
 ##
 ## If the condition is met, it will transition to the [member primary_target_state]
 ## If it's not, it will check the [member secondary_condition]
-@export var primary_condition := StateChangeConditionEnum.AFTER_TIME_PASSED : 
+@export var primary_condition : StateChangeConditionEnum = StateChangeConditionEnum.AFTER_TIME_PASSED : 
 	set(value):
 		if primary_condition != value :
 			primary_condition = value
@@ -147,7 +147,7 @@ enum BlockBehaviorEnum{
 ##
 ## If the condition is met, it will transition to the [member secondary_target_state]
 ## If it's not, it will check the [member tertiary_condition]
-@export var secondary_condition := StateChangeConditionEnum.DO_NOT_CHANGE :
+@export var secondary_condition :StateChangeConditionEnum = StateChangeConditionEnum.DO_NOT_CHANGE :
 	set(value):
 		if secondary_condition != value :
 			secondary_condition = value
@@ -156,27 +156,27 @@ enum BlockBehaviorEnum{
 ## The tertiary condition for changing state and the second one being checked.
 ##
 ## If the condition is met, it will transition to the [member tertiary_target_state].
-@export var tertiary_condition := StateChangeConditionEnum.DO_NOT_CHANGE :
+@export var tertiary_condition : StateChangeConditionEnum = StateChangeConditionEnum.DO_NOT_CHANGE :
 	set(value): 
 		if tertiary_condition != value :
 			tertiary_condition = value
 			notify_property_list_changed()
 
 @export_category("🎯 Target States")
-## The state the [Enemy] will transition to after the [member primary_condition] is met.
-@export var primary_target_state : State
+## The [EnemyState] the [Enemy] will transition to after the [member primary_condition] is met.
+@export var primary_target_state : EnemyState
 
-## The state the [Enemy] will transition to after the [member secondary_condition] is met.
-@export var secondary_target_state : State
+## The [EnemyState] the [Enemy] will transition to after the [member secondary_condition] is met.
+@export var secondary_target_state : EnemyState
 
-## The state the [Enemy] will transition to after the [member tertiary_condition] is met.
-@export var tertiary_target_state : State
+## The [EnemyState] the [Enemy] will transition to after the [member tertiary_condition] is met.
+@export var tertiary_target_state : EnemyState
 
 
 @export_category("*️⃣ State Changing Arguments")
 ### Basically, ignore/override the conditions of the current state and transition to this state, 
 ### regardless of the current state, whenever the conditions of this state are met.
-#@export var override_current_state : bool = false
+#@export var invert_conditional_logic : bool = false
 
 ## The time in the round (in seconds) where the [Enemy] changes to the target state.
 @export_range(10.0, 180.0, 1.0, "suffix:s") var target_round_time : float = 20.0
@@ -188,28 +188,36 @@ enum BlockBehaviorEnum{
 @export_range(1.0, 100.0, 1.0, "suffix:hp") var target_hp : float = 30.0
 
 ## The HP the [Enemy] has to loose in this state before changing to the target state.
-@export_range(1.0, 100.0, 1.0, "suffix:hp") var target_damage_taken : float = 30.0
+@export_range(10.0, 90.0, 1.0, "suffix:hp") var target_damage_taken : float = 30.0
 
 @export_category("🎬 Animations & Moveset")
 
 ## What type of moveset is available in this state.
-@export var moveset_type := MovesetTypeEnum.WEIGHTED_DICTIONARY :
+@export var moveset_type : MovesetTypeEnum = MovesetTypeEnum.WEIGHTED_DICTIONARY :
 	set(value):
-		if moveset_type != value :
+		if moveset_type != value:
 			moveset_type = value
 			notify_property_list_changed()
 
 ## The available animations that can be called by the [member attack_timer] in this state stored as a weighted [Dictionary].
 ## The 1st variable or "key" is a string corresponding to the name of the move, and the 2nd variable corresponds to the weight or chance of that move.
-@export var moveset_dictionary : Dictionary[String, float] = {}
+@export var moveset_dictionary : Dictionary[String, float] = {} :
+	set(value):
+		moveset_dictionary = value
+		if moveset_dictionary.is_empty() == true and moveset_type == MovesetTypeEnum.WEIGHTED_DICTIONARY :
+			printerr(self.name, ": Moveset Dictionary is empty. Leaving it empty will mean the enemy does not have any attacks.")
 
 ## The available animations that can be called by the [member attack_timer] in this state stored as an array.
-@export var moveset_array : Array[String] = []
+@export var moveset_array : Array[String] = [] :
+	set(value):
+		moveset_array = value
+		if moveset_dictionary.is_empty() == true and moveset_type != MovesetTypeEnum.WEIGHTED_DICTIONARY :
+			printerr(self.name, ": Moveset Array is empty. Leaving it empty will mean the enemy does not have any attacks.")
 
 @export_category("⏱ Attack Delays")
 
 ## What to do when an attack is blocked by either the [Player] or the [Enemy] when in this state.
-@export var block_behavior := BlockBehaviorEnum.PAUSE_TIMER :
+@export var block_behavior : BlockBehaviorEnum = BlockBehaviorEnum.PAUSE_TIMER :
 	set(value):
 		if block_behavior != value :
 			block_behavior = value
@@ -219,11 +227,11 @@ enum BlockBehaviorEnum{
 @export var counter_attack : String = "counter_uppercut"
 
 ## How the delay between each attack is handled.
-@export var attack_delay_type := AttackDelayTypeEnum.FLOAT : 
+@export var attack_delay_type : AttackDelayTypeEnum = AttackDelayTypeEnum.FLOAT : 
 	set(value):
 		if attack_delay_type != value :
 			attack_delay_type = value
-			#notify_property_list_changed()
+			notify_property_list_changed()
 
 ## The minimum amount of time (in seconds) the [Enemy] will wait before calling [method perform_action].
 @export_range(0.0, 6.0, 0.1, "suffix:s") var min_delay_time : float = 1.0 :
@@ -246,6 +254,7 @@ enum BlockBehaviorEnum{
 ## An array of predetermined attack delay amounts. 
 ## Instead of choosing a number BETWEEN a minumum and a maximum value, it will choose randomly from the list of provided values instead.
 @export_custom(PROPERTY_HINT_NONE, "suffix:s") var attack_delay_array : Array[float]
+
 #endregion
 
 #region Stored Variables
@@ -352,8 +361,8 @@ func enter() -> void:
 	# Sets the idle blend to not stunned
 	animation_tree.set(str("parameters/idle/blend_position"),  0)
 	
-	# Connects the enemy knocked down, player knocked down and stun signals.
-	toggle_stunned_signal_connections() 
+	# Connects the stunned signal.
+	defense_component.stunned_signal.connect(StateChangeCheckManager.check_state_after_stun.bind(self))
 	
 	# If the interrupted state isn't the state itself,
 	# then it means it's enterring the state for the first time,
@@ -389,7 +398,8 @@ func exit() -> void:
 	
 	toggle_state_change_timer() # Stops the state change timer.
 	
-	toggle_stunned_signal_connections() # Disconnects the stun signal.
+	# Disonnects the stunned signal.
+	defense_component.stunned_signal.disconnect(StateChangeCheckManager.check_state_after_stun)
 	
 	FightManager.successful_block_signal.disconnect(handle_block) 
 	
@@ -476,7 +486,7 @@ func set_conditions_and_targets_dictionary() -> void:
 #region Timer Related Functions
 func start_attack_delay_timer() -> void:
 	
-	 # Checks if the attack timer even exists.
+	# Checks if the attack timer even exists.
 	if attack_timer == null :
 		return
 	
@@ -646,12 +656,6 @@ func set_and_check_interrupted_state(target_state) -> void:
 	state_machine.interrupted_state = target_state
 	return
 
-## Toggles the signals for going to [StunState].
-func toggle_stunned_signal_connections() -> void:
-	if defense_component.stunned_signal.is_connected(StateChangeCheckManager.check_state_after_stun) == true:
-		defense_component.stunned_signal.disconnect(StateChangeCheckManager.check_state_after_stun)
-	else:
-		defense_component.stunned_signal.connect(StateChangeCheckManager.check_state_after_stun.bind(self))
 #endregion
 
 #region Attacking related functions
@@ -690,10 +694,12 @@ func play_attack_start_attack_timer(animation : String) -> void:
 	# Waits for the attack animation to finish before restarting the attack delay timer.
 	await animation_tree.animation_finished
 	
-	start_attack_delay_timer() # Resets the attack delay timer after attacking
+	# Resets the attack delay timer after attacking.
+	# If you don't reset the timer, the enemy will stop attacking.
+	start_attack_delay_timer() 
 
 ## Does the weight calculation and chooses a random move from the [member moveset_dictionary].
-func get_weighted_choice(weight_dict: Dictionary) -> String:
+func get_weighted_choice(weight_dict : Dictionary) -> Variant:
 	
 	# Calculates the sum of all weights
 	var total_weight : float = 0.0
@@ -713,7 +719,7 @@ func get_weighted_choice(weight_dict: Dictionary) -> String:
 			
 		random_value -= weight # Shrink the remaining roll value
 	
-	return str(weight_dict.keys().back()) # Fallback edge case
+	return weight_dict.keys().back() # Fallback edge case
 
 #endregion
 

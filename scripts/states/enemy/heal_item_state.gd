@@ -15,13 +15,37 @@ class_name ItemHeal extends EnemyState
 ## DO NOT change anything in the actual .gd file, since it'll mess up compatibility.
 
 ## The animation that plays when entering the state for the first time.
-@export var intro_animation : String = "heal_intro"
+@export_placeholder("Don't include the library") var intro_animation : String = "heal_intro" :
+	set(value):
+		intro_animation = value
+		if intro_animation.is_empty() == true:
+			printerr(self.name, ": The given Intro Animation is empty. Having no animation will cause this state to fail and not function correctly.")
+			return
+		if AnimationNodeManager.match_animation_library(intro_animation, animation_player).is_empty() == true:
+			printerr(self.name, ": The given Intro Animation is not an animation present in the Animation Player's Library. Having no animation will cause this state to fail and not function correctly.")
+			return
 
 ## The animation that gets played when the enemy gets hit and fails healing during this state.
-@export var failed_animation : String = "heal_failed"
+@export_placeholder("Don't include the library") var failed_animation : String = "heal_failed" :
+	set(value):
+		failed_animation = value
+		if failed_animation.is_empty() == true:
+			printerr(self.name, ": The given Failed Animation is empty. Having no animation will cause this state to fail and not function correctly.")
+			return
+		if AnimationNodeManager.match_animation_library(failed_animation, animation_player).is_empty() == true:
+			printerr(self.name, ": The given Failed Animation is not an animation present in the Animation Player's Library. Having no animation will cause this state to fail and not function correctly.")
+			return
 
 ## The animation played when the player doesn't stop the heal on time.
-@export var successful_animation : String = "heal_successful"
+@export_placeholder("Don't include the library") var successful_animation : String = "heal_successful" :
+	set(value):
+		successful_animation = value
+		if successful_animation.is_empty() == true:
+			printerr(self.name, ": The given Successful Animation is empty. Having no animation will cause this state to fail and not function correctly.")
+			return
+		if AnimationNodeManager.match_animation_library(successful_animation, animation_player).is_empty() == true:
+			printerr(self.name, ": The given Successful Animation is not an animation present in the Animation Player's Library. Having no animation will cause this state to fail and not function correctly.")
+			return
 
 ## Stores if the [member intro_animation] or rather, any animation has started playing during this state.
 var has_started : bool = false
@@ -70,6 +94,8 @@ func exit() -> void:
 
 func override_conditions_and_state_parameters() -> void:
 	state_type = StateTypeEnum.SIMPLE
+	
+	override_idle_animation = false
 	
 	moveset_type = MovesetTypeEnum.NOT_APPLICABLE
 	
@@ -120,4 +146,9 @@ func _validate_property(property : Dictionary) -> void:
 		property.usage |= PROPERTY_USAGE_READ_ONLY
 	if property.name == "moveset_type" :
 		property.usage |= PROPERTY_USAGE_READ_ONLY
+		
 	super(property) # Calls the base EnemyState function right after.
+	if property.name == "custom_idle_animation":
+		property.usage = PROPERTY_USAGE_NONE
+	if property.name == "override_idle_animation":
+		property.usage |= PROPERTY_USAGE_READ_ONLY

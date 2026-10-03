@@ -131,15 +131,34 @@ enum BlockBehaviorEnum{
 
 #region Exported Variables
 
+@export_category("🎯 Target States")
+
+## The [EnemyState] the [Enemy] will transition to after the [member primary_condition] is met.
+@export var primary_target_state : EnemyState
+
+## The [EnemyState] the [Enemy] will transition to after the [member secondary_condition] is met.
+@export var secondary_target_state : EnemyState
+
+## The [EnemyState] the [Enemy] will transition to after the [member tertiary_condition] is met.
+@export var tertiary_target_state : EnemyState
+
+
 @export_category("⇄ State Changing Conditions")
 
 ## The primary condition for changing state and the first one being checked.
 ##
 ## If the condition is met, it will transition to the [member primary_target_state]
 ## If it's not, it will check the [member secondary_condition]
-@export var primary_condition := StateChangeConditionEnum.AFTER_TIME_PASSED : 
+@export var primary_condition : StateChangeConditionEnum = StateChangeConditionEnum.AFTER_TIME_PASSED : 
 	set(value):
 		if primary_condition != value :
+			if value != StateChangeConditionEnum.DO_NOT_CHANGE:
+				
+				# Checks for duplicate conditions.
+				if value in [secondary_condition, tertiary_condition]:
+					printerr("You can't have duplicate conditions. Please set a different condition.")
+					return
+			
 			primary_condition = value
 			notify_property_list_changed()
 
@@ -147,31 +166,34 @@ enum BlockBehaviorEnum{
 ##
 ## If the condition is met, it will transition to the [member secondary_target_state]
 ## If it's not, it will check the [member tertiary_condition]
-@export var secondary_condition := StateChangeConditionEnum.DO_NOT_CHANGE :
+@export var secondary_condition : StateChangeConditionEnum = StateChangeConditionEnum.DO_NOT_CHANGE :
 	set(value):
 		if secondary_condition != value :
+			if value != StateChangeConditionEnum.DO_NOT_CHANGE:
+				
+				# Checks for duplicate conditions.
+				if value in [primary_condition, tertiary_condition]:
+					printerr("You can't have duplicate conditions. Please set a different condition.")
+					return
+			
 			secondary_condition = value
 			notify_property_list_changed()
 
 ## The tertiary condition for changing state and the second one being checked.
 ##
 ## If the condition is met, it will transition to the [member tertiary_target_state].
-@export var tertiary_condition := StateChangeConditionEnum.DO_NOT_CHANGE :
+@export var tertiary_condition : StateChangeConditionEnum = StateChangeConditionEnum.DO_NOT_CHANGE :
 	set(value): 
 		if tertiary_condition != value :
+			if value != StateChangeConditionEnum.DO_NOT_CHANGE:
+				
+				# Checks for duplicate conditions.
+				if value in [primary_condition, secondary_condition]:
+					printerr("You can't have duplicate conditions. Please set a different condition.")
+					return
+			
 			tertiary_condition = value
 			notify_property_list_changed()
-
-@export_category("🎯 Target States")
-## The state the [Enemy] will transition to after the [member primary_condition] is met.
-@export var primary_target_state : State
-
-## The state the [Enemy] will transition to after the [member secondary_condition] is met.
-@export var secondary_target_state : State
-
-## The state the [Enemy] will transition to after the [member tertiary_condition] is met.
-@export var tertiary_target_state : State
-
 
 @export_category("*️⃣ State Changing Arguments")
 ### Basically, ignore/override the conditions of the current state and transition to this state, 
@@ -192,8 +214,17 @@ enum BlockBehaviorEnum{
 
 @export_category("🎬 Animations & Moveset")
 
+## The option to override/change the idle animation for this state
+@export var override_idle_animation : bool = false : 
+	set(value):
+		override_idle_animation = value
+		notify_property_list_changed()
+
+## The name of the new idle animation that will happen during the state.
+@export_placeholder("idle") var custom_idle_animation : String
+
 ## What type of moveset is available in this state.
-@export var moveset_type := MovesetTypeEnum.WEIGHTED_DICTIONARY :
+@export var moveset_type : MovesetTypeEnum = MovesetTypeEnum.WEIGHTED_DICTIONARY :
 	set(value):
 		if moveset_type != value :
 			moveset_type = value
@@ -201,29 +232,44 @@ enum BlockBehaviorEnum{
 
 ## The available animations that can be called by the [member attack_timer] in this state stored as a weighted [Dictionary].
 ## The 1st variable or "key" is a string corresponding to the name of the move, and the 2nd variable corresponds to the weight or chance of that move.
-@export var moveset_dictionary : Dictionary[String, float] = {}
+@export var moveset_dictionary : Dictionary[String, float] = {} :
+	set(value):
+		moveset_dictionary = value
+		if moveset_dictionary.is_empty() == true and moveset_type == MovesetTypeEnum.WEIGHTED_DICTIONARY and moveset_type != MovesetTypeEnum.NOT_APPLICABLE:
+			if self.get_script() != EnemyState:
+				printerr(self.name, ": Moveset Dictionary is empty. Leaving it empty will mean the enemy does not have any attacks.")
 
 ## The available animations that can be called by the [member attack_timer] in this state stored as an array.
-@export var moveset_array : Array[String] = []
+@export var moveset_array : Array[String] = [] :
+	set(value):
+		moveset_array = value
+		if moveset_array.is_empty() == true and moveset_type != MovesetTypeEnum.WEIGHTED_DICTIONARY and moveset_type != MovesetTypeEnum.NOT_APPLICABLE:
+			if self.get_script() != EnemyState:
+				printerr(self.name, ": Moveset Array is empty. Leaving it empty will mean the enemy does not have any attacks.")
 
 @export_category("⏱ Attack Delays")
 
 ## What to do when an attack is blocked by either the [Player] or the [Enemy] when in this state.
-@export var block_behavior := BlockBehaviorEnum.PAUSE_TIMER :
+@export var block_behavior : BlockBehaviorEnum = BlockBehaviorEnum.PAUSE_TIMER :
 	set(value):
-		if block_behavior != value :
+		if block_behavior != value:
 			block_behavior = value
 			notify_property_list_changed()
 
 ## The attack that the [Enemy] will perform after blocking.
-@export var counter_attack : String = "counter_uppercut"
+@export var counter_attack : String = "counter_uppercut" :
+	set(value):
+		counter_attack = value
+		if counter_attack.is_empty() == true and block_behavior == BlockBehaviorEnum.COUNTER_ATTACK:
+			if self.get_script() != EnemyState:
+				printerr(self.name, ": Counter Attack animation is empty. Leaving it empty will mean the enemy won't counter attack..")
 
 ## How the delay between each attack is handled.
-@export var attack_delay_type := AttackDelayTypeEnum.FLOAT : 
+@export var attack_delay_type : AttackDelayTypeEnum = AttackDelayTypeEnum.FLOAT : 
 	set(value):
 		if attack_delay_type != value :
 			attack_delay_type = value
-			#notify_property_list_changed()
+			notify_property_list_changed()
 
 ## The minimum amount of time (in seconds) the [Enemy] will wait before calling [method perform_action].
 @export_range(0.0, 6.0, 0.1, "suffix:s") var min_delay_time : float = 1.0 :
@@ -352,6 +398,9 @@ func enter() -> void:
 	# Sets the idle blend to not stunned
 	animation_tree.set(str("parameters/idle/blend_position"),  0)
 	
+	# Sets the idel animation that will play during this state.
+	set_idle_animation_for_state()
+	
 	# Connects the enemy knocked down, player knocked down and stun signals.
 	toggle_stunned_signal_connections() 
 	
@@ -397,6 +446,26 @@ func exit() -> void:
 	defense_component.reset_current_animations()
 	return
 #endregion
+
+## Sets the idle animation for the state depending on [member override_idle_animation].
+func set_idle_animation_for_state() -> void:
+	
+	# Checks if the option for overriding the the idle animation is set to true.
+	if override_idle_animation == true:
+		
+		# Checks if the custom idle animation is empty or not.
+		if custom_idle_animation.is_empty() == false:
+			
+			# If it is, it grabs the "idle" BlendSpace1D node and then overwrites the "idle" animation to be the custom idle animation.
+			animation_tree.tree_root.get_node("idle").get_blend_point_node(0).animation = str(custom_idle_animation)
+			return
+			
+		if self.get_script() != EnemyState:
+			push_warning(self.name, ": Custom Idle Animation is empty despite the option to override it set to true. Using default idle animation as backup.")
+			
+	# If it's NOT true, then use the default idle animation.
+	animation_tree.tree_root.get_node("idle").get_blend_point_node(0).animation = str("idle")
+	return
 
 #region Check For Stuff Functions
 ## Checks to see if the user forgot to assign a state when they assigned a condition.
@@ -590,36 +659,30 @@ func transition_to_target(target_state : State) -> void:
 	#print("target_state: ", target_state)
 	#print("IS target_state SPECTATING: ", target_state is EnemySpectating)
 	
-	# Checks to see if the enemy is already in a "safe animation" so that it doesn't interrupt a hit, block, or any other animation.
+	# Checks to see if the enemy is already in the idle animation so that it doesn't interrupt a hit, block, or any other animation.
 	if anim_state_machine.get_current_node() == "idle":
 		transition(target_state)
 		return
 	
 	else:
 		
-		# If the current animation node isn't one of the "safe animations" like "idle", "idle_guard" or "End,
-		# Then wait till the animation finishes playing, then travel to the "hub_node" and then return.
-		# This will force the animation tree to land on one of the "safe animation" nodes so that it can then transition state.
+		# If the current animation node isn't "idle",
+		# then wait till the animation finishes playing, then travel to the "hub_node" and then return.
+		# This will force the animation tree to land on idle so that it can then transition state.
 		
 		# If the target state is EnemyKnockedDown, then travel to the "knockdown" animation
 		# and transition to the knockdown state.
 		# This cuts off any animation and is required since going into Knockdown has way more priority than anything else.
 		if target_state is EnemyKnockedDown : 
-			#print("Traveling to knockdown")
 			anim_state_machine.travel("knockdown")
 			transition(target_state)
 			return
+			
+		# Waits until the current attack/animation is finished before changing state.
+		await animation_tree.animation_finished
 		
-		#print("PRE-AWAIT ANIMATION FINISHED")
-		await animation_tree.animation_finished # Waits until the current attack/animation is finished before changing state.
-		#print("POST-AWAIT ANIMATION FINISHED")
-		
-		
-		#print("CURRENT NODE AFTER WAITING: ", anim_state_machine.get_current_node())
-
 		# If the enemy is gonna enter Spectating, then it transitions after the current attack animation is finished.
 		if target_state is EnemySpectating : 
-			#print("Traveling to move_to_spectate")
 			anim_state_machine.travel("move_to_spectate")
 			transition(target_state)
 			return
@@ -749,6 +812,8 @@ func _validate_property(property : Dictionary) -> void:
 	if property.name == "tertiary_target_state" and tertiary_condition == StateChangeConditionEnum.DO_NOT_CHANGE:
 		property.usage = PROPERTY_USAGE_NONE
 		
+	if property.name == "custom_idle_animation" and override_idle_animation == false:
+		property.usage = PROPERTY_USAGE_NONE
 		
 	if property.name == "max_delay_time" and attack_timer_required == false:
 		property.usage = PROPERTY_USAGE_NONE

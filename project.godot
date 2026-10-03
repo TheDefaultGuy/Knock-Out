@@ -54,7 +54,23 @@ window/stretch/aspect="expand"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/AnyObjectInspector/plugin.cfg", "res://addons/scene-graphs/plugin.cfg")
+enabled=PackedStringArray("res://addons/scene-graphs/plugin.cfg")
+
+[file_customization]
+
+folder_colors={
+"res://addons/": "gray",
+"res://animation/": "purple",
+"res://assets/": "orange",
+"res://scripts/": "blue",
+"res://scripts/classes/": "red",
+"res://scripts/components/": "gray",
+"res://scripts/globals/": "teal",
+"res://scripts/resources/": "green",
+"res://scripts/shaders/": "pink",
+"res://scripts/states/": "yellow",
+"res://scripts/ui/": "green"
+}
 
 [input]
 

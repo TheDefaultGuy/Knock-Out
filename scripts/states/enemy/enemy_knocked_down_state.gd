@@ -64,32 +64,7 @@ func _process(_delta: float) -> void:
 	if state_machine.current_state == self and get_up_timer.is_stopped() == false:
 		#print("get_up_timer.time_left: ",ceilf(get_up_timer.time_left))
 		#print("stored_time_left: ", stored_time_left)
-		if ceilf(get_up_timer.time_left) < stored_time_left:
-			
-			stored_time_left = ceilf(get_up_timer.time_left)
-			
-			var roll_value = randf()
-			
-			#print("check_count: ", check_count)
-			#prints(remap(chance_for_failed_attempt, 0.0, 100.0, 0.0, 1.0), randy)
-			
-			var modified_chance : float = chance_for_failed_attempt + (CHANCE_INCREASE_INCREMENT * check_count)
-			
-			var remapped_chance = remap(modified_chance, 0.0, 100.0, 0.0, 1.0)
-			
-			#print("modified_chance: ", modified_chance)
-			#print("remapped_chance: ", remapped_chance)
-			#if stored_attempts < min_failed_attempts:
-				#roll_value = remap(chance_for_failed_attempt + CHANCE_INCREASE_INCREMENT, 0.0, 100.0, 0.0, 1.0)
-			#print("Roll Value: ", roll_value)
-			
-			if remapped_chance > roll_value:
-				play_failed_get_up_animation()
-				stored_attempts += 1
-				check_count = 0
-				return
-			check_count += 1
-		return
+		handle_failed_get_up()
 
 func enter() -> void:
 	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
@@ -119,6 +94,34 @@ func play_get_up_animation() -> void:
 	await get_tree().create_timer(0.4).timeout
 	anim_state_machine.travel("get_up")
 
+func handle_failed_get_up() -> void:
+	if ceilf(get_up_timer.time_left) < stored_time_left:
+		
+		stored_time_left = ceilf(get_up_timer.time_left)
+		
+		var roll_value = randf()
+		
+		#print("check_count: ", check_count)
+		#prints(remap(chance_for_failed_attempt, 0.0, 100.0, 0.0, 1.0), randy)
+		
+		var modified_chance : float = chance_for_failed_attempt + (CHANCE_INCREASE_INCREMENT * check_count)
+		
+		var remapped_chance = remap(modified_chance, 0.0, 100.0, 0.0, 1.0)
+		
+		#print("modified_chance: ", modified_chance)
+		#print("remapped_chance: ", remapped_chance)
+		#if stored_attempts < min_failed_attempts:
+			#roll_value = remap(chance_for_failed_attempt + CHANCE_INCREASE_INCREMENT, 0.0, 100.0, 0.0, 1.0)
+		#print("Roll Value: ", roll_value)
+		
+		if remapped_chance > roll_value:
+			play_failed_get_up_animation()
+			stored_attempts += 1
+			check_count = 0
+			return
+		check_count += 1
+	return
+
 
 func play_failed_get_up_animation() -> void:
 	print("\nPlaying Failed Get Up Animation...")
@@ -145,8 +148,6 @@ func start_get_up_timer() -> void:
 		print("Not getting up.")
 		get_up_timer.timeout.disconnect(play_get_up_animation)
 		return
-		
-		
 	
 	print("STARTING GETUP TIMER")
 	
@@ -161,9 +162,6 @@ func check_started_animation(animation : String) -> void:
 		return
 
 func check_finished_animation(animation : String) -> void:
-	
-	print(animation)
-	#print(animation.contains("get_up") == true and animation.contains("failed") == true)
 	
 	if animation.contains("knockdown") == true:
 		start_get_up_timer()

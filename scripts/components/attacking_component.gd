@@ -38,7 +38,8 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	if parry_attack_timer.is_stopped() == false and owner is Player:
-		attack_multiplier = parry_damage_curve.sample(1 - (parry_attack_timer.time_left / parry_attack_timer.wait_time))
+		if parry_damage_curve != null:
+			attack_multiplier = parry_damage_curve.sample(1 - (parry_attack_timer.time_left / parry_attack_timer.wait_time))
 
 ## Function that is called by the attack animations.
 ## It calls functions in the opposing fighter's [DefenseComponent], giving it the attacks variables as input.

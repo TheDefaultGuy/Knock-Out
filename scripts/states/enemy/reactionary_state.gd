@@ -12,16 +12,48 @@ class_name Reactionary extends EnemyState
 ## DO NOT change anything in the actual .gd file, since it'll mess up compatibility.
 
 ## The fakeout animation that will play in this state.
-@export var fakeout_animation: String = "fakeout"
+@export_placeholder("Don't include the library") var fakeout_animation: String = "fakeout" :
+	set(value):
+		fakeout_animation = value
+		if fakeout_animation.is_empty() == true:
+			printerr(self.name, ": The given Fakeout Animation is empty. Having no animation will cause this state to fail and not function correctly.")
+			return
+		if AnimationNodeManager.match_animation_library(fakeout_animation, animation_player).is_empty() == true:
+			printerr(self.name, ": The given Fakeout Animation is not an animation present in the Animation Player's Library. Having no animation will cause this state to fail and not function correctly.")
+			return
 
 ## The punish attack the [Enemy] will perform if the [Player] tries to dodge left during the [member fakeout_animation].
-@export var left_dodge_punish: String = "punish_left"
+@export_placeholder("Don't include the library") var left_dodge_punish: String = "punish_left":
+	set(value):
+		left_dodge_punish = value
+		if left_dodge_punish.is_empty() == true:
+			printerr(self.name, ": The given Left Dodge Punish Animation is empty. Having no animation will cause this state to fail and not function correctly.")
+			return
+		if AnimationNodeManager.match_animation_library(left_dodge_punish, animation_player).is_empty() == true:
+			printerr(self.name, ": The given Left Dodge Punish Animation is not an animation present in the Animation Player's Library. Having no animation will cause this state to fail and not function correctly.")
+			return
 
 ## The punish attack the [Enemy] will perform if the [Player] tries to dodge right during the [member fakeout_animation].
-@export var right_dodge_punish: String = "punish_right"
+@export_placeholder("Don't include the library") var right_dodge_punish: String = "punish_right":
+	set(value):
+		right_dodge_punish = value
+		if right_dodge_punish.is_empty() == true:
+			printerr(self.name, ": The given Right Dodge Punish Animation is empty. Having no animation will cause this state to fail and not function correctly.")
+			return
+		if AnimationNodeManager.match_animation_library(right_dodge_punish, animation_player).is_empty() == true:
+			printerr(self.name, ": The given Right Dodge Punish Animation is not an animation present in the Animation Player's Library. Having no animation will cause this state to fail and not function correctly.")
+			return
 
 ## The punish attack the [Enemy] will perform if the [Player] tries to duck during the [member fakeout_animation].
-@export var duck_punish: String = "punish_duck"
+@export_placeholder("Don't include the library") var duck_punish: String = "punish_duck":
+	set(value):
+		duck_punish = value
+		if duck_punish.is_empty() == true:
+			printerr(self.name, ": The given Duck Punish Animation is empty. Having no animation will cause this state to fail and not function correctly.")
+			return
+		if AnimationNodeManager.match_animation_library(duck_punish, animation_player).is_empty() == true:
+			printerr(self.name, ": The given Duck Punish Animation is not an animation present in the Animation Player's Library. Having no animation will cause this state to fail and not function correctly.")
+			return
 
 func _ready() -> void:
 	

@@ -41,7 +41,7 @@ const DIZZY_EFFECT = preload("uid://1gxun2up65jb")
 @export_category("💫 Stun Behavior")
 
 ## How the enemy will behave during stun.
-@export var stun_behavior := StunBehaviorTypeEnum.FIXED_TIME_DURATION: 
+@export var stun_behavior : StunBehaviorTypeEnum = StunBehaviorTypeEnum.FIXED_TIME_DURATION: 
 	set(value):
 		stun_behavior = value
 		notify_property_list_changed()

@@ -226,6 +226,11 @@ animations = [{
 "speed": 1.0
 }]
 
+[sub_resource type="Curve" id="Curve_ssxbu"]
+_limits = [1.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, 3), 0.0, 0.0, 0, 0, Vector2(0.25406504, 3), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 3
+
 [sub_resource type="Curve" id="Curve_holxr"]
 _limits = [1.0, 3.0, 0.0, 7.0]
 _data = [Vector2(0, 1), 0.0, 0.04114618, 0, 0, Vector2(7, 3), 0.42639792, 0.0, 0, 0]
@@ -3207,6 +3212,7 @@ metadata/_custom_type_script = "uid://g56svn272vdm"
 [node name="AttackingComponent" type="Node" parent="." unique_id=1435903188]
 unique_name_in_owner = true
 script = ExtResource("8_ur7pv")
+parry_damage_curve = SubResource("Curve_ssxbu")
 metadata/_custom_type_script = "uid://by7b3lklkcynb"
 
 [node name="StateMachine" type="Node" parent="." unique_id=343069231 node_paths=PackedStringArray("initial_state", "knocked_down_state", "spectating_state", "tired_state", "cutscene_state", "neutral_state")]

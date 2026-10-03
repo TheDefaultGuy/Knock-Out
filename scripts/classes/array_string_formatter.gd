@@ -19,6 +19,32 @@ static func array_remove_duplicates(array: Array) -> Array:
 	# Returns the finished output array without duplicates
 	return output
 
+## Short little function that removes any duplicate entries in an Array.
+static func array_return_duplicates(array: Array) -> Array:
+	var output : Array = []
+	var duplicates : Array = []
+	
+	# Iterates through each element of the array
+	for element in array: 
+		
+		# Checks if the element isn't in the output Array.
+		if not element in output: 
+			
+			# Adds the element to the output Array if it isn't.
+			output.append(element) 
+			
+			continue
+		# Checks if the element IS in the output Array.
+		elif element in output: 
+			
+			# Adds the element to the duplicates Array.
+			duplicates.append(element) 
+			
+			continue
+			
+	# Returns the finished output array without duplicates
+	return duplicates
+
 ## Short little function that removes any empty entries in an Array.
 static func array_remove_empty_entries(array: Array) -> Array:
 	var output : Array = []

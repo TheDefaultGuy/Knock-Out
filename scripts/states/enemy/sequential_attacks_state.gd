@@ -89,6 +89,8 @@ func override_conditions_and_state_parameters() -> void:
 	
 	moveset_type = MovesetTypeEnum.PREDETERMINED_ORDER
 	
+	override_idle_animation = false
+	
 	# Overrides the state change condition so that this state can function properly.
 	primary_condition = StateChangeConditionEnum.AFTER_COMPLETION
 	secondary_condition = StateChangeConditionEnum.AFTER_PLAYER_KNOCKED_DOWN
@@ -97,3 +99,13 @@ func override_conditions_and_state_parameters() -> void:
 func _validate_property(property: Dictionary) -> void: 
 	attack_timer_required = false
 	super(property)
+	if property.name == "primary_condition":
+		property.usage |= PROPERTY_USAGE_READ_ONLY
+		
+	if property.name == "secondary_condition":
+		property.usage |= PROPERTY_USAGE_READ_ONLY
+	
+	if property.name == "custom_idle_animation":
+		property.usage = PROPERTY_USAGE_NONE
+	if property.name == "override_idle_animation":
+		property.usage |= PROPERTY_USAGE_READ_ONLY

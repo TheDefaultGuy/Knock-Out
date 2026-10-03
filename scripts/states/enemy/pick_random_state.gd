@@ -15,6 +15,7 @@ func override_conditions_and_state_parameters() -> void:
 	
 	moveset_type = MovesetTypeEnum.NOT_APPLICABLE
 	attack_timer_required = false
+	override_idle_animation = false
 	primary_condition = StateChangeConditionEnum.DO_NOT_CHANGE
 	secondary_condition = StateChangeConditionEnum.DO_NOT_CHANGE
 	tertiary_condition = StateChangeConditionEnum.DO_NOT_CHANGE
@@ -51,11 +52,15 @@ func _validate_property(property : Dictionary) -> void:
 	if property.name == "tertiary_condition" :
 		property.usage |= PROPERTY_USAGE_READ_ONLY
 		
+	if property.name == "override_idle_animation":
+		property.usage |= PROPERTY_USAGE_READ_ONLY
+		
 	if property.name == "block_behavior" :
 		property.usage |= PROPERTY_USAGE_READ_ONLY
 	if property.name == "moveset_type" :
 		property.usage |= PROPERTY_USAGE_READ_ONLY
 	super(property) # Calls the base EnemyState function right after.
+	
 	if property.name == "primary_target_state" :
 		property.usage = PROPERTY_USAGE_DEFAULT
 	if property.name == "secondary_target_state" :
