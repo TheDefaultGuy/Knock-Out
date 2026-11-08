@@ -105,6 +105,8 @@ func _validate_property(property : Dictionary) -> void:
 		property.usage |= PROPERTY_USAGE_READ_ONLY
 	if property.name == "moveset_array" :
 		property.usage = PROPERTY_USAGE_NONE
+	if property.name == "defense_behavior" :
+		property.usage |= PROPERTY_USAGE_READ_ONLY
 	super(property) # Calls the base EnemyState function right after.
 	
 	if property.name == "custom_idle_animation":

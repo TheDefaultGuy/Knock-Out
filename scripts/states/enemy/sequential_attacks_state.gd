@@ -36,13 +36,13 @@ func _process(_delta: float) -> void:
 
 
 func enter() -> void:
-	super() # Runs the base EnemyState enter function and then runs everything below.
-	
+	started_attacking = false
 	interruption_status = false
 	
-	started_attacking = false
+	super() # Runs the base EnemyState enter function and then runs everything below.
+	
+	
 	animation_tree.animation_finished.connect(increase_count)
-	animation_tree.animation_started.connect(set_attacking)
 	
 	# Shenanigans to make sure the animation name when traveling is the same format and order
 	# as the special formatted array that avoids duplicate animation nodes.
@@ -52,25 +52,21 @@ func enter() -> void:
 	modified_moveset = AnimationNodeManager.format_moveset_for_unique_names(reversed_moveset, self)
 	modified_moveset.reverse()
 	
-	# Travels to the first attack/animation
-	anim_state_machine.travel(modified_moveset[0])
-	
+	# Force travels to the first attack/animation
+	AnimationManager.force_play_animation(modified_moveset[0], self)
 
 func exit() -> void:
 	super() # Runs the base EnemyState exit function and then runs everything below.
 	
 	# Disconnecting signals.
 	animation_tree.animation_finished.disconnect(increase_count)
-	animation_tree.animation_started.disconnect(set_attacking)
 
 #endregion
 
-## Just sets the variable when an animation has started:
-func set_attacking(_animation) ->void:
-	started_attacking = true 
-
 ## Increases the attack count variable by 1 every time an animation is played in this state.
 func increase_count(_animation) -> void:
+	
+	started_attacking = true 
 	# Sets this variable true so that it can start checking for state completion in the process functions
 	
 	attack_count += 1 # Increases the attack count index everytime an animation/attack is finished
@@ -104,7 +100,8 @@ func _validate_property(property: Dictionary) -> void:
 		
 	if property.name == "secondary_condition":
 		property.usage |= PROPERTY_USAGE_READ_ONLY
-	
+	if property.name == "defense_behavior" :
+		property.usage |= PROPERTY_USAGE_READ_ONLY
 	if property.name == "custom_idle_animation":
 		property.usage = PROPERTY_USAGE_NONE
 	if property.name == "override_idle_animation":

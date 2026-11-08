@@ -54,7 +54,8 @@ func _validate_property(property : Dictionary) -> void:
 		
 	if property.name == "override_idle_animation":
 		property.usage |= PROPERTY_USAGE_READ_ONLY
-		
+	if property.name == "defense_behavior" :
+		property.usage |= PROPERTY_USAGE_READ_ONLY
 	if property.name == "block_behavior" :
 		property.usage |= PROPERTY_USAGE_READ_ONLY
 	if property.name == "moveset_type" :

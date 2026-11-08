@@ -3757,7 +3757,7 @@ tracks/4/path = NodePath("DefenseComponent:stun_window")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"times": PackedFloat32Array(0, 0.6666667, 1),
+"times": PackedFloat32Array(0, 0.5, 1),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 1,
 "values": [false, true, false]
@@ -3781,7 +3781,7 @@ tracks/6/path = NodePath("DefenseComponent:lower_blocking_status")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
-"times": PackedFloat32Array(0, 0.6666667),
+"times": PackedFloat32Array(0, 0.5),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [false, true]
@@ -3793,7 +3793,7 @@ tracks/7/path = NodePath("DefenseComponent:upper_invulnerability")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
-"times": PackedFloat32Array(0, 0.76666665),
+"times": PackedFloat32Array(0, 0.6),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [true, false]
@@ -3805,7 +3805,7 @@ tracks/8/path = NodePath("DefenseComponent:lower_invulnerability")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
-"times": PackedFloat32Array(0, 0.76666665),
+"times": PackedFloat32Array(0, 0.6),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [true, false]
@@ -9130,8 +9130,8 @@ animation = &"idle"
 [node name="DefenseComponent" type="Node" parent="." unique_id=2045134485]
 unique_name_in_owner = true
 script = ExtResource("12_qdshv")
-upper_blocking_status = true
-lower_blocking_status = true
+upper_invulnerability = true
+lower_invulnerability = true
 metadata/_custom_type_script = "uid://dq3iqh3osri6o"
 
 [node name="HealthComponent" type="Node" parent="." unique_id=144358405]
@@ -9192,7 +9192,7 @@ metadata/_custom_type_script = "uid://bxdm4cxh3jw0n"
 
 [node name="CutSceneState" type="Node" parent="StateMachine/Round 1/Required States" unique_id=334701676 node_paths=PackedStringArray("next_state")]
 script = ExtResource("50_wnc28")
-next_state = NodePath("../../Reactionary")
+next_state = NodePath("../../Randomized Attacks/Aggressive2")
 metadata/_custom_type_script = "uid://bd3i8gnmviajw"
 
 [node name="Randomized Attacks" type="Node" parent="StateMachine/Round 1" unique_id=236151705]
@@ -9242,7 +9242,7 @@ script = ExtResource("44_wdmnt")
 primary_target_state = NodePath("../../TauntAndCounter")
 secondary_target_state = NodePath("../../FlurryAttack")
 secondary_condition = 4
-time_to_change_state = 8.0
+time_to_change_state = 12.0
 moveset_dictionary = Dictionary[String, float]({
 "elbow": 20.0,
 "hook_right": 20.0,
@@ -9364,7 +9364,7 @@ time_to_change_state = 8.0
 override_idle_animation = true
 custom_idle_animation = "idle_guard"
 moveset_type = 2
-moveset_array = Array[String](["taunt", "counter_uppercut"])
+moveset_array = Array[String](["taunt"])
 block_behavior = 2
 max_delay_time = 2.0
 metadata/_custom_type_script = "uid://c4q24a656iry7"
@@ -9379,7 +9379,7 @@ time_to_change_state = 6.0
 override_idle_animation = true
 custom_idle_animation = "idle_guard"
 moveset_type = 2
-moveset_array = Array[String](["taunt", "counter_uppercut"])
+moveset_array = Array[String](["taunt"])
 block_behavior = 2
 min_delay_time = 0.5
 max_delay_time = 2.0
