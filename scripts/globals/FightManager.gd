@@ -234,3 +234,8 @@ func start_the_fight() -> void:
 		print("Fight Manager: both fighters ready to fight")
 		enemy_ready_status = false
 		player_ready_status = false
+		
+func reset_everything() -> void:
+	reset_ko_count()
+	set_stamina()
+	

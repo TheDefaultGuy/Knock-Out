@@ -8,11 +8,14 @@ const NICK_BRUISER = preload("uid://7858o2inqkak")
 func _ready() -> void:
 	if OS.is_debug_build() == true:
 		SceneChanger.change_scene(arena_scene, self)
+		FightManager.reset_everything()
 		return
 
 
 func _on_button_pressed() -> void: # Nick
 	SceneChanger.change_to_arena(NICK_BRUISER, self)
+	FightManager.reset_everything()
 
 func _on_button_2_pressed() -> void:
 	SceneChanger.change_to_arena(RICK_BRUISER, self)
+	FightManager.reset_everything()

@@ -127,11 +127,14 @@ enum BlockBehaviorEnum{
 ## What the enemy will do for defense.
 enum DefenseBehaviorEnum{
 	
-	## The enemy will perform blocks to defend themselves from the player's attacks when in this state.
+	## The enemy will perform blocks to defend themselves from any the player's attacks when in this state.
 	BLOCK,
 	
-	## The enemy will dodge to defend themselves from the player's attacks when in this state.
+	## The enemy will dodge to defend themselves from any the player's attacks when in this state.
 	DODGE,
+	
+	## The enemy will dodge to defend themselves from the player's star punches when in this state.
+	#DODGE_STAR_PUNCHES,
 	
 	### The enemy will perform both blocks and dodges to defend themselves from the player's attacks when in this state.
 	#BOTH,
@@ -377,7 +380,6 @@ func _ready() -> void:
 	if block_behavior == BlockBehaviorEnum.COUNTER_ATTACK : 
 		moves_arr.append(counter_attack)
 	
-	#print(self.name, list_of_check_functions)
 	
 	set_conditions_and_targets_dictionary()
 	
@@ -456,6 +458,8 @@ func enter() -> void:
 			defense_component.current_block_animation = "block"
 		DefenseBehaviorEnum.DODGE:
 			defense_component.current_block_animation = "dodge"
+		_: # Uses block animation as a fallback
+			defense_component.current_block_animation = "block"
 	return
 
 func exit() -> void:
