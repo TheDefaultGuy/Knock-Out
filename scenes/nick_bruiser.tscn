@@ -9126,6 +9126,7 @@ texture_filter = 1
 material = ExtResource("2_v64oh")
 sprite_frames = SubResource("SpriteFrames_m0jec")
 animation = &"idle"
+frame = 1
 
 [node name="DefenseComponent" type="Node" parent="." unique_id=2045134485]
 unique_name_in_owner = true
@@ -9192,7 +9193,7 @@ metadata/_custom_type_script = "uid://bxdm4cxh3jw0n"
 
 [node name="CutSceneState" type="Node" parent="StateMachine/Round 1/Required States" unique_id=334701676 node_paths=PackedStringArray("next_state")]
 script = ExtResource("50_wnc28")
-next_state = NodePath("../../Randomized Attacks/CalmState")
+next_state = NodePath("../../Reactionary")
 metadata/_custom_type_script = "uid://bd3i8gnmviajw"
 
 [node name="Randomized Attacks" type="Node" parent="StateMachine/Round 1" unique_id=236151705]
@@ -9204,14 +9205,13 @@ secondary_target_state = NodePath("../../ItemHeal2")
 tertiary_target_state = NodePath("../../TauntAndCounter")
 secondary_condition = 5
 tertiary_condition = 1
-time_to_change_state = 15.0
+target_round_time = 18.0
+time_to_change_state = 13.0
 target_damage_taken = 45.0
 override_idle_animation = true
 custom_idle_animation = "idle_slow"
 moveset_type = 1
 moveset_array = Array[String](["jab_high", "jab_low"])
-min_delay_time = 0.5
-max_delay_time = 1.8
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
 [node name="Debug" type="Node" parent="StateMachine/Round 1/Randomized Attacks" unique_id=1997623450]
@@ -9249,8 +9249,6 @@ moveset_dictionary = Dictionary[String, float]({
 "hook_right": 20.0,
 "uppercut": 40.0
 })
-min_delay_time = 0.8
-max_delay_time = 1.5
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
 [node name="WeirdAttacks" type="Node" parent="StateMachine/Round 1/Randomized Attacks" unique_id=2144043967 node_paths=PackedStringArray("primary_target_state")]
@@ -9261,8 +9259,6 @@ override_idle_animation = true
 custom_idle_animation = "idle_shifty"
 moveset_type = 1
 moveset_array = Array[String](["great_tiger_uppercut", "great_tiger_uppercut_2"])
-min_delay_time = 0.4
-max_delay_time = 1.2
 metadata/_custom_type_script = "uid://dy765alksxcdx"
 
 [node name="WeirdAttacks2" type="Node" parent="StateMachine/Round 1/Randomized Attacks" unique_id=455264741]
@@ -9319,7 +9315,7 @@ script = ExtResource("59_poxia")
 primary_target_state = NodePath("../Randomized Attacks/WeirdAttacks")
 secondary_target_state = NodePath("../ItemHeal")
 secondary_condition = 5
-time_to_change_state = 10.0
+time_to_change_state = 19.0
 override_idle_animation = true
 custom_idle_animation = "idle_fast"
 moveset_type = 1
@@ -9328,6 +9324,7 @@ block_behavior = 2
 counter_attack = "counter_jab"
 min_delay_time = 0.8
 max_delay_time = 1.8
+defense_behavior = 1
 metadata/_custom_type_script = "uid://bjtexblqp5cmp"
 
 [node name="Reactionary2" type="Node" parent="StateMachine/Round 1" unique_id=137125735 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
@@ -9342,6 +9339,7 @@ moveset_type = 1
 moveset_array = Array[String](["fakeout", "fakeout_uppercut", "uppercut"])
 block_behavior = 2
 counter_attack = "counter_jab"
+defense_behavior = 1
 metadata/_custom_type_script = "uid://bjtexblqp5cmp"
 
 [node name="LoopingCharge" type="Node" parent="StateMachine/Round 1" unique_id=61317170 node_paths=PackedStringArray("primary_target_state", "secondary_target_state")]
@@ -9367,7 +9365,7 @@ time_to_change_state = 8.0
 override_idle_animation = true
 custom_idle_animation = "idle_guard"
 moveset_type = 2
-moveset_array = Array[String](["taunt"])
+moveset_array = Array[String](["taunt", "counter_uppercut"])
 block_behavior = 2
 max_delay_time = 2.0
 metadata/_custom_type_script = "uid://c4q24a656iry7"
@@ -9382,7 +9380,7 @@ time_to_change_state = 6.0
 override_idle_animation = true
 custom_idle_animation = "idle_guard"
 moveset_type = 2
-moveset_array = Array[String](["taunt"])
+moveset_array = Array[String](["taunt", "counter_uppercut"])
 block_behavior = 2
 min_delay_time = 0.5
 max_delay_time = 2.0

@@ -51,6 +51,9 @@ func _ready() -> void:
 	add_child(player_node)
 	add_child(enemy_node)
 	
+	FightManager.reset_ko_count()
+	FightManager.set_stamina()
+	
 	FightManager.enemy_knocked_down_signal.connect(slow_down_effect)
 	FightManager.player_knocked_down_signal.connect(slow_down_effect)
 	
@@ -84,11 +87,6 @@ func _exit_tree() -> void:
 	FightManager.enemy_knocked_down_signal.disconnect(slow_down_effect)
 	FightManager.player_knocked_down_signal.disconnect(slow_down_effect)
 	FightManager.go_to_results_screen_signal.disconnect(SceneChanger.change_scene.bind(RESULTS_SCREEN, self))
-
-#func _input(_event: InputEvent) -> void:
-	#if Input.is_action_pressed("esc"):
-		#get_tree().paused = not get_tree().paused
-	
 
 ## Sets [member is_slow_motion] to [code]true[/code] and resets [member slow_mo_time_passed] back to 0.0 so that the [member slow_motion_curve] can be sampled.
 func slow_down_effect() -> void:

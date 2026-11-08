@@ -4,14 +4,17 @@ class_name FightLogicComponent extends Node
 ##
 ## Handles the winner, the round time, the KO count, determining when the fight is over, etc...
 
+## Signal emitted after the round timer has fully reached 0.000 time left.
 signal time_is_over_signal
 
 const RESULTS_SCREEN = preload("uid://b4unduv261ia0")
 const CHARACTER_SELECTION_MENU = preload("uid://bvyokq5qbudmq")
 
+## The timer that keeps track of how much time is left in the round.
 var round_timer: Timer = null
-var ko_timer: Timer  = null
 
+## Stores if [member round_timer] has been fully started and the match is under way
+## so that [method check_for_round_over] can start checking.
 var can_start_checking : bool = false
 
 @onready var animation_player: AnimationPlayer = %AnimationPlayer
@@ -23,90 +26,83 @@ func _ready() -> void:
 	FightManager.start_ko_count_signal.connect(start_ko_count)
 	FightManager.fighter_got_up_signal.connect(stop_ko_count)
 	
-	call_deferred("create_timers")
-	
-	#await get_tree().create_timer(0.4).timeout
+	# Have to call deferred otherwise it doesn't work for some reason.
+	call_deferred("create_round_timer")
 	
 	time_is_over_signal.connect(_on_round_timer_timeout)
 	
 	FightManager.pause_ko_count_signal.connect(pause_ko_count)
-	
-	#FightManager.start_intro_animation_signal.emit()
-	
-	#owner.arena_ui.time_left_label.text = str("0'00",str(000))
-	
-	#start_the_match()
+
 
 func _process(_delta: float) -> void:
 	
-	# Does the math to convert the seconds to M:SS:MSS format.
-	
-	
+	# Sets the round time in Fight Manager as the the that has ellapsed in the round_timer.
 	FightManager.round_time = snappedf((round_timer.wait_time - round_timer.time_left), 0.001)
 	
-	#print(FightManager.round_time)
-	
+	# Does the math to convert the seconds to M:SS:MSS format.
 	@warning_ignore("integer_division")
 	var minutes: int = int(FightManager.round_time) / 60
 	var seconds: int = int(fmod(FightManager.round_time, 60))
 	var milliseconds : int = int((FightManager.round_time - int(FightManager.round_time)) * 1000)
 	owner.arena_ui.time_left_label.text = str( "%d'%02d\"%03d" % [minutes, seconds, milliseconds])
-	#prints(round_timer.wait_time, round_timer.time_left)
-	#prints(FightManager.round_time, owner.arena_ui.time_left_label.text)
-	#print(FightManager.is_fight_over)
-	#print(round_timer.is_stopped())
-	#print(round_timer.time_left)
-	#print("Timer Paused?: ", round_timer.paused)
-	#print("Timer Stopped?: ", round_timer.is_stopped())
-	# This is done because the timer label can stop at a number like: 2'59"997
+	check_for_round_over()
+
+## Checks if the round is over via timeout.
+func check_for_round_over() -> void:
+	# This is done because the timer label can stop at a number like: 2'59"997 instead of 3'00"000.
 	if can_start_checking == true and round_timer.is_stopped() == true:
 		if FightManager.is_fight_over == false:
 			time_is_over_signal.emit()
-	
-	#if ko_timer.is_stopped() == false:
-		#print("KO Timer: ",ko_timer.time_left)
-		#print("KO Text: ",owner.arena_ui.ko.text)
 
+## Pauses/unpauses the [member round_timer] and starts it if it's stopped.
 func toggle_round_timer() -> void:
 	print("Fight Logic Component: Toggling round timer...")
+	
+	# Checks if the timer is stopped/hasn't been started.
 	if round_timer.is_stopped() == true:
+		
+		# If it's stopped, start it and set the paused status to false.
 		round_timer.start()
 		round_timer.paused = false
+		
+		# Sets this as true to that check_for_fight_over() can work.
 		can_start_checking = true
 		return
+		
+	# If the timer has been started already, then toggle the pause.
 	round_timer.paused = !round_timer.paused
-	
-func start_the_match() -> void:
-	round_timer.paused = true
-	
+
+
+## Plays the KO Count animation in the animation player.
 func start_ko_count() -> void:
 	
+	# If the fight's still going, play the regular KO count animation.
 	if FightManager.is_fight_over == false:
 		print("Fight Logic Component: Starting KO count...")
-		#ko_timer.start(10.0)
 		animation_player.play("ko_count")
 		
-	if FightManager.is_fight_over == true:
+	# If one of the fighters has 3 Knockdowns, meaning the fight is already over,
+	# then play the TKO animation.
+	elif FightManager.is_fight_over == true:
 		animation_player.play("TKO")
 
+## Pauses the KO count animation. Used for failed get ups.
 func pause_ko_count() -> void:
-	
-	#print("KO Count is Animation PLaying?: ", animation_player.is_playing())
-	#print("Timer Paused?: ", ko_timer.paused)
-	
 	if animation_player.is_playing() == true:
 		animation_player.pause()
 	
 	elif animation_player.is_playing() == false:
 		animation_player.play()
-	
-	#ko_timer.paused = !ko_timer.paused
 
+## Stops the KO Count animation.
 func stop_ko_count() -> void:
-	#ko_timer.stop()
+	
+	# Waits a little to avoid cutting the voicelines.
 	await get_tree().create_timer(0.5).timeout
 	animation_player.play("RESET")
-	
+
+## Functions called be the TKO and KO Count animations.
+## Handles setting the winner of the fight.
 func end_fight() -> void:
 	print("Fight Logic Component: FIGHTER COULDNT GET UP")
 	stop_ko_count()
@@ -123,23 +119,14 @@ func end_fight() -> void:
 	
 	FightManager.fight_is_over_signal.emit()
 
-func set_that_fight_is_over() -> void:
-	FightManager.is_fight_over = true
-
+## Handles what to do when the round timer has reached zero.
 func _on_round_timer_timeout() -> void:
 	FightManager.fight_is_over_signal.emit()
 	FightManager.is_fight_over = true
 	get_tree().paused = true
 	print("Fight Logic Component: ROUND OVER; TIMES UP")
 	SceneChanger.change_scene(RESULTS_SCREEN, self)
-	#get_tree().paused = false
-	
-	
 
-## Creates the timers with code so that  you don't have to make a round timer node and then manually assign it.
-func create_timers() -> void:
+## Creates the [member round_timer] with code.
+func create_round_timer() -> void:
 	round_timer = TimerCreator.create_timer_and_add_as_child("Round Timer", true, owner.match_settings.round_length, false, self)
-	#round_timer.timeout.connect(_on_round_timer_timeout)
-	
-	#ko_timer = TimerCreator.create_timer_and_add_as_child("KO Count Timer", true, 10.0, false)
-	#ko_timer.timeout.connect(set_that_fight_is_over)

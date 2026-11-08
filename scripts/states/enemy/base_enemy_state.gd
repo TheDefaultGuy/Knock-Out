@@ -123,6 +123,20 @@ enum BlockBehaviorEnum{
 	## Don't do anything when a block occurs. This is for states where blocking shouldn't happen (since they aren't effective) or affect the enemy's behavior.
 	NOT_APPLICABLE,
 }
+
+## What the enemy will do for defense.
+enum DefenseBehaviorEnum{
+	
+	## The enemy will perform blocks to defend themselves from the player's attacks when in this state.
+	BLOCK,
+	
+	## The enemy will dodge to defend themselves from the player's attacks when in this state.
+	DODGE,
+	
+	### The enemy will perform both blocks and dodges to defend themselves from the player's attacks when in this state.
+	#BOTH,
+}
+
 #endregion
 
 #region Constants
@@ -292,6 +306,12 @@ enum BlockBehaviorEnum{
 ## An array of predetermined attack delay amounts. 
 ## Instead of choosing a number BETWEEN a minumum and a maximum value, it will choose randomly from the list of provided values instead.
 @export_custom(PROPERTY_HINT_NONE, "suffix:s") var attack_delay_array : Array[float]
+
+@export_category("🛡️ Defensive Behavior")
+
+## What defensive behavior the enemy will have in reaction to the player's punches while in this state.
+@export var defense_behavior : DefenseBehaviorEnum = DefenseBehaviorEnum.BLOCK
+
 #endregion
 
 #region Stored Variables
@@ -429,6 +449,13 @@ func enter() -> void:
 	# If it stopped or wasn't started, then it starts it.
 	# If it was already started, the it toggles pause.
 	toggle_state_change_timer()
+	
+	# Sets the block animation in the defense component based on what the defense behavior is set to.
+	match defense_behavior:
+		DefenseBehaviorEnum.BLOCK:
+			defense_component.current_block_animation = "block"
+		DefenseBehaviorEnum.DODGE:
+			defense_component.current_block_animation = "dodge"
 	return
 
 func exit() -> void:

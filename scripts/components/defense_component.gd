@@ -212,7 +212,7 @@ func choose_hit_region(punch_height : int, damage_amount : float, punch_directio
 		#play_impact_effect(punch_height)
 		
 		# If the damage passes a certain amount, then play the final hit animation instead.
-		if damage_amount > 15.0 :
+		if damage_amount >= 15.0 :
 			
 			current_hit_animation = "final_hit"
 			

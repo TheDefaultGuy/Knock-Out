@@ -86,12 +86,9 @@ tracks/1/path = NodePath("FightLogicComponent")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(2, 11.766666),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(2),
+"transitions": PackedFloat32Array(1),
 "values": [{
-"args": [],
-"method": &"end_fight"
-}, {
 "args": [],
 "method": &"end_fight"
 }]

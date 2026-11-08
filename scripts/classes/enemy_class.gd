@@ -12,7 +12,7 @@ class_name Enemy extends Fighter
 signal hit_by_star_punch_signal
 
 ## Whether the [Enemy] is currently stunned/in [StunState].
-var is_stunned : bool = false
+#var is_stunned : bool = false
 
 @onready var instant_kd_component: InstantKDComponent = %InstantKDComponent
 @onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D

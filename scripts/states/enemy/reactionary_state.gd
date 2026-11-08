@@ -77,10 +77,6 @@ func enter() -> void:
 	
 	# Plays the punish animation when the player dodges.
 	FightManager.player_dodged_signal.connect(play_punish_animation)
-	
-	# Sets the block animation and state machine in the defense component as the block animation in the state machine.
-	# This is because the defense component is the one responsible for playing the block animation
-	defense_component.current_block_animation = "dodge"
 
 func exit() -> void:
 	
@@ -108,12 +104,13 @@ func override_conditions_and_state_parameters() -> void:
 	attack_timer_required  = true
 	
 	moveset_type = MovesetTypeEnum.PICK_RANDOM
-	
+	defense_behavior = DefenseBehaviorEnum.DODGE
 	block_behavior = BlockBehaviorEnum.COUNTER_ATTACK
 
 ## Sets the required conditions as Read Only so that they can't be changed.
 func _validate_property(property : Dictionary) -> void:
 	if property.name == "block_behavior" :
 		property.usage |= PROPERTY_USAGE_READ_ONLY
-	
+	if property.name == "defense_behavior" :
+		property.usage |= PROPERTY_USAGE_READ_ONLY
 	super(property) # Calls the base EnemyState function right after.
