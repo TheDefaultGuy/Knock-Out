@@ -215,6 +215,9 @@ func run_required_checks(stored_conditions : KDConditions, punch_height : int) -
 		
 		# If it was an instant knockdown, determine whether it's a simple knockdown or a full Knock-Out
 		if response == true : 
+			
+			# Adds points for landing an instant KD
+			PointsManager.points += PointsManager.INSTANT_KD
 			select_outcome(stored_conditions)
 			
 		return response # Returns the response of check_for_punch_type()

@@ -3197,6 +3197,7 @@ autoplay = "guard_down"
 [node name="InputComponent" type="Node" parent="." unique_id=489829923]
 unique_name_in_owner = true
 script = ExtResource("3_qlg0r")
+parry_window = 0.08
 metadata/_custom_type_script = "uid://c20tqslkyvip3"
 
 [node name="DefenseComponent" type="Node" parent="." unique_id=1058310838]

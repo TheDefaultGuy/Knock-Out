@@ -58,6 +58,10 @@ func deal_damage_and_check_for_knockdown(damage_amount : float, damage_multiplie
 			
 		elif owner is Enemy:
 			FightManager.enemy_knocked_down_signal.emit()
+			
+			# Adds points for knockdown
+			PointsManager.points += PointsManager.KNOCKDOWN
+			
 			print_rich('[color=green]Health Component:[/color] Enemy Knocked Down!')
 			
 		owner.is_knocked_down = true

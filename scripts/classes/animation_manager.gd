@@ -63,7 +63,7 @@ static func force_play_animation(animation_name : String, calling_node : Node) -
 		#print("Current node matches animation!")
 		
 		# Repeats the following as long as the playback position of the current animation is slightly larger than zero
-		while node_owner.anim_state_machine.get_current_play_position().is_zero_approx() == true: 
+		while node_owner.anim_state_machine.get_current_play_position() < 0.005 : 
 			
 			#print("Current node Play position: ", node_owner.anim_state_machine.get_current_play_position())
 			
@@ -75,8 +75,8 @@ static func force_play_animation(animation_name : String, calling_node : Node) -
 			
 			# Checks to see if the current animation's play back position is Zero.
 			# If it is Zero, then animation was successfully restarted.
-			if node_owner.anim_state_machine.get_current_play_position().is_zero_approx() == true:
-				print_rich("[color=purple]Animation Manager:[/color] Successfully Restarted Animation: ", animation_name)
+			if node_owner.anim_state_machine.get_current_play_position() < 0.005 :
+				print_rich("[color=purple][b]Animation Manager:[/b] Successfully Restarted Animation: [/color]", animation_name)
 				return
 	
 	# Does the following if the current animation is different than the given animation_name
@@ -94,7 +94,7 @@ static func force_play_animation(animation_name : String, calling_node : Node) -
 			
 			# If the current animation playing IS the desired one, then exit loop since work here is done.
 			if node_owner.anim_state_machine.get_current_node() == animation_name: 
-				print_rich("[color=purple]Animation Manager:[/color] Successfully Started Animation: ", animation_name)
+				print_rich("[color=purple][b]Animation Manager:[/b] Playing Animation: [/color]", animation_name)
 				return
 	return
 

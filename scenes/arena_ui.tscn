@@ -73,6 +73,17 @@ scale = Vector2(0.65069264, 0.65069264)
 text = "Stamina:"
 label_settings = SubResource("LabelSettings_hpwni")
 
+[node name="PointsLabel" type="Label" parent="." unique_id=2002655693]
+texture_filter = 1
+layout_mode = 0
+offset_left = -182.0
+offset_top = -80.0
+offset_right = -114.0
+offset_bottom = -57.0
+scale = Vector2(0.65069264, 0.65069264)
+text = "Points: "
+label_settings = SubResource("LabelSettings_hpwni")
+
 [node name="KO" type="Label" parent="." unique_id=636008840]
 layout_mode = 1
 anchors_preset = 8

@@ -15,6 +15,7 @@ extends Control
 ##The label that displays the time left in the round..
 @onready var time_left_label: Label = $TimeLeftLabel
 @onready var state_label: Label = $StateLabel
+@onready var points_label: Label = $PointsLabel
 
 @onready var ko: Label = $KO
 
@@ -44,3 +45,4 @@ func update_ui() -> void:
 	enemy_bar.value = Global.enemy_node.health_component.hp
 	star_count_label.text = str("Stars: ", FightManager.star_count)
 	stamina_label.text = str("Stamina: ", FightManager.stamina)
+	points_label.text = str("Points: ", PointsManager.points)

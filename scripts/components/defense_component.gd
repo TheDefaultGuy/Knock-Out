@@ -120,6 +120,10 @@ func check_defense(punch_height : int, punch_range : int, damage_amount : float,
 	if is_invulnerable(punch_height) or is_punch_dodged(punch_range) == true: # If the player is invulnerable or is not in the area the punch covers, it missed.
 		if owner is Player: # Sends a signal that the player successfully dodged so that they can leave the Tired State.
 			succesful_dodge.emit()
+			
+			# Adds points for succesfully dodging
+			PointsManager.points += PointsManager.DODGE
+			
 		#FightManager.missed_attack_signal.emit()
 		return false # Returns that the hit was NOT successful. Mainly as an answer to the attacking component.
 		
@@ -188,6 +192,9 @@ func handle_player_blocking_and_parry(damage_amount : float, punch_height : int,
 		current_block_animation = "fast_block"
 		#play_parry_effect(punch_height)
 		
+		# Adds points for landing a parry
+		PointsManager.points += PointsManager.PARRY
+		
 	else: # If the block wasn't during the parry window, the use the regular block animation.
 		current_block_animation = "block"
 		
@@ -200,7 +207,25 @@ func choose_hit_region(punch_height : int, damage_amount : float, punch_directio
 	punch_height = clampi(punch_height, 0, 1) # Clamps it to either 1 or 0 cause 2 is a possible input.
 	
 	hit_registered_signal.emit() # Emits that a hit has been registered.
-	print_rich("[color=gray][b]Defense Component:[/b][/color] Hit registered.")
+	
+	var hit_text : String = ""
+	
+	match punch_height:
+		Global.HeightEnum.HIGH:
+			hit_text += "Upper "
+		Global.HeightEnum.LOW:
+			hit_text += "Lower "
+		_:
+			hit_text += "Both "
+	match punch_direction:
+		Global.RangeEnum.RIGHT:
+			hit_text += "Right"
+		Global.RangeEnum.LEFT:
+			hit_text += "Left"
+		_:
+			hit_text += "Middle"
+	
+	print_rich("[color=gray][b]Defense Component:[/b][/color] Hit registered: " + hit_text)
 	
 	if owner is Enemy:
 	

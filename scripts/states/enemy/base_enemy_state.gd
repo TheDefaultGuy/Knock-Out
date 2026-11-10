@@ -415,7 +415,7 @@ func _ready() -> void:
 
 #region Enter and Exit functions
 func enter() -> void:
-	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
+	print_rich("[color=orange][b]Enemy Entered State: [/b][/color]", self.name)
 	
 	# Sets the idle blend to not stunned
 	animation_tree.set(str("parameters/idle/blend_position"),  0)
@@ -779,7 +779,7 @@ func play_attack_start_attack_timer(animation : String) -> void:
 		return
 	
 	# Travels to the given animation on the animation tree.
-	anim_state_machine.travel(animation)
+	AnimationManager.force_play_animation(animation, self)
 	
 	# Waits for the attack animation to finish before restarting the attack delay timer.
 	await animation_tree.animation_finished

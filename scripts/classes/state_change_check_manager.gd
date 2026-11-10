@@ -70,9 +70,12 @@ static func check_damage_taken(calling_state : State) -> bool:
 static func check_time_has_passed(calling_state : State) -> bool:
 	#print("timepased")
 	if calling_state.state_change_timer == null:
-		if EnemyState.StateChangeConditionEnum.AFTER_TIME_PASSED in calling_state.conditions_and_targets_dict.keys() : # Checks if not having a state change timer is intended behavior.
+		
+		# Checks if not having a state change timer is intended behavior.
+		if EnemyState.StateChangeConditionEnum.AFTER_TIME_PASSED in calling_state.conditions_and_targets_dict.keys() : 
 			printerr(calling_state.name, " has no State Change timer but is calling the check_time_has_passed() function")
 		return false
+		
 	if calling_state.state_change_timer.time_left == 0.0 :
 		calling_state.condition_match_direct_transition(EnemyState.StateChangeConditionEnum.AFTER_TIME_PASSED)
 		return true

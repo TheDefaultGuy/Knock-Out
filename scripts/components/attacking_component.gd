@@ -84,12 +84,17 @@ func punch(input_node : Node2D, punch_height : int, punch_range : int, attack_da
 		true: # Hit landed/was successful
 			if owner.anim_state_machine.get_current_node().contains("star") == true: # Checks if it was a star punch animation.
 				FightManager.star_punches_landed += 1  # If it was a star punch and the hit was true, then increase the star punch landed variable
-			
+				
+				if owner is Player: # Adds points for landing a Star punch
+					PointsManager.points += PointsManager.STAR_PUNCH * FightManager.stars_used # Multiplied by the amount of stars used.
+					
 			if owner is Player: # Checks to see if the attacker is the player.
 				
 				# Resets the number of stars used back to zero
 				FightManager.stars_used = 0
-			
+				
+				# Adds points for landing a regular punch
+				PointsManager.points += PointsManager.REGULAR_PUNCH
 			
 			FightManager.succesful_hit_signal.emit() 
 			return defense_response

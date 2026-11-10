@@ -104,7 +104,7 @@ func stop_ko_count() -> void:
 ## Functions called be the TKO and KO Count animations.
 ## Handles setting the winner of the fight.
 func end_fight() -> void:
-	print("Fight Logic Component: FIGHTER COULDNT GET UP")
+	print("Fight Logic Component: Fighter could not get up.")
 	stop_ko_count()
 	
 	FightManager.is_fight_over = true

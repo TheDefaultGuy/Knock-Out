@@ -616,12 +616,12 @@ func transition_to_target(target_state : State) -> void:
 		# This cuts off any animation and is required since going into Knockdown has way more priority than anything else.
 		if target_state is EnemyKnockedDown : 
 			#print("Traveling to knockdown")
-			anim_state_machine.travel("knockdown")
+			AnimationManager.force_play_animation("knockdown", self)
 			transition(target_state)
 			return
 		
 		#print("PRE-AWAIT ANIMATION FINISHED")
-		await animation_tree.animation_finished # Waits until the current attack/animation is finished before changing state.
+		#await animation_tree.animation_finished # Waits until the current attack/animation is finished before changing state.
 		#print("POST-AWAIT ANIMATION FINISHED")
 		
 		
@@ -630,15 +630,15 @@ func transition_to_target(target_state : State) -> void:
 		# If the enemy is gonna enter Spectating, then it transitions after the current attack animation is finished.
 		if target_state is EnemySpectating : 
 			#print("Traveling to move_to_spectate")
-			anim_state_machine.travel("move_to_spectate")
+			AnimationManager.force_play_animation("move_to_spectate", self)
 			transition(target_state)
 			return
 			
-		if anim_state_machine.get_current_node() not in ["knockdown", "get_up", "move_to_spectate", "spectating"] :
-			anim_state_machine.travel("hub_node") # Travels to the "hub_node" to go to the next state.
-			anim_state_machine.next()
-			transition(target_state)
-			return
+		#if anim_state_machine.get_current_node() not in ["knockdown", "get_up", "move_to_spectate", "spectating"] :
+			#AnimationManager.skip_current_animation_and_play_new_one("hub_node", self) # Travels to the "hub_node" to go to the next state.
+			##anim_state_machine.next()
+			#transition(target_state)
+			#return
 	return
 
 
@@ -689,7 +689,7 @@ func play_attack_start_attack_timer(animation : String) -> void:
 		return
 	
 	# Travels to the given animation on the animation tree.
-	anim_state_machine.travel(animation)
+	AnimationManager.force_play_animation(animation, self)
 	
 	# Waits for the attack animation to finish before restarting the attack delay timer.
 	await animation_tree.animation_finished

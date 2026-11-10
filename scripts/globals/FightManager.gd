@@ -238,4 +238,4 @@ func start_the_fight() -> void:
 func reset_everything() -> void:
 	reset_ko_count()
 	set_stamina()
-	
+	PointsManager.points = 0
