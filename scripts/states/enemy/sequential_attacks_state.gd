@@ -52,6 +52,10 @@ func enter() -> void:
 	modified_moveset = AnimationNodeManager.format_moveset_for_unique_names(reversed_moveset, self)
 	modified_moveset.reverse()
 	
+	# Waits until the enemy is in the idle animation before playing the move to spectate animation.
+	if anim_state_machine.get_current_node() != "idle" and anim_state_machine.get_current_node() != "RESET":
+		await animation_tree.animation_finished
+		
 	# Force travels to the first attack/animation
 	AnimationManager.force_play_animation(modified_moveset[0], self)
 

@@ -56,7 +56,7 @@ func check_for_round_over() -> void:
 
 ## Pauses/unpauses the [member round_timer] and starts it if it's stopped.
 func toggle_round_timer() -> void:
-	print("Fight Logic Component: Toggling round timer...")
+	print_rich("[b]🧠 Fight Logic Component:[/b] Toggling round timer...")
 	
 	# Checks if the timer is stopped/hasn't been started.
 	if round_timer.is_stopped() == true:
@@ -78,7 +78,7 @@ func start_ko_count() -> void:
 	
 	# If the fight's still going, play the regular KO count animation.
 	if FightManager.is_fight_over == false:
-		print("Fight Logic Component: Starting KO count...")
+		print_rich("[b]🧠 Fight Logic Component:[/b] Starting KO count...")
 		animation_player.play("ko_count")
 		
 	# If one of the fighters has 3 Knockdowns, meaning the fight is already over,
@@ -104,7 +104,7 @@ func stop_ko_count() -> void:
 ## Functions called be the TKO and KO Count animations.
 ## Handles setting the winner of the fight.
 func end_fight() -> void:
-	print("Fight Logic Component: Fighter could not get up.")
+	print_rich("[b]🧠 Fight Logic Component:[/b] Fighter could not get up.")
 	stop_ko_count()
 	
 	FightManager.is_fight_over = true
@@ -115,7 +115,7 @@ func end_fight() -> void:
 			
 		Global.enemy_node.is_knocked_down:
 			Global.winner = Global.WinnerEnum.PLAYER
-	print("Winner: ", Global.winner)
+	print_rich("[b]🧠 Fight Logic Component:[/b] Winner: ", Global.WinnerEnum.find_key(Global.winner))
 	
 	FightManager.fight_is_over_signal.emit()
 
@@ -124,7 +124,7 @@ func _on_round_timer_timeout() -> void:
 	FightManager.fight_is_over_signal.emit()
 	FightManager.is_fight_over = true
 	get_tree().paused = true
-	print("Fight Logic Component: ROUND OVER; TIMES UP")
+	print_rich("[b]🧠 Fight Logic Component:[/b] Round is over; Time is up.")
 	SceneChanger.change_scene(RESULTS_SCREEN, self)
 
 ## Creates the [member round_timer] with code.

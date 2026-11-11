@@ -38,6 +38,9 @@ static func set_condition_check_functions_based_on_conditions(conditions_and_tar
 			EnemyState.StateChangeConditionEnum.AFTER_COMPLETION, EnemyState.StateChangeConditionEnum.STATE_INTERRUPTED:
 				array_of_check_functions.append(check_state_completion)
 				
+			EnemyState.StateChangeConditionEnum.AFTER_PLAYER_HEALTH_DROPS_BELOW:
+				array_of_check_functions.append(check_player_health)
+				
 			#EnemyState.StateChangeConditionEnum.AFTER_STAR_PUNCH_LANDED:
 				#array_of_check_functions.append(check_time_has_passed)
 				
@@ -52,7 +55,7 @@ static func check_round_time(calling_state : State) -> bool:
 		return true
 	return false
 
-## Checks to see if the enemy's HP has dropped below the [member EnemyState.target_hp]
+## Checks to see if the [Enemy] HP has dropped below the [member EnemyState.target_hp]
 static func check_enemy_health(calling_state : State) -> bool:
 	if calling_state.health_component.hp <= calling_state.target_hp:
 		calling_state.condition_match_direct_transition(EnemyState.StateChangeConditionEnum.AFTER_HEALTH_DROPS_BELOW)
@@ -65,6 +68,21 @@ static func check_damage_taken(calling_state : State) -> bool:
 		calling_state.condition_match_direct_transition(EnemyState.StateChangeConditionEnum.AFTER_TAKEN_AMOUNT_OF_DAMAGE)
 		return true
 	return false
+
+## Checks to see if the [Player] HP has dropped below the [member EnemyState.player_target_hp]
+static func check_player_health(calling_state : State) -> bool:
+	if Global.player_node.health_component.hp <= calling_state.player_target_hp:
+		calling_state.condition_match_direct_transition(EnemyState.StateChangeConditionEnum.AFTER_PLAYER_HEALTH_DROPS_BELOW)
+		return true
+	return false
+
+### Checks to see if the [member EnemyState.damage_taken_so_far] is more than the [member EnemyState.player_target_damage_taken]
+#static func check_player_damage_taken(calling_state : State) -> bool:
+	#if calling_state.damage_given_so_far >= calling_state.player_target_damage_taken:
+		#calling_state.condition_match_direct_transition(EnemyState.StateChangeConditionEnum.AFTER_PLAYER_TAKEN_AMOUNT_OF_DAMAGE)
+		#return true
+	#return false
+
 
 ## Checks to see if the [member EnemyState.state_change_timer] has ran out so that the enemy can change state.
 static func check_time_has_passed(calling_state : State) -> bool:
@@ -116,6 +134,7 @@ static func check_state_completion(calling_state : State) -> bool:
 
 ## Checks if the [Enemy] or the [Player] have been knocked down and then changes to the state of the matching condition.
 static func check_for_knockdowns(calling_state : State) -> bool:
+	
 	match true:
 		Global.enemy_node.is_knocked_down:
 			calling_state.condition_match_change_interrupted_state(EnemyState.StateChangeConditionEnum.AFTER_ENEMY_KNOCKED_DOWN)

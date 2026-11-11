@@ -105,7 +105,7 @@ const MAX_NUMBER_OF_ROUNDS : int = 3
 @export var player_kd_count : int = 0 : 
 	# Clamps the value and emits the signal to update the UI everytime the value is set.
 	set(value):
-		print("Player KD Count: ", player_kd_count)
+		print_rich("[color=#6EDDB8][b]◉ Fight Manager:[/b][/color] Player KD Count: ", player_kd_count)
 		
 		player_kd_count = clampi(value, 0 , MAX_KD_COUNT)
 		if player_kd_count == MAX_KD_COUNT: # Checks for TKO; 3 knockouts
@@ -116,14 +116,14 @@ const MAX_NUMBER_OF_ROUNDS : int = 3
 			# Sets the fight as over.
 			is_fight_over = true
 			
-			print_rich("[b][u]\nFightManager: TKO Player[/u][/b]")
+			print_rich("[color=#6EDDB8][b]◉ Fight Manager:[/b][/color] TKO Player.")
 
 ## Number of times the [Enemy] has been knocked down in the current round.
 @export var enemy_kd_count : int = 0 :
 	# Clamps the value and emits the signal to update the UI everytime the value is set.
 	set(value):
 		
-		print("Enemy KD Count: ", enemy_kd_count)
+		print_rich("[color=#6EDDB8][b]◉ Fight Manager:[/b][/color] Enemy KD Count: ", enemy_kd_count)
 		
 		enemy_kd_count = clampi(value, 0 , MAX_KD_COUNT)
 		
@@ -135,7 +135,7 @@ const MAX_NUMBER_OF_ROUNDS : int = 3
 			# Sets the fight as over.
 			is_fight_over = true
 			
-			print_rich("[b][u]\nFightManager: TKO enemy[/u][/b]")
+			print_rich("[color=#6EDDB8][b]◉ Fight Manager:[/b][/color] TKO Enemy.")
 
 ## Which round of the fight it currently is. 1 = 1st round, 2 = 2nd round , 3 = 3rd round.
 @export var round_idx : int = 1 :
@@ -202,7 +202,7 @@ func reset_ko_count() -> void:
 
 ## Adds a star to the player's [member star_count] and emits [signal star_awarded_signal].
 func award_star() -> void:
-	print("Fight Manager: player was awarded a star")
+	print_rich("[color=#6EDDB8][b]◉ Fight Manager:[/b][/color] The player was awarded a star ⭐")
 	star_count += 1
 	star_awarded_signal.emit()
 	stars_used = 0
@@ -210,7 +210,8 @@ func award_star() -> void:
 
 ## Resets the player's [member star_count] back to zero after using them.
 func use_stars() -> void:
-	print("Fight Manager: player used ", star_count, " stars")
+	print_rich("[color=#6EDDB8][b]◉ Fight Manager:[/b][/color] The player used ", star_count, " stars")
+
 	stars_used = star_count
 	star_count = 0
 	return
@@ -227,11 +228,11 @@ func set_stamina() -> void:
 ## It checks if both [member enemy_ready_status] and [member player_ready_status] are true first.
 ## Emits the [signal resume_fighting_signal] for both fighters to resume fighting and resets their fighting status.
 func start_the_fight() -> void: 
-	print("Fighter Ready Signal Emitted.")
+	print_rich("[color=#6EDDB8][b]◉ Fight Manager:[/b][/color] Fighter Ready Signal Emitted.")
 	
 	if enemy_ready_status == true and player_ready_status == true:
 		resume_fighting_signal.emit()
-		print("Fight Manager: both fighters ready to fight")
+		print_rich("[color=#6EDDB8][b]◉ Fight Manager:[/b][/color] Both fighters ready to fight.")
 		enemy_ready_status = false
 		player_ready_status = false
 		

@@ -131,7 +131,7 @@ func check_defense(punch_height : int, punch_range : int, damage_amount : float,
 		match punch_height:
 			# Checks to see if it's an attack that covers both heights.
 			Global.HeightEnum.BOTH: 
-				return choose_hit_region(punch_height, damage_amount, punch_direction)
+				return choose_hit_region(punch_height, damage_amount, punch_direction, punch_range)
 				
 			_: 
 				return await check_blocking_status(blocking_array[punch_height], damage_amount, punch_height, punch_direction, punch_range)
@@ -145,7 +145,7 @@ func check_blocking_status(blocking_status : bool, damage_amount : float, punch_
 		# true = blocking and NOT vulnerable
 		# false = not blocking and IS vulnerable
 		false: # NOT blocking
-			return choose_hit_region(punch_height, damage_amount, punch_direction)
+			return choose_hit_region(punch_height, damage_amount, punch_direction, punch_range)
 			
 		true: # IS blocking
 			
@@ -157,7 +157,7 @@ func check_blocking_status(blocking_status : bool, damage_amount : float, punch_
 			
 			# Plays the corresponding block animation if it wasn't enough damage for a knockdown.
 			AnimationManager.force_play_animation(current_block_animation, self)
-			print_rich("[color=gray][b]Defense Component:[/b][/color] Blocked")
+			print_rich("[color=gray][b]🛡️ Defense Component:[/b][/color] Blocked")
 			
 			# This is done so that state change functions dont try and check for idle or something and checks on the actual block animation
 			await owner.animation_tree.animation_started 
@@ -178,7 +178,7 @@ func handle_player_blocking_and_parry(damage_amount : float, punch_height : int,
 	# Basically, if you're blocking, but the punch isn't straight ahead, you still get hit.
 	if dodge_position == Global.RangeEnum.NEUTRAL:
 		if punch_range != Global.RangeEnum.NEUTRAL:
-			return choose_hit_region(punch_height, damage_amount, punch_direction)
+			return choose_hit_region(punch_height, damage_amount, punch_direction, punch_range)
 	
 	# If the parry timer hasn't reached 0, then it's considered a successful parry.
 	if owner.input_component.parry_timer.time_left > 0.0 :
@@ -202,30 +202,13 @@ func handle_player_blocking_and_parry(damage_amount : float, punch_height : int,
 
 
 ## Chooses which region the attack landed and does calls all of the pertinent functions.
-func choose_hit_region(punch_height : int, damage_amount : float, punch_direction : int) -> bool:
+func choose_hit_region(punch_height : int, damage_amount : float, punch_direction : int, punch_range : int) -> bool:
 	
 	punch_height = clampi(punch_height, 0, 1) # Clamps it to either 1 or 0 cause 2 is a possible input.
 	
 	hit_registered_signal.emit() # Emits that a hit has been registered.
 	
-	var hit_text : String = ""
-	
-	match punch_height:
-		Global.HeightEnum.HIGH:
-			hit_text += "Upper "
-		Global.HeightEnum.LOW:
-			hit_text += "Lower "
-		_:
-			hit_text += "Both "
-	match punch_direction:
-		Global.RangeEnum.RIGHT:
-			hit_text += "Right"
-		Global.RangeEnum.LEFT:
-			hit_text += "Left"
-		_:
-			hit_text += "Middle"
-	
-	print_rich("[color=gray][b]Defense Component:[/b][/color] Hit registered: " + hit_text)
+	print_hit_information(punch_height, punch_direction, punch_range)
 	
 	if owner is Enemy:
 	
@@ -263,7 +246,23 @@ func choose_hit_region(punch_height : int, damage_amount : float, punch_directio
 ## this is to prevent the player being able to hit the enemy after getting hit due to long animations.
 func shorten_enemy_attack_animation() -> void:
 	if owner is Player:
+		#print("first check: ", owner.anim_state_machine.get_current_node())
+		#if owner.anim_state_machine.get_current_node() != "hit":
+			#await owner.animation_tree.animation_started
+		#print(owner.anim_state_machine.get_current_node())
+		#print(owner.anim_state_machine.get_current_length())
+		#print(owner.anim_state_machine.get_current_play_position())
+		#print(Global.enemy_node.anim_state_machine.get_current_length())
+		#print(Global.enemy_node.anim_state_machine.get_current_play_position())
 		
+		#var player_time_left : float = owner.anim_state_machine.get_current_length() - owner.anim_state_machine.get_current_play_position()
+		#var enemy_time_left : float = Global.enemy_node.anim_state_machine.get_current_length() - Global.enemy_node.anim_state_machine.get_current_play_position()
+		#
+		#print("player time_left: ", player_time_left)
+		#print("enemy time_left: ", enemy_time_left)
+		
+		#if enemy_time_left > (player_time_left * 1.0):
+			#return
 		# Waits until the player's hit animation is finished.
 		await owner.animation_tree.animation_finished
 		
@@ -272,19 +271,18 @@ func shorten_enemy_attack_animation() -> void:
 			return
 			
 		# Don't run the function if the enemy's current state is not a simple one.
-		if Global.enemy_node.state_machine.current_state.state_type != EnemyState.StateTypeEnum.SIMPLE:
-			return
-			
-		# Don't run the function if the enemy's current state is not a simple one.
 		if owner.state_machine.current_state is PlayerKnockedDown:
 			return
+		
 		
 		# Shortens the attack animation by skipping it.
 		AnimationManager.skip_current_animation_and_play_new_one("hub_node", Global.enemy_node)
 		
+		
+		
 		# Restarts the attack delay timer, otherwise it'll never attack again.
 		Global.enemy_node.state_machine.current_state.start_attack_delay_timer()
-
+		return
 
 ## Checks to see if the attack can be rewarded a star and if the [Enemy] enters [StunState]. 
 ##
@@ -334,6 +332,40 @@ func is_punch_dodged(punch_range: int) -> bool:
 func reset_current_animations() -> void:
 	current_hit_animation = "hit"
 	current_block_animation = "block"
+
+## Helper functions that prints detailed information about the hit that was registered.
+func print_hit_information(punch_height : int, punch_direction : int, punch_range : int) -> void:
+	
+	# Don't run this function if it's not a debug build
+	if OS.is_debug_build() == false:
+		return
+	
+	var hit_text : String = ""
+	
+	match punch_height:
+		Global.HeightEnum.HIGH:
+			hit_text += "Upper "
+		Global.HeightEnum.LOW:
+			hit_text += "Lower "
+		_:
+			hit_text += "Upper and Lower "
+			
+	match punch_direction:
+		Global.RangeEnum.RIGHT:
+			hit_text += "Right Punch "
+		Global.RangeEnum.LEFT:
+			hit_text += "Left Punch "
+
+	match punch_range:
+		Global.RangeEnum.RIGHT:
+			hit_text += "Covering the Right"
+		Global.RangeEnum.LEFT:
+			hit_text += "Covering the Left"
+		_:
+			hit_text += "Down the Middle"
+	
+	print_rich("[color=gray][b]🛡️ Defense Component:[/b][/color] Hit registered: " + hit_text)
+
 
 #endregion
 

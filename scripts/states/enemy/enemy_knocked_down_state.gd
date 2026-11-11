@@ -67,7 +67,10 @@ func _process(_delta: float) -> void:
 		handle_failed_get_up()
 
 func enter() -> void:
-	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
+	print_rich("[color=orange][b]Enemy Entered State: [/b][/color]", self.name)
+	
+	AnimationManager.force_play_animation("knockdown", self)
+	
 	FightManager.enemy_ready_status = false
 	
 	FightManager.resume_fighting_signal.connect(transition_to_previous_state)
@@ -92,6 +95,7 @@ func exit() -> void:
 func play_get_up_animation() -> void:
 	
 	await get_tree().create_timer(0.4).timeout
+	print_rich(str("[color=yellow]", self.name,"[/color]:  Traveling to: get_up"))
 	anim_state_machine.travel("get_up")
 
 func handle_failed_get_up() -> void:
@@ -124,7 +128,7 @@ func handle_failed_get_up() -> void:
 
 
 func play_failed_get_up_animation() -> void:
-	print("\nPlaying Failed Get Up Animation...")
+	print_rich("[color=orange][b]Enemy KnockedDown State:[/b][/color] Playing Failed Get Up Animation...")
 	
 	await get_tree().create_timer(0.4).timeout
 	anim_state_machine.start("get_up_failed", true)
@@ -145,11 +149,11 @@ func start_get_up_timer() -> void:
 		get_up_wait_time = 9.0
 		
 	if FightManager.enemy_kd_count == FightManager.MAX_KD_COUNT:
-		print("Not getting up.")
+		print_rich("[color=orange][b]Enemy KnockedDown State:[/b][/color] Not getting up.")
 		get_up_timer.timeout.disconnect(play_get_up_animation)
 		return
 	
-	print("STARTING GETUP TIMER")
+	print_rich("[color=orange][b]Enemy KnockedDown State:[/b][/color] Starting Get Up Timer")
 	
 	stored_time_left = get_up_wait_time
 	
@@ -173,7 +177,7 @@ func check_finished_animation(animation : String) -> void:
 		
 	elif animation.contains("return_to_fight") == true:
 		FightManager.enemy_ready_status = true
-		print("ENEMY READY")
+		print_rich("[color=orange][b]Enemy KnockedDown State:[/b][/color] Enemy is ready to fight.")
 		FightManager.fighter_ready_signal.emit()
 		return
 	

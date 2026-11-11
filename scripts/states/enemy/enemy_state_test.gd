@@ -564,7 +564,7 @@ func condition_match_direct_transition(condition : int) -> void:
 	# Iterates through the conditions_and_targets_dict instead of matching since its much easier to scale amount of possible conditions and target states.
 	for key in conditions_and_targets_dict.keys() : 
 		if key == condition :
-			print("Condition Met: ", StateChangeConditionEnum.find_key(condition))
+			print("condition_match_direct_transition(): Condition Met: ", StateChangeConditionEnum.find_key(condition))
 			#print("Target state: ", conditions_and_targets_dict[key].name)
 			
 			set_and_check_interrupted_state(conditions_and_targets_dict[key]) # Sets interrupted state as a fallback.
@@ -580,7 +580,7 @@ func condition_match_change_interrupted_state(condition : int) -> void:
 	# Iterates through the conditions_and_targets_dict instead of matching since its much easier to scale amount of possible conditions and target states.
 	for key in conditions_and_targets_dict.keys(): 
 		if key == condition:
-			#print("Condition Met: ", StateChangeConditionEnum.find_key(condition))
+			print("condition_match_change_interrupted_state(): Condition Met: ", StateChangeConditionEnum.find_key(condition))
 			
 			set_and_check_interrupted_state(conditions_and_targets_dict[key])
 			

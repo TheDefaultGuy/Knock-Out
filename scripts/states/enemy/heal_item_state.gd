@@ -70,10 +70,14 @@ func _process(_delta: float) -> void:
 		return
 
 func enter() -> void:
-	
 	has_started = false
+	
 	super() # Runs the base EnemyState enter function and then runs everything below.
 	
+	# Waits until the enemy is in the idle animation before playing the move to spectate animation.
+	if anim_state_machine.get_current_node() != "idle" and anim_state_machine.get_current_node() != "RESET":
+		await animation_tree.animation_finished
+		
 	AnimationManager.force_play_animation(intro_animation, self)
 	
 	await animation_tree.animation_started
@@ -108,6 +112,7 @@ func override_conditions_and_state_parameters() -> void:
 	# Given the nature of this state, these 2 conditions MUST ALWAYS be enabled and have corresponding target states.
 	primary_condition = StateChangeConditionEnum.AFTER_COMPLETION
 	secondary_condition = StateChangeConditionEnum.STATE_INTERRUPTED
+	tertiary_condition = StateChangeConditionEnum.DO_NOT_CHANGE
 	
 	if secondary_target_state == null and primary_target_state != null:
 		secondary_target_state = primary_target_state
@@ -118,20 +123,16 @@ func check_animation(animation_name : String) -> void:
 	#print(intro_animation)
 	match ArrayStringFormatter.remove_animation_library_preffix(animation_name):
 		intro_animation:
+			print_rich(str("[color=orange]",self.name,"[/color]:  Traveling to: ", successful_animation))
 			anim_state_machine.travel(successful_animation)
-			#await animation_tree.animation_started
 			return
 			
-		failed_animation: 
+		failed_animation: # Sets the interruption status as true if the enemy was hit during this state.
 			interruption_status = true
-			#anim_state_machine.start("hub_node")
-			#await animation_tree.animation_started
 			return
 			
-		successful_animation: 
+		successful_animation: # Sets the interruption status as false if the enemy was NOT hit during this state.
 			interruption_status = false
-			#anim_state_machine.start("hub_node")
-			#await animation_tree.animation_started
 			return
 
 ## Sets the required conditions as Read Only so that they can't be changed.

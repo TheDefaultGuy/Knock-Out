@@ -35,7 +35,10 @@ func _ready() -> void:
 	super() # Runs the Base EnemyState _ready() function after running this code.
 
 func enter() -> void:
-	
+	# Waits until the enemy is in the idle animation before playing the move to spectate animation.
+	if anim_state_machine.get_current_node() != "idle" and anim_state_machine.get_current_node() != "RESET":
+		await animation_tree.animation_finished
+		
 	AnimationManager.force_play_animation(intro_animation, self)
 	
 	animation_tree.animation_finished.connect(check_animation)
@@ -54,15 +57,18 @@ func check_animation(animation_name : String) -> void:
 	match ArrayStringFormatter.remove_animation_library_preffix(animation_name):
 		intro_animation:
 			anim_state_machine.travel(idle_loop_animation)
+			print_rich(str("[color=orange]",self.name,"[/color]:  Traveling to: ", idle_loop_animation))
 			return
 			
 		attack_animation:
-			if Global.player_node.is_knocked_down != true or Global.enemy_node.is_knocked_down != true :
+			if Global.player_node.is_knocked_down != true or Global.enemy_node.is_knocked_down != true:
+				print_rich(str("[color=orange]",self.name,"[/color]:  Traveling to: ", restart_animation))
 				anim_state_machine.travel(restart_animation)
 				return
 				
 		restart_animation:
 			anim_state_machine.travel(idle_loop_animation)
+			print_rich(str("[color=orange]",self.name,"[/color]:  Traveling to: ", idle_loop_animation))
 			return
 			
 
@@ -81,6 +87,7 @@ func override_conditions_and_state_parameters() -> void:
 	# Given the nature of this state, these 2 conditions MUST ALWAYS be set and have a target state to transition to.
 	primary_condition = StateChangeConditionEnum.AFTER_PLAYER_KNOCKED_DOWN
 	secondary_condition = StateChangeConditionEnum.AFTER_ENEMY_KNOCKED_DOWN
+	tertiary_condition = StateChangeConditionEnum.DO_NOT_CHANGE
 	
 	if primary_target_state == null and secondary_target_state != null:
 		primary_target_state = secondary_target_state

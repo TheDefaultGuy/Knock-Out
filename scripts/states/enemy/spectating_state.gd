@@ -18,8 +18,13 @@ class_name EnemySpectating extends State
 @export var spectating_animation : String = "spectating"
 
 func enter() -> void:
-	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
+	print_rich("[color=orange][b]Enemy Entered State: [/b][/color]", self.name)
 	
+	# Waits until the enemy is in the idle animation before playing the move to spectate animation.
+	if anim_state_machine.get_current_node() != "idle":
+		await animation_tree.animation_finished
+		
+	AnimationManager.force_play_animation("move_to_spectate", self)
 	
 	FightManager.fighter_got_up_signal.connect(back_to_the_fight)
 	
@@ -44,6 +49,7 @@ func exit() -> void:
 
 func back_to_the_fight() -> void:
 	anim_state_machine.travel("from_spectate")
+	print_rich(str("[color=orange]",self.name,"[/color]:  Traveling to: from_spectate"))
 
 func check_finished_animation(animation : String) -> void:
 	
@@ -52,16 +58,16 @@ func check_finished_animation(animation : String) -> void:
 	match animation:
 		outro_animation:
 			FightManager.go_to_results_screen_signal.emit()
-			print("Fight's over for real this time.")
+			print_rich("[color=#orange][b]Enemy Spectating State: [/b][/color]Fight's over for real this time.")
 			return
 		
 		move_to_spectate_animation:
-			print("Emitting fighter_can_start_getup_signal...")
+			print_rich("[color=#orange][b]Enemy Spectating State: [/b][/color]Emitting fighter_can_start_getup_signal...")
 			FightManager.fighter_can_start_getup_signal.emit()
 			return
 			
 		"left", "right", "from_spectate":
-			print("ENEMY READY")
+			print_rich("[color=#orange][b]Enemy Spectating State: [/b][/color]Enemy is ready to fight.")
 			FightManager.enemy_ready_status = true
 			FightManager.fighter_ready_signal.emit()
 			return
@@ -69,6 +75,7 @@ func check_finished_animation(animation : String) -> void:
 		_:
 			if anim_state_machine.get_current_node() == "idle":
 				anim_state_machine.travel(move_to_spectate_animation)
+				print_rich(str("[color=orange]",self.name,"[/color]:  Traveling to: ", move_to_spectate_animation))
 				return
 
 

@@ -56,6 +56,7 @@ static func force_play_animation(animation_name : String, calling_node : Node) -
 	
 	node_owner.anim_state_machine.stop() # Stops the current animation if there is one playing
 	
+	
 	# Checks to see if the current node of animation_state_machine matches the animation that is being given.
 	# If it does match, then it restarts the animation.
 	if node_owner.anim_state_machine.get_current_node() == animation_name :
@@ -63,7 +64,7 @@ static func force_play_animation(animation_name : String, calling_node : Node) -
 		#print("Current node matches animation!")
 		
 		# Repeats the following as long as the playback position of the current animation is slightly larger than zero
-		while node_owner.anim_state_machine.get_current_play_position() < 0.005 : 
+		while node_owner.anim_state_machine.get_current_play_position() > 0.005 : 
 			
 			#print("Current node Play position: ", node_owner.anim_state_machine.get_current_play_position())
 			
@@ -76,7 +77,7 @@ static func force_play_animation(animation_name : String, calling_node : Node) -
 			# Checks to see if the current animation's play back position is Zero.
 			# If it is Zero, then animation was successfully restarted.
 			if node_owner.anim_state_machine.get_current_play_position() < 0.005 :
-				print_rich("[color=purple][b]Animation Manager:[/b] Successfully Restarted Animation: [/color]", animation_name)
+				print_rich("[color=purple][b]🎬 Animation Manager:[/b][/color] Successfully Restarted Animation: ", animation_name)
 				return
 	
 	# Does the following if the current animation is different than the given animation_name
@@ -87,16 +88,33 @@ static func force_play_animation(animation_name : String, calling_node : Node) -
 		while node_owner.anim_state_machine.get_current_node() != animation_name: 
 			
 			node_owner.anim_state_machine.start(animation_name) # Starts the desired animation
-			
+			#node_owner.anim_state_machine.travel(animation_name)
 			# Waits until the signal for an animation starting has been emitted.
 			# That way it only checks when it has to.
 			await node_owner.animation_tree.animation_started 
 			
 			# If the current animation playing IS the desired one, then exit loop since work here is done.
 			if node_owner.anim_state_machine.get_current_node() == animation_name: 
-				print_rich("[color=purple][b]Animation Manager:[/b] ", calling_node.owner.name ," Playing Animation: [/color]", animation_name)
+				print_rich("[color=purple][b]🎬 Animation Manager:[/b][/color] ", calling_node.owner.name ," Playing Animation: ", animation_name)
 				return
 	return
+
+### Basically just the travel() function but made it complicated so that the states that call travel regularly 
+#static func soft_play_animation(animation_name : String, calling_node : Node) -> void:
+	## For readability and flexability during checks.
+	#var node_owner : Node = calling_node.owner
+	#
+	## Checks if the owner of the calling node doesn't have an animation state machine.
+	#if node_owner == null:
+		#
+		## If it doesn't it probably means the calling node IS the owner.
+		#if calling_node != null:
+			#if calling_node.anim_state_machine != null:
+				#node_owner = calling_node
+	#
+	#node_owner.anim_state_machine.travel(animation_name) # Stops the current animation if there is one playing
+	#
+	#print_rich("[color=purple][b]🎬 Animation Manager:[/b][/color] ", calling_node.owner.name ," Playing Animation: ", animation_name)
 
 ## Sets the next animation to play, and then calls [method AnimationNodeStateMachinePlayback.next] to skip the currently playing animation.
 static func skip_current_animation_and_play_new_one(target_animation : String, calling_node : Node) -> void:
@@ -118,3 +136,25 @@ static func skip_current_animation_and_play_new_one(target_animation : String, c
 	# Travels to the next animation that was set above.
 	node_owner.anim_state_machine.next()
 	return
+
+## Does a while loop for as long as the enemy isn't is not in the idle animation. As soon as it is in the idle animation it returns true.
+## This is mostly called as a coroutine.
+static func wait_until_idle(calling_node : Node) -> bool:
+	
+	# For readability and flexability during checks.
+	var node_owner : Node = calling_node.owner
+	
+	# Checks if the owner of the calling node doesn't have an animation state machine.
+	if node_owner == null:
+		
+		# If it doesn't it probably means the calling node IS the owner.
+		if calling_node != null:
+			if calling_node.anim_state_machine != null:
+				node_owner = calling_node
+				
+	while node_owner.anim_state_machine.get_current_node() != "idle" :
+		#print("Current Animation Node: ", node_owner.anim_state_machine.get_current_node())
+		await node_owner.animation_tree.animation_finished
+		continue
+	#print("FINALLY IN IDLE")
+	return true

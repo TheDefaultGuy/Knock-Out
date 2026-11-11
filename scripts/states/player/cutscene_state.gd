@@ -17,7 +17,7 @@ func _ready() -> void:
 	skip_cutscene = OS.is_debug_build()
 
 func enter() -> void:
-	print_rich("[color=yellow]",owner.name," Entered State: [/color]", self.name)
+	print_rich("[color=yellow][b]",owner.name," Entered State: [/b][/color]", self.name)
 	
 	FightManager.resume_fighting_signal.connect(transition.bind(next_state))
 	

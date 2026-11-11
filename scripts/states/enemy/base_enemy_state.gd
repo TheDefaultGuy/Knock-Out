@@ -76,6 +76,12 @@ enum StateChangeConditionEnum{
 	## The [Enemy] will change to the target state after being interrupted in this state.
 	STATE_INTERRUPTED,
 	
+	### The [Enemy] will change to the target state after the [Player] a given amount of damage during the state.
+	#AFTER_PLAYER_TAKEN_AMOUNT_OF_DAMAGE,
+	
+	## The [Enemy] will change to the target state the moment the [Player] health drops below [member target_hp].
+	AFTER_PLAYER_HEALTH_DROPS_BELOW,
+	
 	## The [Enemy] will never change from this state.
 	DO_NOT_CHANGE,
 
@@ -226,6 +232,12 @@ enum DefenseBehaviorEnum{
 ## The HP the [Enemy] has to reach before changing to the target state.
 @export_range(1.0, 100.0, 1.0, "suffix:hp") var target_hp : float = 30.0
 
+## The HP the [Player] has to reach before changing to the target state.
+@export_range(1.0, 100.0, 1.0, "suffix:hp") var player_target_hp : float = 30.0
+
+### The HP the [Player] has to loose in this state before changing to the target state.
+#@export_range(1.0, 100.0, 1.0, "suffix:hp") var player_target_damage_taken : float = 30.0
+
 ## The HP the [Enemy] has to loose in this state before changing to the target state.
 @export_range(1.0, 100.0, 1.0, "suffix:hp") var target_damage_taken : float = 30.0
 
@@ -347,12 +359,17 @@ var list_of_check_functions : Array[Callable] = []
 ## Used so that it can loop back to the start and not look for a value beyond the range of the array
 var moveset_index : int = 0
 
-## Stores how much damage the enemy has received during this state so far.
+## Stores how much damage the [Enemy] has received during this state so far.
 var damage_taken_so_far : float = 0.0
+
+### Stores how much damage the [Enemy] has given/the [Player] has received during this state so far.
+#var damage_given_so_far : float = 0.0
 
 ## Stores an array of animations that need to be added to the animation tree,
 ## but aren't considered part of the moveset.
 var additional_animations_to_add : Array[String] = []
+
+var condition_met : bool = false
 
 @onready var animation_player: AnimationPlayer = %AnimationPlayer
 
@@ -417,6 +434,8 @@ func _ready() -> void:
 func enter() -> void:
 	print_rich("[color=orange][b]Enemy Entered State: [/b][/color]", self.name)
 	
+	condition_met = false
+	
 	# Sets the idle blend to not stunned
 	animation_tree.set(str("parameters/idle/blend_position"),  0)
 	
@@ -463,6 +482,9 @@ func enter() -> void:
 	return
 
 func exit() -> void:
+	
+	condition_met = false
+	
 	if attack_timer != null and attack_timer_required == true : # Checks if the state even has an attack timer
 		attack_timer.stop() # Full on stops the attack timer since it's leaving the state.
 		attack_timer.timeout.disconnect(perform_action)
@@ -475,10 +497,11 @@ func exit() -> void:
 	
 	# Resets the hit animation and state machine in the defense component back to the default hit animation.
 	defense_component.reset_current_animations()
+	anim_state_machine.next()
 	return
 #endregion
 
-## Sets the idle animation for the state depending on [member override_idle_animation].
+## Sets the idle animation for the [EnemyState] depending on [member override_idle_animation].
 func set_idle_animation_for_state() -> void:
 	
 	# Checks if the option for overriding the the idle animation is set to true.
@@ -494,7 +517,7 @@ func set_idle_animation_for_state() -> void:
 		if self.get_script() != EnemyState:
 			push_warning(self.name, ": Custom Idle Animation is empty despite the option to override it set to true. Using default idle animation as backup.")
 			
-	# If it's NOT true, then use the default idle animation.
+	# If the option to override the idle animation is false, then use the default idle animation.
 	animation_tree.tree_root.get_node("idle").get_blend_point_node(0).animation = str("idle")
 	return
 
@@ -574,6 +597,7 @@ func set_conditions_and_targets_dictionary() -> void:
 
 
 #region Timer Related Functions
+## Starts the [member attack_timer] depending on the [member attack_delay_type].
 func start_attack_delay_timer() -> void:
 	
 	 # Checks if the attack timer even exists.
@@ -592,8 +616,7 @@ func start_attack_delay_timer() -> void:
 	return
 
 ## Function called when a block occurs.
-##
-## Handle attack delay times after a block.
+## Handles attack delay times after a block.
 func handle_block() -> void:
 	match block_behavior:
 		BlockBehaviorEnum.RESET_TIMER:  # Restarts the attack timer on Block.
@@ -609,8 +632,15 @@ func handle_block() -> void:
 			return
 		
 		BlockBehaviorEnum.COUNTER_ATTACK:
+			if attack_timer != null : # Checks if the attack timer even exists
+				
+				# Stops the timer in order to play the counter attack animation and not have another regular attack animation go off during the counter attack.
+				attack_timer.stop() 
+				
 			await animation_tree.animation_finished
+			
 			play_attack_start_attack_timer(counter_attack)
+			
 			return
 		
 		BlockBehaviorEnum.NOT_APPLICABLE: # If it's not applicable, do nothing.
@@ -654,9 +684,9 @@ func condition_match_direct_transition(condition : int) -> void:
 	# Iterates through the conditions_and_targets_dict instead of matching since its much easier to scale amount of possible conditions and target states.
 	for key in conditions_and_targets_dict.keys() : 
 		if key == condition :
-			print("Condition Met: ", StateChangeConditionEnum.find_key(condition))
+			print("condition_match_direct_transition(): Condition Met: ", StateChangeConditionEnum.find_key(condition))
 			#print("Target state: ", conditions_and_targets_dict[key].name)
-			
+			condition_met = true
 			set_and_check_interrupted_state(conditions_and_targets_dict[key]) # Sets interrupted state as a fallback.
 			
 			transition_to_target(conditions_and_targets_dict[key]) # Finally transitions to the target
@@ -670,8 +700,8 @@ func condition_match_change_interrupted_state(condition : int) -> void:
 	# Iterates through the conditions_and_targets_dict instead of matching since its much easier to scale amount of possible conditions and target states.
 	for key in conditions_and_targets_dict.keys(): 
 		if key == condition:
-			#print("Condition Met: ", StateChangeConditionEnum.find_key(condition))
-			
+			print("condition_match_change_interrupted_state(): Condition Met: ", StateChangeConditionEnum.find_key(condition))
+			condition_met = true
 			set_and_check_interrupted_state(conditions_and_targets_dict[key])
 			
 			return # Very important return since multiple conditions can be met.
@@ -682,47 +712,17 @@ func condition_match_change_interrupted_state(condition : int) -> void:
 ## Checks if the [Player] is able to transition and then transitions to the target state once it's possible.
 ## This is done to avoid cutting off animations.
 func transition_to_target(target_state : State) -> void:
+	
 	if attack_timer != null :
 		attack_timer.stop() # Stops the attack timer to avoid shenanigans.
-		
-	#print("\ntransition_to_target function: ")
-	#print("CURRENT NODE AT START: ",anim_state_machine.get_current_node())
-	#print("target_state: ", target_state)
-	#print("IS target_state SPECTATING: ", target_state is EnemySpectating)
 	
-	# Checks to see if the enemy is already in the idle animation so that it doesn't interrupt a hit, block, or any other animation.
-	if anim_state_machine.get_current_node() == "idle":
-		transition(target_state)
-		return
-	
-	else:
-		
-		# If the current animation node isn't "idle",
-		# then wait till the animation finishes playing, then travel to the "hub_node" and then return.
-		# This will force the animation tree to land on idle so that it can then transition state.
-		
-		# If the target state is EnemyKnockedDown, then travel to the "knockdown" animation
-		# and transition to the knockdown state.
-		# This cuts off any animation and is required since going into Knockdown has way more priority than anything else.
-		if target_state is EnemyKnockedDown : 
-			AnimationManager.force_play_animation("knockdown", self)
-			transition(target_state)
-			return
+	# If the enemy is transitioning to another state that IS NOT either Spectating or KnockedDown,
+	# then make sure the enemy is in the idle animation or wait until they finish the animation they're currently in.
+	if target_state is not EnemyKnockedDown and target_state is not EnemySpectating:
+		if anim_state_machine.get_current_node() != "idle":
+			await animation_tree.animation_finished
 			
-		# Waits until the current attack/animation is finished before changing state.
-		await animation_tree.animation_finished
-		
-		# If the enemy is gonna enter Spectating, then it transitions after the current attack animation is finished.
-		if target_state is EnemySpectating : 
-			AnimationManager.force_play_animation("move_to_spectate", self)
-			transition(target_state)
-			return
-			
-		if anim_state_machine.get_current_node() not in ["knockdown", "get_up", "move_to_spectate", "spectating"] :
-			anim_state_machine.travel("hub_node") # Travels to the "hub_node" to go to the next state.
-			anim_state_machine.next()
-			transition(target_state)
-			return
+	transition(target_state)
 	return
 
 
@@ -771,15 +771,23 @@ func perform_action() -> void:
 
 ## Helper function to make [method perform_action] more readable.
 func play_attack_start_attack_timer(animation : String) -> void:
+	
+	if condition_met == true:
+		return
+	
 	if attack_timer != null : # Checks if the attack timer exists.
 		attack_timer.stop()
 	
 	if animation == null :
 		printerr(self.name, " play_attack_start_attack_timer(): given animation returned null.")
 		return
+		
+	print_rich(str("[color=orange]",self.name,"[/color]:  Traveling to: ", animation))
 	
 	# Travels to the given animation on the animation tree.
-	AnimationManager.force_play_animation(animation, self)
+	anim_state_machine.travel(animation)
+	
+	#AnimationManager.force_play_animation(animation, self)
 	
 	# Waits for the attack animation to finish before restarting the attack delay timer.
 	await animation_tree.animation_finished
@@ -828,6 +836,8 @@ func _validate_property(property : Dictionary) -> void:
 	if property.name == "state_change_timer" and StateChangeConditionEnum.AFTER_TIME_PASSED not in conditions:
 		property.usage = PROPERTY_USAGE_NONE
 	if property.name == "target_hp" and StateChangeConditionEnum.AFTER_HEALTH_DROPS_BELOW not in conditions:
+		property.usage = PROPERTY_USAGE_NONE
+	if property.name == "player_target_hp" and StateChangeConditionEnum.AFTER_PLAYER_HEALTH_DROPS_BELOW not in conditions:
 		property.usage = PROPERTY_USAGE_NONE
 	if property.name == "attack_delay_array" and attack_delay_type == AttackDelayTypeEnum.FLOAT:
 		property.usage = PROPERTY_USAGE_NONE

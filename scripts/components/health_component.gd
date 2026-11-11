@@ -36,7 +36,7 @@ func take_damage(amount : float) -> float:
 
 func reset_hp() -> void:
 	hp = max_hp
-	print_rich("[color=green]Health Component:[/color] ", owner.name, " resetting HP and emitting got up signal...")
+	print_rich("[color=green][b]Health Component:[/b][/color] ", owner.name, " resetting HP and emitting got up signal...")
 	FightManager.fighter_got_up_signal.emit()
 	owner.is_knocked_down = false
 
@@ -54,7 +54,7 @@ func deal_damage_and_check_for_knockdown(damage_amount : float, damage_multiplie
 		# Checks to see whether the parent is the enemy or the player and then sends the global signal accordingly.
 		if owner is Player: 
 			FightManager.player_knocked_down_signal.emit()
-			print_rich('[color=green]Health Component:[/color] Player Knocked Down!')
+			print_rich('[color=green][b]Health Component:[/b][/color] Player Knocked Down!')
 			
 		elif owner is Enemy:
 			FightManager.enemy_knocked_down_signal.emit()
@@ -62,7 +62,7 @@ func deal_damage_and_check_for_knockdown(damage_amount : float, damage_multiplie
 			# Adds points for knockdown
 			PointsManager.points += PointsManager.KNOCKDOWN
 			
-			print_rich('[color=green]Health Component:[/color] Enemy Knocked Down!')
+			print_rich('[color=green][b]Health Component:[/b][/color] Enemy Knocked Down!')
 			
 		owner.is_knocked_down = true
 		return true

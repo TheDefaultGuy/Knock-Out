@@ -18,53 +18,65 @@ script = ExtResource("1_1aubv")
 layout_mode = 0
 offset_right = 1152.0
 offset_bottom = 648.0
-theme_override_constants/margin_left = 64
-theme_override_constants/margin_top = 64
-theme_override_constants/margin_right = 64
-theme_override_constants/margin_bottom = 64
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 32
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1603289325]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer" unique_id=1650935486]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1765992356]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer" unique_id=1603289325]
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 3.98
+
+[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/VBoxContainer" unique_id=1765992356]
+layout_mode = 2
 theme_override_font_sizes/font_size = 33
 text = "Choose your opponent:"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Button" type="Button" parent="MarginContainer/VBoxContainer" unique_id=378937222]
+[node name="Button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer" unique_id=378937222]
 layout_mode = 2
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 32
+size_flags_stretch_ratio = 0.66
+theme_override_font_sizes/font_size = 28
 text = "Nick Bruiser
 (For Experienced Punch-Out Players)"
 icon = ExtResource("2_qma75")
 
-[node name="Button2" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1921885383]
+[node name="Button2" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer" unique_id=1921885383]
 layout_mode = 2
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 32
+size_flags_stretch_ratio = 0.66
+theme_override_font_sizes/font_size = 28
 text = "Rick Bruiser
 (For players new to Punch-Out)"
 icon = ExtResource("3_npab4")
 
-[node name="Control2" type="Control" parent="MarginContainer/VBoxContainer" unique_id=1550732919]
+[node name="Button3" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer" unique_id=59943846]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Nick Bruiser (Hard)
+(Nick Bruiser but only the more complicated phases)"
+icon = ExtResource("2_qma75")
+
+[node name="Control2" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer" unique_id=1550732919]
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 4.85
+size_flags_stretch_ratio = 14.69
 
 [node name="TextureRect" type="TextureRect" parent="." unique_id=1008836303]
 layout_mode = 0
-offset_left = 293.0
-offset_top = 295.0
-offset_right = 1089.0619
-offset_bottom = 809.56
+offset_left = 289.0
+offset_top = 369.0
+offset_right = 1136.9791
+offset_bottom = 844.24097
 scale = Vector2(0.7511978, 0.7511978)
 texture = ExtResource("4_qma75")
 expand_mode = 5
 stretch_mode = 5
 
-[connection signal="pressed" from="MarginContainer/VBoxContainer/Button" to="." method="_on_button_pressed"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/Button2" to="." method="_on_button_2_pressed"]
+[connection signal="pressed" from="MarginContainer/HBoxContainer/VBoxContainer/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="MarginContainer/HBoxContainer/VBoxContainer/Button2" to="." method="_on_button_2_pressed"]
+[connection signal="pressed" from="MarginContainer/HBoxContainer/VBoxContainer/Button3" to="." method="_on_button_3_pressed"]

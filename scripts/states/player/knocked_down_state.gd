@@ -58,7 +58,7 @@ func _process(delta: float) -> void:
 	return
 
 func enter() -> void:
-	print_rich("[color=yellow]Player Entered State: [/color]", self.name)
+	print_rich("[color=yellow][b]Player Entered State: [/b][/color]", self.name)
 	
 	animation_tree.set("parameters/conditions/gotup", false)
 	
@@ -88,7 +88,7 @@ func exit() -> void:
 func check_finished_animation(animation : String) -> void:
 	if animation.contains("back_to_the_fight_2") == true :
 		FightManager.player_ready_status = true
-		print("PLAYER READY")
+		print_rich("[color=yellow][b]Player KnockedDown State:[/b][/color] Player is ready to fight.")
 		FightManager.fighter_ready_signal.emit()
 		
 	else:

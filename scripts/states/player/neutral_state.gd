@@ -14,8 +14,8 @@ class_name PlayerNeutral extends State
 
 
 func enter() -> void:
-	print_rich("[color=yellow]Player Entered State: [/color]", self.name)
-
+	print_rich("[color=yellow][b]Player Entered State: [/b][/color]", self.name)
+	
 	input_component.allow_inputs = true
 	
 	animation_tree.set("parameters/neutral/blend_position", 0)

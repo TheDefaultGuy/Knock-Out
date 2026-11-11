@@ -11,7 +11,7 @@ class_name TiredState extends State
 @onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
 
 func enter() -> void:
-	print_rich("[color=yellow]Player Entered State: [/color]", self.name)
+	print_rich("[color=yellow][b]Player Entered State: [/b][/color]", self.name)
 	
 	# Sets the idle blend so that it does the tired animation.
 	animation_tree.set("parameters/neutral/blend_position", 1)

@@ -84,18 +84,27 @@ func exit() -> void:
 	
 	FightManager.player_dodged_signal.disconnect(play_punish_animation)
 
+## Responsible for executing the attack that corresponds to where the player dodges to during the enemy's fakeout animation.
 func play_punish_animation(dodge_direction : int) -> void:
 	if anim_state_machine.get_current_node() == str(fakeout_animation) :
-		match dodge_direction :
+		
+		match dodge_direction:
+			
+			# If Player dodges left during the fakeout animation, then play the attack animation that covers that direction.
 			Global.RangeEnum.LEFT:
+				print_rich(str("[color=orange]",self.name,"[/color]:  Traveling to: ", left_dodge_punish))
 				anim_state_machine.travel(left_dodge_punish)
 				return
 				
+			# If Player dodges right during the fakeout animation, then play the attack animation that covers that direction.
 			Global.RangeEnum.RIGHT:
+				print_rich(str("[color=orange]",self.name,"[/color]:  Traveling to: ", right_dodge_punish))
 				anim_state_machine.travel(right_dodge_punish)
 				return
 				
+			# If Player ducks during the fakeout animation, then play the attack animation that covers that height.
 			Global.RangeEnum.NEUTRAL:
+				print_rich(str("[color=orange]",self.name,"[/color]:  Traveling to: ", duck_punish))
 				anim_state_machine.travel(duck_punish)
 				return
 

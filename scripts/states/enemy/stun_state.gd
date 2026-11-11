@@ -142,11 +142,12 @@ func _process(_delta: float) -> void:
 		check_if_stun_over()
 
 func enter() -> void: # Blank enter and exit functions that get overridden by each state's own custom enter and exit functions.
-	print_rich("[color=orange]Enemy Entered State: [/color]", self.name)
+	print_rich("[color=orange][b]Enemy Entered State: [/b][/color]", self.name)
 	
 	AnimationManager.set_animation_1d_blend("idle", 1, self)
 	
-	FightManager.enemy_knocked_down_signal.connect(transition_to_knocked_down)
+	FightManager.enemy_knocked_down_signal.connect(handle_knockdown)
+	
 	FightManager.succesful_hit_signal.connect(increase_punch_count)
 	
 	health_component.damage_taken_signal.connect(accumulate_damage)
@@ -174,16 +175,23 @@ func exit() -> void:
 	
 	AnimationManager.set_animation_1d_blend("idle", 0, self)
 	
-	FightManager.enemy_knocked_down_signal.disconnect(transition_to_knocked_down)
+	FightManager.enemy_knocked_down_signal.disconnect(handle_knockdown)
+	
 	FightManager.succesful_hit_signal.disconnect(increase_punch_count)
 	owner.hit_by_star_punch_signal.disconnect(set_stun_over)
 	health_component.damage_taken_signal.disconnect(accumulate_damage)
 	defense_component.reset_current_animations()
 	
 	animation_tree.animation_finished.disconnect(check_if_stun_over)
-
+	
 	dizzy.visible = false
 #endregion
+
+
+func handle_knockdown() -> void:
+	state_machine.interrupted_state.condition_match_change_interrupted_state(EnemyState.StateChangeConditionEnum.AFTER_ENEMY_KNOCKED_DOWN)
+	transition_to_knocked_down()
+	return
 
 ## Adds up the damage taken during this state.
 func accumulate_damage(damage_amount : float) -> void:
@@ -202,11 +210,17 @@ func increase_punch_count() -> void:
 		
 		if punch_count + 1 == stun_punch_length:
 			defense_component.current_hit_animation = "final_hit" # Sets the last hit of the stun to be the final hit animation.
-			print("Final hit in stun coming...")
+			#print("Final hit in stun coming...")
 			
 		if punch_count == stun_punch_length:
+			
+			# Makes the dizzy particles invisible
 			dizzy.visible = false
+			
+			# Emits the signal that the final stun hit has occured
 			FightManager.final_stun_hit_signal.emit()
+			
+			# Sets that the stun is over.
 			stun_over = true
 			
 ## Checks if the enemy is in the idle animation and if stun is over so that it can transition out.

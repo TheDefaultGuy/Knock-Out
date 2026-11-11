@@ -5,7 +5,8 @@ class_name PlayerSpectating extends State
 
 
 func enter() -> void:
-	print_rich("[color=yellow]Player Entered State: [/color]", self.name)
+	print_rich("[color=yellow][b]Player Entered State: [/b][/color]", self.name)
+	
 	animation_tree.set("parameters/conditions/spectating", true)
 	
 	FightManager.fighter_got_up_signal.connect(back_to_fight)
@@ -37,16 +38,17 @@ func check_finished_animation(animation : String) -> void:
 		# the player is ready to continue the fight.
 		"back_to_the_fight": 
 			FightManager.player_ready_status = true
-			print("PLAYER READY")
+			print_rich("[color=yellow][b]Player Spectating State: [/b][/color]Player is ready to fight.")
 			FightManager.fighter_ready_signal.emit()
 			
 		"outro":
 			FightManager.go_to_results_screen_signal.emit()
-			print("Fight's over for real this time.")
+			#print("Fight's over for real this time.")
 
 
 func play_win_animation() -> void:
-	print("PLAYER: ", FightManager.is_fight_over)
+	print_rich("[color=#6EDDB8][b]◉ FightManager: [/b][/color]: is_fight_over: ", FightManager.is_fight_over)
 	
 	if FightManager.is_fight_over == true:
+		
 		anim_state_machine.travel("outro")

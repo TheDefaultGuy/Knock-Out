@@ -233,7 +233,7 @@ func select_outcome(stored_conditions : KDConditions) -> void:
 			return
 			
 		OutcomeEnum.FULL_KNOCKOUT:
-			print_rich("[color=cyan]FULL KNOCKOUT[/color]")
+			print_rich("[color=cyan][b]🥊 Instant KD component:[/b][/color] FULL KNOCKOUT")
 			# Sets the variable to true so that the enemy can't get back up
 			is_fully_knocked_out = true
 			return
@@ -286,7 +286,7 @@ func check_for_expected_animation(stored_conditions : KDConditions) -> bool:
 				# If it DOES NOT match expected animation, return false.
 				return false
 			
-		print_rich("[color=cyan]Instant KD component:[/color] KD condition met: ", KDConditionTypeEnum.find_key(stored_conditions.knockdown_condition))
+		print_rich("[color=cyan][b]🥊 Instant KD component:[/b][/color] KD condition met: ", KDConditionTypeEnum.find_key(stored_conditions.knockdown_condition))
 		return true
 
 ## Handles showing and hiding applicable exported variables
