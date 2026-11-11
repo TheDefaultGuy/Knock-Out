@@ -94,7 +94,7 @@ static func force_play_animation(animation_name : String, calling_node : Node) -
 			
 			# If the current animation playing IS the desired one, then exit loop since work here is done.
 			if node_owner.anim_state_machine.get_current_node() == animation_name: 
-				print_rich("[color=purple][b]Animation Manager:[/b] Playing Animation: [/color]", animation_name)
+				print_rich("[color=purple][b]Animation Manager:[/b] ", calling_node.owner.name ," Playing Animation: [/color]", animation_name)
 				return
 	return
 

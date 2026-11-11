@@ -9180,7 +9180,7 @@ metadata/_custom_type_script = "uid://bxdm4cxh3jw0n"
 
 [node name="CutSceneState" type="Node" parent="StateMachine/Round 1/Required States" unique_id=334701676 node_paths=PackedStringArray("next_state")]
 script = ExtResource("50_wnc28")
-next_state = NodePath("../../Randomized Attacks/Aggressive2")
+next_state = NodePath("../../Randomized Attacks/CalmState")
 metadata/_custom_type_script = "uid://bd3i8gnmviajw"
 
 [node name="Randomized Attacks" type="Node" parent="StateMachine/Round 1" unique_id=236151705]
@@ -9192,8 +9192,8 @@ secondary_target_state = NodePath("../../ItemHeal2")
 tertiary_target_state = NodePath("../../TauntAndCounter")
 secondary_condition = 5
 tertiary_condition = 1
-target_round_time = 18.0
-time_to_change_state = 13.0
+target_round_time = 10.0
+time_to_change_state = 9.0
 target_damage_taken = 45.0
 override_idle_animation = true
 custom_idle_animation = "idle_slow"
