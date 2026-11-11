@@ -21,9 +21,9 @@ func enter() -> void:
 	print_rich("[color=orange][b]Enemy Entered State: [/b][/color]", self.name)
 	
 	# Waits until the enemy is in the idle animation before playing the move to spectate animation.
-	if anim_state_machine.get_current_node() != "idle":
+	if anim_state_machine.get_current_node() != "idle" and anim_state_machine.get_current_node() != "RESET":
 		await animation_tree.animation_finished
-		
+	
 	AnimationManager.force_play_animation("move_to_spectate", self)
 	
 	FightManager.fighter_got_up_signal.connect(back_to_the_fight)
