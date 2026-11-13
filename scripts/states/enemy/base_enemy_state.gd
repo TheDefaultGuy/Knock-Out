@@ -369,6 +369,7 @@ var damage_taken_so_far : float = 0.0
 ## but aren't considered part of the moveset.
 var additional_animations_to_add : Array[String] = []
 
+## Stores if any condition has been met to avoid the enemy attacking across states.
 var condition_met : bool = false
 
 @onready var animation_player: AnimationPlayer = %AnimationPlayer
@@ -497,7 +498,7 @@ func exit() -> void:
 	
 	# Resets the hit animation and state machine in the defense component back to the default hit animation.
 	defense_component.reset_current_animations()
-	anim_state_machine.next()
+	
 	return
 #endregion
 
@@ -715,13 +716,19 @@ func transition_to_target(target_state : State) -> void:
 	
 	if attack_timer != null :
 		attack_timer.stop() # Stops the attack timer to avoid shenanigans.
+		
+	#print(target_state)
 	
 	# If the enemy is transitioning to another state that IS NOT either Spectating or KnockedDown,
 	# then make sure the enemy is in the idle animation or wait until they finish the animation they're currently in.
-	if target_state is not EnemyKnockedDown and target_state is not EnemySpectating:
-		if anim_state_machine.get_current_node() != "idle":
-			await animation_tree.animation_finished
-			
+	if target_state is EnemyKnockedDown or target_state is EnemySpectating:
+		transition(target_state)
+		return
+		
+	#print(anim_state_machine.get_current_node())
+	if anim_state_machine.get_current_node() not in ["idle", "hub_node", "RESET" ]:
+		await animation_tree.animation_finished
+	
 	transition(target_state)
 	return
 
@@ -772,6 +779,7 @@ func perform_action() -> void:
 ## Helper function to make [method perform_action] more readable.
 func play_attack_start_attack_timer(animation : String) -> void:
 	
+	# If a condition has been met, then don't attack because state is changing.
 	if condition_met == true:
 		return
 	

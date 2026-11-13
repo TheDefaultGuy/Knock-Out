@@ -112,11 +112,6 @@ func handle_failed_get_up() -> void:
 		
 		var remapped_chance = remap(modified_chance, 0.0, 100.0, 0.0, 1.0)
 		
-		#print("modified_chance: ", modified_chance)
-		#print("remapped_chance: ", remapped_chance)
-		#if stored_attempts < min_failed_attempts:
-			#roll_value = remap(chance_for_failed_attempt + CHANCE_INCREASE_INCREMENT, 0.0, 100.0, 0.0, 1.0)
-		#print("Roll Value: ", roll_value)
 		
 		if remapped_chance > roll_value:
 			play_failed_get_up_animation()

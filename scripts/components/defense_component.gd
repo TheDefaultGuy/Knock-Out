@@ -261,12 +261,13 @@ func shorten_enemy_attack_animation() -> void:
 		#print("player time_left: ", player_time_left)
 		#print("enemy time_left: ", enemy_time_left)
 		
-		#if enemy_time_left > (player_time_left * 1.0):
-			#return
-		# Waits until the player's hit animation is finished.
+		##if enemy_time_left > (player_time_left * 1.0):
+			##return
+		
+		## Waits until the player's hit animation is finished.
 		await owner.animation_tree.animation_finished
 		
-		# Don't run if the enemy is not in an EnemyState state.
+		## Don't run if the enemy is not in an EnemyState state.
 		if Global.enemy_node.state_machine.current_state is not EnemyState:
 			return
 			
@@ -274,11 +275,14 @@ func shorten_enemy_attack_animation() -> void:
 		if owner.state_machine.current_state is PlayerKnockedDown:
 			return
 		
-		
+		# If the enemy is still invulnerable after the player's hit animation is finished,
+		# then it means the enemy is doing a long attack animation and it shouldn't be shortned yet.
+		if Global.enemy_node.defense_component.upper_invulnerability == true or Global.enemy_node.defense_component.lower_invulnerability == true:
+			return
+			
 		# Shortens the attack animation by skipping it.
-		AnimationManager.skip_current_animation_and_play_new_one("hub_node", Global.enemy_node)
-		
-		
+		#AnimationManager.skip_current_animation_and_play_new_one("hub_node", Global.enemy_node)
+		Global.enemy_node.anim_state_machine.next()
 		
 		# Restarts the attack delay timer, otherwise it'll never attack again.
 		Global.enemy_node.state_machine.current_state.start_attack_delay_timer()
@@ -323,7 +327,7 @@ func is_punch_dodged(punch_range: int) -> bool:
 	var dodged_neutral = (punch_range == Global.RangeEnum.NEUTRAL and dodge_position != Global.RangeEnum.NEUTRAL)
 	var dodged_right = (punch_range <= Global.RangeEnum.NEUTRAL and dodge_position >= Global.RangeEnum.RIGHT)
 	var dodged_left = (punch_range >= Global.RangeEnum.NEUTRAL and dodge_position <= Global.RangeEnum.LEFT)
-
+	
 	# Returns true if any of them are true.
 	return dodged_neutral or dodged_right or dodged_left
 

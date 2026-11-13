@@ -75,7 +75,7 @@ func enter() -> void:
 	super() # Runs the base EnemyState enter function and then runs everything below.
 	
 	# Waits until the enemy is in the idle animation before playing the move to spectate animation.
-	if anim_state_machine.get_current_node() != "idle" and anim_state_machine.get_current_node() != "RESET":
+	if anim_state_machine.get_current_node() not in ["idle", "RESET", "hub_node"]:
 		await animation_tree.animation_finished
 		
 	AnimationManager.force_play_animation(intro_animation, self)

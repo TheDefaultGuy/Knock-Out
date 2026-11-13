@@ -235,8 +235,9 @@ func start_the_fight() -> void:
 		print_rich("[color=#6EDDB8][b]◉ Fight Manager:[/b][/color] Both fighters ready to fight.")
 		enemy_ready_status = false
 		player_ready_status = false
-		
+
 func reset_everything() -> void:
 	reset_ko_count()
 	set_stamina()
+	star_count = 0
 	PointsManager.points = 0

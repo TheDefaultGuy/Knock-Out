@@ -2098,7 +2098,7 @@ tracks/8/keys = {
 
 [sub_resource type="Animation" id="Animation_g8nv4"]
 resource_name = "double_jab_combo"
-length = 1.8
+length = 1.8333334
 tracks/0/type = "method"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -2106,16 +2106,16 @@ tracks/0/path = NodePath("AttackingComponent")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0.3, 0.70000005, 1.1),
+"times": PackedFloat32Array(0.3, 0.70000005, 1.3),
 "transitions": PackedFloat32Array(1, 1, 1),
 "values": [{
 "args": [],
 "method": &"attack_flash"
 }, {
-"args": [1, 0, 10.0, 1],
+"args": [1, 0, 15.0, 1],
 "method": &"send_attack_call"
 }, {
-"args": [1, 0, 10.0, 1],
+"args": [1, 0, 30.0, 1],
 "method": &"send_attack_call"
 }]
 }
@@ -2138,7 +2138,7 @@ tracks/2/path = NodePath("AnimatedSprite2D:frame")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.3, 0.6666667, 0.70000005, 0.8333333, 1.0333333, 1.1),
+"times": PackedFloat32Array(0, 0.3, 0.6666667, 0.70000005, 0.8333333, 1.2333332, 1.3),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
 "update": 1,
 "values": [0, 0, 0, 1, 0, 0, 1]
@@ -2150,7 +2150,7 @@ tracks/3/path = NodePath("AnimatedSprite2D:position")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0.53333336, 0.6666667, 0.8, 0.8666667, 1.0000001, 1.0333334, 1.1666666, 1.2333333),
+"times": PackedFloat32Array(0.53333336, 0.6666667, 0.8, 0.8666667, 1.2, 1.2333333, 1.3666666, 1.4333333),
 "transitions": PackedFloat32Array(1, 0.5358867, 0.5358867, 0.5358867, 0.5358867, 0.5358867, 0.5358867, 0.5358867),
 "update": 0,
 "values": [Vector2(0, 0), Vector2(8, -10), Vector2(-2, 3), Vector2(0, 0), Vector2(0, 0), Vector2(8, -10), Vector2(-2, 3), Vector2(0, 0)]
@@ -2162,7 +2162,7 @@ tracks/4/path = NodePath("DefenseComponent:stun_window")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"times": PackedFloat32Array(0, 0.6666667, 1.5999999),
+"times": PackedFloat32Array(0, 0.6666667, 1.8),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 1,
 "values": [false, true, false]
@@ -2186,7 +2186,7 @@ tracks/6/path = NodePath("DefenseComponent:lower_blocking_status")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
-"times": PackedFloat32Array(0, 1.2000002),
+"times": PackedFloat32Array(0, 1.4000001),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [true, false]
@@ -2198,7 +2198,7 @@ tracks/7/path = NodePath("DefenseComponent:upper_invulnerability")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
-"times": PackedFloat32Array(0, 0.6666667, 1.2),
+"times": PackedFloat32Array(0, 0.6666667, 1.4),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 1,
 "values": [false, true, false]
@@ -2210,7 +2210,7 @@ tracks/8/path = NodePath("DefenseComponent:lower_invulnerability")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
-"times": PackedFloat32Array(0, 0.6666667, 1.2),
+"times": PackedFloat32Array(0, 0.6666667, 1.4),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 1,
 "values": [false, true, false]
@@ -2239,7 +2239,7 @@ tracks/9/keys = {
 "start_offset": 0.0,
 "stream": ExtResource("68_ji5sy")
 }],
-"times": PackedFloat32Array(0, 0.3, 0.6666667, 1.0666667)
+"times": PackedFloat32Array(0, 0.3, 0.6666667, 1.2666667)
 }
 tracks/9/use_blend = true
 tracks/10/type = "value"
@@ -4327,7 +4327,7 @@ tracks/11/use_blend = true
 
 [sub_resource type="Animation" id="Animation_0meu8"]
 resource_name = "jab_high_combo"
-length = 1.8
+length = 3.0
 tracks/0/type = "method"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -8270,7 +8270,7 @@ tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
 "clips": [{
-"end_offset": 0.0,
+"end_offset": 0.9114538,
 "start_offset": 0.0,
 "stream": ExtResource("68_ji5sy")
 }],
@@ -8375,7 +8375,7 @@ tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
 "clips": [{
-"end_offset": 0.0,
+"end_offset": 0.9324871,
 "start_offset": 0.0,
 "stream": ExtResource("68_ji5sy")
 }],
@@ -9301,9 +9301,8 @@ animation = &"idle"
 [node name="DefenseComponent" type="Node" parent="." unique_id=2045134485]
 unique_name_in_owner = true
 script = ExtResource("48_ah88u")
+upper_blocking_status = true
 lower_blocking_status = true
-upper_invulnerability = true
-lower_invulnerability = true
 metadata/_custom_type_script = "uid://dq3iqh3osri6o"
 
 [node name="HealthComponent" type="Node" parent="." unique_id=144358405]
@@ -9464,14 +9463,16 @@ primary_target_state = NodePath("../Randomized Attacks/WeirdAttacks")
 secondary_target_state = NodePath("../ItemHeal")
 tertiary_target_state = NodePath("../FlurryAttack2")
 secondary_condition = 5
-tertiary_condition = 4
-time_to_change_state = 10.0
+tertiary_condition = 6
+time_to_change_state = 15.0
 override_idle_animation = true
 custom_idle_animation = "idle_fast"
 moveset_type = 1
 moveset_array = Array[String](["fakeout"])
 block_behavior = 2
 counter_attack = "counter_jab"
+min_delay_time = 0.6
+max_delay_time = 1.4
 defense_behavior = 1
 metadata/_custom_type_script = "uid://bjtexblqp5cmp"
 
@@ -9487,6 +9488,8 @@ moveset_type = 1
 moveset_array = Array[String](["fakeout"])
 block_behavior = 2
 counter_attack = "counter_jab"
+min_delay_time = 0.8
+max_delay_time = 1.8
 defense_behavior = 1
 metadata/_custom_type_script = "uid://bjtexblqp5cmp"
 

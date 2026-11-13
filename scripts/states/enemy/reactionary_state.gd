@@ -94,18 +94,21 @@ func play_punish_animation(dodge_direction : int) -> void:
 			Global.RangeEnum.LEFT:
 				print_rich(str("[color=orange]",self.name,"[/color]:  Traveling to: ", left_dodge_punish))
 				anim_state_machine.travel(left_dodge_punish)
+				#AnimationManager.force_play_animation(left_dodge_punish, self)
 				return
 				
 			# If Player dodges right during the fakeout animation, then play the attack animation that covers that direction.
 			Global.RangeEnum.RIGHT:
 				print_rich(str("[color=orange]",self.name,"[/color]:  Traveling to: ", right_dodge_punish))
 				anim_state_machine.travel(right_dodge_punish)
+				#AnimationManager.force_play_animation(right_dodge_punish, self)
 				return
 				
 			# If Player ducks during the fakeout animation, then play the attack animation that covers that height.
 			Global.RangeEnum.NEUTRAL:
 				print_rich(str("[color=orange]",self.name,"[/color]:  Traveling to: ", duck_punish))
 				anim_state_machine.travel(duck_punish)
+				#AnimationManager.force_play_animation(duck_punish, self)
 				return
 
 func override_conditions_and_state_parameters() -> void:

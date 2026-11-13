@@ -35,8 +35,8 @@ func _ready() -> void:
 	super() # Runs the Base EnemyState _ready() function after running this code.
 
 func enter() -> void:
-	# Waits until the enemy is in the idle animation before playing the move to spectate animation.
-	if anim_state_machine.get_current_node() != "idle" and anim_state_machine.get_current_node() != "RESET":
+	# Waits until the enemy is in the idle animation before playing the first attack animation.
+	if anim_state_machine.get_current_node() not in ["idle", "RESET", "hub_node"]:
 		await animation_tree.animation_finished
 		
 	AnimationManager.force_play_animation(intro_animation, self)

@@ -41,7 +41,6 @@ func enter() -> void:
 	
 	super() # Runs the base EnemyState enter function and then runs everything below.
 	
-	
 	animation_tree.animation_finished.connect(increase_count)
 	
 	# Shenanigans to make sure the animation name when traveling is the same format and order
@@ -52,10 +51,11 @@ func enter() -> void:
 	modified_moveset = AnimationNodeManager.format_moveset_for_unique_names(reversed_moveset, self)
 	modified_moveset.reverse()
 	
-	# Waits until the enemy is in the idle animation before playing the move to spectate animation.
-	if anim_state_machine.get_current_node() != "idle" and anim_state_machine.get_current_node() != "RESET":
-		await animation_tree.animation_finished
+	# Waits until the enemy is in the idle animation before playing the first attack animation.
+	if anim_state_machine.get_current_node() not in ["idle", "hub_node", "RESET"]:
 		
+		await animation_tree.animation_finished
+	
 	# Force travels to the first attack/animation
 	AnimationManager.force_play_animation(modified_moveset[0], self)
 
