@@ -23,11 +23,16 @@ buses/default_bus_layout="uid://dcttlqxn8r0fe"
 
 Global="*uid://bd8evkkqb6qmu"
 FightManager="*uid://gxuvijllc8s4"
+Dialogic="*uid://ds2q0uclmolvu"
 
 [dialogic]
 
-directories/dch_directory={}
-directories/dtl_directory={}
+directories/dch_directory={
+"nick": "res://dialogic/nick.dch"
+}
+directories/dtl_directory={
+"nick_test": "res://dialogic/timelines/nick_test.dtl"
+}
 layout/style_directory={}
 text/letter_speed=0.01
 text/initial_text_reveal_skippable=true
@@ -54,7 +59,7 @@ window/stretch/aspect="expand"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/scene-graphs/plugin.cfg")
+enabled=PackedStringArray("res://addons/dialogic/plugin.cfg", "res://addons/scene-graphs/plugin.cfg")
 
 [file_customization]
 

@@ -9528,7 +9528,7 @@ player_target_hp = 35.0
 override_idle_animation = true
 custom_idle_animation = "idle_guard"
 moveset_type = 2
-moveset_array = Array[String](["taunt"])
+moveset_array = Array[String](["taunt", "counter_uppercut"])
 block_behavior = 2
 metadata/_custom_type_script = "uid://c4q24a656iry7"
 
@@ -9544,7 +9544,7 @@ time_to_change_state = 9.0
 override_idle_animation = true
 custom_idle_animation = "idle_guard"
 moveset_type = 2
-moveset_array = Array[String](["taunt"])
+moveset_array = Array[String](["taunt", "counter_uppercut"])
 block_behavior = 2
 metadata/_custom_type_script = "uid://c4q24a656iry7"
 
