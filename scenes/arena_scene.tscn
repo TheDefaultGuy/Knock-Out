@@ -54,7 +54,7 @@ length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Camera2D/Arena UI/KO:text")
+tracks/0/path = NodePath("CanvasLayer/Arena UI/%KO:text")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -70,7 +70,7 @@ length = 2.0
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Camera2D/Arena UI/KO:text")
+tracks/0/path = NodePath("CanvasLayer/Arena UI/%KO:text")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -115,16 +115,14 @@ length = 11.8
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Camera2D/Arena UI/KO:text")
+tracks/0/path = NodePath("CanvasLayer/Arena UI/%KO:text")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 11.8),
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 1,
-"values": ["
-
-", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "KO", ""]
+"values": ["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "KO", ""]
 }
 tracks/1/type = "method"
 tracks/1/imported = false
@@ -214,9 +212,6 @@ slow_motion_curve = SubResource("Curve_ildxb")
 position = Vector2(0, -18)
 zoom = Vector2(3.12, 3.12)
 
-[node name="Arena UI" parent="Camera2D" unique_id=912051865 instance=ExtResource("4_tqdu3")]
-unique_name_in_owner = true
-
 [node name="Background" type="AnimatedSprite2D" parent="." unique_id=564253712]
 texture_filter = 1
 position = Vector2(0, 12)
@@ -270,3 +265,9 @@ metadata/_custom_type_script = "uid://cguhik1wigmds"
 unique_name_in_owner = true
 script = ExtResource("13_tqdu3")
 metadata/_custom_type_script = "uid://kmaq2e83r45t"
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1871208143]
+
+[node name="Arena UI" parent="CanvasLayer" unique_id=912051865 instance=ExtResource("4_tqdu3")]
+unique_name_in_owner = true
+offset_transform_enabled = true

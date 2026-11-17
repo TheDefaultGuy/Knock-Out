@@ -1,0 +1,47 @@
+[gd_scene format=3 uid="uid://dyiimdee71of8"]
+
+[ext_resource type="Script" uid="uid://cdkiic3xcg4c4" path="res://test_ui.gd" id="1_51ae7"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_51ae7"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_51ae7"]
+bg_color = Color(1, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_as1i0"]
+bg_color = Color(0.14044744, 0.14044747, 0.14044738, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wvgql"]
+bg_color = Color(1, 1, 1, 1)
+
+[node name="Arena UI" type="Control" unique_id=912051865]
+z_index = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+script = ExtResource("1_51ae7")
+
+[node name="Front Bar" type="ProgressBar" parent="." unique_id=519980197]
+z_index = 1
+layout_mode = 0
+offset_right = 223.0
+offset_bottom = 8.0
+theme_override_colors/font_color = Color(0.9490196, 0, 0, 1)
+theme_override_styles/background = SubResource("StyleBoxEmpty_51ae7")
+theme_override_styles/fill = SubResource("StyleBoxFlat_51ae7")
+value = 100.0
+show_percentage = false
+
+[node name="Back Bar" type="ProgressBar" parent="." unique_id=2029802068]
+layout_mode = 0
+offset_right = 223.0
+offset_bottom = 8.0
+theme_override_styles/background = SubResource("StyleBoxFlat_as1i0")
+theme_override_styles/fill = SubResource("StyleBoxFlat_wvgql")
+value = 100.0
+show_percentage = false

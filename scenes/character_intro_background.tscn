@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://bdsag3hdwhppo"]
+
+[ext_resource type="Texture2D" uid="uid://dwh4in8dhu3wx" path="res://assets/intro_bg.jpg" id="1_x17xn"]
+[ext_resource type="Texture2D" uid="uid://6wepakqw53fh" path="res://assets/intro_fg.png" id="2_mfer5"]
+
+[node name="Node2D" type="Node2D" unique_id=569867555]
+
+[node name="Parallax2D" type="Parallax2D" parent="." unique_id=249470489]
+repeat_size = Vector2(64, 64)
+repeat_times = 20
+
+[node name="Sprite2D" type="Sprite2D" parent="Parallax2D" unique_id=1273334916]
+texture_filter = 1
+position = Vector2(589, 313)
+scale = Vector2(32, 32)
+texture = ExtResource("1_x17xn")
+
+[node name="Parallax2D2" type="Parallax2D" parent="." unique_id=1508182331]
+scale = Vector2(2, 2)
+repeat_size = Vector2(128, 64)
+repeat_times = 6
+
+[node name="Sprite2D2" type="Sprite2D" parent="Parallax2D2" unique_id=1891698049]
+texture_filter = 1
+position = Vector2(296.5, 168)
+texture = ExtResource("2_mfer5")
