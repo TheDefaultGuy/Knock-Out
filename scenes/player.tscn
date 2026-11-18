@@ -228,7 +228,12 @@ animations = [{
 
 [sub_resource type="Curve" id="Curve_ssxbu"]
 _limits = [1.0, 3.0, 0.0, 1.0]
-_data = [Vector2(0, 3), 0.0, 0.0, 0, 0, Vector2(0.25406504, 3), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+_data = [Vector2(1e-05, 2.0147781), 0.0, 0.0, 0, 0, Vector2(0.1605691, 2.0049262), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Curve" id="Curve_c5qw3"]
+_limits = [0.0, 1.0, 0.0, 8.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1e-05, 1), 0.0, 0.0, 0, 0, Vector2(8, 0.50246304), -0.09467356, 0.0, 0, 0]
 point_count = 3
 
 [sub_resource type="Curve" id="Curve_holxr"]
@@ -3356,6 +3361,7 @@ metadata/_custom_type_script = "uid://ch1gb3rys2tfm"
 
 [node name="Neutral" type="Node" parent="StateMachine" unique_id=19848670]
 script = ExtResource("16_qfm1y")
+debuff_curve = SubResource("Curve_c5qw3")
 metadata/_custom_type_script = "uid://b8xj68b44boym"
 
 [node name="TiredState" type="Node" parent="StateMachine" unique_id=1201197542]

@@ -10,7 +10,10 @@ class_name AttackingComponent extends Node
 
 
 ## Multiplier for the attack's damage. mainly used by the [Player].
-@export_custom(PROPERTY_HINT_NONE, "suffix:x") var attack_multiplier : float = 1.0 
+@export_custom(PROPERTY_HINT_NONE, "suffix:x") var attack_multiplier : float = 1.0:
+	set(value):
+		attack_multiplier = value
+		print_rich("[color=red][b]⚔️ Attacking Multiplier: [/b][/color] Attack multiplier", attack_multiplier)
 
 ## Curve used to extrapolate the damage bonus over time after a parry has been performed.
 @export var parry_damage_curve : Curve
@@ -75,7 +78,10 @@ func punch(input_node : Node2D, punch_height : int, punch_range : int, attack_da
 		
 	# If it was a star punch, change the attack damage to reflect the amount of star punches used.
 	if owner is Player and owner.anim_state_machine.get_current_node().contains("star") == true: 
-		attack_damage = calculate_start_punch_damage(attack_damage)
+		attack_damage = calculate_star_punch_damage(attack_damage)
+		
+	else: 
+		attack_damage *= attack_multiplier
 	
 	# Stores the response given by the defense component about whether or not the hit was succesful
 	var defense_response : bool = await input_node.defense_component.check_defense(punch_height, punch_range, attack_damage, punch_direction)
@@ -137,5 +143,5 @@ func parry_damage_bonus() -> void:
 ## @tutorial: https://www.desmos.com/calculator/ck5t9wejr0
 ## Basically, it's not a linear equation, its slightly exponential.
 ## That way, the first star doesn't have the same weight as the 3rd star, and the more the player holds on to the stars, the more damage they can do.
-func calculate_start_punch_damage(attack_damage: float) -> float:
+func calculate_star_punch_damage(attack_damage: float) -> float:
 	return snappedf(attack_damage * ( (float(FightManager.stars_used) + 1.0) ** 2.0 / 4.0), 5.0)

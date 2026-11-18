@@ -19,10 +19,10 @@ const CHARACTER_SELECTION_MENU = preload("uid://bvyokq5qbudmq")
 @export var slow_motion_curve : Curve
 
 ## Stores the [Player] node/scene.
-var player_node = null
+var player_node : Node2D = null
 
 ## Stores the [Enemy] node/scene.
-var enemy_node = null
+var enemy_node : Node2D = null
 
 ## Stores whether it's currently slow motion or not.
 var is_slow_motion : bool = false
@@ -50,6 +50,9 @@ func _ready() -> void:
 	# Adds the nodes as children.
 	add_child(player_node)
 	add_child(enemy_node)
+	
+	player_node.z_index += 2
+	enemy_node.z_index += 2
 	
 	FightManager.reset_ko_count()
 	FightManager.set_stamina()

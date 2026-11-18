@@ -131,6 +131,7 @@ func _ready() -> void:
 	dizzy.local_coords = true
 	dizzy.emitting = true
 	dizzy.visible = false
+	dizzy.z_index += 2
 	
 
 ## Constantly checks the conditions to change state.

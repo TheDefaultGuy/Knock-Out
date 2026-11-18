@@ -9285,7 +9285,6 @@ _data = {
 
 [node name="Enemy" type="Node2D" unique_id=2050285250]
 process_mode = 1
-z_index = 1
 script = ExtResource("1_t1dt5")
 metadata/_custom_type_script = "uid://b34r64ty2kswc"
 metadata/_edit_horizontal_guides_ = [-133.0]
@@ -9297,6 +9296,7 @@ texture_filter = 1
 material = ExtResource("2_gthl3")
 sprite_frames = SubResource("SpriteFrames_m0jec")
 animation = &"idle"
+frame = 1
 
 [node name="DefenseComponent" type="Node" parent="." unique_id=2045134485]
 unique_name_in_owner = true
@@ -9528,7 +9528,7 @@ player_target_hp = 35.0
 override_idle_animation = true
 custom_idle_animation = "idle_guard"
 moveset_type = 2
-moveset_array = Array[String](["taunt", "counter_uppercut"])
+moveset_array = Array[String](["taunt"])
 block_behavior = 2
 metadata/_custom_type_script = "uid://c4q24a656iry7"
 
@@ -9544,7 +9544,7 @@ time_to_change_state = 9.0
 override_idle_animation = true
 custom_idle_animation = "idle_guard"
 moveset_type = 2
-moveset_array = Array[String](["taunt", "counter_uppercut"])
+moveset_array = Array[String](["taunt"])
 block_behavior = 2
 metadata/_custom_type_script = "uid://c4q24a656iry7"
 

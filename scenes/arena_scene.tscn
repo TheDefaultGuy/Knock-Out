@@ -54,7 +54,7 @@ length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("CanvasLayer/Arena UI/%KO:text")
+tracks/0/path = NodePath("CanvasLayer/Arena UI/MarginContainer/KO:text")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -70,7 +70,7 @@ length = 2.0
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("CanvasLayer/Arena UI/%KO:text")
+tracks/0/path = NodePath("CanvasLayer/Arena UI/MarginContainer/KO:text")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -115,7 +115,7 @@ length = 11.8
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("CanvasLayer/Arena UI/%KO:text")
+tracks/0/path = NodePath("CanvasLayer/Arena UI/MarginContainer/KO:text")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -209,34 +209,39 @@ enemy_scene = ExtResource("3_c5qw3")
 slow_motion_curve = SubResource("Curve_ildxb")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=664736061]
-position = Vector2(0, -18)
+position = Vector2(0, -28)
 zoom = Vector2(3.12, 3.12)
 
-[node name="Background" type="AnimatedSprite2D" parent="." unique_id=564253712]
+[node name="Background" type="AnimatedSprite2D" parent="Camera2D" unique_id=564253712]
+z_index = -2
 texture_filter = 1
-position = Vector2(0, 12)
+position = Vector2(0, 29)
 scale = Vector2(0.85227275, 0.85227275)
 sprite_frames = SubResource("SpriteFrames_m0jec")
 autoplay = "default"
 frame_progress = 0.30562395
 
-[node name="ColorRect" type="ColorRect" parent="Background" unique_id=1580573806]
+[node name="ColorRect" type="ColorRect" parent="Camera2D/Background" unique_id=1580573806]
 z_index = -1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -473.54663
-offset_top = -256.04
-offset_right = 41.54663
-offset_bottom = 80.04001
+offset_left = -473.54666
+offset_top = -256.04004
+offset_right = 41.5466
+offset_bottom = 80.03998
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 color = Color(0, 0, 0, 1)
 metadata/_edit_lock_ = true
+
+[node name="CanvasLayer2" type="CanvasLayer" parent="." unique_id=2016317615]
+layer = -1
+visible = false
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=805291020]
 unique_name_in_owner = true
@@ -270,4 +275,5 @@ metadata/_custom_type_script = "uid://kmaq2e83r45t"
 
 [node name="Arena UI" parent="CanvasLayer" unique_id=912051865 instance=ExtResource("4_tqdu3")]
 unique_name_in_owner = true
+z_index = -1
 offset_transform_enabled = true

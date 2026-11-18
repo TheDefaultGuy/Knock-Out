@@ -12,6 +12,22 @@ class_name PlayerNeutral extends State
 
 @onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
 
+## How much time in seconds dows it take for the [member repeated_punch_count] to return back to 0.
+const PUNCH_REFRESH_TIME : float = 3.0
+
+## Stores how many pucnhes the player has done with the same arm.
+var repeated_punch_count : int = 0
+
+## Timer that sets the [member repeated_punch_count] to 0 once it finishes.
+var repeated_punch_timer : Timer = null
+
+@export var debuff_curve : Curve
+
+var last_punch_direction : int = 0
+
+func _ready() -> void:
+	repeated_punch_timer = TimerCreator.create_timer_and_add_as_child("Repeated Punch Timer", true, PUNCH_REFRESH_TIME, false, self)
+	repeated_punch_timer.timeout.connect(_on_repeated_punch_timer_timeout)
 
 func enter() -> void:
 	print_rich("[color=yellow][b]Player Entered State: [/b][/color]", self.name)
@@ -25,6 +41,7 @@ func enter() -> void:
 	
 	input_component.attack_input_signal.connect(perform_attack)
 	input_component.defense_input_signal.connect(perform_defense)
+	
 	FightManager.no_stamina_signal.connect(transition_to_tired)
 	FightManager.enemy_knocked_down_signal.connect(transition_to_spectating)
 	FightManager.player_knocked_down_signal.connect(transition_to_knocked_down)
@@ -101,6 +118,8 @@ func perform_attack(height : int, direction : int, action_name : String) -> void
 				return
 		else:
 			
+			handle_repeated_punches(direction)
+			
 			# Sets the blend for the attack animation based on the punch's direction and height.
 			animation_tree.set("parameters/attack/blend_position", Vector2i(direction, height))
 			
@@ -111,3 +130,37 @@ func perform_attack(height : int, direction : int, action_name : String) -> void
 		
 	# If the player is currently already dodging, attacking or hit, it'll store the attack they wanted to do so that it's buffered.
 	input_component.store_unhandled_input(action_name)
+
+##  Handles the logic for punches done with the same arm/direction.
+func handle_repeated_punches(direction : int) -> void:
+	
+	repeated_punch_timer.start()
+	
+	# Sets the last punch direction if it hasn't been set.
+	if last_punch_direction == Global.RangeEnum.NEUTRAL:
+		last_punch_direction = direction
+		return
+		
+	# If the attack is the same side as the last punch direction, then increase the repeated punch count.
+	if last_punch_direction == direction:
+		repeated_punch_count += 1
+		
+		# Sets the attacking component's attack multiplier based on the curve.
+		# This lowers attack damage.
+		attacking_component.attack_multiplier = debuff_curve.sample(repeated_punch_count)
+		return
+		
+	elif last_punch_direction != direction:
+		
+		# Sets the last punch direction as the new direction.
+		last_punch_direction = direction
+		
+		# Sets the attacking component's attack multiplier based on the INVERSE curve.
+		# This INCREASES attack damage, but only once, as repeated_punch_count is set back to 0 right after.
+		attacking_component.attack_multiplier = 1 / debuff_curve.sample(repeated_punch_count)
+		repeated_punch_count = 0
+		return
+
+func _on_repeated_punch_timer_timeout() -> void:
+	repeated_punch_count = 0
+	print("Punch Refreshed")

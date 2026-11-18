@@ -3,8 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://dc4w1c8wo6uig" path="res://assets/single_star.png" id="1_ecgsl"]
 
 [node name="Dizzy" type="CPUParticles2D" unique_id=1178928618]
-z_index = 1
-y_sort_enabled = true
+z_index = 3
 texture_filter = 1
 scale = Vector2(1, 0.8)
 amount = 2
