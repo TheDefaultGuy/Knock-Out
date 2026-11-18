@@ -23,7 +23,7 @@ var accumulation_timer : Timer = null
 ## The label that displays the player's points.
 @onready var points_label: Label = %PointsLabel
 
-@onready var ko: Label = $KO
+@onready var ko: Label = %KO
 
 @onready var player_ko_counter: HBoxContainer = %Player
 @onready var enemy_ko_counter: HBoxContainer = %Enemy
@@ -34,11 +34,23 @@ var accumulation_timer : Timer = null
 @onready var player_front_bar: ProgressBar = $"MarginContainer/HBoxContainer/VBoxContainer/Health Bars/Player Health Bar/Front Bar"
 @onready var player_back_bar: ProgressBar = $"MarginContainer/HBoxContainer/VBoxContainer/Health Bars/Player Health Bar/Back Bar"
 
+@onready var enemy_damage: Label = %EnemyDamage
+@onready var player_damage: Label = %PlayerDamage
+@onready var attack_multipler_label: Label = %AttackMultiplierLabel
 
 func _ready() -> void:
 	state_label.visible = OS.is_debug_build()
+	enemy_front_bar.show_percentage = OS.is_debug_build()
+	player_front_bar.show_percentage = OS.is_debug_build()
+	
+	enemy_damage.visible = OS.is_debug_build()
+	player_damage.visible = OS.is_debug_build()
+	attack_multipler_label.visible = OS.is_debug_build()
+	
 	accumulation_timer = TimerCreator.create_timer_and_add_as_child("Acc Timer", true, ACCUMULATION_WAIT_TIME, false, self)
 	accumulation_timer.timeout.connect(_on_timer_timeout)
+	
+
 
 # Called when the node enters the scene tree for the first time.
 func connect_signals() -> void:
@@ -49,6 +61,8 @@ func connect_signals() -> void:
 	
 	FightManager.enemy_knocked_down_signal.connect(enemy_ko_counter.update_ko_counters)
 	FightManager.player_knocked_down_signal.connect(player_ko_counter.update_ko_counters)
+	
+	Global.player_node.attacking_component.attack_multiplier_changed_signal.connect(update_attack_multiplier_label)
 	update_ui()
 
 func _process(_delta: float) -> void:
@@ -59,6 +73,8 @@ func _on_timer_timeout() -> void:
 	# Animates the enemy's white bar after the accumulation timer is over.
 	animate_bar(enemy_back_bar, HP_BAR_TWEEN_DURATION_LONG, Global.enemy_node.health_component.hp)
 
+func update_attack_multiplier_label() -> void:
+	attack_multipler_label.text = str("x", Global.player_node.attacking_component.attack_multiplier)
 
 func handle_health_change_player() -> void:
 	

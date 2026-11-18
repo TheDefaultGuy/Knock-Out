@@ -13,21 +13,21 @@ class_name PlayerNeutral extends State
 @onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
 
 ## How much time in seconds dows it take for the [member repeated_punch_count] to return back to 0.
-const PUNCH_REFRESH_TIME : float = 3.0
+const FATIGUE_RECOVERY_TIME : float = 3.0
 
 ## Stores how many pucnhes the player has done with the same arm.
 var repeated_punch_count : int = 0
 
 ## Timer that sets the [member repeated_punch_count] to 0 once it finishes.
-var repeated_punch_timer : Timer = null
+var fatigue_timer : Timer = null
 
-@export var debuff_curve : Curve
+@export var fatigue_curve : Curve
 
 var last_punch_direction : int = 0
 
 func _ready() -> void:
-	repeated_punch_timer = TimerCreator.create_timer_and_add_as_child("Repeated Punch Timer", true, PUNCH_REFRESH_TIME, false, self)
-	repeated_punch_timer.timeout.connect(_on_repeated_punch_timer_timeout)
+	fatigue_timer = TimerCreator.create_timer_and_add_as_child("Fatigue Timer", true, FATIGUE_RECOVERY_TIME, false, self)
+	fatigue_timer.timeout.connect(_on_fatigue_timer_timeout)
 
 func enter() -> void:
 	print_rich("[color=yellow][b]Player Entered State: [/b][/color]", self.name)
@@ -118,7 +118,7 @@ func perform_attack(height : int, direction : int, action_name : String) -> void
 				return
 		else:
 			
-			handle_repeated_punches(direction)
+			handle_punch_fatigue(direction)
 			
 			# Sets the blend for the attack animation based on the punch's direction and height.
 			animation_tree.set("parameters/attack/blend_position", Vector2i(direction, height))
@@ -132,13 +132,14 @@ func perform_attack(height : int, direction : int, action_name : String) -> void
 	input_component.store_unhandled_input(action_name)
 
 ##  Handles the logic for punches done with the same arm/direction.
-func handle_repeated_punches(direction : int) -> void:
+func handle_punch_fatigue(direction : int) -> void:
 	
-	repeated_punch_timer.start()
+	fatigue_timer.start()
 	
 	# Sets the last punch direction if it hasn't been set.
 	if last_punch_direction == Global.RangeEnum.NEUTRAL:
 		last_punch_direction = direction
+		attacking_component.attack_multiplier = 1.0
 		return
 		
 	# If the attack is the same side as the last punch direction, then increase the repeated punch count.
@@ -147,7 +148,7 @@ func handle_repeated_punches(direction : int) -> void:
 		
 		# Sets the attacking component's attack multiplier based on the curve.
 		# This lowers attack damage.
-		attacking_component.attack_multiplier = debuff_curve.sample(repeated_punch_count)
+		attacking_component.attack_multiplier = fatigue_curve.sample(repeated_punch_count)
 		return
 		
 	elif last_punch_direction != direction:
@@ -155,12 +156,17 @@ func handle_repeated_punches(direction : int) -> void:
 		# Sets the last punch direction as the new direction.
 		last_punch_direction = direction
 		
+		# If the player is alternating arms, then set the attack multiplier to 1.0.
+		if repeated_punch_count == 0 :
+			attacking_component.attack_multiplier = 1.0
+			return
+		
 		# Sets the attacking component's attack multiplier based on the INVERSE curve.
 		# This INCREASES attack damage, but only once, as repeated_punch_count is set back to 0 right after.
-		attacking_component.attack_multiplier = 1 / debuff_curve.sample(repeated_punch_count)
+		attacking_component.attack_multiplier = 1 / fatigue_curve.sample(repeated_punch_count)
 		repeated_punch_count = 0
 		return
 
-func _on_repeated_punch_timer_timeout() -> void:
+func _on_fatigue_timer_timeout() -> void:
 	repeated_punch_count = 0
 	print("Punch Refreshed")

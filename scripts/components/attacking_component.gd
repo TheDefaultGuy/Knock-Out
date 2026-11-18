@@ -8,16 +8,19 @@ class_name AttackingComponent extends Node
 ## The range it covers, the height it covers, the amount of damage and the punch direction.
 ## The defense then checks against the defense variables it has and returns whether or not the attack landed.
 
+signal attack_multiplier_changed_signal
 
 ## Multiplier for the attack's damage. mainly used by the [Player].
 @export_custom(PROPERTY_HINT_NONE, "suffix:x") var attack_multiplier : float = 1.0:
 	set(value):
 		
-		if attack_multiplier != snappedf(value, 0.01):
+		if attack_multiplier != value:
+			attack_multiplier = snappedf(value, 0.01)
+			
 			if OS.is_debug_build() == true:
 				print_rich("[color=red][b]⚔️ Attacking Multiplier: [/b][/color] Attack multiplier: ", attack_multiplier)
-				return
-		attack_multiplier = snappedf(value, 0.01)
+				if owner is Player:
+					attack_multiplier_changed_signal.emit()
 
 
 ## Curve used to extrapolate the damage bonus over time after a parry has been performed.
