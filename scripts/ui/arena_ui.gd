@@ -63,6 +63,11 @@ func connect_signals() -> void:
 	FightManager.player_knocked_down_signal.connect(player_ko_counter.update_ko_counters)
 	
 	Global.player_node.attacking_component.attack_multiplier_changed_signal.connect(update_attack_multiplier_label)
+	
+	
+	Global.player_node.health_component.damage_taken_signal.connect(update_player_damage_label)
+	Global.enemy_node.health_component.damage_taken_signal.connect(update_enemy_damage_label)
+	
 	update_ui()
 
 func _process(_delta: float) -> void:
@@ -72,6 +77,12 @@ func _process(_delta: float) -> void:
 func _on_timer_timeout() -> void:
 	# Animates the enemy's white bar after the accumulation timer is over.
 	animate_bar(enemy_back_bar, HP_BAR_TWEEN_DURATION_LONG, Global.enemy_node.health_component.hp)
+
+func update_player_damage_label(amount : float) -> void:
+	player_damage.text = str(amount)
+	
+func update_enemy_damage_label(amount : float) -> void:
+	enemy_damage.text = str(amount)
 
 func update_attack_multiplier_label() -> void:
 	attack_multipler_label.text = str("x", Global.player_node.attacking_component.attack_multiplier)
