@@ -101,6 +101,7 @@ func _input(_event: InputEvent) -> void:
 		
 		if Input.is_action_just_pressed("left_punch"):
 			perform_action("left_low_punch")
+			
 		elif Input.is_action_just_pressed("right_punch"):
 			perform_action("right_low_punch")
 			
@@ -112,6 +113,7 @@ func _input(_event: InputEvent) -> void:
 		
 		if Input.is_action_just_pressed("left_punch"):
 			perform_action("left_high_punch")
+			
 		elif Input.is_action_just_pressed("right_punch"):
 			perform_action("right_high_punch")
 			

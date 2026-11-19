@@ -213,6 +213,7 @@ position = Vector2(0, -28)
 zoom = Vector2(3.12, 3.12)
 
 [node name="Background" type="AnimatedSprite2D" parent="Camera2D" unique_id=564253712]
+process_mode = 1
 z_index = -2
 texture_filter = 1
 position = Vector2(0, 29)
@@ -257,17 +258,19 @@ metadata/_custom_type_script = "uid://c8kyx1g3lvmgb"
 
 [node name="ParticleEffectComponent" type="Node" parent="." unique_id=1861586519]
 unique_name_in_owner = true
+process_mode = 1
 script = ExtResource("4_4wfwo")
 metadata/_custom_type_script = "uid://lks1t1wg7nna"
 
 [node name="FightLogicComponent" type="Node" parent="." unique_id=32840368]
 unique_name_in_owner = true
-process_mode = 3
+process_mode = 1
 script = ExtResource("12_4wfwo")
 metadata/_custom_type_script = "uid://cguhik1wigmds"
 
 [node name="MatchSettings" type="Node" parent="." unique_id=1391593835]
 unique_name_in_owner = true
+process_mode = 1
 script = ExtResource("13_tqdu3")
 metadata/_custom_type_script = "uid://kmaq2e83r45t"
 

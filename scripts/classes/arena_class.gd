@@ -95,3 +95,8 @@ func _exit_tree() -> void:
 func slow_down_effect() -> void:
 	slow_mo_time_passed = 0.0
 	is_slow_motion = true
+
+
+func _input(_event: InputEvent) -> void:
+	if Input.is_action_just_pressed("esc"):
+		get_tree().paused = !get_tree().paused
