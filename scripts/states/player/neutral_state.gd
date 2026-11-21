@@ -169,4 +169,4 @@ func handle_punch_fatigue(direction : int) -> void:
 
 func _on_fatigue_timer_timeout() -> void:
 	repeated_punch_count = 0
-	print("Punch Refreshed")
+	print("Neutral State: Recovered from punch fatigue")

@@ -14,7 +14,7 @@ func _ready() -> void:
 	if next_state == null and state_machine.initial_state == self:
 		push_error(owner.name, " CutScene State: next state not set")
 		
-	skip_cutscene = OS.is_debug_build()
+	#skip_cutscene = OS.is_debug_build()
 
 func enter() -> void:
 	print_rich("[color=yellow][b]",owner.name," Entered State: [/b][/color]", self.name)
@@ -30,7 +30,7 @@ func enter() -> void:
 
 func exit() -> void:
 	FightManager.resume_fighting_signal.disconnect(transition)
-#	FightManager.start_intro_animation_signal.disconnect(play_intro)
+	#FightManager.start_intro_animation_signal.disconnect(play_intro)
 	animation_tree.animation_finished.disconnect(check_finished_animation)
 
 func check_finished_animation(animation : String) -> void:
@@ -45,11 +45,6 @@ func check_finished_animation(animation : String) -> void:
 			FightManager.fighter_ready_signal.emit()
 
 func play_intro() -> void:
-	
-	print(self.owner.name, FightManager.enemy_ready_status)
-	#if owner is Player:
-		#if FightManager.enemy_ready_status == true:
-			#anim_state_machine.travel("intro")
 	
 	if owner is Enemy:
 		if skip_cutscene == true:

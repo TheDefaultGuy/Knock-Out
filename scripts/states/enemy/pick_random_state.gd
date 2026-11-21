@@ -31,7 +31,7 @@ func enter() -> void:
 	if tertiary_target_state != null:
 		state_array.append(tertiary_target_state)
 	if state_array.is_empty() == false:
-		transition_to_target(state_array.pick_random())
+		transition_to_target(RandomManager.choose_random_element(state_array))
 		return
 	elif state_array.size() == 0:
 		printerr(self.name, " no target states set. There needs to be at least 2 target states for this State to function properly as intended.")

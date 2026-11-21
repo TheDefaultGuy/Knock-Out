@@ -30,7 +30,7 @@ var get_up_decay_rate : float = 50.0
 
 @onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
 
-func _process(delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	
 	if state_machine.current_state != self :
 		return
@@ -44,6 +44,11 @@ func _process(delta: float) -> void:
 	
 	# Sets the blend of the get up animation to be equal to the get_up_progress
 	animation_tree.set("parameters/get_up_blend/blend_position", get_up_progress)
+	
+	if Input.is_action_just_pressed("left_punch") or Input.is_action_just_pressed("right_punch"):
+		get_up_progress += get_up_step_value
+		#print("GET UP: ", get_up_progress)
+		return
 	
 	if FightManager.is_fight_over == false:
 		
@@ -96,6 +101,4 @@ func check_finished_animation(animation : String) -> void:
 
 ## When an attack input is Given by the [InputComponent], increase the [member get_up_progress].
 func perform_attack(_height : int, _direction : int, _action_name : String):
-	if FightManager.is_fight_over == false and FightManager.player_kd_count < FightManager.MAX_KD_COUNT:
-		get_up_progress += get_up_step_value
-		
+	return

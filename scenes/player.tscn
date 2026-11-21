@@ -3328,6 +3328,7 @@ autoplay = "guard_down"
 
 [node name="InputComponent" type="Node" parent="." unique_id=489829923]
 unique_name_in_owner = true
+process_physics_priority = -1
 script = ExtResource("3_qlg0r")
 parry_window = 0.08
 metadata/_custom_type_script = "uid://c20tqslkyvip3"
@@ -3373,6 +3374,7 @@ process_mode = 1
 script = ExtResource("19_4r5pv")
 get_up_difficulty_curve = SubResource("Curve_holxr")
 get_up_step_value = 8.0
+base_decay_rate = 35.0
 metadata/_custom_type_script = "uid://dbtcttyq4b1k6"
 
 [node name="Spectating" type="Node" parent="StateMachine" unique_id=358364741]

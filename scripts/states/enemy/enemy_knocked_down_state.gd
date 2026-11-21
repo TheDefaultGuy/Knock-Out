@@ -58,7 +58,7 @@ func _ready() -> void:
 	
 	
 
-func _process(_delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Only Runs the function in-game and not the editor
 		return
 	if state_machine.current_state == self and get_up_timer.is_stopped() == false:
@@ -103,17 +103,15 @@ func handle_failed_get_up() -> void:
 		
 		stored_time_left = ceilf(get_up_timer.time_left)
 		
-		var roll_value = randf()
+		var roll_value = remap(RandomManager.get_number(), 0, RandomManager.RNG_TABLE.size(), 0.0, 100.0)
 		
 		#print("check_count: ", check_count)
 		#prints(remap(chance_for_failed_attempt, 0.0, 100.0, 0.0, 1.0), randy)
 		
 		var modified_chance : float = chance_for_failed_attempt + (CHANCE_INCREASE_INCREMENT * check_count)
 		
-		var remapped_chance = remap(modified_chance, 0.0, 100.0, 0.0, 1.0)
 		
-		
-		if remapped_chance > roll_value:
+		if modified_chance > roll_value:
 			play_failed_get_up_animation()
 			stored_attempts += 1
 			check_count = 0
@@ -138,7 +136,8 @@ func start_get_up_timer() -> void:
 	
 	# Grabs a random number between min_getup_time and max_getup_time
 	# Then rounds it to the nearest whole number.
-	get_up_wait_time = roundf(randf_range(min_getup_time, max_getup_time))
+	
+	get_up_wait_time = roundf(remap(RandomManager.get_number(), 0, RandomManager.RNG_TABLE.size(), min_getup_time, max_getup_time))
 	
 	if owner.instant_kd_component.is_fully_knocked_out == true:
 		get_up_wait_time = 9.0

@@ -47,7 +47,7 @@ func _ready() -> void:
 	parry_attack_timer = TimerCreator.create_timer_and_add_as_child("Parry Attack Timer", true, parry_bonus_duration, false, self)
 	defense_component.player_parried_signal.connect(parry_damage_bonus)
 
-func _process(_delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if parry_attack_timer.is_stopped() == false and owner is Player:
 		if parry_damage_curve != null:
 			attack_multiplier = parry_damage_curve.sample(1 - (parry_attack_timer.time_left / parry_attack_timer.wait_time))

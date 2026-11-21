@@ -3,9 +3,7 @@
 @abstract class_name Fighter extends Node2D
 ## The base class for all boxers/fighters, including the [Player] and [Enemy].
 
-
 @export var fighter_info : FighterInfo
-
 
 ## Whether the [Fighter] is currently knocked down.
 var is_knocked_down : bool = false

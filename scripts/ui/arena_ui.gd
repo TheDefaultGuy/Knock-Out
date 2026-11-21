@@ -39,13 +39,12 @@ var accumulation_timer : Timer = null
 @onready var attack_multipler_label: Label = %AttackMultiplierLabel
 
 func _ready() -> void:
-	state_label.visible = OS.is_debug_build()
-	enemy_front_bar.show_percentage = OS.is_debug_build()
-	player_front_bar.show_percentage = OS.is_debug_build()
-	
-	enemy_damage.visible = OS.is_debug_build()
-	player_damage.visible = OS.is_debug_build()
-	attack_multipler_label.visible = OS.is_debug_build()
+	state_label.visible = OS.is_debug_build() and !OS.has_feature("mobile")
+	enemy_front_bar.show_percentage = OS.is_debug_build() and !OS.has_feature("mobile")
+	player_front_bar.show_percentage = OS.is_debug_build() and !OS.has_feature("mobile")
+	enemy_damage.visible = OS.is_debug_build() and !OS.has_feature("mobile")
+	player_damage.visible = OS.is_debug_build() and !OS.has_feature("mobile")
+	attack_multipler_label.visible = OS.is_debug_build() and !OS.has_feature("mobile")
 	
 	accumulation_timer = TimerCreator.create_timer_and_add_as_child("Acc Timer", true, ACCUMULATION_WAIT_TIME, false, self)
 	accumulation_timer.timeout.connect(_on_timer_timeout)

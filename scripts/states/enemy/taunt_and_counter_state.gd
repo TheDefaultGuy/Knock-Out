@@ -22,7 +22,7 @@ class_name TauntAndCounter extends EnemyState
 			printerr(self.name, ": The given Taunt Animation is not an animation present in the Animation Player's Library. Having no animation will cause this state to fail and not function correctly.")
 			return
 
-func _process(_delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesn't run the check round time function when in the editor; only when in-game
 		return
 	if state_machine.current_state == self:

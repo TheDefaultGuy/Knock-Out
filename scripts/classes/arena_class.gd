@@ -5,6 +5,8 @@ class_name Arena extends Node2D
 ##
 ## You can select the player and enemy scenes.
 
+signal pause_game_signal
+
 const RESULTS_SCREEN = preload("uid://b4unduv261ia0")
 const CHARACTER_SELECTION_MENU = preload("uid://bvyokq5qbudmq")
 
@@ -34,11 +36,11 @@ var slow_mo_time_passed : float = 0.0
 @onready var fight_logic_component : FightLogicComponent = %FightLogicComponent
 @onready var match_settings : MatchSettings = %MatchSettings
 @onready var arena_ui: Control = %"Arena UI"
+@onready var demo_recorder: DemoRecorder = %DemoRecorder
 
 ## Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	
-	
+
 	# Instantiates the player and enemy packed scenes into nodes.
 	player_node = player_scene.instantiate()
 	enemy_node = enemy_scene.instantiate()
@@ -51,8 +53,8 @@ func _ready() -> void:
 	add_child(player_node)
 	add_child(enemy_node)
 	
-	player_node.z_index += 2
-	enemy_node.z_index += 2
+	#player_node.z_index += 2
+	#enemy_node.z_index += 2
 	
 	FightManager.reset_ko_count()
 	FightManager.set_stamina()
@@ -72,7 +74,7 @@ func _ready() -> void:
 	
 	arena_ui.connect_signals()
 
-func _process(delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	if is_slow_motion == true:
 		
 		# Update how much time has passed by adding the delta.
@@ -96,7 +98,7 @@ func slow_down_effect() -> void:
 	slow_mo_time_passed = 0.0
 	is_slow_motion = true
 
-
 func _input(_event: InputEvent) -> void:
 	if Input.is_action_just_pressed("esc"):
+		pause_game_signal.emit()
 		get_tree().paused = !get_tree().paused

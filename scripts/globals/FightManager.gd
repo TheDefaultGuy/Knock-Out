@@ -241,3 +241,4 @@ func reset_everything() -> void:
 	set_stamina()
 	star_count = 0
 	PointsManager.points = 0
+	RandomManager.table_index = 0

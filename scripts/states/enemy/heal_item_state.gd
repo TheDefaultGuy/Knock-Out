@@ -61,7 +61,7 @@ func _ready() -> void:
 	
 	super() # Runs the Base EnemyState _ready() function after running this code.
 
-func _process(_delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Doesnt run the check round time function when in the editor; only when in-game
 		return
 	if state_machine.current_state == self:

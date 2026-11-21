@@ -14,7 +14,7 @@ class_name RandomizedMoves extends EnemyState
 ## Then, tweak the exported variables to set it up how you'd like.
 ## DO NOT change anything in the actual .gd file, since it'll mess up compatibility.
 
-func _process(_delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if Engine.is_editor_hint(): # Only Runs the function in-game and not the editor
 		return
 	if state_machine.current_state == self:

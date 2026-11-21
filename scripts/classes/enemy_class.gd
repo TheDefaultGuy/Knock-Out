@@ -11,20 +11,21 @@ class_name Enemy extends Fighter
 ## Signal emitted when the enemy is confirmed to have been hit by a star punch.
 signal hit_by_star_punch_signal
 
-## Whether the [Enemy] is currently stunned/in [StunState].
-#var is_stunned : bool = false
-
 @onready var instant_kd_component: InstantKDComponent = %InstantKDComponent
 @onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
 
 func _ready() -> void:
 	if defense_component == null and self.get_script() != Fighter:
 		printerr(self.name, " doesn't have a Defense Component assigned.")
+		
 	if attacking_component == null and self.get_script() != Fighter:
 		printerr(self, " doesn't have an Attacking Component assigned.")
+		
 	if health_component == null and self.get_script() != Fighter:
 		printerr(self.name, " doesn't have a Health Component assigned.")
+		
 	if animation_tree == null and self.get_script() != Fighter:
 		printerr(self.name, " doesn't have an Animation Tree assigned.")
+		
 	if instant_kd_component == null and self.get_script() != Fighter:
 		push_warning(self.name, " doesn't have an Instant KO Component assigned")

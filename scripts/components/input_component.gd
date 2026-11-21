@@ -46,13 +46,18 @@ func _ready() -> void:
 	parry_timer = TimerCreator.create_timer_and_add_as_child("ParryTimer", true, parry_window, false, self)
 	
 	FightManager.final_stun_hit_signal.connect(final_stun_hit)
+	
+	## Don't allow inputs if it's playing a demo.
+	#if DemoRecorder.status == DemoRecorder.RECORD_STATUS_ENUM.PLAYBACK:
+		#allow_inputs = false
 
-func _process(_delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	
 	# If inputs aren't allowed, don't bother running the rest of the function.
 	if allow_inputs == false :
 		return
-	
+		
+	#print("Demo Tick: ", DemoRecorder.tick)
 	
 	# Sets the value to be used for the block animation blend.
 	var blend_vector : Vector2i = Vector2i( \
@@ -75,22 +80,21 @@ func _process(_delta: float) -> void:
 	owner.animation_tree.set("parameters/dodge/dodge_left/conditions/holding_left", Input.is_action_pressed("left"))
 	owner.animation_tree.set("parameters/dodge/dodge_right/conditions/holding_right", Input.is_action_pressed("right"))
 	owner.animation_tree.set("parameters/dodge/duck/conditions/holding_down", Input.is_action_pressed("down"))
-
-func _input(_event: InputEvent) -> void:
-	if allow_inputs == false:
-		return
 	
 	# Ducking to avoid high attacks
 	if Input.is_action_just_pressed("down"): 
 		perform_action("down")
+		return
 	
 	# Left Dodge
 	elif Input.is_action_just_pressed("left"):
 		perform_action("left")
+		return
 	
 	# Right Dodge
 	elif Input.is_action_just_pressed("right"):
 		perform_action("right")
+		return
 	
 	# Starts the parry timer if any of the block buttons are pressed.
 	if Input.is_action_just_pressed("block") or Input.is_action_just_pressed("block_upper") or Input.is_action_just_pressed("block_lower"):
@@ -101,24 +105,30 @@ func _input(_event: InputEvent) -> void:
 		
 		if Input.is_action_just_pressed("left_punch"):
 			perform_action("left_low_punch")
+			return
 			
 		elif Input.is_action_just_pressed("right_punch"):
 			perform_action("right_low_punch")
+			return
 			
 		elif Input.is_action_just_pressed("star_punch"):
 			perform_action("star_punch_lower")
+			return
 			
 	# If the player is already holding the Up button check the high punches
 	elif Input.is_action_pressed("up") == true:
 		
 		if Input.is_action_just_pressed("left_punch"):
 			perform_action("left_high_punch")
+			return
 			
 		elif Input.is_action_just_pressed("right_punch"):
 			perform_action("right_high_punch")
+			return
 			
 		elif Input.is_action_just_pressed("star_punch"):
 			perform_action("star_punch_upper")
+			return
 
 ## Emits a signal depending on the action that will be used by the player states.
 func perform_action(action_name : String):

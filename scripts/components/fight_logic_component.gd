@@ -34,7 +34,7 @@ func _ready() -> void:
 	FightManager.pause_ko_count_signal.connect(pause_ko_count)
 
 
-func _process(_delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	
 	# Sets the round time in Fight Manager as the the that has ellapsed in the round_timer.
 	FightManager.round_time = snappedf((round_timer.wait_time - round_timer.time_left), 0.001)

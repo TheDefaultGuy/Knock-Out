@@ -66,6 +66,14 @@ layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 14.69
 
+[node name="Button4" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer" unique_id=89235711]
+custom_minimum_size = Vector2(0, 68.33)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 8
+theme_override_font_sizes/font_size = 28
+text = "Play recorded demo"
+
 [node name="TextureRect" type="TextureRect" parent="." unique_id=1008836303]
 layout_mode = 0
 offset_left = 289.0
@@ -80,3 +88,4 @@ stretch_mode = 5
 [connection signal="pressed" from="MarginContainer/HBoxContainer/VBoxContainer/Button" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="MarginContainer/HBoxContainer/VBoxContainer/Button2" to="." method="_on_button_2_pressed"]
 [connection signal="pressed" from="MarginContainer/HBoxContainer/VBoxContainer/Button3" to="." method="_on_button_3_pressed"]
+[connection signal="pressed" from="MarginContainer/HBoxContainer/VBoxContainer/Button4" to="." method="_on_button_4_pressed"]
