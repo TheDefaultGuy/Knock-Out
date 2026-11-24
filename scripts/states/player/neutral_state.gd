@@ -127,7 +127,62 @@ func perform_attack(height : int, direction : int, action_name : String) -> void
 			anim_state_machine.travel("attack")
 			
 			return
+			
+	elif anim_state_machine.get_current_node() == "dodge":
 		
+		# Checks to see if the dodge animation's blend position matches with the defense component's current dodge position.
+		if animation_tree.get("parameters/dodge/blend_position") != defense_component.dodge_position:
+			printerr(" Neutral State: Animation and Dodge position disagree.")
+			return
+			
+		# If the punch direction pressed does not match the direction of the dodge, don't perform a hook.
+		# Make an exception if the dodge position is neutral (That means it's a duck).
+		if direction != defense_component.dodge_position and defense_component.dodge_position != Global.RangeEnum.NEUTRAL:
+			printerr("Neutral State: HOOK FAILED. MUST THROW PUNCH SAME DIRECTION AS DODGE.")
+			return
+			
+		match defense_component.dodge_position:
+			Global.RangeEnum.LEFT:
+				
+				# Grabs the nested state machine for the direction's dodge animation state machine.
+				var sub_anim_state_machine: AnimationNodeStateMachinePlayback = animation_tree.get("parameters/dodge/dodge_left/playback")
+				
+				# Performs a left hook if the left button is still being pressed and the player is still in the "dodge_blend_left" animation
+				# The blend is the animation that extends the duration of the dodge if you hold down the direction/dodge button.
+				if Input.is_action_pressed("left") and sub_anim_state_machine.get_current_node() == "dodge_blend_left":
+					
+					
+					handle_punch_fatigue(direction)
+					
+					# Sets the blend for the hook animation based on the punch's direction.
+					animation_tree.set("parameters/hook/blend_position", direction)
+					
+					# Starts the hook attack animation.
+					anim_state_machine.start("hook")
+				return
+				
+			Global.RangeEnum.RIGHT:
+				# Grabs the nested state machine for the direction's dodge animation state machine.
+				var sub_anim_state_machine: AnimationNodeStateMachinePlayback = animation_tree.get("parameters/dodge/dodge_right/playback")
+				
+				# Performs a right hook if the right button is still being pressed and the player is still in the "dodge_blend_right" animation
+				# The blend is the animation that extends the duration of the dodge if you hold down the direction/dodge button.
+				if Input.is_action_pressed("right") and sub_anim_state_machine.get_current_node() == "dodge_blend_right":
+					
+					handle_punch_fatigue(direction)
+					
+					# Sets the blend for the hook animation based on the punch's direction.
+					animation_tree.set("parameters/hook/blend_position", direction)
+					
+					# Starts the hook attack animation.
+					anim_state_machine.start("hook")
+				return
+				
+			Global.RangeEnum.NEUTRAL:
+				
+				# No attack from ducks for now.
+				return
+			
 	# If the player is currently already dodging, attacking or hit, it'll store the attack they wanted to do so that it's buffered.
 	input_component.store_unhandled_input(action_name)
 

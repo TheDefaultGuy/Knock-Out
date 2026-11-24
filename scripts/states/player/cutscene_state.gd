@@ -14,7 +14,7 @@ func _ready() -> void:
 	if next_state == null and state_machine.initial_state == self:
 		push_error(owner.name, " CutScene State: next state not set")
 		
-	#skip_cutscene = OS.is_debug_build()
+	skip_cutscene = OS.is_debug_build()
 
 func enter() -> void:
 	print_rich("[color=yellow][b]",owner.name," Entered State: [/b][/color]", self.name)

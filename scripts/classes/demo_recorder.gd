@@ -151,7 +151,7 @@ func add_inputs_to_dictionary() -> void:
 	if input_array.is_empty() == true:
 		return
 	
-	print("Recording Inputs: ", input_array, " @ Tick: ", tick)
+	#print("Recording Inputs: ", input_array, " @ Tick: ", tick)
 	
 	# Adds the input to the input dictionary with the tick it happened as the key.
 	input_dictionary[tick] = input_array

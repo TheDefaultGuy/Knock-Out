@@ -18,7 +18,9 @@ static func _save_fight_data(calling_node : Node) -> void:
 	fight_data["points"] = PointsManager.points
 	fight_data["result"] = Global.winner
 	fight_data["date"] = Time.get_datetime_string_from_system()
+	fight_data["last_tick"] = DemoRecorder.tick
 	
+## Saves the recorded inputs as a JSON file.
 static func _save_demo(calling_node : Node) -> void:
 	
 	print("SAVING DEMO...")
@@ -29,20 +31,12 @@ static func _save_demo(calling_node : Node) -> void:
 	var demo_file = FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	
 	# Converts the recorded input dictionary into a stringified JSON format.
-	
 	var full_data : Dictionary = {
 		"fight_data" : fight_data,
 		"input_data" : DemoRecorder.input_dictionary,
 	}
 	
-	#var master_dict := {
-		#"player": dict_player,
-		#"settings": dict_settings
-	#}
-	#
 	var input_data = JSON.stringify(full_data.duplicate(), "\t")
-	
-	#demo_file.store_string(fight_data)
 	
 	# Stores the input dictionary as a string in the JSON demo file.
 	demo_file.store_string(input_data)

@@ -28,18 +28,18 @@ switch_mode = 2
 advance_mode = 2
 advance_condition = &"holding_left"
 
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_2lbek"]
-switch_mode = 2
-advance_mode = 2
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_y38th"]
-switch_mode = 2
-advance_mode = 2
-
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_gb5um"]
 advance_mode = 2
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_5gxbg"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_scsfb"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_v473p"]
 switch_mode = 2
 advance_mode = 2
 
@@ -52,5 +52,5 @@ states/dodge_left_end/node = SubResource("AnimationNodeAnimation_kdswm")
 states/dodge_left_end/position = Vector2(-114.6, -313)
 states/dodge_left_start/node = SubResource("AnimationNodeAnimation_omg23")
 states/dodge_left_start/position = Vector2(-355.6, -312.34402)
-transitions = ["dodge_left_start", "dodge_blend_left", SubResource("AnimationNodeStateMachineTransition_omg23"), "dodge_left_start", "dodge_left_end", SubResource("AnimationNodeStateMachineTransition_2lbek"), "dodge_blend_left", "dodge_left_end", SubResource("AnimationNodeStateMachineTransition_y38th"), "Start", "dodge_left_start", SubResource("AnimationNodeStateMachineTransition_gb5um"), "dodge_left_end", "End", SubResource("AnimationNodeStateMachineTransition_5gxbg")]
+transitions = ["dodge_left_start", "dodge_blend_left", SubResource("AnimationNodeStateMachineTransition_omg23"), "Start", "dodge_left_start", SubResource("AnimationNodeStateMachineTransition_gb5um"), "dodge_left_end", "End", SubResource("AnimationNodeStateMachineTransition_5gxbg"), "dodge_blend_left", "dodge_left_end", SubResource("AnimationNodeStateMachineTransition_scsfb"), "dodge_left_start", "dodge_left_end", SubResource("AnimationNodeStateMachineTransition_v473p")]
 graph_offset = Vector2(-761.33606, -478)

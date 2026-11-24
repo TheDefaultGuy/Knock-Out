@@ -45,6 +45,7 @@
 [ext_resource type="AudioStream" uid="uid://dk4m0ir8p5ns2" path="res://assets/sound/sfx/39.wav" id="38_j2b1d"]
 [ext_resource type="Script" uid="uid://bd3i8gnmviajw" path="res://scripts/states/player/cutscene_state.gd" id="38_t4otl"]
 [ext_resource type="AudioStream" uid="uid://cj2whkvaqwy33" path="res://assets/sound/sfx/uppercut.wav" id="43_6e8lb"]
+[ext_resource type="AudioStream" uid="uid://ghulw4avu2eq" path="res://assets/sound/sfx/star_punch_start.wav" id="43_holxr"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_poxia"]
 shader = ExtResource("1_j2b1d")
@@ -624,7 +625,7 @@ tracks/4/keys = {
 
 [sub_resource type="Animation" id="Animation_2a3c5"]
 resource_name = "hook_left"
-length = 0.4
+length = 0.8
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -644,7 +645,7 @@ tracks/1/path = NodePath("AnimatedSprite2D:frame")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.19895321, 0.3),
+"times": PackedFloat32Array(0, 0.2, 0.3),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 1,
 "values": [0, 1, 1]
@@ -656,8 +657,8 @@ tracks/2/path = NodePath("AnimatedSprite2D:position")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.3),
-"transitions": PackedFloat32Array(0.5743493, 1),
+"times": PackedFloat32Array(0.13333334, 0.26666668),
+"transitions": PackedFloat32Array(0.37892932, 1),
 "update": 0,
 "values": [Vector2(-32, 0), Vector2(0, 0)]
 }
@@ -668,10 +669,10 @@ tracks/3/path = NodePath("DefenseComponent:dodge_position")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0, 0.16666667),
+"transitions": PackedFloat32Array(1, 1),
 "update": 1,
-"values": [-1]
+"values": [-1, 0]
 }
 tracks/4/type = "value"
 tracks/4/imported = false
@@ -692,10 +693,10 @@ tracks/5/path = NodePath("AnimatedSprite2D:offset")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
-"times": PackedFloat32Array(0, 0.1, 0.2),
+"times": PackedFloat32Array(0, 0.2, 0.3),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 1,
-"values": [Vector2(0, 0), Vector2(0, 16), Vector2(0, 0)]
+"values": [Vector2(0, 0), Vector2(-8.68, 24), Vector2(0, 0)]
 }
 tracks/6/type = "method"
 tracks/6/imported = false
@@ -707,7 +708,7 @@ tracks/6/keys = {
 "times": PackedFloat32Array(0.2),
 "transitions": PackedFloat32Array(1),
 "values": [{
-"args": [0, 0, 16.0, -1],
+"args": [0, -1, 15.0, -1],
 "method": &"send_attack_call"
 }]
 }
@@ -718,7 +719,7 @@ tracks/7/path = NodePath("DefenseComponent:upper_invulnerability")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
-"times": PackedFloat32Array(0, 0.2, 0.39999998),
+"times": PackedFloat32Array(0, 0.2, 0.3),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 1,
 "values": [false, true, false]
@@ -730,10 +731,202 @@ tracks/8/path = NodePath("DefenseComponent:lower_invulnerability")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
-"times": PackedFloat32Array(0, 0.2, 0.39999998),
+"times": PackedFloat32Array(0, 0.2, 0.3),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 1,
 "values": [false, true, false]
+}
+tracks/9/type = "audio"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("AudioStreamPlayer")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"clips": [{
+"end_offset": 0.9966527,
+"start_offset": 0.22386703,
+"stream": ExtResource("43_holxr")
+}],
+"times": PackedFloat32Array(0)
+}
+tracks/9/use_blend = true
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("DefenseComponent:upper_damage_multiplier")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0, 0.8),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1.25, 1.0]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("DefenseComponent:lower_damage_multiplier")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(0, 0.8),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1.25, 1.0]
+}
+
+[sub_resource type="Animation" id="Animation_au7lq"]
+resource_name = "hook_right"
+length = 0.8
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [&"star_punch_lower", &"punch_lower"]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimatedSprite2D:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [0, 1, 1]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("AnimatedSprite2D:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.13333334, 0.26666668),
+"transitions": PackedFloat32Array(0.37892932, 1),
+"update": 0,
+"values": [Vector2(32, 0), Vector2(0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("DefenseComponent:dodge_position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.16666667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [1, 0]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("AnimatedSprite2D:flip_h")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("AnimatedSprite2D:offset")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [Vector2(0, 0), Vector2(8.68, 24), Vector2(0, 0)]
+}
+tracks/6/type = "method"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("AttackingComponent")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0.2),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [0, 1, 15.0, 1],
+"method": &"send_attack_call"
+}]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("DefenseComponent:upper_invulnerability")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, true, false]
+}
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("DefenseComponent:lower_invulnerability")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, true, false]
+}
+tracks/9/type = "audio"
+tracks/9/imported = false
+tracks/9/enabled = true
+tracks/9/path = NodePath("AudioStreamPlayer")
+tracks/9/interp = 1
+tracks/9/loop_wrap = true
+tracks/9/keys = {
+"clips": [{
+"end_offset": 0.9966527,
+"start_offset": 0.22386703,
+"stream": ExtResource("43_holxr")
+}],
+"times": PackedFloat32Array(0)
+}
+tracks/9/use_blend = true
+tracks/10/type = "value"
+tracks/10/imported = false
+tracks/10/enabled = true
+tracks/10/path = NodePath("DefenseComponent:upper_damage_multiplier")
+tracks/10/interp = 1
+tracks/10/loop_wrap = true
+tracks/10/keys = {
+"times": PackedFloat32Array(0, 0.8),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1.25, 1.0]
+}
+tracks/11/type = "value"
+tracks/11/imported = false
+tracks/11/enabled = true
+tracks/11/path = NodePath("DefenseComponent:lower_damage_multiplier")
+tracks/11/interp = 1
+tracks/11/loop_wrap = true
+tracks/11/keys = {
+"times": PackedFloat32Array(0, 0.8),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [1.25, 1.0]
 }
 
 [sub_resource type="Animation" id="Animation_oprun"]
@@ -1127,6 +1320,7 @@ _data = {
 &"get_up_end": SubResource("Animation_lxlsd"),
 &"get_up_start": SubResource("Animation_ha2mi"),
 &"hook_left": SubResource("Animation_2a3c5"),
+&"hook_right": SubResource("Animation_au7lq"),
 &"idle": SubResource("Animation_oprun"),
 &"intro": SubResource("Animation_2dvfe"),
 &"intro_start": SubResource("Animation_giy8y"),
@@ -3383,6 +3577,7 @@ metadata/_custom_type_script = "uid://bmm6abcpujspl"
 
 [node name="CutSceneState" type="Node" parent="StateMachine" unique_id=266133528 node_paths=PackedStringArray("next_state")]
 script = ExtResource("38_t4otl")
+skip_cutscene = true
 next_state = NodePath("../Neutral")
 metadata/_custom_type_script = "uid://bd3i8gnmviajw"
 
@@ -3406,16 +3601,17 @@ parameters/conditions/gotup = false
 parameters/conditions/spectating = false
 parameters/attack/blend_position = Vector2(-1.0488889, 1.0478011)
 parameters/block/blend_position = Vector2(0, 0)
-parameters/dodge/blend_position = 0.0
+parameters/dodge/blend_position = 0.0018371344
 parameters/dodge/dodge_right/conditions/holding_right = false
 parameters/dodge/dodge_right/dodge_blend_right/blend_position = 0.0
 parameters/dodge/dodge_left/conditions/holding_left = false
-parameters/dodge/dodge_left/dodge_blend_left/blend_position = 0.0
+parameters/dodge/dodge_left/dodge_blend_left/blend_position = -1.1022657
 parameters/dodge/duck/conditions/holding_down = false
 parameters/dodge/duck/duck_blend/blend_position = 0.0
 parameters/fast_block/blend_position = Vector2(0, 0)
 parameters/get_up_blend/blend_position = 0.0
 parameters/hit/blend_position = Vector2(0, 0)
+parameters/hook/blend_position = 0.0
 parameters/knockdown/blend_position = Vector2(0, 0)
 parameters/neutral/blend_position = 0.0
 parameters/neutral/idle/blend_position = Vector2(0, 0)
