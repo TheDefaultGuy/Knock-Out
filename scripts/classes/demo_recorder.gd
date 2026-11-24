@@ -10,6 +10,8 @@ enum RECORD_STATUS_ENUM{
 	
 	## Means that it's currently playing a demo.
 	PLAYBACK,
+	
+	NEITHER,
 }
 
 ## List of all the names of the actions/inputs a player can perform.
@@ -40,7 +42,7 @@ var action_pressed_status : Dictionary[String, bool] = {}
 @onready var arena: Arena = $".."
 
 func _ready() -> void:
-	
+	tick = 0
 	dictionary_index = 0
 	process_mode = Node.PROCESS_MODE_PAUSABLE
 	owner.pause_game_signal.connect(handle_pause)
@@ -50,7 +52,10 @@ func _ready() -> void:
 		var demo_data : Dictionary = DemoFileManager._load_demo()
 		input_dictionary = demo_data["input_data"]
 		return
-		
+	
+	#match status:
+		#RECORD_STATUS_ENUM.PLAYBACK:
+	
 	handle_start()
 
 func _physics_process(_delta: float) -> void:
@@ -73,8 +78,8 @@ func _input(_event: InputEvent) -> void:
 	if status == RECORD_STATUS_ENUM.PLAYBACK:
 		return
 	
-	if Input.is_action_just_pressed("save"):
-		DemoFileManager._save_demo(self)
+	#if Input.is_action_just_pressed("save"):
+		#DemoFileManager._save_demo(self)
 	
 	# Resets input_array to be empty
 	input_array = []
@@ -180,8 +185,16 @@ func replay_inputs() -> void:
 		
 		for input in input_dictionary[tick]:
 			var event = InputEventAction.new()
+			
+			# Sets the action of the even as the input registered in the input dictionary.
 			event.action = input
+			
+			# Sets the pressed status of the input event as the opposite of what it currently is.
+			# Basically toggles inputs on and off.
 			event.pressed = !Input.is_action_pressed(input)
+			
+			# Setting the input's device as negative because it's not a physical input device performing the input.
+			event.device = -32
 			
 			if event.pressed == true:
 				print("Pressing Input: ", input)

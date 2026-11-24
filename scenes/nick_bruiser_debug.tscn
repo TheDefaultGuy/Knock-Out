@@ -8105,7 +8105,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0.2),
 "transitions": PackedFloat32Array(1),
 "values": [{
-"args": [2, 0, 20.0, -1],
+"args": [2, 0, 10.0, -1],
 "method": &"send_attack_call"
 }]
 }
@@ -8198,7 +8198,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0.2),
 "transitions": PackedFloat32Array(1),
 "values": [{
-"args": [0, -1, 20.0, 1],
+"args": [0, -1, 10.0, 1],
 "method": &"send_attack_call"
 }]
 }
@@ -8303,7 +8303,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0.2),
 "transitions": PackedFloat32Array(1),
 "values": [{
-"args": [0, 1, 20.0, -1],
+"args": [0, 1, 10.0, -1],
 "method": &"send_attack_call"
 }]
 }
@@ -9467,7 +9467,7 @@ time_to_change_state = 15.0
 override_idle_animation = true
 custom_idle_animation = "idle_fast"
 moveset_type = 1
-moveset_array = Array[String](["fakeout"])
+moveset_array = Array[String](["fakeout", "fakeout_uppercut"])
 block_behavior = 2
 counter_attack = "counter_jab"
 min_delay_time = 0.6
@@ -9484,7 +9484,7 @@ time_to_change_state = 15.0
 override_idle_animation = true
 custom_idle_animation = "idle_fast"
 moveset_type = 1
-moveset_array = Array[String](["fakeout"])
+moveset_array = Array[String](["fakeout", "fakeout_uppercut", "uppercut"])
 block_behavior = 2
 counter_attack = "counter_jab"
 min_delay_time = 0.8
@@ -9523,12 +9523,13 @@ primary_condition = 4
 secondary_condition = 0
 tertiary_condition = 11
 time_to_change_state = 15.0
-player_target_hp = 35.0
+player_target_hp = 45.0
 override_idle_animation = true
 custom_idle_animation = "idle_guard"
 moveset_type = 2
 moveset_array = Array[String](["taunt", "counter_uppercut"])
 block_behavior = 2
+max_delay_time = 2.0
 metadata/_custom_type_script = "uid://c4q24a656iry7"
 
 [node name="TauntAndCounter2" type="Node" parent="StateMachine/Round 1" unique_id=2001566302 node_paths=PackedStringArray("primary_target_state", "secondary_target_state", "tertiary_target_state")]

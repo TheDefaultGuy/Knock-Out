@@ -239,7 +239,7 @@ point_count = 3
 
 [sub_resource type="Curve" id="Curve_holxr"]
 _limits = [1.0, 3.0, 0.0, 7.0]
-_data = [Vector2(0, 1), 0.0, 0.04114618, 0, 0, Vector2(7, 3), 0.42639792, 0.0, 0, 0]
+_data = [Vector2(0, 1), 0.0, 0.13267049, 0, 0, Vector2(7, 3), 0.41127828, 0.0, 0, 0]
 point_count = 2
 metadata/_snap_enabled = true
 metadata/_snap_count = 4
@@ -3524,6 +3524,7 @@ autoplay = "guard_down"
 unique_name_in_owner = true
 process_physics_priority = -1
 script = ExtResource("3_qlg0r")
+buffer_time = 0.275
 parry_window = 0.08
 metadata/_custom_type_script = "uid://c20tqslkyvip3"
 

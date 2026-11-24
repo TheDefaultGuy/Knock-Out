@@ -30,6 +30,8 @@ var get_up_decay_rate : float = 50.0
 
 @onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
 
+var can_start_getup : bool = false
+
 func _physics_process(delta: float) -> void:
 	
 	if state_machine.current_state != self :
@@ -45,21 +47,26 @@ func _physics_process(delta: float) -> void:
 	# Sets the blend of the get up animation to be equal to the get_up_progress
 	animation_tree.set("parameters/get_up_blend/blend_position", get_up_progress)
 	
+	if can_start_getup == false:
+		return
+	
+	if FightManager.is_fight_over == true:
+		get_up_decay_rate += 2.5 # Makes the player fall down a little faster and with some acceleration.
+		return
+		
 	if Input.is_action_just_pressed("left_punch") or Input.is_action_just_pressed("right_punch"):
 		get_up_progress += get_up_step_value
 		#print("GET UP: ", get_up_progress)
 		return
-	
-	if FightManager.is_fight_over == false:
 		
-		# When the get up progress reaches 100 or the get_up_threshold, the player succesfully gets back up.
-		if get_up_progress >= get_up_threshold: 
-			
-			# Plays the get up animation
-			animation_tree.set("parameters/conditions/gotup", true)
-			
-			# Resets HP and also emits tha the fighter is ready.
-			health_component.reset_hp()
+	# When the get up progress reaches 100 or the get_up_threshold, the player succesfully gets back up.
+	if get_up_progress >= get_up_threshold: 
+		
+		# Plays the get up animation
+		animation_tree.set("parameters/conditions/gotup", true)
+		
+		# Resets HP and also emits tha the fighter is ready.
+		health_component.reset_hp()
 	return
 
 func enter() -> void:
@@ -71,6 +78,7 @@ func enter() -> void:
 	
 	# Waits until the enemy emits the signal so that the player can start getting up.
 	await FightManager.fighter_can_start_getup_signal 
+	can_start_getup = true
 	
 	# Starts the KO Timer as soon as the player can attempt to get up.
 	FightManager.start_ko_count_signal.emit()
@@ -88,7 +96,7 @@ func exit() -> void:
 	input_component.attack_input_signal.disconnect(perform_attack)
 	FightManager.resume_fighting_signal.disconnect(transition_to_neutral)
 	animation_tree.animation_finished.disconnect(check_finished_animation)
-	
+	can_start_getup = false
 
 func check_finished_animation(animation : String) -> void:
 	if animation.contains("back_to_the_fight_2") == true :

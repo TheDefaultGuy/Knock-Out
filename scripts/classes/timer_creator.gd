@@ -19,6 +19,10 @@ static func create_timer_and_add_as_child(timer_name : String, one_shot : bool, 
 	# Sets the autostart of the timer
 	created_timer.autostart = autostart
 	
+	# Sets the timer to update during _physics_process instead of _process.
+	# This is to avoid desyncs in demos.
+	created_timer.process_callback = Timer.TIMER_PROCESS_PHYSICS
+	
 	# Adds the timer as a child of the node that called the function.
 	# Call defered because some components and states need it to be defered some some stupid reason.
 	calling_node.add_child.call_deferred(created_timer)

@@ -33,6 +33,7 @@ var accumulation_timer : Timer = null
 
 @onready var player_front_bar: ProgressBar = $"MarginContainer/HBoxContainer/VBoxContainer/Health Bars/Player Health Bar/Front Bar"
 @onready var player_back_bar: ProgressBar = $"MarginContainer/HBoxContainer/VBoxContainer/Health Bars/Player Health Bar/Back Bar"
+@onready var rng_index: Label = %"RNG Index"
 
 @onready var enemy_damage: Label = %EnemyDamage
 @onready var player_damage: Label = %PlayerDamage
@@ -115,6 +116,7 @@ func update_ui() -> void:
 	star_count_label.text = str("Stars: ", FightManager.star_count)
 	stamina_label.text = str("Stamina: ", FightManager.stamina)
 	points_label.text = str("Points: ", PointsManager.points)
+	rng_index.text = str(RandomManager.table_index)
 	
 ## Animates the progress bars depleting.
 func animate_bar(bar : ProgressBar, duration : float, hp_value : float) -> void:

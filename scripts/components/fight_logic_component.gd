@@ -105,10 +105,12 @@ func stop_ko_count() -> void:
 ## Handles setting the winner of the fight.
 func end_fight() -> void:
 	print_rich("[b]🧠 Fight Logic Component:[/b] Fighter could not get up.")
-	stop_ko_count()
+	
 	
 	FightManager.is_fight_over = true
+	await get_tree().create_timer(2.0).timeout
 	
+	stop_ko_count()
 	match true:
 		Global.player_node.is_knocked_down:
 			Global.winner = Global.WinnerEnum.ENEMY

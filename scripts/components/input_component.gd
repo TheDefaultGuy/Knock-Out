@@ -47,17 +47,33 @@ func _ready() -> void:
 	
 	FightManager.final_stun_hit_signal.connect(final_stun_hit)
 	
+	return
+	
 	## Don't allow inputs if it's playing a demo.
 	#if DemoRecorder.status == DemoRecorder.RECORD_STATUS_ENUM.PLAYBACK:
 		#allow_inputs = false
+#func _input(event: InputEvent) -> void:
+	#
+	## If inputs aren't allowed, don't bother running the rest of the function.
+	#if allow_inputs == false :
+		#return
+	#
+	## Don't read inputs if they aren't simulated by the demo playback when playing a demo.
+	## Basically, don't read player inputs when in a demo.
+	#if DemoRecorder.status == DemoRecorder.RECORD_STATUS_ENUM.PLAYBACK and event.device != -32:
+		#return
+		##print("Demo Tick: ", DemoRecorder.tick)
+	#pass
+
 
 func _physics_process(_delta: float) -> void:
+	
+	
+	#print("Demo Tick: ", DemoRecorder.tick)
 	
 	# If inputs aren't allowed, don't bother running the rest of the function.
 	if allow_inputs == false :
 		return
-		
-	#print("Demo Tick: ", DemoRecorder.tick)
 	
 	# Sets the value to be used for the block animation blend.
 	var blend_vector : Vector2i = Vector2i( \

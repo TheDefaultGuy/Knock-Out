@@ -764,8 +764,6 @@ func perform_action() -> void:
 			return
 			
 		MovesetTypeEnum.PICK_RANDOM:
-			
-			
 			play_attack_start_attack_timer(RandomManager.choose_random_element(moveset_array))
 			return
 			
