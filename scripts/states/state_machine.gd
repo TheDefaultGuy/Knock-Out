@@ -52,6 +52,8 @@ func _ready() -> void:
 	if Engine.is_editor_hint(): 
 		return
 	
+	
+	
 	AnimationNodeManager.delete_attack_animation_nodes(animation_tree.tree_root, self)
 	#print(get_children())
 	

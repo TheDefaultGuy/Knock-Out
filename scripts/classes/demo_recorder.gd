@@ -17,6 +17,9 @@ enum RECORD_STATUS_ENUM{
 ## List of all the names of the actions/inputs a player can perform.
 const ACTION_NAMES : Array[String] = ["left", "right", "up", "down", "star_punch", "block", "block_lower", "block_upper", "left_punch", "right_punch"]
 
+## Device ID assigned to inputs simulated by this class.
+static var SIMULATED_DEVICE_ID : int = -32
+
 ## Stores whether it's recording a demo, or playing back a demo.
 static var status : RECORD_STATUS_ENUM = RECORD_STATUS_ENUM.RECORDING
 
@@ -194,7 +197,7 @@ func replay_inputs() -> void:
 			event.pressed = !Input.is_action_pressed(input)
 			
 			# Setting the input's device as negative because it's not a physical input device performing the input.
-			event.device = -32
+			event.device = SIMULATED_DEVICE_ID
 			
 			if event.pressed == true:
 				print("Pressing Input: ", input)

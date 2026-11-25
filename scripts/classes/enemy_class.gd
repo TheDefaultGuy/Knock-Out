@@ -15,6 +15,9 @@ signal hit_by_star_punch_signal
 @onready var animated_sprite_2d: AnimatedSprite2D = %AnimatedSprite2D
 
 func _ready() -> void:
+	
+	animation_tree.callback_mode_process = AnimationMixer.ANIMATION_CALLBACK_MODE_PROCESS_PHYSICS
+	
 	if defense_component == null and self.get_script() != Fighter:
 		printerr(self.name, " doesn't have a Defense Component assigned.")
 		

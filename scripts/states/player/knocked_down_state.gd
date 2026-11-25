@@ -54,10 +54,13 @@ func _physics_process(delta: float) -> void:
 		get_up_decay_rate += 2.5 # Makes the player fall down a little faster and with some acceleration.
 		return
 		
-	if Input.is_action_just_pressed("left_punch") or Input.is_action_just_pressed("right_punch"):
-		get_up_progress += get_up_step_value
-		#print("GET UP: ", get_up_progress)
-		return
+	#var left_result : bool = input_component.action_dictionary["left_punch"] == true and input_component.stored_dictionary["left_punch"] == false
+	#var right_result : bool = input_component.action_dictionary["right_punch"] == true and input_component.stored_dictionary["right_punch"] == false
+	#
+	#if left_result or right_result:
+		#get_up_progress += get_up_step_value
+		##print("GET UP: ", get_up_progress)
+		#return
 		
 	# When the get up progress reaches 100 or the get_up_threshold, the player succesfully gets back up.
 	if get_up_progress >= get_up_threshold: 
@@ -109,4 +112,6 @@ func check_finished_animation(animation : String) -> void:
 
 ## When an attack input is Given by the [InputComponent], increase the [member get_up_progress].
 func perform_attack(_height : int, _direction : int, _action_name : String):
+	
+	get_up_progress += get_up_step_value
 	return
