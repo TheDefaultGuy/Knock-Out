@@ -4,7 +4,7 @@
 ## Abstract class that hold functions that handle complex animation functions.
 
 ## The threshold an animation's play position needs to be to be considered started.
-const PLAY_POS_THRESHOLD : float = 0.005
+const PLAY_POS_THRESHOLD : float = 0.00005
 
 ## Sets the blend of the given animation using the given blend_vector.
 static func set_animation_2d_blend(animation : String, blend_vector : Vector2, calling_node : Node) -> void:

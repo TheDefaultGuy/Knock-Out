@@ -607,7 +607,7 @@ func start_attack_delay_timer() -> void:
 	
 	match attack_delay_type: # Matches the selected attack delay type
 		AttackDelayTypeEnum.FLOAT:
-			attack_timer.start(remap(RandomManager.get_number(), 0, RandomManager.RNG_TABLE.size(), min_delay_time, max_delay_time)) # Sets the time as a random float value between the minimum and maximum values.
+			attack_timer.start(RandomManager.get_remapped_float(min_delay_time, max_delay_time)) # Sets the time as a random float value between the minimum and maximum values.
 			return
 			
 		AttackDelayTypeEnum.PREDETERMINED:
@@ -812,7 +812,7 @@ func get_weighted_choice(weight_dict: Dictionary) -> String:
 		total_weight += weight
 	
 	# Picks a random number between 0 and the total weight
-	var random_value : float = remap(RandomManager.get_number(), 0, RandomManager.RNG_TABLE.size(), 0.0, total_weight)
+	var random_value : float = RandomManager.get_remapped_float(0.0, total_weight)
 	
 	# Goes through the dictionary to find which bracket the roll falls into
 	for attack in weight_dict:

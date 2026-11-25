@@ -242,4 +242,4 @@ func reset_everything() -> void:
 	star_count = 0
 	PointsManager.points = 0
 	RandomManager.table_index = 0
-	RandomManager.seeded_shuffle()
+	#RandomManager.seeded_shuffle()

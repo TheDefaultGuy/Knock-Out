@@ -103,7 +103,7 @@ func handle_failed_get_up() -> void:
 		
 		stored_time_left = ceilf(get_up_timer.time_left)
 		
-		var roll_value = remap(RandomManager.get_number(), 0, RandomManager.RNG_TABLE.size(), 0.0, 100.0)
+		var roll_value = RandomManager.get_remapped_float(0.0, 100.0)
 		
 		#print("check_count: ", check_count)
 		#prints(remap(chance_for_failed_attempt, 0.0, 100.0, 0.0, 1.0), randy)
@@ -137,7 +137,7 @@ func start_get_up_timer() -> void:
 	# Grabs a random number between min_getup_time and max_getup_time
 	# Then rounds it to the nearest whole number.
 	
-	get_up_wait_time = roundf(remap(RandomManager.get_number(), 0, RandomManager.RNG_TABLE.size(), min_getup_time, max_getup_time))
+	get_up_wait_time = RandomManager.get_remapped_float(min_getup_time, max_getup_time)
 	
 	if owner.instant_kd_component.is_fully_knocked_out == true:
 		get_up_wait_time = 9.0

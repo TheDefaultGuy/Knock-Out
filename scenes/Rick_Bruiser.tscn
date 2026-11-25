@@ -9128,6 +9128,7 @@ libraries/stun_hit = SubResource("AnimationLibrary_f32gn")
 [node name="AnimationTree" type="AnimationTree" parent="." unique_id=1716021603]
 unique_name_in_owner = true
 root_node = NodePath("%AnimationTree/..")
+callback_mode_process = 0
 tree_root = ExtResource("70_xc4uc")
 anim_player = NodePath("../AnimationPlayer")
 parameters/back_to_the_fight/blend_position = -0.00054496527

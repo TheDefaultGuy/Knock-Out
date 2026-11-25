@@ -9296,6 +9296,7 @@ texture_filter = 1
 material = ExtResource("2_gthl3")
 sprite_frames = SubResource("SpriteFrames_m0jec")
 animation = &"idle"
+frame = 1
 
 [node name="DefenseComponent" type="Node" parent="." unique_id=2045134485]
 unique_name_in_owner = true
@@ -9600,6 +9601,7 @@ metadata/_custom_type_script = "uid://dt50cn0l8twro"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=513767802]
 unique_name_in_owner = true
+callback_mode_process = 0
 libraries/ = SubResource("AnimationLibrary_1x4g4")
 libraries/attack = SubResource("AnimationLibrary_xom0j")
 libraries/block = SubResource("AnimationLibrary_yfn78")
@@ -9617,6 +9619,7 @@ libraries/stun_hit = SubResource("AnimationLibrary_f32gn")
 [node name="AnimationTree" type="AnimationTree" parent="." unique_id=1716021603]
 unique_name_in_owner = true
 root_node = NodePath("%AnimationTree/..")
+callback_mode_process = 0
 tree_root = ExtResource("74_dawdu")
 anim_player = NodePath("../AnimationPlayer")
 parameters/back_to_the_fight/blend_position = -0.00054496527
